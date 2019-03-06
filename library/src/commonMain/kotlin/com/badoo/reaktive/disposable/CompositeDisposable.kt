@@ -9,7 +9,7 @@ import com.badoo.reaktive.utils.lock.synchronized
 class CompositeDisposable : Disposable {
 
     private val lock = newLock()
-    private var set: HashSet<Disposable>? = hashSetOf()
+    private var set: MutableSet<Disposable>? = hashSetOf()
     override val isDisposed: Boolean get() = lock.synchronized { set == null }
 
     override fun dispose() {

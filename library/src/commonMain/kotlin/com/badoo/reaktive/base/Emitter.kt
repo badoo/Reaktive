@@ -11,9 +11,9 @@ interface Emitter {
     /**
      * Signal an exception
      *
-     * @param e the Throwable to signal
+     * @param error the Throwable to signal
      */
-    fun onError(e: Throwable)
+    fun onError(error: Throwable)
 
     /**
      * Sets a [Disposable] on this emitter, any previous [Disposable]
