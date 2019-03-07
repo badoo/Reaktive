@@ -18,7 +18,7 @@ class DisposableWrapper(
         if (!_isDisposed) {
             var d: Disposable? = null
             lock.synchronized {
-                if (isDisposed) {
+                if (_isDisposed) {
                     return
                 }
                 _isDisposed = true
