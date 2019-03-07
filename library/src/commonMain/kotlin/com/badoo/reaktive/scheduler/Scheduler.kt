@@ -36,7 +36,7 @@ interface Scheduler {
         fun submitRepeating(startDelay: Long = 0L, period: Long, task: () -> Unit)
 
         /**
-         * Cancels all tasks, all running tasks will be interrupted, all pending tasks will not be executed
+         * Cancels all tasks. All running tasks will be interrupted, all pending tasks will not be executed.
          */
         fun cancel()
     }

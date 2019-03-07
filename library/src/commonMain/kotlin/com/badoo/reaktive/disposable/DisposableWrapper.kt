@@ -16,35 +16,33 @@ class DisposableWrapper(
 
     override fun dispose() {
         if (!_isDisposed) {
-            var d: Disposable? = null
+            var disposableToDispose: Disposable? = null
             lock.synchronized {
-                if (_isDisposed) {
-                    return
+                if (!_isDisposed) {
+                    _isDisposed = true
+                    disposableToDispose = disposable
+                    disposable = null
                 }
-                _isDisposed = true
-                d = disposable
-                disposable = null
             }
-            d?.dispose()
+            disposableToDispose?.dispose()
         }
     }
 
     /**
-     * Atomically either sets the specified [Disposable] or disposes it if wrapper is already disposed
+     * Atomically either replaces any existing [Disposable] with the specified one or disposes it if wrapper is already disposed.
+     * Also disposes any replaced [Disposable].
      */
-    fun set(disposable: Disposable?): Disposable? {
+    fun set(disposable: Disposable?) {
+        var disposableToDispose: Disposable? = disposable
         if (!_isDisposed) {
             lock.synchronized {
                 if (!_isDisposed) {
-                    val old = this.disposable
+                    disposableToDispose = this.disposable
                     this.disposable = disposable
-                    return old
                 }
             }
         }
 
-        disposable?.dispose()
-
-        return null
+        disposableToDispose?.dispose()
     }
 }
