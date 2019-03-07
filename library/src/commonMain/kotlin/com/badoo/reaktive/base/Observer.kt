@@ -21,7 +21,7 @@ interface Observer {
     /**
      * Notifies the [Observer] about error, no other methods must be called after this method
      *
-     * @param e the exception
+     * @param error the exception
      */
-    fun onError(e: Throwable)
+    fun onError(error: Throwable)
 }
