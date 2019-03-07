@@ -6,7 +6,7 @@ import com.badoo.reaktive.disposable.Disposable
  * Base interface for receivers of events from [Source]s.
  * When an [Observer] is subscribed to a [Source] through its [Source.subscribe] method,
  * the [Source] calls [onSubscribe] method with a [Disposable] that allows
- * disposing the sequence at any time.
+ * disposing the [Source] at any time.
  * All methods must be called synchronously, never concurrently.
  */
 interface Observer {

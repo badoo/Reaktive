@@ -12,6 +12,7 @@ internal class ThreadFactoryImpl(
             .newThread(runnable)
             .apply {
                 name = "$namePrefix, $name"
+                isDaemon = true
             }
 
     private companion object {
