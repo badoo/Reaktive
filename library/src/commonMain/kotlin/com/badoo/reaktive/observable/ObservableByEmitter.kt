@@ -3,7 +3,7 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
-inline fun <T> observableByEmitter(crossinline subscribe: (emitter: ObservableEmitter<T>) -> Unit): Observable<T> =
+fun <T> observableByEmitter(subscribe: (emitter: ObservableEmitter<T>) -> Unit): Observable<T> =
     observable { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
