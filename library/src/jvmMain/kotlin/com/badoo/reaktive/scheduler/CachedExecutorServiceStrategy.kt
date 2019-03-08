@@ -22,6 +22,6 @@ internal class CachedExecutorServiceStrategy(
     }
 
     private companion object {
-        private val pool by lazy { ExpirationPool<ScheduledExecutorService>() }
+        private val pool by lazy { ExpirationPool(ScheduledExecutorService::shutdown) }
     }
 }
