@@ -17,6 +17,10 @@ internal class CachedExecutorServiceStrategy(
         pool.release(executorService, keepAliveTimeoutMillis)
     }
 
+    override fun destroy() {
+        // no-op
+    }
+
     private companion object {
         private val pool by lazy { ExpirationPool<ScheduledExecutorService>() }
     }

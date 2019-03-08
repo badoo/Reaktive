@@ -7,4 +7,6 @@ internal interface ExecutorServiceStrategy {
     fun get(): ScheduledExecutorService
 
     fun recycle(executorService: ScheduledExecutorService)
+
+    fun destroy()
 }

@@ -8,9 +8,14 @@ import com.badoo.reaktive.disposable.Disposable
 interface Scheduler {
 
     /**
-     * Creates a new instance of [Executor]
+     * Creates a new instance of [Executor]. Throws an exception if [Scheduler] is destroyed.
      */
     fun newExecutor(): Executor
+
+    /**
+     * Destroys the scheduler
+     */
+    fun destroy()
 
     /**
      * Base interface for [Scheduler] executors. All tasks are executed synchronously one by one, never concurrently.

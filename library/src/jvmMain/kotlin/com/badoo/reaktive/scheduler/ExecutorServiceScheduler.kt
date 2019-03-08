@@ -12,6 +12,10 @@ internal class ExecutorServiceScheduler(
 
     override fun newExecutor(): Scheduler.Executor = ExecutorImpl(executorServiceStrategy)
 
+    override fun destroy() {
+        executorServiceStrategy.destroy()
+    }
+
     private class ExecutorImpl(
         private val executorServiceStrategy: ExecutorServiceStrategy
     ) : Scheduler.Executor {
@@ -20,12 +24,13 @@ internal class ExecutorServiceScheduler(
         private var executor: ScheduledExecutorService? = executorServiceStrategy.get()
 
         private val disposables = CompositeDisposable()
+        private val monitor: Any = disposables
         override val isDisposed: Boolean get() = executor == null
 
         override fun dispose() {
             if (executor != null) {
                 val executorToRecycle: ScheduledExecutorService
-                synchronized(this) {
+                synchronized(monitor) {
                     executorToRecycle = executor ?: return
                     executor = null
                 }
@@ -56,7 +61,7 @@ internal class ExecutorServiceScheduler(
 
         private inline fun <T> executeIfNotRecycled(block: (ScheduledExecutorService) -> T): T? {
             if (executor != null) {
-                synchronized(this) {
+                synchronized(monitor) {
                     return executor?.let(block)
                 }
             }
