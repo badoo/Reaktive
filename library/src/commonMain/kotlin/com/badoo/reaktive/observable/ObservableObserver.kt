@@ -1,7 +1,6 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.Observer
-import com.badoo.reaktive.base.Source
 import com.badoo.reaktive.completable.CompletableObserver
 
 /**

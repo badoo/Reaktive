@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.utils.uptimeMillis
 
 fun <T> Observable<T>.throttle(window: Long): Observable<T> =

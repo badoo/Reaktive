@@ -1,8 +1,14 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.Source
-
 /**
- * Represents a [Source] that produces stream of values
+ * Produces stream of values and completes at the end
  */
-interface Observable<out T> : Source<ObservableObserver<T>>
+interface Observable<out T> {
+
+    /**
+     * Subscribes the specified [ObservableObserver] to this [Observable]
+     *
+     * @param observer the [ObservableObserver] to be subscribed
+     */
+    fun subscribe(observer: ObservableObserver<T>)
+}

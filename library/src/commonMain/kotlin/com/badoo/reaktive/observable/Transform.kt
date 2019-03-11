@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 
 internal inline fun <T, R> Observable<T>.transform(crossinline onNext: (value: T, onNext: (R) -> Unit) -> Unit): Observable<R> =
