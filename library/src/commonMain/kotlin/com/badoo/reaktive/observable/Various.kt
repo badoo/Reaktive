@@ -1,9 +1,9 @@
 package com.badoo.reaktive.observable
 
-inline fun <T> observable(crossinline subscribe: (observer: ObservableObserver<T>) -> Unit): Observable<T> =
+inline fun <T> observable(crossinline onSubscribe: (observer: ObservableObserver<T>) -> Unit): Observable<T> =
     object : Observable<T> {
         override fun subscribe(observer: ObservableObserver<T>) {
-            subscribe(observer)
+            onSubscribe(observer)
         }
     }
 

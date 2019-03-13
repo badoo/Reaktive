@@ -2,7 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.utils.uptimeMillis
 
-fun <T> Observable<T>.throttle(window: Long): Observable<T> =
+fun <T> Observable<T>.throttle(windowMillis: Long): Observable<T> =
     observable { observer ->
         subscribeSafe(
             object : ObservableObserver<T> by observer {
@@ -10,7 +10,7 @@ fun <T> Observable<T>.throttle(window: Long): Observable<T> =
 
                 override fun onNext(value: T) {
                     val time = uptimeMillis
-                    if (time - lastTime >= window) {
+                    if (time - lastTime >= windowMillis) {
                         lastTime = time
                         observer.onNext(value)
                     }

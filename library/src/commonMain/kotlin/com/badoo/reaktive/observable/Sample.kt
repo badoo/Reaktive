@@ -6,7 +6,7 @@ import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
-fun <T> Observable<T>.sample(window: Long, scheduler: Scheduler): Observable<T> =
+fun <T> Observable<T>.sample(windowMillis: Long, scheduler: Scheduler): Observable<T> =
     observableByEmitter { emitter ->
         val disposableWrapper = CompositeDisposable()
         emitter.setDisposable(disposableWrapper)
@@ -21,7 +21,7 @@ fun <T> Observable<T>.sample(window: Long, scheduler: Scheduler): Observable<T> 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper += disposable
 
-                    executor.submitRepeating(period = window) {
+                    executor.submitRepeating(period = windowMillis) {
                         lock.synchronized {
                             if (::lastValue.isInitialized) {
                                 emitter.onNext(lastValue[0])

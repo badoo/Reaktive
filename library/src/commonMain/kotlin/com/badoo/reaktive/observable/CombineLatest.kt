@@ -38,7 +38,8 @@ fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Obse
 
                     override fun onComplete() {
                         lock.synchronized {
-                            if (--activeSourceCount == 0) {
+                            activeSourceCount--
+                            if (activeSourceCount == 0) {
                                 emitter.onComplete()
                             }
                         }

@@ -6,7 +6,7 @@ import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
-fun <T> Observable<T>.debounce(timeout: Long, scheduler: Scheduler): Observable<T> =
+fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Observable<T> =
     observableByEmitter { emitter ->
         val disposableWrapper = CompositeDisposable()
         emitter.setDisposable(disposableWrapper)
@@ -32,7 +32,7 @@ fun <T> Observable<T>.debounce(timeout: Long, scheduler: Scheduler): Observable<
 
                     executor.cancel()
 
-                    executor.submit(timeout) {
+                    executor.submit(timeoutMillis) {
                         lock.synchronized {
                             if (pendingValueCounter == valueCounter) {
                                 pendingValue = null
@@ -50,7 +50,7 @@ fun <T> Observable<T>.debounce(timeout: Long, scheduler: Scheduler): Observable<
                     executor.submit {
                         lock
                             .synchronized(::pendingValueCounter)
-                            .takeIf { it > 0 }
+                            .takeIf { it != 0 }
                             ?.also {
                                 @Suppress("UNCHECKED_CAST")
                                 emitter.onNext(pendingValue as T)

@@ -2,6 +2,9 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.arrayqueue.ArrayQueue
+import com.badoo.reaktive.utils.arrayqueue.isNotEmpty
+import com.badoo.reaktive.utils.arrayqueue.take
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
@@ -10,8 +13,7 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val lock = newLock()
-        val values = List<MutableList<T>>(size) { mutableListOf() }
-        val readyValues = mutableListOf<T>()
+        val values = List<ArrayQueue<T>>(size) { ArrayQueue() }
 
         forEachIndexed { index, source ->
             source.subscribeSafe(
@@ -22,18 +24,13 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
 
                     override fun onNext(value: T) {
                         lock.synchronized {
-                            values[index].add(value)
+                            values[index].offer(value)
 
-                            if (values.all(List<*>::isNotEmpty)) {
-                                values.forEach { queue ->
-                                    readyValues.add(queue.removeAt(0))
-                                }
-
-                                mapper(readyValues)
-                                    .also {
-                                        readyValues.clear()
-                                        emitter.onNext(it)
-                                    }
+                            if (values.all(ArrayQueue<*>::isNotEmpty)) {
+                                values
+                                    .map(ArrayQueue<T>::take)
+                                    .let(mapper)
+                                    .also(emitter::onNext)
                             }
                         }
                     }

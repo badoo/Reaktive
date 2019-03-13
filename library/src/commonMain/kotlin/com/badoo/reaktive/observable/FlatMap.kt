@@ -44,7 +44,8 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
 
                 override fun onComplete() {
                     lock.synchronized {
-                        if (--activeSourceCount == 0) {
+                        activeSourceCount--
+                        if (activeSourceCount == 0) {
                             emitter.onComplete()
                         }
                     }
