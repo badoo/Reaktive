@@ -5,11 +5,13 @@ import com.badoo.reaktive.disposable.Disposable
 /**
  * Base interface for emitting signals from various [Source]s.
  * Note that its methods must be called synchronously, never concurrently.
+ * Unlike [Observer]s it is safe to call any methods of [Emitter] in any order.
  */
 interface Emitter {
 
     /**
-     * Signal an exception
+     * Signals an exception.
+     * It's safe to call any other methods of the [Emitter] after error though it has no effect.
      *
      * @param error the Throwable to signal
      */
