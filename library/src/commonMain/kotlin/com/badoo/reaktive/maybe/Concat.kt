@@ -1,4 +1,4 @@
-package com.arkivanov.rxkotlin.maybe
+package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.concat

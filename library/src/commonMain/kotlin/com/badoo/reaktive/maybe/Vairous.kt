@@ -1,4 +1,4 @@
-package com.arkivanov.rxkotlin.maybe
+package com.badoo.reaktive.maybe
 
 inline fun <T> maybe(crossinline onSubscribe: (observer: MaybeObserver<T>) -> Unit): Maybe<T> =
     object : Maybe<T> {
@@ -24,7 +24,8 @@ fun <T> errorMaybe(e: Throwable): Maybe<T> =
 
 fun <T> Throwable.toErrorMaybe(): Maybe<T> = errorMaybe(this)
 
-fun <T> emptyMaybe(): Maybe<T> = maybeByEmitter(MaybeEmitter<*>::onComplete)
+fun <T> emptyMaybe(): Maybe<T> =
+    maybeByEmitter(MaybeEmitter<*>::onComplete)
 
 fun <T> maybeFromFunction(func: () -> T): Maybe<T> =
     maybeByEmitter { emitter ->

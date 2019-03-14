@@ -1,8 +1,8 @@
-package com.arkivanov.rxkotlin.maybe
+package com.badoo.reaktive.maybe
 
-fun <T : Any> Maybe<T?>.notNull(): Maybe<T> =
+fun <T> Maybe<T>.filter(predicate: (T) -> Boolean): Maybe<T> =
     transform { value, onSuccess, onComplete ->
-        if (value != null) {
+        if (predicate(value)) {
             onSuccess(value)
         } else {
             onComplete()

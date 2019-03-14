@@ -1,4 +1,4 @@
-package com.arkivanov.rxkotlin.maybe
+package com.badoo.reaktive.maybe
 
 fun <T, R> Maybe<T>.map(mapper: (T) -> R): Maybe<R> =
     transform { value, onSuccess, _ ->

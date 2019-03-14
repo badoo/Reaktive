@@ -1,4 +1,4 @@
-package com.arkivanov.rxkotlin.maybe
+package com.badoo.reaktive.maybe
 
 internal fun <T> Maybe<T>.subscribeSafe(observer: MaybeObserver<T>) {
     try {

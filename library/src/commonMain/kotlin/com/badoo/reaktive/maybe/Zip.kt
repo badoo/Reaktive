@@ -1,4 +1,4 @@
-package com.arkivanov.rxkotlin.maybe
+package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable

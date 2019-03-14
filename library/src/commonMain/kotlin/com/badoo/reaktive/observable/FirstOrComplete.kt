@@ -1,7 +1,7 @@
 package com.badoo.reaktive.observable
 
-import com.arkivanov.rxkotlin.maybe.Maybe
-import com.arkivanov.rxkotlin.maybe.maybeByEmitter
+import com.badoo.reaktive.maybe.Maybe
+import com.badoo.reaktive.maybe.maybeByEmitter
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
