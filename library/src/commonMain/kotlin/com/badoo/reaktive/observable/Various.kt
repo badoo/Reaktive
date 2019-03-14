@@ -13,7 +13,9 @@ fun <T> observableOf(value: T): Observable<T> =
         emitter.onComplete()
     }
 
-fun <T> Iterable<T>.toObservable(): Observable<T> =
+fun <T> T.toObservable(): Observable<T> = observableOf(this)
+
+fun <T> Iterable<T>.asObservable(): Observable<T> =
     observableByEmitter { emitter ->
         forEach(emitter::onNext)
         emitter.onComplete()

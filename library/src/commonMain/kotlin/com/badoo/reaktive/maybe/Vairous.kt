@@ -12,10 +12,7 @@ fun <T> maybeOf(value: T): Maybe<T> =
         emitter.onSuccess(value)
     }
 
-fun <T> T.toMaybe(): Maybe<T> =
-    maybeByEmitter { emitter ->
-        emitter.onSuccess(this)
-    }
+fun <T> T.toMaybe(): Maybe<T> = maybeOf(this)
 
 fun <T> errorMaybe(e: Throwable): Maybe<T> =
     maybeByEmitter { emitter ->

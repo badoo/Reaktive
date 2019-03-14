@@ -2,16 +2,9 @@ package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.Emitter
 import com.badoo.reaktive.completable.CompletableEmitter
+import com.badoo.reaktive.single.SingleEmitter
 
 /**
- * Represents [Emitter] that in addition to [CompletableEmitter] can signal completion with value
+ * Represents [Emitter] that acts as both [CompletableEmitter] and [SingleEmitter]
  */
-interface MaybeEmitter<in T> : CompletableEmitter {
-
-    /**
-     * Signals completion with value
-     *
-     * @param value the value
-     */
-    fun onSuccess(value: T)
-}
+interface MaybeEmitter<in T> : CompletableEmitter, SingleEmitter<T>
