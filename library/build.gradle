@@ -35,20 +35,18 @@ kotlin {
             }
         }
 
-        jvmMain {
+        jvmCommon {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
             }
         }
-
-        jvmTest {
-            dependencies {
-                implementation 'junit:junit:4.12'
-            }
-        }
         
+        jvmMain {
+            dependsOn jvmCommon
+        }
+
         androidMain {
-            dependsOn jvmMain
+            dependsOn jvmCommon
         }
     }
 }
