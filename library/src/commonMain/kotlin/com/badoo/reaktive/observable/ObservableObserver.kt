@@ -4,7 +4,7 @@ import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.completable.CompletableObserver
 
 /**
- * Represents [Observer] of [Source] that produces stream of values
+ * Represents [Observer] of source that produces stream of values
  */
 interface ObservableObserver<in T> : CompletableObserver {
 

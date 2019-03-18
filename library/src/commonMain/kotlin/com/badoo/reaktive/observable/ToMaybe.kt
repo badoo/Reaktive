@@ -1,23 +1,24 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.maybe.Maybe
+import com.badoo.reaktive.maybe.maybeByEmitter
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.DisposableWrapper
 
-internal inline fun <T, R> Observable<T>.transform(crossinline onNext: (value: T, onNext: (R) -> Unit) -> Unit): Observable<R> =
-    observableByEmitter { emitter ->
+fun <T> Observable<T>.firstOrComplete(): Maybe<T> =
+    maybeByEmitter { emitter ->
+        val disposableWrapper = DisposableWrapper()
+        emitter.setDisposable(disposableWrapper)
+
         subscribeSafe(
             object : ObservableObserver<T> {
-                private val onNextFunction = emitter::onNext
-
                 override fun onSubscribe(disposable: Disposable) {
-                    emitter.setDisposable(disposable)
+                    disposableWrapper.set(disposable)
                 }
 
                 override fun onNext(value: T) {
-                    try {
-                        onNext(value, onNextFunction)
-                    } catch (e: Throwable) {
-                        emitter.onError(e)
-                    }
+                    disposableWrapper.dispose()
+                    emitter.onSuccess(value)
                 }
 
                 override fun onComplete() {

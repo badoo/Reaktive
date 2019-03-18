@@ -3,7 +3,7 @@ package com.badoo.reaktive.base
 import com.badoo.reaktive.disposable.Disposable
 
 /**
- * Base interface for emitting signals from various [Source]s.
+ * Base interface for emitting signals from various sources.
  * Note that its methods must be called synchronously, never concurrently.
  * Unlike [Observer]s it is safe to call any methods of [Emitter] in any order.
  */

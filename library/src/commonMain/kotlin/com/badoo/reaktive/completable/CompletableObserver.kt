@@ -3,7 +3,7 @@ package com.badoo.reaktive.completable
 import com.badoo.reaktive.base.Observer
 
 /**
- * Represents [Observer] of completable [Source]
+ * Represents [Observer] of completable source
  */
 interface CompletableObserver : Observer {
 
