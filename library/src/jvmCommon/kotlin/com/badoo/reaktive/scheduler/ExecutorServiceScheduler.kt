@@ -10,9 +10,14 @@ internal class ExecutorServiceScheduler(
     private val executorServiceStrategy: ExecutorServiceStrategy
 ) : Scheduler {
 
-    override fun newExecutor(): Scheduler.Executor = ExecutorImpl(executorServiceStrategy)
+    private val disposables = CompositeDisposable()
+
+    override fun newExecutor(): Scheduler.Executor =
+        ExecutorImpl(executorServiceStrategy)
+            .also(disposables::add)
 
     override fun destroy() {
+        disposables.dispose()
         executorServiceStrategy.destroy()
     }
 

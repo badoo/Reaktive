@@ -18,4 +18,4 @@ pluginManagement {
 
 enableFeaturePreview('GRADLE_METADATA')
 
-include ':library'
+include ':library', ':android-sample-app'
