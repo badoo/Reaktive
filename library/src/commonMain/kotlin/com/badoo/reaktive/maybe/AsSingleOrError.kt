@@ -2,7 +2,7 @@ package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.single.Single
 
-fun <T> Maybe<T>.asSingleOrError(error: Throwable): Single<T> =
+fun <T> Maybe<T>.asSingleOrError(error: Throwable = NoSuchElementException()): Single<T> =
     asSingleOrAction { observer ->
         observer.onError(error)
     }

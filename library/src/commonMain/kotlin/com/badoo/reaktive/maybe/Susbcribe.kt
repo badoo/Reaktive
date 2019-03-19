@@ -3,6 +3,7 @@ package com.badoo.reaktive.maybe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.utils.UseReturnValue
+import com.badoo.reaktive.utils.handleSourceError
 
 @UseReturnValue
 fun <T> Maybe<T>.subscribe(
@@ -36,7 +37,7 @@ fun <T> Maybe<T>.subscribe(
 
             override fun onError(error: Throwable) {
                 try {
-                    onError?.invoke(error)
+                    handleSourceError(error, onError)
                 } finally {
                     disposableWrapper.dispose()
                 }

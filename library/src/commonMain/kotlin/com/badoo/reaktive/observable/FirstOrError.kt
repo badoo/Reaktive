@@ -2,7 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.single.Single
 
-fun <T> Observable<T>.firstOrError(error: Throwable): Single<T> =
+fun <T> Observable<T>.firstOrError(error: Throwable = NoSuchElementException()): Single<T> =
     firstOrAction { emitter ->
         emitter.onError(error)
     }
