@@ -3,6 +3,7 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.arrayqueue.ArrayQueue
+import com.badoo.reaktive.utils.arrayqueue.isEmpty
 import com.badoo.reaktive.utils.arrayqueue.isNotEmpty
 import com.badoo.reaktive.utils.arrayqueue.take
 import com.badoo.reaktive.utils.lock.newLock
@@ -13,6 +14,7 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val lock = newLock()
+        var activeSourceCount = 0
         val values = List<ArrayQueue<T>>(size) { ArrayQueue() }
 
         forEachIndexed { index, source ->
@@ -29,7 +31,14 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
                             if (values.all(ArrayQueue<*>::isNotEmpty)) {
                                 values
                                     .map(ArrayQueue<T>::take)
-                                    .let(mapper)
+                                    .let {
+                                        try {
+                                            mapper(it)
+                                        } catch (e: Throwable) {
+                                            emitter.onError(e)
+                                            return
+                                        }
+                                    }
                                     .also(emitter::onNext)
                             }
                         }
@@ -37,7 +46,10 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
 
                     override fun onComplete() {
                         lock.synchronized {
-                            emitter.onComplete()
+                            activeSourceCount--
+                            if ((activeSourceCount == 0) || values[index].isEmpty) {
+                                emitter.onComplete()
+                            }
                         }
                     }
 

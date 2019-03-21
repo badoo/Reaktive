@@ -31,7 +31,8 @@ fun <T> Iterable<Observable<T>>.merge(): Observable<T> =
 
                     override fun onComplete() {
                         lock.synchronized {
-                            if (--activeSourceCount == 0) {
+                            activeSourceCount--
+                            if (activeSourceCount == 0) {
                                 emitter.onComplete()
                             }
                         }

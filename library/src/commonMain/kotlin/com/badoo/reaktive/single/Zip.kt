@@ -1,12 +1,12 @@
-package com.badoo.reaktive.maybe
+package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
-fun <T, R> Collection<Maybe<T>>.zip(mapper: (List<T>) -> R): Maybe<R> =
-    maybeByEmitter { emitter ->
+fun <T, R> Collection<Single<T>>.zip(mapper: (List<T>) -> R): Single<R> =
+    singleByEmitter { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val lock = newLock()
@@ -15,8 +15,7 @@ fun <T, R> Collection<Maybe<T>>.zip(mapper: (List<T>) -> R): Maybe<R> =
 
         forEachIndexed { index, source ->
             source.subscribeSafe(
-                object : MaybeObserver<T> {
-
+                object : SingleObserver<T> {
                     override fun onSubscribe(disposable: Disposable) {
                         disposables += disposable
                     }
@@ -43,10 +42,6 @@ fun <T, R> Collection<Maybe<T>>.zip(mapper: (List<T>) -> R): Maybe<R> =
                             ?.also(emitter::onSuccess)
                     }
 
-                    override fun onComplete() {
-                        lock.synchronized(emitter::onComplete)
-                    }
-
                     override fun onError(error: Throwable) {
                         lock.synchronized {
                             emitter.onError(error)
@@ -57,14 +52,14 @@ fun <T, R> Collection<Maybe<T>>.zip(mapper: (List<T>) -> R): Maybe<R> =
         }
     }
 
-fun <T, R> zip(vararg sources: Maybe<T>, mapper: (List<T>) -> R): Maybe<R> =
+fun <T, R> zip(vararg sources: Single<T>, mapper: (List<T>) -> R): Single<R> =
     sources.toList().zip(mapper)
 
 fun <T1, T2, R> zip(
-    source1: Maybe<T1>,
-    source2: Maybe<T2>,
+    source1: Single<T1>,
+    source2: Single<T2>,
     mapper: (T1, T2) -> R
-): Maybe<R> =
+): Single<R> =
     listOf(source1, source2)
         .zip { values ->
             @Suppress("UNCHECKED_CAST")
@@ -72,11 +67,11 @@ fun <T1, T2, R> zip(
         }
 
 fun <T1, T2, T3, R> zip(
-    source1: Maybe<T1>,
-    source2: Maybe<T2>,
-    source3: Maybe<T3>,
+    source1: Single<T1>,
+    source2: Single<T2>,
+    source3: Single<T3>,
     mapper: (T1, T2, T3) -> R
-): Maybe<R> =
+): Single<R> =
     listOf(source1, source2, source3)
         .zip { values ->
             @Suppress("UNCHECKED_CAST")
@@ -84,12 +79,12 @@ fun <T1, T2, T3, R> zip(
         }
 
 fun <T1, T2, T3, T4, R> zip(
-    source1: Maybe<T1>,
-    source2: Maybe<T2>,
-    source3: Maybe<T3>,
-    source4: Maybe<T4>,
+    source1: Single<T1>,
+    source2: Single<T2>,
+    source3: Single<T3>,
+    source4: Single<T4>,
     mapper: (T1, T2, T3, T4) -> R
-): Maybe<R> =
+): Single<R> =
     listOf(source1, source2, source3, source4)
         .zip { values ->
             @Suppress("UNCHECKED_CAST")
@@ -97,13 +92,13 @@ fun <T1, T2, T3, T4, R> zip(
         }
 
 fun <T1, T2, T3, T4, T5, R> zip(
-    source1: Maybe<T1>,
-    source2: Maybe<T2>,
-    source3: Maybe<T3>,
-    source4: Maybe<T4>,
-    source5: Maybe<T5>,
+    source1: Single<T1>,
+    source2: Single<T2>,
+    source3: Single<T3>,
+    source4: Single<T4>,
+    source5: Single<T5>,
     mapper: (T1, T2, T3, T4, T5) -> R
-): Maybe<R> =
+): Single<R> =
     listOf(source1, source2, source3, source4, source5)
         .zip { values ->
             @Suppress("UNCHECKED_CAST")
@@ -111,14 +106,14 @@ fun <T1, T2, T3, T4, T5, R> zip(
         }
 
 fun <T1, T2, T3, T4, T5, T6, R> zip(
-    source1: Maybe<T1>,
-    source2: Maybe<T2>,
-    source3: Maybe<T3>,
-    source4: Maybe<T4>,
-    source5: Maybe<T5>,
-    source6: Maybe<T6>,
+    source1: Single<T1>,
+    source2: Single<T2>,
+    source3: Single<T3>,
+    source4: Single<T4>,
+    source5: Single<T5>,
+    source6: Single<T6>,
     mapper: (T1, T2, T3, T4, T5, T6) -> R
-): Maybe<R> =
+): Single<R> =
     listOf(source1, source2, source3, source4, source5, source6)
         .zip { values ->
             @Suppress("UNCHECKED_CAST")
@@ -126,15 +121,15 @@ fun <T1, T2, T3, T4, T5, T6, R> zip(
         }
 
 fun <T1, T2, T3, T4, T5, T6, T7, R> zip(
-    source1: Maybe<T1>,
-    source2: Maybe<T2>,
-    source3: Maybe<T3>,
-    source4: Maybe<T4>,
-    source5: Maybe<T5>,
-    source6: Maybe<T6>,
-    source7: Maybe<T7>,
+    source1: Single<T1>,
+    source2: Single<T2>,
+    source3: Single<T3>,
+    source4: Single<T4>,
+    source5: Single<T5>,
+    source6: Single<T6>,
+    source7: Single<T7>,
     mapper: (T1, T2, T3, T4, T5, T6, T7) -> R
-): Maybe<R> =
+): Single<R> =
     listOf(source1, source2, source3, source4, source5, source6, source7)
         .zip { values ->
             @Suppress("UNCHECKED_CAST")
@@ -150,16 +145,16 @@ fun <T1, T2, T3, T4, T5, T6, T7, R> zip(
         }
 
 fun <T1, T2, T3, T4, T5, T6, T7, T8, R> zip(
-    source1: Maybe<T1>,
-    source2: Maybe<T2>,
-    source3: Maybe<T3>,
-    source4: Maybe<T4>,
-    source5: Maybe<T5>,
-    source6: Maybe<T6>,
-    source7: Maybe<T7>,
-    source8: Maybe<T8>,
+    source1: Single<T1>,
+    source2: Single<T2>,
+    source3: Single<T3>,
+    source4: Single<T4>,
+    source5: Single<T5>,
+    source6: Single<T6>,
+    source7: Single<T7>,
+    source8: Single<T8>,
     mapper: (T1, T2, T3, T4, T5, T6, T7, T8) -> R
-): Maybe<R> =
+): Single<R> =
     listOf(source1, source2, source3, source4, source5, source6, source7, source8)
         .zip { values ->
             @Suppress("UNCHECKED_CAST")
@@ -176,17 +171,17 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, R> zip(
         }
 
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> zip(
-    source1: Maybe<T1>,
-    source2: Maybe<T2>,
-    source3: Maybe<T3>,
-    source4: Maybe<T4>,
-    source5: Maybe<T5>,
-    source6: Maybe<T6>,
-    source7: Maybe<T7>,
-    source8: Maybe<T8>,
-    source9: Maybe<T9>,
+    source1: Single<T1>,
+    source2: Single<T2>,
+    source3: Single<T3>,
+    source4: Single<T4>,
+    source5: Single<T5>,
+    source6: Single<T6>,
+    source7: Single<T7>,
+    source8: Single<T8>,
+    source9: Single<T9>,
     mapper: (T1, T2, T3, T4, T5, T6, T7, T8, T9) -> R
-): Maybe<R> =
+): Single<R> =
     listOf(source1, source2, source3, source4, source5, source6, source7, source8, source9)
         .zip { values ->
             @Suppress("UNCHECKED_CAST")
@@ -204,18 +199,18 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> zip(
         }
 
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> zip(
-    source1: Maybe<T1>,
-    source2: Maybe<T2>,
-    source3: Maybe<T3>,
-    source4: Maybe<T4>,
-    source5: Maybe<T5>,
-    source6: Maybe<T6>,
-    source7: Maybe<T7>,
-    source8: Maybe<T8>,
-    source9: Maybe<T9>,
-    source10: Maybe<T10>,
+    source1: Single<T1>,
+    source2: Single<T2>,
+    source3: Single<T3>,
+    source4: Single<T4>,
+    source5: Single<T5>,
+    source6: Single<T6>,
+    source7: Single<T7>,
+    source8: Single<T8>,
+    source9: Single<T9>,
+    source10: Single<T10>,
     mapper: (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) -> R
-): Maybe<R> =
+): Single<R> =
     listOf(source1, source2, source3, source4, source5, source6, source7, source8, source9, source10)
         .zip { values ->
             @Suppress("UNCHECKED_CAST")
