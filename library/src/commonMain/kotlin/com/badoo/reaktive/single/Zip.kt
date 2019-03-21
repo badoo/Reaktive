@@ -16,27 +16,30 @@ fun <T, R> Collection<Single<T>>.zip(mapper: (List<T>) -> R): Single<R> =
         forEachIndexed { index, source ->
             source.subscribeSafe(
                 object : SingleObserver<T> {
-
                     override fun onSubscribe(disposable: Disposable) {
                         disposables += disposable
                     }
 
                     override fun onSuccess(value: T) {
-                        lock.synchronized {
-                            values[index] = value
-                            valueCounter--
-
-                            if (valueCounter == 0) {
-                                values
-                                    .toList()
-                                    .let {
-                                        @Suppress("UNCHECKED_CAST")
-                                        it as List<T>
-                                    }
-                                    .let(mapper)
-                                    .also(emitter::onSuccess)
+                        lock
+                            .synchronized {
+                                values[index] = value
+                                --valueCounter
                             }
-                        }
+                            .takeIf { it == 0 }
+                            ?.let {
+                                @Suppress("UNCHECKED_CAST")
+                                values as List<T>
+                            }
+                            ?.let {
+                                try {
+                                    mapper(it)
+                                } catch (e: Throwable) {
+                                    emitter.onError(e)
+                                    return
+                                }
+                            }
+                            ?.also(emitter::onSuccess)
                     }
 
                     override fun onError(error: Throwable) {
