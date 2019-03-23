@@ -10,13 +10,14 @@ fun io.reactivex.Scheduler.toReaktive(): Scheduler =
         private val disposables = CompositeDisposable()
 
         override fun newExecutor(): Scheduler.Executor =
-            createWorker()
+            this@toReaktive
+                .createWorker()
                 .toExecutor()
                 .also(disposables::add)
 
         override fun destroy() {
             disposables.dispose()
-            shutdown()
+            this@toReaktive.shutdown()
         }
     }
 
