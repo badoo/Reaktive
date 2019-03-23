@@ -34,25 +34,25 @@ internal class MainScheduler : Scheduler {
             }
         }
 
-        override fun submit(delay: Long, task: () -> Unit) {
+        override fun submit(delayMillis: Long, task: () -> Unit) {
             executeIfNotRecycled {
-                it.postDelayed(task, delay)
+                it.postDelayed(task, delayMillis)
             }
         }
 
-        override fun submitRepeating(startDelay: Long, period: Long, task: () -> Unit) {
+        override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
             val runnable =
                 object : Runnable {
                     override fun run() {
                         executeIfNotRecycled {
-                            it.postDelayed(this, period)
+                            it.postDelayed(this, periodMillis)
                         }
                         task()
                     }
                 }
 
             executeIfNotRecycled {
-                it.postDelayed(runnable, startDelay)
+                it.postDelayed(runnable, startDelayMillis)
             }
         }
 
