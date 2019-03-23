@@ -1,61 +1,12 @@
 package com.badoo.reaktive.maybe
 
-import com.badoo.reaktive.disposable.CompositeDisposable
-import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.observable.firstOrComplete
+import com.badoo.reaktive.observable.zip
 
-fun <T, R> Collection<Maybe<T>>.zip(mapper: (List<T>) -> R): Maybe<R> =
-    maybeByEmitter { emitter ->
-        val disposables = CompositeDisposable()
-        emitter.setDisposable(disposables)
-        val lock = newLock()
-        val values = MutableList<T?>(size) { null }
-        var valueCounter = size
-
-        forEachIndexed { index, source ->
-            source.subscribeSafe(
-                object : MaybeObserver<T> {
-
-                    override fun onSubscribe(disposable: Disposable) {
-                        disposables += disposable
-                    }
-
-                    override fun onSuccess(value: T) {
-                        lock
-                            .synchronized {
-                                values[index] = value
-                                --valueCounter
-                            }
-                            .takeIf { it == 0 }
-                            ?.let {
-                                @Suppress("UNCHECKED_CAST")
-                                values as List<T>
-                            }
-                            ?.let {
-                                try {
-                                    mapper(it)
-                                } catch (e: Throwable) {
-                                    emitter.onError(e)
-                                    return
-                                }
-                            }
-                            ?.also(emitter::onSuccess)
-                    }
-
-                    override fun onComplete() {
-                        lock.synchronized(emitter::onComplete)
-                    }
-
-                    override fun onError(error: Throwable) {
-                        lock.synchronized {
-                            emitter.onError(error)
-                        }
-                    }
-                }
-            )
-        }
-    }
+fun <T, R> Iterable<Maybe<T>>.zip(mapper: (List<T>) -> R): Maybe<R> =
+    map(Maybe<T>::asObservable)
+        .zip(mapper)
+        .firstOrComplete()
 
 fun <T, R> zip(vararg sources: Maybe<T>, mapper: (List<T>) -> R): Maybe<R> =
     sources.toList().zip(mapper)

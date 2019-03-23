@@ -5,6 +5,7 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.serializer.serializer
 
 fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
     observableByEmitter { emitter ->
@@ -15,6 +16,21 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
             object : ObservableObserver<T> {
                 private val lock = newLock()
                 private var activeSourceCount = 1
+
+                private val serializer =
+                    serializer<Any?> {
+                        if (it is FlatMapEvent) {
+                            when (it) {
+                                is FlatMapEvent.OnComplete -> emitter.onComplete()
+                                is FlatMapEvent.OnError -> emitter.onError(it.error)
+                            }
+                        } else {
+                            @Suppress("UNCHECKED_CAST") // Either FlatMapEvent or R, to avoid unnecessary allocations
+                            emitter.onNext(it as R)
+                        }
+
+                        true
+                    }
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable
@@ -34,9 +50,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
                         .subscribeSafe(
                             object : ObservableObserver<R>, CompletableObserver by this {
                                 override fun onNext(value: R) {
-                                    lock.synchronized {
-                                        emitter.onNext(value)
-                                    }
+                                    serializer.accept(value)
                                 }
                             }
                         )
@@ -45,17 +59,23 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
                 override fun onComplete() {
                     lock.synchronized {
                         activeSourceCount--
-                        if (activeSourceCount == 0) {
-                            emitter.onComplete()
+                        if (activeSourceCount > 0) {
+                            return
                         }
                     }
+
+                    serializer.accept(FlatMapEvent.OnComplete)
                 }
 
                 override fun onError(error: Throwable) {
-                    lock.synchronized {
-                        emitter.onError(error)
-                    }
+                    serializer.accept(FlatMapEvent.OnError(error))
                 }
             }
         )
     }
+
+private sealed class FlatMapEvent {
+
+    object OnComplete : FlatMapEvent()
+    class OnError(val error: Throwable) : FlatMapEvent()
+}
