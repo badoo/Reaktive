@@ -90,7 +90,7 @@ fun <T> Maybe<T>.doOnBeforeFinally(action: () -> Unit): Maybe<T> =
     maybe { observer ->
         subscribeSafe(
             object : MaybeObserver<T> by observer {
-                private var lock = newLock()
+                private val lock = newLock()
                 private var isFinished = false
 
                 override fun onSubscribe(disposable: Disposable) {

@@ -73,7 +73,7 @@ fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
     single { observer ->
         subscribeSafe(
             object : SingleObserver<T> by observer {
-                private var lock = newLock()
+                private val lock = newLock()
                 private var isFinished = false
 
                 override fun onSubscribe(disposable: Disposable) {

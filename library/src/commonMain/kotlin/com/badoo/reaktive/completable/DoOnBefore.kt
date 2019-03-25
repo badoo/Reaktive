@@ -73,7 +73,7 @@ fun Completable.doOnBeforeFinally(action: () -> Unit): Completable =
     completable { observer ->
         subscribeSafe(
             object : CompletableObserver by observer {
-                private var lock = newLock()
+                private val lock = newLock()
                 private var isFinished = false
 
                 override fun onSubscribe(disposable: Disposable) {

@@ -85,7 +85,7 @@ fun <T> Observable<T>.doOnBeforeFinally(action: () -> Unit): Observable<T> =
     observable { observer ->
         subscribeSafe(
             object : ObservableObserver<T> by observer {
-                private var lock = newLock()
+                private val lock = newLock()
                 private var isFinished = false
 
                 override fun onSubscribe(disposable: Disposable) {
