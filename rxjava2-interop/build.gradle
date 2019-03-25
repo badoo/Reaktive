@@ -1,0 +1,9 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7'
+    implementation project(':library')
+    implementation 'io.reactivex.rxjava2:rxjava'
+}

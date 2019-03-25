@@ -21,7 +21,7 @@ fun <T> Observable<T>.sample(windowMillis: Long, scheduler: Scheduler): Observab
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper += disposable
 
-                    executor.submitRepeating(period = windowMillis) {
+                    executor.submitRepeating(periodMillis = windowMillis) {
                         lock.synchronized {
                             if (::lastValue.isInitialized) {
                                 emitter.onNext(lastValue[0])

@@ -26,19 +26,19 @@ interface Scheduler {
         /**
          * Submits a new tasks for execution
          *
-         * @param delay a delay in milliseconds before execution
+         * @param delayMillis a delayMillis in milliseconds before execution
          * @param task the task to be executed
          */
-        fun submit(delay: Long = 0L, task: () -> Unit)
+        fun submit(delayMillis: Long = 0L, task: () -> Unit)
 
         /**
          * Submits a new task for repeating execution
          *
-         * @param startDelay a delay in milliseconds before first execution
-         * @param period a period in milliseconds between executions
+         * @param startDelayMillis a delay in milliseconds before first execution
+         * @param periodMillis a periodMillis in milliseconds between executions
          * @param task the task to be executed
          */
-        fun submitRepeating(startDelay: Long = 0L, period: Long, task: () -> Unit)
+        fun submitRepeating(startDelayMillis: Long = 0L, periodMillis: Long, task: () -> Unit)
 
         /**
          * Cancels all tasks. All running tasks will be interrupted, all pending tasks will not be executed.

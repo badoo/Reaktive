@@ -44,17 +44,17 @@ internal class ExecutorServiceScheduler(
             }
         }
 
-        override fun submit(delay: Long, task: () -> Unit) {
+        override fun submit(delayMillis: Long, task: () -> Unit) {
             executeIfNotRecycled {
-                it.schedule(task, delay, TimeUnit.MILLISECONDS)
+                it.schedule(task, delayMillis, TimeUnit.MILLISECONDS)
             }
                 ?.toDisposable()
                 ?.also(disposables::add)
         }
 
-        override fun submitRepeating(startDelay: Long, period: Long, task: () -> Unit) {
+        override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
             executeIfNotRecycled {
-                it.scheduleAtFixedRate(task, startDelay, period, TimeUnit.MILLISECONDS)
+                it.scheduleAtFixedRate(task, startDelayMillis, periodMillis, TimeUnit.MILLISECONDS)
             }
                 ?.toDisposable()
                 ?.also(disposables::add)
