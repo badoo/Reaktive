@@ -7,6 +7,7 @@ import com.badoo.reaktive.utils.handleSourceError
 
 @UseReturnValue
 fun <T> Single<T>.subscribe(
+    onSubscribe: ((Disposable) -> Unit)? = null,
     onSuccess: ((T) -> Unit)? = null,
     onError: ((Throwable) -> Unit)? = null
 ): Disposable {
@@ -16,6 +17,7 @@ fun <T> Single<T>.subscribe(
         object : SingleObserver<T> {
             override fun onSubscribe(disposable: Disposable) {
                 disposableWrapper.set(disposable)
+                onSubscribe?.invoke(disposable)
             }
 
             override fun onSuccess(value: T) {
