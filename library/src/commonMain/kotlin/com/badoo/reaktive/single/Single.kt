@@ -1,7 +1,8 @@
 package com.badoo.reaktive.single
 
 /**
- * Produces a single value
+ * Represents a source that can complete with a value or produce an error.
+ * See [SingleCallbacks] for more information.
  */
 interface Single<out T> {
 

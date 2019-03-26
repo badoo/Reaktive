@@ -1,10 +1,9 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.Emitter
-import com.badoo.reaktive.completable.CompletableEmitter
-import com.badoo.reaktive.single.SingleEmitter
 
 /**
- * Represents [Emitter] that acts as both [CompletableEmitter] and [SingleEmitter]
+ * Represents an emitter for Maybe source.
+ * See [Emitter] and [MaybeCallbacks] for more information.
  */
-interface MaybeEmitter<in T> : CompletableEmitter, SingleEmitter<T>
+interface MaybeEmitter<in T> : Emitter, MaybeCallbacks<T>

@@ -1,7 +1,8 @@
 package com.badoo.reaktive.completable
 
 /**
- * Represents an action that either completes or produces an error
+ * Represents a source that either completes or produces an error.
+ * See [CompletableCallbacks] for more information.
  */
 interface Completable {
 
