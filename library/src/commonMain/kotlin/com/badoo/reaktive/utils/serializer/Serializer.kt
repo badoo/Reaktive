@@ -3,7 +3,6 @@ package com.badoo.reaktive.utils.serializer
 import com.badoo.reaktive.utils.arrayqueue.ArrayQueue
 import com.badoo.reaktive.utils.arrayqueue.isNotEmpty
 import com.badoo.reaktive.utils.arrayqueue.take
-import com.badoo.reaktive.utils.lock.Lock
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
@@ -32,16 +31,36 @@ internal abstract class Serializer<in T> {
                     ?.takeUnless { isDraining }
                     ?.also { isDraining = true }
             }
-            ?.drain(
-                lock = lock,
-                onValue = ::onValue,
-                onFinished = {
-                    isDraining = false
-                    if (it) {
-                        queue = null
+            ?.drain()
+    }
+
+    private fun ArrayQueue<T>.drain() {
+        while (true) {
+            lock
+                .synchronized {
+                    if (isNotEmpty) {
+                        take()
+                    } else {
+                        onDrainFinished(false)
+                        return
                     }
                 }
-            )
+                .let(::onValue)
+                .takeUnless { it }
+                ?.also {
+                    lock.synchronized {
+                        onDrainFinished(true)
+                        return
+                    }
+                }
+        }
+    }
+
+    private fun onDrainFinished(terminate: Boolean) {
+        isDraining = false
+        if (terminate) {
+            queue = null
+        }
     }
 
     /**
@@ -51,32 +70,4 @@ internal abstract class Serializer<in T> {
      * @return true if processing should continue, false otherwise
      */
     protected abstract fun onValue(value: T): Boolean
-
-    private companion object {
-        private inline fun <T> ArrayQueue<T>.drain(
-            lock: Lock,
-            onValue: (T) -> Boolean,
-            onFinished: (terminate: Boolean) -> Unit
-        ) {
-            while (true) {
-                lock
-                    .synchronized {
-                        if (isNotEmpty) {
-                            take()
-                        } else {
-                            onFinished(false)
-                            return
-                        }
-                    }
-                    .let(onValue)
-                    .takeUnless { it }
-                    ?.also {
-                        lock.synchronized {
-                            onFinished(true)
-                            return
-                        }
-                    }
-            }
-        }
-    }
 }
