@@ -38,6 +38,7 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
 
                         emitter.onNext(result)
 
+                        // Complete if for any completed source there are no values left in the queue
                         values.forEachIndexed { index, queue ->
                             if (queue.isEmpty && completed[index]) {
                                 emitter.onComplete()
@@ -51,12 +52,13 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
                     is ZipEvent.OnComplete -> {
                         completed[event.index] = true
 
-                        val allCompleted = completed.all { it }
-                        if (allCompleted) {
+                        // Complete if a source is completed and no values left in its queue
+                        val isEmpty = values[event.index].isEmpty
+                        if (isEmpty) {
                             emitter.onComplete()
                         }
 
-                        !allCompleted
+                        !isEmpty
                     }
 
                     is ZipEvent.OnError -> {
