@@ -1,7 +1,6 @@
 package com.badoo.reaktive.rxjavainterop
 
 import com.badoo.reaktive.disposable.CompositeDisposable
-import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.scheduler.Scheduler
 import java.util.concurrent.TimeUnit
 
@@ -21,10 +20,16 @@ fun io.reactivex.Scheduler.toReaktive(): Scheduler =
         }
     }
 
-private fun io.reactivex.Scheduler.Worker.toExecutor(): Scheduler.Executor {
-    val disposables = CompositeDisposable()
+private fun io.reactivex.Scheduler.Worker.toExecutor(): Scheduler.Executor =
+    object : Scheduler.Executor {
+        private val disposables = CompositeDisposable()
+        override val isDisposed: Boolean get() = disposables.isDisposed
 
-    return object : Scheduler.Executor, Disposable by disposables {
+        override fun dispose() {
+            disposables.dispose()
+            this@toExecutor.dispose()
+        }
+
         override fun submit(delayMillis: Long, task: () -> Unit) {
             disposables +=
                 this@toExecutor
@@ -43,4 +48,3 @@ private fun io.reactivex.Scheduler.Worker.toExecutor(): Scheduler.Executor {
             disposables.clear()
         }
     }
-}

@@ -6,16 +6,67 @@ import com.badoo.reaktive.utils.arrayqueue.ArrayQueue
 import com.badoo.reaktive.utils.arrayqueue.isEmpty
 import com.badoo.reaktive.utils.arrayqueue.isNotEmpty
 import com.badoo.reaktive.utils.arrayqueue.take
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.serializer.serializer
 
 fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
     observableByEmitter { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val lock = newLock()
-        var activeSourceCount = 0
         val values = List<ArrayQueue<T>>(size) { ArrayQueue() }
+        val completed = Array(size) { false }
+
+        val serializer =
+            serializer<ZipEvent<T>> { event ->
+                when (event) {
+                    is ZipEvent.OnNext -> {
+                        values[event.index].offer(event.value)
+
+                        val readyValues =
+                            if (values.all(ArrayQueue<*>::isNotEmpty)) {
+                                values.map(ArrayQueue<T>::take)
+                            } else {
+                                return@serializer true
+                            }
+
+                        val result =
+                            try {
+                                mapper(readyValues)
+                            } catch (e: Throwable) {
+                                emitter.onError(e)
+                                return@serializer false
+                            }
+
+                        emitter.onNext(result)
+
+                        // Complete if for any completed source there are no values left in the queue
+                        values.forEachIndexed { index, queue ->
+                            if (queue.isEmpty && completed[index]) {
+                                emitter.onComplete()
+                                return@serializer false
+                            }
+                        }
+
+                        true
+                    }
+
+                    is ZipEvent.OnComplete -> {
+                        completed[event.index] = true
+
+                        // Complete if a source is completed and no values left in its queue
+                        val isEmpty = values[event.index].isEmpty
+                        if (isEmpty) {
+                            emitter.onComplete()
+                        }
+
+                        !isEmpty
+                    }
+
+                    is ZipEvent.OnError -> {
+                        emitter.onError(event.error)
+                        false
+                    }
+                }
+            }
 
         forEachIndexed { index, source ->
             source.subscribeSafe(
@@ -25,46 +76,32 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
                     }
 
                     override fun onNext(value: T) {
-                        lock.synchronized {
-                            values[index].offer(value)
-
-                            if (values.all(ArrayQueue<*>::isNotEmpty)) {
-                                values
-                                    .map(ArrayQueue<T>::take)
-                                    .let {
-                                        try {
-                                            mapper(it)
-                                        } catch (e: Throwable) {
-                                            emitter.onError(e)
-                                            return
-                                        }
-                                    }
-                                    .also(emitter::onNext)
-                            }
-                        }
+                        serializer.accept(ZipEvent.OnNext(index, value))
                     }
 
                     override fun onComplete() {
-                        lock.synchronized {
-                            activeSourceCount--
-                            if ((activeSourceCount == 0) || values[index].isEmpty) {
-                                emitter.onComplete()
-                            }
-                        }
+                        serializer.accept(ZipEvent.OnComplete(index))
                     }
 
                     override fun onError(error: Throwable) {
-                        lock.synchronized {
-                            emitter.onError(error)
-                        }
+                        serializer.accept(ZipEvent.OnError(error))
                     }
                 }
             )
         }
     }
 
+private sealed class ZipEvent<out T> {
+
+    class OnNext<out T>(val index: Int, val value: T) : ZipEvent<T>()
+    class OnComplete(val index: Int) : ZipEvent<Nothing>()
+    class OnError(val error: Throwable) : ZipEvent<Nothing>()
+}
+
 fun <T, R> zip(vararg sources: Observable<T>, mapper: (List<T>) -> R): Observable<R> =
-    sources.toList().zip(mapper)
+    sources
+        .toList()
+        .zip(mapper)
 
 fun <T1, T2, R> zip(
     source1: Observable<T1>,

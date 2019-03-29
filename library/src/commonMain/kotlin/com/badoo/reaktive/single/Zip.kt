@@ -1,56 +1,12 @@
 package com.badoo.reaktive.single
 
-import com.badoo.reaktive.disposable.CompositeDisposable
-import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.observable.firstOrError
+import com.badoo.reaktive.observable.zip
 
-fun <T, R> Collection<Single<T>>.zip(mapper: (List<T>) -> R): Single<R> =
-    singleByEmitter { emitter ->
-        val disposables = CompositeDisposable()
-        emitter.setDisposable(disposables)
-        val lock = newLock()
-        val values = MutableList<T?>(size) { null }
-        var valueCounter = size
-
-        forEachIndexed { index, source ->
-            source.subscribeSafe(
-                object : SingleObserver<T> {
-                    override fun onSubscribe(disposable: Disposable) {
-                        disposables += disposable
-                    }
-
-                    override fun onSuccess(value: T) {
-                        lock
-                            .synchronized {
-                                values[index] = value
-                                --valueCounter
-                            }
-                            .takeIf { it == 0 }
-                            ?.let {
-                                @Suppress("UNCHECKED_CAST")
-                                values as List<T>
-                            }
-                            ?.let {
-                                try {
-                                    mapper(it)
-                                } catch (e: Throwable) {
-                                    emitter.onError(e)
-                                    return
-                                }
-                            }
-                            ?.also(emitter::onSuccess)
-                    }
-
-                    override fun onError(error: Throwable) {
-                        lock.synchronized {
-                            emitter.onError(error)
-                        }
-                    }
-                }
-            )
-        }
-    }
+fun <T, R> Iterable<Single<T>>.zip(mapper: (List<T>) -> R): Single<R> =
+    map(Single<T>::asObservable)
+        .zip(mapper)
+        .firstOrError()
 
 fun <T, R> zip(vararg sources: Single<T>, mapper: (List<T>) -> R): Single<R> =
     sources.toList().zip(mapper)
