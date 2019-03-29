@@ -1,12 +1,12 @@
 package com.badoo.reaktive.scheduler
 
-import com.badoo.reaktive.utils.arrayqueue.ArrayQueue
-import com.badoo.reaktive.utils.arrayqueue.isNotEmpty
-import com.badoo.reaktive.utils.arrayqueue.take
+import com.badoo.reaktive.utils.queue.ArrayQueue
+import com.badoo.reaktive.utils.queue.isNotEmpty
+import com.badoo.reaktive.utils.queue.take
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
-internal class BufferedExecutor<T>(
+internal class BufferedExecutor<in T>(
     private val executor: Scheduler.Executor,
     private val onNext: (T) -> Unit
 ) {

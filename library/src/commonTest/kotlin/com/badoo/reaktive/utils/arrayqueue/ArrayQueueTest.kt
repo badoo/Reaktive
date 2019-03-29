@@ -1,5 +1,6 @@
 package com.badoo.reaktive.utils.arrayqueue
 
+import com.badoo.reaktive.utils.queue.ArrayQueue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -161,6 +162,54 @@ class ArrayQueueTest {
         }
         poll(150)
         assertEquals(0, queue.size)
+    }
+
+    @Test
+    fun `size is 0 after clear`() {
+        offer(List(100, Int::toString))
+        queue.clear()
+        assertEquals(0, queue.size)
+    }
+
+    @Test
+    fun `size is 1 after clear and 1 offer`() {
+        offer(List(100, Int::toString))
+        queue.clear()
+        queue.offer("a")
+        assertEquals(1, queue.size)
+    }
+
+    @Test
+    fun `poll returns null after clear`() {
+        offer(List(100, Int::toString))
+        queue.clear()
+        assertNull(queue.poll())
+    }
+
+    @Test
+    fun `poll returns correct item after clear and one offer`() {
+        offer(List(100, Int::toString))
+        queue.clear()
+        queue.offer("a")
+        assertEquals("a", queue.poll())
+    }
+
+    @Test
+    fun `size is 0 after clear, one offer and one poll`() {
+        offer(List(100, Int::toString))
+        queue.clear()
+        queue.offer("a")
+        queue.poll()
+        assertEquals(0, queue.size)
+    }
+
+    @Test
+    fun `poll returns null after clear, one offer and one poll`() {
+        offer(List(100, Int::toString))
+        queue.clear()
+        queue.offer("a")
+        queue.poll()
+        assertNull(queue.poll())
     }
 
     private fun offer(iterable: Iterable<String?>) {

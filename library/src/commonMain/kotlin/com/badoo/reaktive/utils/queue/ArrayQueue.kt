@@ -1,8 +1,9 @@
-package com.badoo.reaktive.utils.arrayqueue
+package com.badoo.reaktive.utils.queue
 
 import kotlin.math.abs
 
-internal class ArrayQueue<T> {
+// FIXME: internal
+class ArrayQueue<T> : Queue<T> {
 
     private var queue: Array<T?> = createArray(8)
     private var head = 0
@@ -10,9 +11,9 @@ internal class ArrayQueue<T> {
     private var isFull = false
 
     val peek: T? get() = queue[head]
-    val size: Int get() = abs(tail - head)
+    override val size: Int get() = abs(tail - head)
 
-    fun offer(item: T) {
+    override fun offer(item: T) {
         ensureCapacity()
         queue[tail] = item
         tail++
@@ -24,7 +25,7 @@ internal class ArrayQueue<T> {
         }
     }
 
-    fun poll(): T? {
+    override fun poll(): T? {
         val value = peek
         queue[head] = null
         if ((head != tail) || isFull) {
@@ -36,6 +37,15 @@ internal class ArrayQueue<T> {
         }
 
         return value
+    }
+
+    override fun clear() {
+        for (i in 0 until queue.size) {
+            queue[i] = null
+        }
+        head = 0
+        tail = 0
+        isFull = false
     }
 
     private fun ensureCapacity() {
