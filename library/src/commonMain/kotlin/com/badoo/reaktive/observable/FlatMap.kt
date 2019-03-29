@@ -1,6 +1,6 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.Subscribable
+import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
@@ -49,7 +49,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
                         return
                     }
                         .subscribeSafe(
-                            object : ObservableObserver<R>, Subscribable by this, CompletableCallbacks by this {
+                            object : ObservableObserver<R>, Observer by this, CompletableCallbacks by this {
                                 override fun onNext(value: R) {
                                     serializer.accept(value)
                                 }

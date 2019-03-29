@@ -1,9 +1,9 @@
 package com.badoo.reaktive.single
 
-import com.badoo.reaktive.base.Subscribable
+import com.badoo.reaktive.base.Observer
 
 /**
- * Represents an observer of Single source.
- * See [Subscribable] and [SingleCallbacks] for more information.
+ * Represents an [Observer] of [Single] source.
+ * See [Observer] and [SingleCallbacks] for more information.
  */
-interface SingleObserver<in T> : Subscribable, SingleCallbacks<T>
+interface SingleObserver<in T> : Observer, SingleCallbacks<T>

@@ -5,7 +5,7 @@ import com.badoo.reaktive.disposable.Disposable
 /**
  * Base interface for emitting signals from various sources.
  * Note that emitters' methods must be called synchronously, never concurrently.
- * Unlike observer it is safe to call any methods of [Emitter] in any order.
+ * Unlike [Observer] it is safe to call any methods of [Emitter] in any order.
  */
 interface Emitter {
 

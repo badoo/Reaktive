@@ -1,9 +1,9 @@
 package com.badoo.reaktive.completable
 
-import com.badoo.reaktive.base.Subscribable
+import com.badoo.reaktive.base.Observer
 
 /**
- * Represents an observer of Completable source.
- * See [Subscribable] and [CompletableCallbacks] for more information.
+ * Represents an [Observer] of [Completable] source.
+ * See [Observer] and [CompletableCallbacks] for more information.
  */
-interface CompletableObserver : Subscribable, CompletableCallbacks
+interface CompletableObserver : Observer, CompletableCallbacks

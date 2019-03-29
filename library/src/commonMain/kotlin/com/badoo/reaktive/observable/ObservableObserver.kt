@@ -1,9 +1,9 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.Subscribable
+import com.badoo.reaktive.base.Observer
 
 /**
- * Represents an observer of Observable source.
- * See [Subscribable] and [ObservableCallbacks] for more information.
+ * Represents an [Observer] of [Observable] source.
+ * See [Observer] and [ObservableCallbacks] for more information.
  */
-interface ObservableObserver<in T> : Subscribable, ObservableCallbacks<T>
+interface ObservableObserver<in T> : Observer, ObservableCallbacks<T>

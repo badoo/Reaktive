@@ -1,6 +1,6 @@
 package com.badoo.reaktive.maybe
 
-import com.badoo.reaktive.base.Subscribable
+import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.SingleCallbacks
 import com.badoo.reaktive.single.SingleObserver
@@ -25,7 +25,7 @@ fun <T> Maybe<T>.asSingle(defaultValueSupplier: () -> T): Single<T> =
 internal inline fun <T> Maybe<T>.asSingleOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
     single { observer ->
         subscribeSafe(
-            object : MaybeObserver<T>, Subscribable by observer, SingleCallbacks<T> by observer {
+            object : MaybeObserver<T>, Observer by observer, SingleCallbacks<T> by observer {
                 override fun onComplete() {
                     onComplete(observer)
                 }

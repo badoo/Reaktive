@@ -1,6 +1,7 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.ErrorCallback
+import com.badoo.reaktive.base.Observer
 
 /**
  * Callbacks for [Completable] source.
@@ -9,7 +10,7 @@ import com.badoo.reaktive.base.ErrorCallback
 interface CompletableCallbacks : ErrorCallback {
 
     /**
-     * Notifies the host (typically an observer) about completion
+     * Notifies the host (typically an [Observer]) about completion
      */
     fun onComplete()
 }
