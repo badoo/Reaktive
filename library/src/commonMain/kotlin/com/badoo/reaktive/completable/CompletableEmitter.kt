@@ -3,13 +3,7 @@ package com.badoo.reaktive.completable
 import com.badoo.reaktive.base.Emitter
 
 /**
- * Represents [Emitter] that can signal completion
+ * Represents an emitter for Completable source.
+ * See [Emitter] and [CompletableCallbacks] for more information.
  */
-interface CompletableEmitter : Emitter {
-
-    /**
-     * Signals completion.
-     * It's safe to call any other methods of the [Emitter] after completion though it has no effect.
-     */
-    fun onComplete()
-}
+interface CompletableEmitter : Emitter, CompletableCallbacks

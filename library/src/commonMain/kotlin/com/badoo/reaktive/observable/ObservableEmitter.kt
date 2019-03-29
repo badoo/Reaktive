@@ -1,17 +1,9 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.Emitter
-import com.badoo.reaktive.completable.CompletableEmitter
 
 /**
- * Represents [Emitter] that in addition to [CompletableEmitter] can signal values
+ * Represents an emitter for Observable source.
+ * See [Emitter] and [ObservableCallbacks] for more information.
  */
-interface ObservableEmitter<in T> : CompletableEmitter {
-
-    /**
-     * Signals values
-     *
-     * @param value the value
-     */
-    fun onNext(value: T)
-}
+interface ObservableEmitter<in T> : Emitter, ObservableCallbacks<T>

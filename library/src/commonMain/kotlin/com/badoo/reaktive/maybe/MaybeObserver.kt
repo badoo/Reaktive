@@ -1,10 +1,9 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.Observer
-import com.badoo.reaktive.completable.CompletableObserver
-import com.badoo.reaktive.single.SingleObserver
 
 /**
- * Represents [Observer] that acts as both [CompletableObserver] and [SingleObserver]
+ * Represents an [Observer] of [Maybe] source.
+ * See [Observer] and [MaybeCallbacks] for more information.
  */
-interface MaybeObserver<in T> : CompletableObserver, SingleObserver<T>
+interface MaybeObserver<in T> : Observer, MaybeCallbacks<T>

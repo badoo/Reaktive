@@ -1,7 +1,8 @@
 package com.badoo.reaktive.observable
 
 /**
- * Produces stream of values and completes at the end
+ * Represents a source that begins with producing values (optional) and then completes or produces an exception.
+ * See [ObservableCallbacks] for more information.
  */
 interface Observable<out T> {
 

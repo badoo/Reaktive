@@ -17,11 +17,4 @@ interface Observer {
      * @param disposable the [Disposable] that can be used to cancel the source
      */
     fun onSubscribe(disposable: Disposable)
-
-    /**
-     * Notifies the [Observer] about error, no other methods must be called after this method
-     *
-     * @param error the exception
-     */
-    fun onError(error: Throwable)
 }

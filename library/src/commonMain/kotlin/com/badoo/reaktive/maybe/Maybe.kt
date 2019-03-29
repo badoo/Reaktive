@@ -1,7 +1,8 @@
 package com.badoo.reaktive.maybe
 
 /**
- * Produces either a single value or just completes
+ * Represents a source that can complete with or without a value or produce an error.
+ * See [MaybeCallbacks] for more information.
  */
 interface Maybe<out T> {
 

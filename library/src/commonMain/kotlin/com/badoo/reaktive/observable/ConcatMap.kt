@@ -1,5 +1,6 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
@@ -22,7 +23,7 @@ fun <T, R> Observable<T>.concatMap(mapper: (T) -> Observable<R>): Observable<R> 
                 private var isUpstreamCompleted = false
 
                 private val mappedObserver =
-                    object : ObservableObserver<R>, Observer by this {
+                    object : ObservableObserver<R>, Observer by this, ErrorCallback by this {
                         override fun onNext(value: R) {
                             lock.synchronized {
                                 emitter.onNext(value)
