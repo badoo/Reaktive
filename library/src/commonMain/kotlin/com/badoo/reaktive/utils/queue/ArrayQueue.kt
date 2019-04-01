@@ -2,8 +2,7 @@ package com.badoo.reaktive.utils.queue
 
 import kotlin.math.abs
 
-// FIXME: internal
-class ArrayQueue<T> : Queue<T> {
+internal class ArrayQueue<T> : Queue<T> {
 
     private var queue: Array<T?> = createArray(8)
     private var head = 0
