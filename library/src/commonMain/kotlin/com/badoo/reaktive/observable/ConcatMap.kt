@@ -4,9 +4,9 @@ import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.arrayqueue.ArrayQueue
-import com.badoo.reaktive.utils.arrayqueue.isNotEmpty
-import com.badoo.reaktive.utils.arrayqueue.take
+import com.badoo.reaktive.utils.queue.ArrayQueue
+import com.badoo.reaktive.utils.queue.isNotEmpty
+import com.badoo.reaktive.utils.queue.take
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 

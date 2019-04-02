@@ -2,10 +2,10 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.arrayqueue.ArrayQueue
-import com.badoo.reaktive.utils.arrayqueue.isEmpty
-import com.badoo.reaktive.utils.arrayqueue.isNotEmpty
-import com.badoo.reaktive.utils.arrayqueue.take
+import com.badoo.reaktive.utils.queue.ArrayQueue
+import com.badoo.reaktive.utils.queue.isEmpty
+import com.badoo.reaktive.utils.queue.isNotEmpty
+import com.badoo.reaktive.utils.queue.take
 import com.badoo.reaktive.utils.serializer.serializer
 
 fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =

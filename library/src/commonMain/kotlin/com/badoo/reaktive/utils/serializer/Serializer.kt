@@ -1,18 +1,19 @@
 package com.badoo.reaktive.utils.serializer
 
-import com.badoo.reaktive.utils.arrayqueue.ArrayQueue
-import com.badoo.reaktive.utils.arrayqueue.isNotEmpty
-import com.badoo.reaktive.utils.arrayqueue.take
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.queue.ArrayQueue
+import com.badoo.reaktive.utils.queue.Queue
+import com.badoo.reaktive.utils.queue.isNotEmpty
+import com.badoo.reaktive.utils.queue.take
 
 /**
  * Serializes all calls to "accept" method and synchronously calls "onValue" method with corresponding values
  */
-internal abstract class Serializer<in T> {
+internal abstract class Serializer<in T>(queue: Queue<T> = ArrayQueue()) {
 
     private val lock = newLock()
-    private var queue: ArrayQueue<T>? = ArrayQueue()
+    private var queue: Queue<T>? = queue
     private var isDraining = false
 
     /**
@@ -34,7 +35,13 @@ internal abstract class Serializer<in T> {
             ?.drain()
     }
 
-    private fun ArrayQueue<T>.drain() {
+    fun clear() {
+        lock.synchronized {
+            queue?.clear()
+        }
+    }
+
+    private fun Queue<T>.drain() {
         while (true) {
             lock
                 .synchronized {
