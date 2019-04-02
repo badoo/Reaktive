@@ -7,7 +7,7 @@ internal inline fun disposable(crossinline onDispose: () -> Unit = {}): Disposab
     object : Disposable {
         private val lock = newLock()
 
-        @Suppress("ObjectPropertyName") // backing property
+        @Suppress("ObjectPropertyName") // Backing property
         private var _isDisposed = false
         override val isDisposed: Boolean get() = lock.synchronized { _isDisposed }
 
