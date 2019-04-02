@@ -13,7 +13,7 @@ internal open class DefaultSubject<T> : Subject<T> {
 
     private val lock: Lock = newLock()
     private var observers: Set<ObservableObserver<T>> = emptySet()
-    private val serializer = serializer(::onSerializedValue)
+    private val serializer = serializer(onValue = ::onSerializedValue)
     override var status: Subject.Status by synchronizedReadWriteProperty(Subject.Status.Active, lock)
 
     override fun subscribe(observer: ObservableObserver<T>) {
