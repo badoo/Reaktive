@@ -1,9 +1,11 @@
 package com.badoo.reaktive.completable
 
-internal fun Completable.subscribeSafe(observer: CompletableObserver) {
+import com.badoo.reaktive.utils.handleSourceError
+
+internal fun Completable.subscribeSafe(observer: CompletableObserver, onError: ((Throwable) -> Unit)? = null) {
     try {
         subscribe(observer)
     } catch (e: Throwable) {
-        observer.onError(e)
+        handleSourceError(e, onError)
     }
 }

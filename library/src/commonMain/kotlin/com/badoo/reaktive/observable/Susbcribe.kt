@@ -40,7 +40,8 @@ fun <T> Observable<T>.subscribe(
                     disposableWrapper.dispose()
                 }
             }
-        }
+        },
+        onError
     )
 
     return disposableWrapper

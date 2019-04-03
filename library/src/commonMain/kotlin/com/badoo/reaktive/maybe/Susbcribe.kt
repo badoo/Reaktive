@@ -44,7 +44,8 @@ fun <T> Maybe<T>.subscribe(
                     disposableWrapper.dispose()
                 }
             }
-        }
+        },
+        onError
     )
 
     return disposableWrapper

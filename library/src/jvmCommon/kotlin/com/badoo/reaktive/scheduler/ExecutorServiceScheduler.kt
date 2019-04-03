@@ -2,6 +2,7 @@ package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.handleSourceError
 import java.util.concurrent.Future
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -46,7 +47,7 @@ internal class ExecutorServiceScheduler(
 
         override fun submit(delayMillis: Long, task: () -> Unit) {
             executeIfNotRecycled {
-                it.schedule(task, delayMillis, TimeUnit.MILLISECONDS)
+                it.schedule(wrapSchedulerTaskSafe(task), delayMillis, TimeUnit.MILLISECONDS)
             }
                 ?.toDisposable()
                 ?.also(disposables::add)
@@ -54,7 +55,7 @@ internal class ExecutorServiceScheduler(
 
         override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
             executeIfNotRecycled {
-                it.scheduleAtFixedRate(task, startDelayMillis, periodMillis, TimeUnit.MILLISECONDS)
+                it.scheduleAtFixedRate(wrapSchedulerTaskSafe(task), startDelayMillis, periodMillis, TimeUnit.MILLISECONDS)
             }
                 ?.toDisposable()
                 ?.also(disposables::add)
@@ -81,6 +82,15 @@ internal class ExecutorServiceScheduler(
 
                     override fun dispose() {
                         cancel(true)
+                    }
+                }
+
+            private fun wrapSchedulerTaskSafe(task: () -> Unit): Runnable =
+                Runnable {
+                    try {
+                        task()
+                    } catch (e: Throwable) {
+                        handleSourceError(e)
                     }
                 }
         }

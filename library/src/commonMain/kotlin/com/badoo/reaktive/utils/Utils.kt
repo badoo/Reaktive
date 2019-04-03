@@ -6,7 +6,7 @@ import com.badoo.reaktive.utils.lock.synchronized
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-internal fun handleSourceError(error: Throwable, onError: ((Throwable) -> Unit)?) {
+internal fun handleSourceError(error: Throwable, onError: ((Throwable) -> Unit)? = null) {
     try {
         if (onError == null) {
             reaktiveUncaughtErrorHandler(error)

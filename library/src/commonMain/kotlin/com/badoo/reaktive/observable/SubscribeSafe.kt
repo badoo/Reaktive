@@ -1,9 +1,11 @@
 package com.badoo.reaktive.observable
 
-internal fun <T> Observable<T>.subscribeSafe(observer: ObservableObserver<T>) {
+import com.badoo.reaktive.utils.handleSourceError
+
+internal fun <T> Observable<T>.subscribeSafe(observer: ObservableObserver<T>, onError: ((Throwable) -> Unit)? = null) {
     try {
         subscribe(observer)
     } catch (e: Throwable) {
-        observer.onError(e)
+        handleSourceError(e, onError)
     }
 }
