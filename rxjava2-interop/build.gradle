@@ -1,5 +1,18 @@
 plugins {
     id "org.jetbrains.kotlin.jvm"
+    id 'maven-publish'
+}
+
+group = 'com.github.badoo.reaktive'
+version = reaktive_version
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+//            artifact(dokkaJar)
+        }
+    }
 }
 
 dependencies {

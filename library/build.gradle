@@ -1,10 +1,11 @@
 plugins {
     id 'org.jetbrains.kotlin.multiplatform'
     id 'com.android.library'
+    id 'maven-publish'
 }
 
-group = 'com.badoo.reaktive'
-version = '0.0.1'
+group = 'com.github.badoo.reaktive'
+version = reaktive_version
 
 android {
     compileSdkVersion 28
@@ -14,6 +15,10 @@ android {
 }
 
 kotlin {
+    android {
+        publishLibraryVariants('release', 'debug')
+    }
+
     targets {
         fromPreset(presets.jvm, 'jvm')
         fromPreset(presets.android, 'android')
