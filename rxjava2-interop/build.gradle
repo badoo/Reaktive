@@ -3,20 +3,19 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'com.github.badoo.reaktive'
+group = reaktive_group_id
 version = reaktive_version
 
 publishing {
     publications {
         maven(MavenPublication) {
             from components.java
-//            artifact(dokkaJar)
         }
     }
 }
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7'
-    implementation project(':library')
+    implementation project(':reaktive')
     implementation 'io.reactivex.rxjava2:rxjava'
 }
