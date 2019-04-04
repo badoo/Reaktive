@@ -8,8 +8,8 @@ import com.badoo.reaktive.utils.handleSourceError
 @UseReturnValue
 fun <T> Single<T>.subscribe(
     onSubscribe: ((Disposable) -> Unit)? = null,
-    onSuccess: ((T) -> Unit)? = null,
-    onError: ((Throwable) -> Unit)? = null
+    onError: ((Throwable) -> Unit)? = null,
+    onSuccess: ((T) -> Unit)? = null
 ): Disposable {
     val disposableWrapper = DisposableWrapper()
 
