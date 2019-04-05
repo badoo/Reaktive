@@ -1,8 +1,9 @@
-## Reaktive
-Kotlin multiplatform implementation of Reactive Extensions
+# Reaktive
+[![](https://jitpack.io/v/badoo/Reaktive.svg)](https://jitpack.io/#badoo/Reaktive)
 
-Library status: under development, pre-release is available
-Latest version: [![](https://jitpack.io/v/badoo/Reaktive.svg)](https://jitpack.io/#badoo/Reaktive)
+Kotlin multiplatform implementation of Reactive Extensions.
+
+Library status: under development, pre-release is available.
 
 ### Setup
 Add JitPack repository into your root build.gradle file:
