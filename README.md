@@ -1,9 +1,32 @@
-# Reaktive
+## Reaktive
 Kotlin multiplatform implementation of Reactive Extensions
 
-Library status: under development, preparing for alpha release
+Library status: under development, pre-release is available
+Latest version: [![](https://jitpack.io/v/badoo/Reaktive.svg)](https://jitpack.io/#badoo/Reaktive)
 
-Features:
+### Setup
+Add JitPack repository into your root build.gradle file:
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+Add the following dependencies into your module's build.gradle file:
+##### Main library
+```
+implementation 'com.github.badoo.reaktive:reaktive:<latest-version>'
+```
+
+##### RxJava2 interoperability
+```
+implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
+```
+
+### Features:
 * Multiplatform: JVM and Android, iOS is under development
 * Schedulers support: computation, IO, trampoline, main
 * Supported sources: Observable, Single, Maybe, Completable
