@@ -1,19 +1,24 @@
 plugins {
     id 'org.jetbrains.kotlin.multiplatform'
     id 'com.android.library'
+    id 'maven-publish'
 }
 
-group = 'com.badoo.reaktive'
-version = '0.0.1'
+group = reaktive_group_id
+version = reaktive_version
 
 android {
     compileSdkVersion 28
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 1
     }
 }
 
 kotlin {
+    android {
+        publishLibraryVariants('release', 'debug')
+    }
+
     targets {
         fromPreset(presets.jvm, 'jvm')
         fromPreset(presets.android, 'android')
@@ -35,18 +40,18 @@ kotlin {
             }
         }
 
-        jvmCommon {
+        jvmCommonMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
             }
         }
         
         jvmMain {
-            dependsOn jvmCommon
+            dependsOn jvmCommonMain
         }
 
         androidMain {
-            dependsOn jvmCommon
+            dependsOn jvmCommonMain
         }
     }
 }
