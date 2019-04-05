@@ -35,7 +35,8 @@ fun Completable.subscribe(
                     disposableWrapper.dispose()
                 }
             }
-        }
+        },
+        onError
     )
 
     return disposableWrapper

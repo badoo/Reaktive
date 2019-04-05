@@ -1,9 +1,11 @@
 package com.badoo.reaktive.maybe
 
-internal fun <T> Maybe<T>.subscribeSafe(observer: MaybeObserver<T>) {
+import com.badoo.reaktive.utils.handleSourceError
+
+internal fun <T> Maybe<T>.subscribeSafe(observer: MaybeObserver<T>, onError: ((Throwable) -> Unit)? = null) {
     try {
         subscribe(observer)
     } catch (e: Throwable) {
-        observer.onError(e)
+        handleSourceError(e, onError)
     }
 }

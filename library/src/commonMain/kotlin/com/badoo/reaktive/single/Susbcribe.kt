@@ -35,7 +35,8 @@ fun <T> Single<T>.subscribe(
                     disposableWrapper.dispose()
                 }
             }
-        }
+        },
+        onError
     )
 
     return disposableWrapper
