@@ -1,5 +1,6 @@
 # Reaktive
 [![](https://jitpack.io/v/badoo/Reaktive.svg)](https://jitpack.io/#badoo/Reaktive)
+[![](https://jitpack.io/v/badoo/Reaktive/week.svg)](https://jitpack.io/#badoo/Reaktive)
 
 Kotlin multiplatform implementation of Reactive Extensions.
 
