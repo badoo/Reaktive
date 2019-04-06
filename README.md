@@ -4,7 +4,7 @@
 
 Kotlin multiplatform implementation of Reactive Extensions.
 
-Library status: under development, pre-release is available.
+Library status: under development, alpha pre-release is available, public API is subject to change
 
 ### Setup
 Add JitPack repository into your root build.gradle file:
