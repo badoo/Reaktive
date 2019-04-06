@@ -31,6 +31,7 @@ implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
 * Multiplatform: JVM and Android, iOS is under development
 * Schedulers support: computation, IO, trampoline, main
 * Supported sources: Observable, Single, Maybe, Completable
+* Subjects: PublishSubject, BehaviorSubject
 * Interoperability with RxJava2: convertion of sources between Reaktive and RxJava2, ability to reuse RxJava2's schedulers
 * Supported operators:
   * Observable: asCompletable, collect, combineLatest, concatMap, debounce, doOnBeforeXxx, filter, firstOrComplete, firstOrDefault, firstOrError, flatMap, flatMapCompletable, flatMapMaybe, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, sample, subscribeOn, throttle, toCompletable, toList, zip
