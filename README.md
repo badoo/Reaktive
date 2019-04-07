@@ -1,8 +1,9 @@
 # Reaktive
 [![](https://jitpack.io/v/badoo/Reaktive.svg)](https://jitpack.io/#badoo/Reaktive)
 [![](https://jitpack.io/v/badoo/Reaktive/week.svg)](https://jitpack.io/#badoo/Reaktive)
+[![](https://img.shields.io/badge/License-Apache/2.0-blue.svg)](https://github.com/badoo/Reaktive/blob/master/LICENSE)
 
-Kotlin multiplatform implementation of Reactive Extensions.
+Kotlin multi-platform implementation of Reactive Extensions.
 
 Library status: under development, alpha pre-release is available, public API is subject to change
 
@@ -31,7 +32,7 @@ implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
 ### Features:
 * Multiplatform: JVM and Android, iOS is under development
 * Schedulers support: computation, IO, trampoline, main
-* Supported sources: Observable, Single, Maybe, Completable
+* Supported sources: Observable, Maybe, Single, Completable
 * Subjects: PublishSubject, BehaviorSubject
 * Interoperability with RxJava2: convertion of sources between Reaktive and RxJava2, ability to reuse RxJava2's schedulers
 * Supported operators:
