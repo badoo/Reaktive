@@ -19,10 +19,6 @@ compileKotlin2Js {
 kotlinFrontend {
     downloadNodeJsVersion = "latest"
 
-    npm {
-        devDependency("karma")
-    }
-
     webpackBundle {
         bundleName = "main"
         sourceMapEnabled = true
