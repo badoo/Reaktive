@@ -18,4 +18,7 @@ pluginManagement {
 
 enableFeaturePreview('GRADLE_METADATA')
 
-include ':reaktive', 'rxjava2-interop', ':android-sample-app'
+include ':reaktive'
+include ':rxjava2-interop'
+include ':android-sample-app'
+include ':js-browser-sample-app'

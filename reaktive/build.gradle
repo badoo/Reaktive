@@ -22,6 +22,7 @@ kotlin {
     targets {
         fromPreset(presets.jvm, 'jvm')
         fromPreset(presets.android, 'android')
+        fromPreset(presets.js, 'js')
     }
 
     sourceSets {
@@ -45,7 +46,22 @@ kotlin {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
             }
         }
-        
+
+        jsMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
+            }
+
+            compileKotlinJs {
+                kotlinOptions.metaInfo = true
+                kotlinOptions.sourceMap = true
+                kotlinOptions.suppressWarnings = true
+                kotlinOptions.verbose = true
+                kotlinOptions.main = "call"
+                kotlinOptions.moduleKind = "umd"
+            }
+        }
+
         jvmMain {
             dependsOn jvmCommonMain
         }

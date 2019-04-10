@@ -1,0 +1,40 @@
+plugins {
+    id 'kotlin2js'
+    id 'org.jetbrains.kotlin.frontend'
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    compile project(':reaktive')
+}
+
+compileKotlin2Js {
+    kotlinOptions.metaInfo = true
+    kotlinOptions.sourceMap = true
+    kotlinOptions.suppressWarnings = true
+    kotlinOptions.verbose = true
+    kotlinOptions.main = "call"
+    kotlinOptions.moduleKind = "umd"
+}
+
+kotlinFrontend {
+    downloadNodeJsVersion = "latest"
+
+    npm {
+        devDependency("karma")
+    }
+
+    webpackBundle {
+        bundleName = "main"
+        sourceMapEnabled = true
+        contentPath = file('src/main/web')
+        publicPath = "/"
+        port = 8088
+        proxyUrl = ""
+        stats = "errors-only"
+    }
+}
+
+clean.doFirst() {
+    delete "${projectDir}/web"
+}
