@@ -7,7 +7,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.Image
 import kotlin.browser.document
 import kotlin.browser.window
-import com.badoo.reaktive.promise.toReaktive
+import com.badoo.reaktive.promise.asSingle
 
 private lateinit var loader: Element
 private lateinit var kittensContainer: Element
@@ -43,8 +43,8 @@ class Kitten(val url: String)
 fun loadRandomKitten(): Single<List<Kitten>> {
     return window
         .fetch("https://api.thecatapi.com/v1/images/search")
-        .toReaktive()
-        .flatMap { it.json().toReaktive() }
+        .asSingle()
+        .flatMap { it.json().asSingle() }
         .map {
             (it.asDynamic() as Array<dynamic>).map { kitten ->
                 Kitten(kitten.url as String)
