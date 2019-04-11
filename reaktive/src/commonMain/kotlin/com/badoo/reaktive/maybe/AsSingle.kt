@@ -22,7 +22,8 @@ fun <T> Maybe<T>.asSingle(defaultValueSupplier: () -> T): Single<T> =
             .also(observer::onSuccess)
     }
 
-internal inline fun <T> Maybe<T>.asSingleOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
+// TODO Make it inline/crossinline again when native compilation is fixed
+internal fun <T> Maybe<T>.asSingleOrAction(onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
     single { observer ->
         subscribeSafe(
             object : MaybeObserver<T>, Observer by observer, SingleCallbacks<T> by observer {

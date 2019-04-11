@@ -1,0 +1,28 @@
+apply from: '../target.gradle'
+final target = currentTarget()
+
+kotlin {
+    final taskConfigurationMap = [
+            'kotlinMultiplatform': target.isMeta(),
+            'metadata'           : target.isMeta(),
+            'jvm'                : target.isJvm(),
+            'androidDebug'       : target.isJvm(),
+            'androidRelease'     : target.isJvm(),
+            'ios32'              : target.isIos32(),
+            'ios64'              : target.isIos64(),
+            'iosSim'             : target.isIosSim()
+    ]
+    // meta publication requires all target be included
+    // should be done with android sdk installed, otherwise presents.android will crash configuration step
+    // ios targets will be automatically disabled
+    final configurationTargets = taskConfigurationMap.keySet().collect { targets.findByName(it) }.findAll { it != null }
+    configure(configurationTargets) {
+        mavenPublication { activePublication ->
+            tasks.withType(AbstractPublishToMaven).all {
+                onlyIf {
+                    taskConfigurationMap[publication.name]
+                }
+            }
+        }
+    }
+}

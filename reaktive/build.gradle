@@ -1,57 +1,111 @@
 plugins {
     id 'org.jetbrains.kotlin.multiplatform'
-    id 'com.android.library'
     id 'maven-publish'
 }
 
 group = reaktive_group_id
 version = reaktive_version
 
-android {
-    compileSdkVersion 28
-    defaultConfig {
-        minSdkVersion 1
-    }
-}
-
 kotlin {
-    android {
-        publishLibraryVariants('release', 'debug')
-    }
-
-    targets {
-        fromPreset(presets.jvm, 'jvm')
-        fromPreset(presets.android, 'android')
-    }
-
     sourceSets {
         commonMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
             }
         }
-
         commonTest {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-test'
-                implementation "org.jetbrains.kotlin:kotlin-test-junit"
+                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
                 implementation 'org.jetbrains.kotlin:kotlin-test-common'
                 implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
             }
         }
+    }
+}
 
-        jvmCommonMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-            }
+apply from: '../target.gradle'
+final target = currentTarget()
+
+if (target.isJvm() || target.isMeta()) {
+    apply plugin: 'com.android.library'
+
+    android {
+        compileSdkVersion 28
+        defaultConfig {
+            minSdkVersion 1
+        }
+    }
+
+    kotlin {
+        targets {
+            fromPreset(presets.jvm, 'jvm')
+            fromPreset(presets.android, 'android')
         }
         
-        jvmMain {
-            dependsOn jvmCommonMain
+        sourceSets {
+            jvmCommonMain {
+                dependencies {
+                    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+                }
+            }
+            
+            jvmMain.dependsOn jvmCommonMain
+            androidMain.dependsOn jvmCommonMain
         }
-
-        androidMain {
-            dependsOn jvmCommonMain
+        
+        android {
+            publishLibraryVariants('release', 'debug')
         }
     }
 }
+
+if (target.isIos() || target.isMeta()) {
+    kotlin {
+        sourceSets {
+            iosCommon.dependsOn commonMain
+            iosCommonTest.dependsOn commonMainTest
+        }
+    }
+    if (target.isIos32() || target.isMeta()) {
+        kotlin {
+            targets {
+                fromPreset(presets.iosArm32, 'ios32') {
+                    compilations.main.outputKinds('framework')
+                }
+            }
+            sourceSets {
+                ios32Main.dependsOn iosCommon
+                ios32Test.dependsOn iosCommonTest
+            }
+        }
+    }
+    if (target.isIos64() || target.isMeta()) {
+        kotlin {
+            targets {
+                fromPreset(presets.iosArm64, 'ios64') {
+                    compilations.main.outputKinds('framework')
+                }
+            }
+            sourceSets {
+                ios64Main.dependsOn iosCommon
+                ios64Main.dependsOn iosCommonTest
+            }
+        }
+    }
+    if (target.isIosSim() || target.isMeta()) {
+        kotlin {
+            targets {
+                fromPreset(presets.iosX64, 'iosSim') {
+                    compilations.main.outputKinds('framework')
+                }
+            }
+            sourceSets {
+                iosSimMain.dependsOn iosCommon
+                iosSimMain.dependsOn iosCommonTest
+            }
+        }
+    }
+}
+
+apply from: '../publication.gradle'
