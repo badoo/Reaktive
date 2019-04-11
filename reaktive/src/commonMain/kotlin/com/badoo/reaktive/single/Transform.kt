@@ -7,14 +7,16 @@ internal inline fun <T, R> Single<T>.transform(
 ): Single<R> =
     singleByEmitter { emitter ->
         subscribeSafe(
-            object : SingleObserver<T>, (R) -> Unit {
+            object : SingleObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
                 }
 
                 override fun onSuccess(value: T) {
                     try {
-                        onSuccess(value, this)
+                        onSuccess(value) {
+                            emitter.onSuccess(it)
+                        }
                     } catch (e: Throwable) {
                         emitter.onError(e)
                     }
@@ -22,10 +24,6 @@ internal inline fun <T, R> Single<T>.transform(
 
                 override fun onError(error: Throwable) {
                     emitter.onError(error)
-                }
-
-                override fun invoke(value: R) {
-                    emitter.onSuccess(value)
                 }
             }
         )
