@@ -44,7 +44,7 @@ fun loadRandomKitten(): Single<List<Kitten>> {
     return window
         .fetch("https://api.thecatapi.com/v1/images/search")
         .toReaktive()
-        .flatMap { it.json().toSingle() }
+        .flatMap { it.json().toReaktive() }
         .map {
             (it.asDynamic() as Array<dynamic>).map { kitten ->
                 Kitten(kitten.url as String)
