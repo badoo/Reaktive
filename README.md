@@ -1,4 +1,5 @@
-# Reaktive
+# <img src="https://raw.githubusercontent.com/badoo/Reaktive/master/assets/logo_reaktive.png" height="36"> Reaktive
+
 [![](https://jitpack.io/v/badoo/Reaktive.svg)](https://jitpack.io/#badoo/Reaktive)
 [![](https://jitpack.io/v/badoo/Reaktive/week.svg)](https://jitpack.io/#badoo/Reaktive)
 [![](https://img.shields.io/badge/License-Apache/2.0-blue.svg)](https://github.com/badoo/Reaktive/blob/master/LICENSE)
