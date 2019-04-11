@@ -20,5 +20,5 @@ enableFeaturePreview('GRADLE_METADATA')
 
 include ':reaktive'
 include ':rxjava2-interop'
-include ':android-sample-app'
-include ':js-browser-sample-app'
+include ':sample-android-app'
+include ':sample-js-browser-app'
