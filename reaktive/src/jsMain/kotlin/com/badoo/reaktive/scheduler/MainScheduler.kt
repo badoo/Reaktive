@@ -3,7 +3,7 @@ package com.badoo.reaktive.scheduler
 import com.badoo.reaktive.disposable.CompositeDisposable
 import kotlin.browser.window
 
-class MainScheduler : Scheduler {
+internal class MainScheduler : Scheduler {
 
     private val disposables = CompositeDisposable()
 

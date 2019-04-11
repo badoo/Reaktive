@@ -7,12 +7,12 @@ import org.w3c.dom.Element
 import org.w3c.dom.Image
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.js.Promise
+import com.badoo.reaktive.promise.toReaktive
 
 private lateinit var loader: Element
 private lateinit var kittensContainer: Element
 
-fun main(vararg args: String) {
+fun main() {
     document.addEventListener("DOMContentLoaded", {
 
         loader = document.getElementById("loader")!!
@@ -43,18 +43,11 @@ class Kitten(val url: String)
 fun loadRandomKitten(): Single<List<Kitten>> {
     return window
         .fetch("https://api.thecatapi.com/v1/images/search")
-        .toSingle()
+        .toReaktive()
         .flatMap { it.json().toSingle() }
         .map {
             (it.asDynamic() as Array<dynamic>).map { kitten ->
                 Kitten(kitten.url as String)
             }
         }
-}
-
-fun <T> Promise<T>.toSingle(): Single<T> = singleByEmitter { emitter ->
-    then(
-        onFulfilled = { emitter.onSuccess(it) },
-        onRejected = { emitter.onError(it) }
-    )
 }
