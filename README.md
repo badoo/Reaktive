@@ -1,4 +1,5 @@
-# <img src="https://raw.githubusercontent.com/badoo/Reaktive/master/assets/logo_reaktive.png" height="36"> Reaktive
+<img src="https://raw.githubusercontent.com/badoo/Reaktive/master/assets/logo_reaktive.png" height="36">
+=
 
 [![](https://jitpack.io/v/badoo/Reaktive.svg)](https://jitpack.io/#badoo/Reaktive)
 [![](https://jitpack.io/v/badoo/Reaktive/week.svg)](https://jitpack.io/#badoo/Reaktive)
