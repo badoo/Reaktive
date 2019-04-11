@@ -2,12 +2,15 @@ import com.badoo.reaktive.observable.doOnBeforeFinally
 import com.badoo.reaktive.observable.doOnBeforeSubscribe
 import com.badoo.reaktive.observable.flatten
 import com.badoo.reaktive.observable.subscribe
-import com.badoo.reaktive.single.*
 import org.w3c.dom.Element
 import org.w3c.dom.Image
 import kotlin.browser.document
 import kotlin.browser.window
 import com.badoo.reaktive.promise.asSingle
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.flatMap
+import com.badoo.reaktive.single.map
+import com.badoo.reaktive.single.merge
 
 private lateinit var loader: Element
 private lateinit var kittensContainer: Element
