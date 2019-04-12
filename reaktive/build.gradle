@@ -41,6 +41,7 @@ if (target.isJvm() || target.isMeta()) {
         targets {
             fromPreset(presets.jvm, 'jvm')
             fromPreset(presets.android, 'android')
+            fromPreset(presets.js, 'js')
         }
         
         sourceSets {
@@ -52,6 +53,22 @@ if (target.isJvm() || target.isMeta()) {
             
             jvmMain.dependsOn jvmCommonMain
             androidMain.dependsOn jvmCommonMain
+            
+            jsMain {
+                dependencies {
+                    implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
+                }
+
+                compileKotlinJs {
+                    kotlinOptions.metaInfo = true
+                    kotlinOptions.sourceMap = true
+                    kotlinOptions.verbose = true
+                    kotlinOptions.main = "call"
+                    kotlinOptions.moduleKind = "umd"
+                }
+            }
+
+            jvmMain.dependsOn jvmCommonMain
         }
         
         android {

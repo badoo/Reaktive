@@ -24,6 +24,7 @@ println("Current environment: $target")
 
 include ':reaktive'
 if (target.isJvm()) {
-    include ':android-sample-app'
+    include ':sample-android-app'
+    include ':sample-js-browser-app'
     include ':rxjava2-interop'
 }
