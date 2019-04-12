@@ -6,11 +6,12 @@ kotlin {
             'kotlinMultiplatform': target.isMeta(),
             'metadata'           : target.isMeta(),
             'jvm'                : target.isJvm(),
+            'js'                 : target.isJvm(),
             'androidDebug'       : target.isJvm(),
             'androidRelease'     : target.isJvm(),
-            'ios32'              : target.isIos32(),
-            'ios64'              : target.isIos64(),
-            'iosSim'             : target.isIosSim()
+            'ios32'              : target.isIos(),
+            'ios64'              : target.isIos(),
+            'iosSim'             : target.isIos()
     ]
     // meta publication requires all target be included
     // should be done with android sdk installed, otherwise presents.android will crash configuration step

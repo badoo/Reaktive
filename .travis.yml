@@ -12,21 +12,9 @@ matrix:
     - os: osx
       osx_image: xcode10.2
       language: java
-      env: MP_TARGET=IOS_32
+      env: MP_TARGET=IOS
       install: true
-      script: ./gradlew reaktive:ios32MainBinaries -DMP_TARGET=$MP_TARGET
-    - os: osx
-      osx_image: xcode10.2
-      language: java
-      env: MP_TARGET=IOS_64
-      install: true
-      script: ./gradlew reaktive:ios64MainBinaries -DMP_TARGET=$MP_TARGET
-    - os: osx
-      osx_image: xcode10.2
-      language: java
-      env: MP_TARGET=IOS_SIM
-      install: true
-      script: ./gradlew reaktive:iosSimMainBinaries -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive:ios32MainBinaries reaktive:ios64MainBinaries reaktive:iosSimMainBinaries -DMP_TARGET=$MP_TARGET
     - os: linux
       language: android
       android:

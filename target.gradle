@@ -1,30 +1,17 @@
 enum MpBuildTarget {
     ALL,
     JVM,
-    IOS_32,
-    IOS_64,
-    IOS_SIM,
+    IOS,
     META
 
     boolean isJvm() { return this == ALL || this == JVM }
 
-    boolean isIos() { return this == ALL || this == IOS_32 || this == IOS_64 || this == IOS_SIM }
+    boolean isIos() { return this == ALL || this == IOS }
 
-    boolean isIos32() { return this == ALL || this == IOS_32 }
-
-    boolean isIos64() { return this == ALL || this == IOS_64 }
-
-    boolean isIosSim() { return this == ALL || this == IOS_SIM }
-
-    boolean isMeta() { return this == META }
+    boolean isMeta() { return this == ALL || this == META }
 }
 
 ext.currentTarget = { ->
     final value = System.getProperty('MP_TARGET')
-    final target = MpBuildTarget.values().find { it.name().equalsIgnoreCase(value) }
-    if (target != null) {
-        return target
-    } else {
-        return MpBuildTarget.ALL
-    }
+    return MpBuildTarget.values().find { it.name().equalsIgnoreCase(value) } ?: MpBuildTarget.ALL
 }

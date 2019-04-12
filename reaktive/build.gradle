@@ -31,7 +31,9 @@ if (target.isJvm() || target.isMeta()) {
     apply plugin: 'com.android.library'
 
     android {
+        buildToolsVersion '28.0.3'
         compileSdkVersion 28
+        
         defaultConfig {
             minSdkVersion 1
         }
@@ -43,17 +45,17 @@ if (target.isJvm() || target.isMeta()) {
             fromPreset(presets.android, 'android')
             fromPreset(presets.js, 'js')
         }
-        
+
         sourceSets {
             jvmCommonMain {
                 dependencies {
                     implementation 'org.jetbrains.kotlin:kotlin-stdlib'
                 }
             }
-            
+
             jvmMain.dependsOn jvmCommonMain
             androidMain.dependsOn jvmCommonMain
-            
+
             jsMain {
                 dependencies {
                     implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
@@ -70,7 +72,7 @@ if (target.isJvm() || target.isMeta()) {
 
             jvmMain.dependsOn jvmCommonMain
         }
-        
+
         android {
             publishLibraryVariants('release', 'debug')
         }
@@ -79,48 +81,30 @@ if (target.isJvm() || target.isMeta()) {
 
 if (target.isIos() || target.isMeta()) {
     kotlin {
+        targets {
+            fromPreset(presets.iosArm32, 'ios32') {
+                compilations.main.outputKinds('framework')
+            }
+            fromPreset(presets.iosArm64, 'ios64') {
+                compilations.main.outputKinds('framework')
+            }
+            fromPreset(presets.iosX64, 'iosSim') {
+                compilations.main.outputKinds('framework')
+            }
+        }
+        
         sourceSets {
-            iosCommon.dependsOn commonMain
+            iosCommonMain.dependsOn commonMain
             iosCommonTest.dependsOn commonMainTest
-        }
-    }
-    if (target.isIos32() || target.isMeta()) {
-        kotlin {
-            targets {
-                fromPreset(presets.iosArm32, 'ios32') {
-                    compilations.main.outputKinds('framework')
-                }
-            }
-            sourceSets {
-                ios32Main.dependsOn iosCommon
-                ios32Test.dependsOn iosCommonTest
-            }
-        }
-    }
-    if (target.isIos64() || target.isMeta()) {
-        kotlin {
-            targets {
-                fromPreset(presets.iosArm64, 'ios64') {
-                    compilations.main.outputKinds('framework')
-                }
-            }
-            sourceSets {
-                ios64Main.dependsOn iosCommon
-                ios64Main.dependsOn iosCommonTest
-            }
-        }
-    }
-    if (target.isIosSim() || target.isMeta()) {
-        kotlin {
-            targets {
-                fromPreset(presets.iosX64, 'iosSim') {
-                    compilations.main.outputKinds('framework')
-                }
-            }
-            sourceSets {
-                iosSimMain.dependsOn iosCommon
-                iosSimMain.dependsOn iosCommonTest
-            }
+
+            ios32Main.dependsOn iosCommonMain
+            ios32Test.dependsOn iosCommonTest
+
+            ios64Main.dependsOn iosCommonMain
+            ios64Main.dependsOn iosCommonTest
+
+            iosSimMain.dependsOn iosCommonMain
+            iosSimMain.dependsOn iosCommonTest
         }
     }
 }
