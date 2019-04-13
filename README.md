@@ -1,7 +1,6 @@
 # <img src="https://raw.githubusercontent.com/badoo/Reaktive/master/assets/logo_reaktive.png" height="36">
 
 [![](https://jitpack.io/v/badoo/Reaktive.svg)](https://jitpack.io/#badoo/Reaktive)
-[![](https://jitpack.io/v/badoo/Reaktive/week.svg)](https://jitpack.io/#badoo/Reaktive)
 [![](https://img.shields.io/badge/License-Apache/2.0-blue.svg)](https://github.com/badoo/Reaktive/blob/master/LICENSE)
 
 Kotlin multi-platform implementation of Reactive Extensions.
@@ -21,8 +20,17 @@ allprojects {
 
 Add the following dependencies into your module's build.gradle file:
 ##### Main library
+If you are developing a Kotlin multi-platform library:
 ```
 implementation 'com.github.badoo.reaktive:reaktive:<latest-version>'
+```
+If you are developing a Kotlin Android app:
+```
+implementation 'com.github.badoo.reaktive:reaktive-android:<latest-version>'
+```
+If you are developing a Kotlin JVM project
+```
+implementation 'com.github.badoo.reaktive:reaktive-jvm:<latest-version>'
 ```
 
 ##### RxJava2 interoperability
