@@ -111,6 +111,17 @@ if (target.isIos() || target.isMeta()) {
             iosSimMain.dependsOn iosCommonTest
         }
     }
+
+    task iosTest(dependsOn: 'linkTestDebugExecutableIosSim') {
+        group 'verification'
+        doLast {
+            final binary = kotlin.targets.iosSim.compilations.test.getBinary('EXECUTABLE', 'DEBUG')
+            exec {
+                commandLine 'xcrun', 'simctl', 'spawn', 'iPhone X', binary.absolutePath
+            }
+        }
+    }
+    tasks.check.dependsOn iosTest
 }
 
 apply from: '../publication.gradle'
