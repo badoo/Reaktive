@@ -19,7 +19,7 @@ allprojects {
 ```
 
 Add the following dependencies into your module's build.gradle file:
-##### Main library
+#### Main library
 If you are developing a Kotlin multi-platform library:
 ```
 implementation 'com.github.badoo.reaktive:reaktive:<latest-version>'
@@ -33,7 +33,7 @@ If you are developing a Kotlin JVM project
 implementation 'com.github.badoo.reaktive:reaktive-jvm:<latest-version>'
 ```
 
-##### RxJava2 interoperability
+#### RxJava2 interoperability
 ```
 implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
 ```
