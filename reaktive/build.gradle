@@ -65,12 +65,16 @@ if (target.isJvm() || target.isMeta()) {
                     kotlinOptions.metaInfo = true
                     kotlinOptions.sourceMap = true
                     kotlinOptions.verbose = true
-                    kotlinOptions.main = "call"
-                    kotlinOptions.moduleKind = "umd"
+                    kotlinOptions.main = 'call'
+                    kotlinOptions.moduleKind = 'umd'
                 }
             }
 
-            jvmMain.dependsOn jvmCommonMain
+            jsTest {
+                dependencies {
+                    implementation 'org.jetbrains.kotlin:kotlin-test-js'
+                }
+            }
         }
 
         android {
@@ -83,13 +87,13 @@ if (target.isIos() || target.isMeta()) {
     kotlin {
         targets {
             fromPreset(presets.iosArm32, 'ios32') {
-                compilations.main.outputKinds('framework')
+                binaries.framework()
             }
             fromPreset(presets.iosArm64, 'ios64') {
-                compilations.main.outputKinds('framework')
+                binaries.framework()
             }
             fromPreset(presets.iosX64, 'iosSim') {
-                compilations.main.outputKinds('framework')
+                binaries.framework()
             }
         }
         

@@ -22,8 +22,7 @@ fun <T> Completable.asSingle(defaultValueSupplier: () -> T): Single<T> =
             .also(observer::onSuccess)
     }
 
-// TODO Make it inline/crossinline again when native compilation is fixed
-private fun <T> Completable.asSingleOrAction(onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
+private inline fun <T> Completable.asSingleOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
     single { observer ->
         subscribeSafe(
             object : CompletableObserver, Observer by observer, ErrorCallback by observer {
