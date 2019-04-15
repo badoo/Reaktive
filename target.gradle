@@ -1,10 +1,10 @@
 enum MpBuildTarget {
     ALL,
-    JVM,
+    COMMON,
     IOS,
     META
 
-    boolean isJvm() { return this == ALL || this == JVM }
+    boolean isCommon() { return this == ALL || this == JVM }
 
     boolean isIos() { return this == ALL || this == IOS }
 

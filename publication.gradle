@@ -5,10 +5,10 @@ kotlin {
     final taskConfigurationMap = [
             'kotlinMultiplatform': target.isMeta(),
             'metadata'           : target.isMeta(),
-            'jvm'                : target.isJvm(),
-            'js'                 : target.isJvm(),
-            'androidDebug'       : target.isJvm(),
-            'androidRelease'     : target.isJvm(),
+            'jvm'                : target.isCommon(),
+            'js'                 : target.isCommon(),
+            'androidDebug'       : target.isCommon(),
+            'androidRelease'     : target.isCommon(),
             'ios32'              : target.isIos(),
             'ios64'              : target.isIos(),
             'iosSim'             : target.isIos()

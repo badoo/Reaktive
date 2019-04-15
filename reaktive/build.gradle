@@ -27,7 +27,7 @@ kotlin {
 apply from: '../target.gradle'
 final target = currentTarget()
 
-if (target.isJvm() || target.isMeta()) {
+if (target.isCommon() || target.isMeta()) {
     apply plugin: 'com.android.library'
 
     android {

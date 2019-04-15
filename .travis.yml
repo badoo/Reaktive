@@ -6,7 +6,7 @@ matrix:
         components:
           - build-tools-28.0.3
           - android-28
-      env: MP_TARGET=JVM
+      env: MP_TARGET=COMMON
       install: true
       script: ./gradlew reaktive:check rxjava2-interop:check -DMP_TARGET=$MP_TARGET
     - os: osx
