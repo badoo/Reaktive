@@ -6,7 +6,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun <T, R> Single<T>.flatMap(mapper: (T) -> Single<R>): Single<R> =
-    single { observer ->
+    singleUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 

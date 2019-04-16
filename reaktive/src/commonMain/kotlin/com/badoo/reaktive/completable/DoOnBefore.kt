@@ -6,7 +6,7 @@ import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
 fun Completable.doOnBeforeSubscribe(action: (Disposable) -> Unit): Completable =
-    completable { observer ->
+    completableUnsafe { observer ->
         subscribeSafe(
             object : CompletableObserver by observer {
                 override fun onSubscribe(disposable: Disposable) {
@@ -18,7 +18,7 @@ fun Completable.doOnBeforeSubscribe(action: (Disposable) -> Unit): Completable =
     }
 
 fun Completable.doOnBeforeComplete(action: () -> Unit): Completable =
-    completable { observer ->
+    completableUnsafe { observer ->
         subscribeSafe(
             object : CompletableObserver by observer {
                 override fun onComplete() {
@@ -30,7 +30,7 @@ fun Completable.doOnBeforeComplete(action: () -> Unit): Completable =
     }
 
 fun Completable.doOnBeforeError(consumer: (Throwable) -> Unit): Completable =
-    completable { observer ->
+    completableUnsafe { observer ->
         subscribeSafe(
             object : CompletableObserver by observer {
                 override fun onError(error: Throwable) {
@@ -42,7 +42,7 @@ fun Completable.doOnBeforeError(consumer: (Throwable) -> Unit): Completable =
     }
 
 fun Completable.doOnBeforeTerminate(action: () -> Unit): Completable =
-    completable { observer ->
+    completableUnsafe { observer ->
         subscribeSafe(
             object : CompletableObserver by observer {
                 override fun onComplete() {
@@ -59,7 +59,7 @@ fun Completable.doOnBeforeTerminate(action: () -> Unit): Completable =
     }
 
 fun Completable.doOnBeforeDispose(action: () -> Unit): Completable =
-    completable { observer ->
+    completableUnsafe { observer ->
         subscribeSafe(
             object : CompletableObserver by observer {
                 override fun onSubscribe(disposable: Disposable) {
@@ -70,7 +70,7 @@ fun Completable.doOnBeforeDispose(action: () -> Unit): Completable =
     }
 
 fun Completable.doOnBeforeFinally(action: () -> Unit): Completable =
-    completable { observer ->
+    completableUnsafe { observer ->
         subscribeSafe(
             object : CompletableObserver by observer {
                 private val lock = newLock()

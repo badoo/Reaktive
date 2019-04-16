@@ -5,7 +5,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.scheduler.Scheduler
 
 fun <T> Single<T>.observeOn(scheduler: Scheduler): Single<T> =
-    singleByEmitter { emitter ->
+    single { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val executor = scheduler.newExecutor()

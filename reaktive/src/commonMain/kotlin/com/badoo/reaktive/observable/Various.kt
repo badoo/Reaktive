@@ -1,6 +1,6 @@
 package com.badoo.reaktive.observable
 
-inline fun <T> observable(crossinline onSubscribe: (observer: ObservableObserver<T>) -> Unit): Observable<T> =
+inline fun <T> observableUnsafe(crossinline onSubscribe: (observer: ObservableObserver<T>) -> Unit): Observable<T> =
     object : Observable<T> {
         override fun subscribe(observer: ObservableObserver<T>) {
             onSubscribe(observer)
@@ -8,7 +8,7 @@ inline fun <T> observable(crossinline onSubscribe: (observer: ObservableObserver
     }
 
 fun <T> observableOf(value: T): Observable<T> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         emitter.onNext(value)
         emitter.onComplete()
     }
@@ -16,26 +16,26 @@ fun <T> observableOf(value: T): Observable<T> =
 fun <T> T.toObservable(): Observable<T> = observableOf(this)
 
 fun <T> Iterable<T>.asObservable(): Observable<T> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         forEach(emitter::onNext)
         emitter.onComplete()
     }
 
 fun <T> observableOf(vararg values: T): Observable<T> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         values.forEach(emitter::onNext)
         emitter.onComplete()
     }
 
-fun <T> errorObservable(error: Throwable): Observable<T> =
-    observableByEmitter { emitter -> emitter.onError(error) }
+fun <T> observableOfError(error: Throwable): Observable<T> =
+    observable { emitter -> emitter.onError(error) }
 
-fun <T> Throwable.toErrorObservable(): Observable<T> = errorObservable(this)
+fun <T> Throwable.toObservableOfError(): Observable<T> = observableOfError(this)
 
-fun <T> emptyObservable(): Observable<T> = observableByEmitter(ObservableEmitter<*>::onComplete)
+fun <T> observableOfEmpty(): Observable<T> = observable(ObservableEmitter<*>::onComplete)
 
 fun <T> observableFromFunction(func: () -> T): Observable<T> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         emitter.onNext(func())
         emitter.onComplete()
     }

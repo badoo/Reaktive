@@ -6,7 +6,7 @@ import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
 fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =
-    single { observer ->
+    singleUnsafe { observer ->
         subscribeSafe(
             object : SingleObserver<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
@@ -18,7 +18,7 @@ fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =
     }
 
 fun <T> Single<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Single<T> =
-    single { observer ->
+    singleUnsafe { observer ->
         subscribeSafe(
             object : SingleObserver<T> by observer {
                 override fun onSuccess(value: T) {
@@ -30,7 +30,7 @@ fun <T> Single<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Single<T> =
     }
 
 fun <T> Single<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Single<T> =
-    single { observer ->
+    singleUnsafe { observer ->
         subscribeSafe(
             object : SingleObserver<T> by observer {
                 override fun onError(error: Throwable) {
@@ -42,7 +42,7 @@ fun <T> Single<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Single<T> =
     }
 
 fun <T> Single<T>.doOnBeforeTerminate(action: () -> Unit): Single<T> =
-    single { observer ->
+    singleUnsafe { observer ->
         subscribeSafe(
             object : SingleObserver<T> by observer {
                 override fun onSuccess(value: T) {
@@ -59,7 +59,7 @@ fun <T> Single<T>.doOnBeforeTerminate(action: () -> Unit): Single<T> =
     }
 
 fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
-    single { observer ->
+    singleUnsafe { observer ->
         subscribeSafe(
             object : SingleObserver<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
@@ -70,7 +70,7 @@ fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
     }
 
 fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
-    single { observer ->
+    singleUnsafe { observer ->
         subscribeSafe(
             object : SingleObserver<T> by observer {
                 private val lock = newLock()

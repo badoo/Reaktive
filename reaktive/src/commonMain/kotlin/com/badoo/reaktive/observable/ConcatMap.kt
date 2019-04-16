@@ -11,7 +11,7 @@ import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
 fun <T, R> Observable<T>.concatMap(mapper: (T) -> Observable<R>): Observable<R> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
 

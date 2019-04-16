@@ -9,7 +9,7 @@ import com.badoo.reaktive.utils.lock.synchronized
 import com.badoo.reaktive.utils.serializer.serializer
 
 fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
 

@@ -6,11 +6,11 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.MaybeObserver
-import com.badoo.reaktive.maybe.maybe
+import com.badoo.reaktive.maybe.maybeUnsafe
 import com.badoo.reaktive.maybe.subscribeSafe
 
 fun <T, R> Single<T>.flatMapMaybe(mapper: (T) -> Maybe<R>): Maybe<R> =
-    maybe { observer ->
+    maybeUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 

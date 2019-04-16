@@ -4,7 +4,7 @@ import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 
 internal inline fun <T, R> Observable<T>.transform(crossinline onNext: (value: T, onNext: (R) -> Unit) -> Unit): Observable<R> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         subscribeSafe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
                 private val onNextFunction = emitter::onNext
