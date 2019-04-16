@@ -1,0 +1,39 @@
+matrix:
+  include:
+    - os: linux
+      language: android
+      android:
+        components:
+          - build-tools-28.0.3
+          - android-28
+      env: MP_TARGET=COMMON
+      install: true
+      script: ./gradlew reaktive:check rxjava2-interop:check -DMP_TARGET=$MP_TARGET
+    - os: osx
+      osx_image: xcode10.2
+      language: java
+      env: MP_TARGET=IOS
+      install: true
+      script: ./gradlew reaktive:ios32MainBinaries reaktive:ios64MainBinaries reaktive:iosSimMainBinaries reaktive:check -DMP_TARGET=$MP_TARGET
+    - os: linux
+      language: android
+      android:
+        components:
+          - build-tools-28.0.3
+          - android-28
+      env: MP_TARGET=META
+      install: true
+      script: true
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: ./gradlew publishToMavenLocal -DMP_TARGET=$MP_TARGET && find ~/.m2/repository -name *.module -exec cat \{\} \;
+  on:
+    tags: true

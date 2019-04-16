@@ -1,0 +1,17 @@
+enum MpBuildTarget {
+    ALL,
+    COMMON,
+    IOS,
+    META
+
+    boolean isCommon() { return this == ALL || this == COMMON }
+
+    boolean isIos() { return this == ALL || this == IOS }
+
+    boolean isMeta() { return this == ALL || this == META }
+}
+
+ext.currentTarget = { ->
+    final value = System.getProperty('MP_TARGET')
+    return MpBuildTarget.values().find { it.name().equalsIgnoreCase(value) } ?: MpBuildTarget.ALL
+}

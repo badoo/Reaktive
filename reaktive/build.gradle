@@ -1,72 +1,127 @@
 plugins {
     id 'org.jetbrains.kotlin.multiplatform'
-    id 'com.android.library'
     id 'maven-publish'
 }
 
 group = reaktive_group_id
 version = reaktive_version
 
-android {
-    compileSdkVersion 28
-    defaultConfig {
-        minSdkVersion 1
-    }
-}
-
 kotlin {
-    android {
-        publishLibraryVariants('release', 'debug')
-    }
-
-    targets {
-        fromPreset(presets.jvm, 'jvm')
-        fromPreset(presets.android, 'android')
-        fromPreset(presets.js, 'js')
-    }
-
     sourceSets {
         commonMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
             }
         }
-
         commonTest {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-test'
-                implementation "org.jetbrains.kotlin:kotlin-test-junit"
+                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
                 implementation 'org.jetbrains.kotlin:kotlin-test-common'
                 implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
             }
         }
+    }
+}
 
-        jvmCommonMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+apply from: '../target.gradle'
+final target = currentTarget()
+
+if (target.isCommon() || target.isMeta()) {
+    apply plugin: 'com.android.library'
+
+    android {
+        buildToolsVersion '28.0.3'
+        compileSdkVersion 28
+        
+        defaultConfig {
+            minSdkVersion 1
+        }
+    }
+
+    kotlin {
+        targets {
+            fromPreset(presets.jvm, 'jvm')
+            fromPreset(presets.android, 'android')
+            fromPreset(presets.js, 'js')
+        }
+
+        sourceSets {
+            jvmCommonMain {
+                dependencies {
+                    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+                }
+            }
+
+            jvmMain.dependsOn jvmCommonMain
+            androidMain.dependsOn jvmCommonMain
+
+            jsMain {
+                dependencies {
+                    implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
+                }
+
+                compileKotlinJs {
+                    kotlinOptions.metaInfo = true
+                    kotlinOptions.sourceMap = true
+                    kotlinOptions.verbose = true
+                    kotlinOptions.main = 'call'
+                    kotlinOptions.moduleKind = 'umd'
+                }
+            }
+
+            jsTest {
+                dependencies {
+                    implementation 'org.jetbrains.kotlin:kotlin-test-js'
+                }
             }
         }
 
-        jsMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
-            }
-
-            compileKotlinJs {
-                kotlinOptions.metaInfo = true
-                kotlinOptions.sourceMap = true
-                kotlinOptions.verbose = true
-                kotlinOptions.main = "call"
-                kotlinOptions.moduleKind = "umd"
-            }
-        }
-
-        jvmMain {
-            dependsOn jvmCommonMain
-        }
-
-        androidMain {
-            dependsOn jvmCommonMain
+        android {
+            publishLibraryVariants('release', 'debug')
         }
     }
 }
+
+if (target.isIos() || target.isMeta()) {
+    kotlin {
+        targets {
+            fromPreset(presets.iosArm32, 'ios32') {
+                binaries.framework()
+            }
+            fromPreset(presets.iosArm64, 'ios64') {
+                binaries.framework()
+            }
+            fromPreset(presets.iosX64, 'iosSim') {
+                binaries.framework()
+            }
+        }
+        
+        sourceSets {
+            iosCommonMain.dependsOn commonMain
+            iosCommonTest.dependsOn commonMainTest
+
+            ios32Main.dependsOn iosCommonMain
+            ios32Test.dependsOn iosCommonTest
+
+            ios64Main.dependsOn iosCommonMain
+            ios64Main.dependsOn iosCommonTest
+
+            iosSimMain.dependsOn iosCommonMain
+            iosSimMain.dependsOn iosCommonTest
+        }
+    }
+
+    task iosTest(dependsOn: 'linkTestDebugExecutableIosSim') {
+        group 'verification'
+        doLast {
+            final binary = kotlin.targets.iosSim.compilations.test.getBinary('EXECUTABLE', 'DEBUG')
+            exec {
+                commandLine 'xcrun', 'simctl', 'spawn', 'iPhone X', binary.absolutePath
+            }
+        }
+    }
+    tasks.check.dependsOn iosTest
+}
+
+apply from: '../publication.gradle'

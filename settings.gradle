@@ -1,10 +1,10 @@
 pluginManagement {
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.id == "kotlin-multiplatform") {
+            if (requested.id.id == 'kotlin-multiplatform') {
                 useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
             }
-            if (requested.id.id == "com.android.library") {
+            if (requested.id.id == 'com.android.library') {
                 useModule("com.android.tools.build:gradle:${requested.version}")
             }
         }
@@ -18,7 +18,13 @@ pluginManagement {
 
 enableFeaturePreview('GRADLE_METADATA')
 
+apply from: 'target.gradle'
+final target = currentTarget()
+println("Current environment: $target")
+
 include ':reaktive'
-include ':rxjava2-interop'
-include ':sample-android-app'
-include ':sample-js-browser-app'
+if (target.isCommon()) {
+    include ':sample-android-app'
+    include ':sample-js-browser-app'
+    include ':rxjava2-interop'
+}

@@ -10,25 +10,25 @@ class ArrayQueueTest {
     private val queue = ArrayQueue<String?>()
 
     @Test
-    fun `initial size is zero`() {
+    fun initialSizeIsZero() {
         assertEquals(0, queue.size)
     }
 
     @Test
-    fun `size is 1 when offer one item`() {
+    fun sizeIs1WhenOfferOneItem() {
         queue.offer("a")
         assertEquals(1, queue.size)
     }
 
     @Test
-    fun `size is 0 when offer and poll`() {
+    fun sizeIs0WhenOfferAndPoll() {
         queue.offer("a")
         queue.poll()
         assertEquals(0, queue.size)
     }
 
     @Test
-    fun `size is 100 when offer one 100 items`() {
+    fun sizeIs100WhenOfferOne100Items() {
         repeat(100) {
             queue.offer("a")
         }
@@ -36,13 +36,13 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `offer, poll returns value`() {
+    fun offerPollReturnsValue() {
         queue.offer("a")
         assertEquals("a", queue.poll())
     }
 
     @Test
-    fun `offer, all peeks return same value`() {
+    fun offerAllPeeksReturnSameValue() {
         queue.offer("a")
         repeat(50) {
             assertEquals("a", queue.peek)
@@ -50,14 +50,14 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `offer, poll, peak returns null`() {
+    fun offerPollPeakReturnsNull() {
         queue.offer("a")
         queue.poll()
         assertNull(queue.peek)
     }
 
     @Test
-    fun `offer, second and other polls return null`() {
+    fun offerSecondAndOtherPollsReturnNull() {
         queue.offer("a")
         queue.poll()
         repeat(50) {
@@ -66,7 +66,7 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `offer, poll, poll, offer, poll returns last item`() {
+    fun offerPollPollOfferPollReturnsLastItem() {
         queue.offer("a")
         poll(2)
         queue.offer("b")
@@ -74,7 +74,7 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `offer, poll, poll, offer, peek returns last item`() {
+    fun offerPollPollOfferPeekReturnsLastItem() {
         queue.offer("a")
         poll(2)
         queue.offer("b")
@@ -82,14 +82,14 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `100 offers 100 polls return valid items`() {
+    fun a100Offers100PollsReturnValidItems() {
         val src = List(100, Int::toString)
         offer(src)
         assertEquals(src, poll(100))
     }
 
     @Test
-    fun `100 offers 50 polls 50 offers 100 polls return valid items`() {
+    fun a100Offers50Polls50Offers100PollsReturnValidItems() {
         val src = List(100, Int::toString)
         repeat(50) { queue.offer("a") }
         repeat(50) { queue.offer(src[it]) }
@@ -101,7 +101,7 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `size is 1 when 100 offers, 50 polls, 50 offers, 99 polls`() {
+    fun sizeIs1When100Offers50Polls50Offers99Polls() {
         val src = List(100, Int::toString)
         repeat(50) { queue.offer("a") }
         repeat(50) { queue.offer(src[it]) }
@@ -114,7 +114,7 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `size is 0 when 100 offers, 50 polls, 50 offers, 100 polls`() {
+    fun sizeIs0When100Offers50Polls50Offers100Polls() {
         val src = List(100, Int::toString)
         repeat(50) { queue.offer("a") }
         repeat(50) { queue.offer(src[it]) }
@@ -127,7 +127,7 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `100 offers, 50 polls, 100 offers, 150 polls return valid items`() {
+    fun a100Offers50Polls100Offers150PollsReturnValidItems() {
         val src = List(150, Int::toString)
         repeat(50) { queue.offer("a") }
         repeat(50) { queue.offer(src[it]) }
@@ -139,7 +139,7 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `size is 1 when 100 offers, 50 polls, 100 offers, 149 polls`() {
+    fun sizeIs1When100Offers50Polls100Offers149Polls() {
         val src = List(150, Int::toString)
         repeat(50) { queue.offer("a") }
         repeat(50) { queue.offer(src[it]) }
@@ -152,7 +152,7 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `size is 0 when 100 offers, 50 polls, 100 offers, 150 polls`() {
+    fun sizeIs0When100Offers50Polls100Offers150Polls() {
         val src = List(150, Int::toString)
         repeat(50) { queue.offer("a") }
         repeat(50) { queue.offer(src[it]) }
@@ -165,14 +165,14 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `size is 0 after clear`() {
+    fun sizeIs0AfterClear() {
         offer(List(100, Int::toString))
         queue.clear()
         assertEquals(0, queue.size)
     }
 
     @Test
-    fun `size is 1 after clear and 1 offer`() {
+    fun sizeIs1AfterClearAnd1Offer() {
         offer(List(100, Int::toString))
         queue.clear()
         queue.offer("a")
@@ -180,14 +180,14 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `poll returns null after clear`() {
+    fun pollReturnsNullAfterClear() {
         offer(List(100, Int::toString))
         queue.clear()
         assertNull(queue.poll())
     }
 
     @Test
-    fun `poll returns correct item after clear and one offer`() {
+    fun pollReturnsCorrectItemAfterClearAndOneOffer() {
         offer(List(100, Int::toString))
         queue.clear()
         queue.offer("a")
@@ -195,7 +195,7 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `size is 0 after clear, one offer and one poll`() {
+    fun sizeIs0AfterClearOneOfferAndOnePoll() {
         offer(List(100, Int::toString))
         queue.clear()
         queue.offer("a")
@@ -204,7 +204,7 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun `poll returns null after clear, one offer and one poll`() {
+    fun pollReturnsNullAfterClearOneOfferAndOnePoll() {
         offer(List(100, Int::toString))
         queue.clear()
         queue.offer("a")
