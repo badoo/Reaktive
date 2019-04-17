@@ -78,7 +78,7 @@ internal class ExecutorServiceScheduler(
         private companion object {
             private fun Future<*>.toDisposable(): Disposable =
                 object : Disposable {
-                    override val isDisposed: Boolean = isDone
+                    override val isDisposed: Boolean get() = isDone
 
                     override fun dispose() {
                         cancel(true)
