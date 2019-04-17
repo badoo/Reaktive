@@ -212,6 +212,36 @@ class ArrayQueueTest {
         assertNull(queue.poll())
     }
 
+    @Test
+    fun sizeIsOneAfterInitialCapacityMinus1OffersAndSamePollsAndOneAdditionalOffer() {
+        val count = ArrayQueue.INITIAL_CAPACITY - 1
+        offer(List(count, Int::toString))
+        poll(count)
+        queue.offer("a")
+        assertEquals(1, queue.size)
+    }
+
+    @Test
+    fun sizeIsInitialCapacityAfterSameOffers() {
+        offer(List(ArrayQueue.INITIAL_CAPACITY, Int::toString))
+        assertEquals(ArrayQueue.INITIAL_CAPACITY, queue.size)
+    }
+
+    @Test
+    fun sizeIsInitialCapacityPlus1AfterSameOffers() {
+        offer(List(ArrayQueue.INITIAL_CAPACITY + 1, Int::toString))
+        assertEquals(ArrayQueue.INITIAL_CAPACITY + 1, queue.size)
+    }
+
+    @Test
+    fun sizeIsInitialCapacityAfterInitialCapacityOffersAndTwoPollsAndTwoOffers() {
+        offer(List(ArrayQueue.INITIAL_CAPACITY, Int::toString))
+        poll(2)
+        offer(List(2, Int::toString))
+        assertEquals(ArrayQueue.INITIAL_CAPACITY, queue.size)
+    }
+
+
     private fun offer(iterable: Iterable<String?>) {
         iterable.forEach(queue::offer)
     }
