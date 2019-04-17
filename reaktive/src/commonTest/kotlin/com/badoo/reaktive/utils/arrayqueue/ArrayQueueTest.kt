@@ -50,7 +50,7 @@ class ArrayQueueTest {
     }
 
     @Test
-    fun offerPollPeakReturnsNull() {
+    fun offerPollPeekReturnsNull() {
         queue.offer("a")
         queue.poll()
         assertNull(queue.peek)
