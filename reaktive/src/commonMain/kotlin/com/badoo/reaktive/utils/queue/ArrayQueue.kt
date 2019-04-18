@@ -66,7 +66,7 @@ internal class ArrayQueue<T> : Queue<T> {
     }
 
     internal companion object {
-        internal const val INITIAL_CAPACITY = 9
+        internal const val INITIAL_CAPACITY = 8
 
         @Suppress("UNCHECKED_CAST")
         private fun <T> createArray(size: Int): Array<T?> = arrayOfNulls<Any>(size) as Array<T?>
