@@ -4,7 +4,7 @@ import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.SingleObserver
-import com.badoo.reaktive.single.single
+import com.badoo.reaktive.single.singleUnsafe
 
 fun <T> Completable.asSingle(defaultValue: T): Single<T> =
     asSingleOrAction { observer ->
@@ -23,7 +23,7 @@ fun <T> Completable.asSingle(defaultValueSupplier: () -> T): Single<T> =
     }
 
 private inline fun <T> Completable.asSingleOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
-    single { observer ->
+    singleUnsafe { observer ->
         subscribeSafe(
             object : CompletableObserver, Observer by observer, ErrorCallback by observer {
                 override fun onComplete() {

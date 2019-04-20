@@ -6,7 +6,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun <T, R> Maybe<T>.flatMap(mapper: (T) -> Maybe<R>): Maybe<R> =
-    maybe { observer ->
+    maybeUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 

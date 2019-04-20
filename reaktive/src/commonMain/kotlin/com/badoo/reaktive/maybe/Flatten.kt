@@ -3,10 +3,10 @@ package com.badoo.reaktive.maybe
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.observable.observableByEmitter
+import com.badoo.reaktive.observable.observable
 
 fun <T> Maybe<Iterable<T>>.flatten(): Observable<T> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         subscribeSafe(
             object : MaybeObserver<Iterable<T>>, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {

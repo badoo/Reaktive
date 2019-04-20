@@ -4,14 +4,14 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
-    observable { observer ->
+    observableUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 
         val iterator = iterator()
         if (!iterator.hasNext()) {
             observer.onComplete()
-            return@observable
+            return@observableUnsafe
         }
 
         val upstreamObserver =

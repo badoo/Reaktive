@@ -3,8 +3,8 @@ package com.badoo.reaktive.completable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
-inline fun completableByEmitter(crossinline onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable =
-    completable { observer ->
+fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable =
+    completableUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 

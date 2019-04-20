@@ -9,7 +9,7 @@ import com.badoo.reaktive.utils.queue.take
 import com.badoo.reaktive.utils.serializer.serializer
 
 fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val values = List<ArrayQueue<T>>(size) { ArrayQueue() }

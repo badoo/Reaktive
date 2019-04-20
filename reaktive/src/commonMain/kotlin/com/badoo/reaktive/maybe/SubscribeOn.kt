@@ -5,7 +5,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.scheduler.Scheduler
 
 fun <T> Maybe<T>.subscribeOn(scheduler: Scheduler): Maybe<T> =
-    maybe { observer ->
+    maybeUnsafe { observer ->
         val disposables = CompositeDisposable()
         observer.onSubscribe(disposables)
         val executor = scheduler.newExecutor()

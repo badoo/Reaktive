@@ -2,10 +2,10 @@ package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.maybe.Maybe
-import com.badoo.reaktive.maybe.maybe
+import com.badoo.reaktive.maybe.maybeUnsafe
 
 fun <T> Single<T>.asMaybe(): Maybe<T> =
-    maybe { observer ->
+    maybeUnsafe { observer ->
         subscribeSafe(
             object : SingleObserver<T>, Observer by observer, SingleCallbacks<T> by observer {
             }

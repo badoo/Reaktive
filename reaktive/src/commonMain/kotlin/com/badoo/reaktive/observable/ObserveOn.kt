@@ -6,7 +6,7 @@ import com.badoo.reaktive.scheduler.BufferedExecutor
 import com.badoo.reaktive.scheduler.Scheduler
 
 fun <T> Observable<T>.observeOn(scheduler: Scheduler): Observable<T> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val executor = scheduler.newExecutor()

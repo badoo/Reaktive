@@ -7,7 +7,7 @@ import com.badoo.reaktive.utils.serializer.serializer
 private val dummyValue = Any()
 
 fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Observable<R> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val values = MutableList<Any?>(size) { dummyValue }

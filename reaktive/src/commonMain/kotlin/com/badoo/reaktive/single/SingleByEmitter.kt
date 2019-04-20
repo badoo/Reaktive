@@ -3,8 +3,8 @@ package com.badoo.reaktive.single
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
-inline fun <T> singleByEmitter(crossinline onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
-    single { observer ->
+fun <T> single(onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
+    singleUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 

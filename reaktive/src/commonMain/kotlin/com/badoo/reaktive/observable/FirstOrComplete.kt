@@ -1,12 +1,12 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.maybe.Maybe
-import com.badoo.reaktive.maybe.maybeByEmitter
+import com.badoo.reaktive.maybe.maybe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun <T> Observable<T>.firstOrComplete(): Maybe<T> =
-    maybeByEmitter { emitter ->
+    maybe { emitter ->
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)
 

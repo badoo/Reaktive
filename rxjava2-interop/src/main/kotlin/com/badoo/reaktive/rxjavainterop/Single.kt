@@ -3,7 +3,7 @@ package com.badoo.reaktive.rxjavainterop
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.SingleObserver
-import com.badoo.reaktive.single.single
+import com.badoo.reaktive.single.singleUnsafe
 
 fun <T> Single<T>.toRxJava2Source(): io.reactivex.SingleSource<T> =
     io.reactivex.SingleSource { observer ->
@@ -18,7 +18,7 @@ fun <T> Single<T>.toRxJava2(): io.reactivex.Single<T> =
     }
 
 fun <T> io.reactivex.SingleSource<out T>.toReaktive(): Single<T> =
-    single { observer ->
+    singleUnsafe { observer ->
         subscribe(observer.toRxJava2())
     }
 

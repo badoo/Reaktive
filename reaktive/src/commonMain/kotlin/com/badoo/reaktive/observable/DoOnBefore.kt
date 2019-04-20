@@ -6,7 +6,7 @@ import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
 fun <T> Observable<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Observable<T> =
-    observable { observer ->
+    observableUnsafe { observer ->
         subscribeSafe(
             object : ObservableObserver<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
@@ -18,7 +18,7 @@ fun <T> Observable<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Observa
     }
 
 fun <T> Observable<T>.doOnBeforeNext(consumer: (T) -> Unit): Observable<T> =
-    observable { observer ->
+    observableUnsafe { observer ->
         subscribeSafe(
             object : ObservableObserver<T> by observer {
                 override fun onNext(value: T) {
@@ -30,7 +30,7 @@ fun <T> Observable<T>.doOnBeforeNext(consumer: (T) -> Unit): Observable<T> =
     }
 
 fun <T> Observable<T>.doOnBeforeComplete(action: () -> Unit): Observable<T> =
-    observable { observer ->
+    observableUnsafe { observer ->
         subscribeSafe(
             object : ObservableObserver<T> by observer {
                 override fun onComplete() {
@@ -42,7 +42,7 @@ fun <T> Observable<T>.doOnBeforeComplete(action: () -> Unit): Observable<T> =
     }
 
 fun <T> Observable<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Observable<T> =
-    observable { observer ->
+    observableUnsafe { observer ->
         subscribeSafe(
             object : ObservableObserver<T> by observer {
                 override fun onError(error: Throwable) {
@@ -54,7 +54,7 @@ fun <T> Observable<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Observable
     }
 
 fun <T> Observable<T>.doOnBeforeTerminate(action: () -> Unit): Observable<T> =
-    observable { observer ->
+    observableUnsafe { observer ->
         subscribeSafe(
             object : ObservableObserver<T> by observer {
                 override fun onComplete() {
@@ -71,7 +71,7 @@ fun <T> Observable<T>.doOnBeforeTerminate(action: () -> Unit): Observable<T> =
     }
 
 fun <T> Observable<T>.doOnBeforeDispose(action: () -> Unit): Observable<T> =
-    observable { observer ->
+    observableUnsafe { observer ->
         subscribeSafe(
             object : ObservableObserver<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
@@ -82,7 +82,7 @@ fun <T> Observable<T>.doOnBeforeDispose(action: () -> Unit): Observable<T> =
     }
 
 fun <T> Observable<T>.doOnBeforeFinally(action: () -> Unit): Observable<T> =
-    observable { observer ->
+    observableUnsafe { observer ->
         subscribeSafe(
             object : ObservableObserver<T> by observer {
                 private val lock = newLock()

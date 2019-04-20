@@ -4,7 +4,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.SingleEmitter
-import com.badoo.reaktive.single.singleByEmitter
+import com.badoo.reaktive.single.single
 
 fun <T> Observable<T>.firstOrDefault(defaultValue: T): Single<T> =
     firstOrAction { emitter ->
@@ -23,7 +23,7 @@ fun <T> Observable<T>.firstOrDefault(defaultValueSupplier: () -> T): Single<T> =
     }
 
 internal inline fun <T> Observable<T>.firstOrAction(crossinline onComplete: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
-    singleByEmitter { emitter ->
+    single { emitter ->
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)
 

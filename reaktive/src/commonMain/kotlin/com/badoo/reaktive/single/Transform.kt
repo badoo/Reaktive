@@ -5,7 +5,7 @@ import com.badoo.reaktive.disposable.Disposable
 internal inline fun <T, R> Single<T>.transform(
     crossinline onSuccess: (value: T, onSuccess: (R) -> Unit) -> Unit
 ): Single<R> =
-    singleByEmitter { emitter ->
+    single { emitter ->
         subscribeSafe(
             object : SingleObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {

@@ -7,7 +7,7 @@ import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
 fun <T> Observable<T>.sample(windowMillis: Long, scheduler: Scheduler): Observable<T> =
-    observableByEmitter { emitter ->
+    observable { emitter ->
         val disposableWrapper = CompositeDisposable()
         emitter.setDisposable(disposableWrapper)
         val executor = scheduler.newExecutor()

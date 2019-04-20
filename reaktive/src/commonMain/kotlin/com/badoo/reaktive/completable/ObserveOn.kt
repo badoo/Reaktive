@@ -5,7 +5,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.scheduler.Scheduler
 
 fun Completable.observeOn(scheduler: Scheduler): Completable =
-    completableByEmitter { emitter ->
+    completable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val executor = scheduler.newExecutor()

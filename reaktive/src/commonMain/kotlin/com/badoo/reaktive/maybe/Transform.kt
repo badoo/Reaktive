@@ -5,7 +5,7 @@ import com.badoo.reaktive.disposable.Disposable
 internal inline fun <T, R> Maybe<T>.transform(
     crossinline onSuccess: (value: T, onSuccess: (R) -> Unit, onComplete: () -> Unit) -> Unit
 ): Maybe<R> =
-    maybeByEmitter { emitter ->
+    maybe { emitter ->
         subscribeSafe(
             object : MaybeObserver<T> {
                 private val onSuccessFunction = emitter::onSuccess

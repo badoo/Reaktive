@@ -3,8 +3,8 @@ package com.badoo.reaktive.maybe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
-inline fun <T> maybeByEmitter(crossinline onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T> =
-    maybe { observer ->
+fun <T> maybe(onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T> =
+    maybeUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 
