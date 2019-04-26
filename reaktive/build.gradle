@@ -33,7 +33,7 @@ if (target.isCommon() || target.isMeta()) {
     android {
         buildToolsVersion '28.0.3'
         compileSdkVersion 28
-        
+
         defaultConfig {
             minSdkVersion 1
         }
@@ -96,7 +96,7 @@ if (target.isIos() || target.isMeta()) {
                 binaries.framework()
             }
         }
-        
+
         sourceSets {
             iosCommonMain.dependsOn commonMain
             iosCommonTest.dependsOn commonMainTest
@@ -112,6 +112,8 @@ if (target.isIos() || target.isMeta()) {
         }
     }
 
+    // Uncomment when ios is ready
+    /*
     task iosTest(dependsOn: 'linkTestDebugExecutableIosSim') {
         group 'verification'
         doLast {
@@ -122,6 +124,7 @@ if (target.isIos() || target.isMeta()) {
         }
     }
     tasks.check.dependsOn iosTest
+    */
 }
 
 apply from: '../publication.gradle'
