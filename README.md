@@ -40,7 +40,7 @@ implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
 ```
 
 ### Features:
-* Multiplatform: JVM and Android, iOS is under development
+* Multiplatform: JVM, Android and JavaScript, iOS is under development
 * Schedulers support: computation, IO, trampoline, main
 * Supported sources: Observable, Maybe, Single, Completable
 * Subjects: PublishSubject, BehaviorSubject
