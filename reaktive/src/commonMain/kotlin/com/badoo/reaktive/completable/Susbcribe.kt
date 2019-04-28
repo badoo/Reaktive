@@ -12,12 +12,12 @@ fun Completable.subscribe(
     onComplete: (() -> Unit)? = null
 ): Disposable {
     val disposableWrapper = DisposableWrapper()
+    onSubscribe?.invoke(disposableWrapper)
 
     subscribeSafe(
         object : CompletableObserver {
             override fun onSubscribe(disposable: Disposable) {
                 disposableWrapper.set(disposable)
-                onSubscribe?.invoke(disposable)
             }
 
             override fun onComplete() {
@@ -35,8 +35,7 @@ fun Completable.subscribe(
                     disposableWrapper.dispose()
                 }
             }
-        },
-        onError
+        }
     )
 
     return disposableWrapper

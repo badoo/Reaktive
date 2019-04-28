@@ -1,17 +1,22 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
 fun Completable.doOnBeforeSubscribe(action: (Disposable) -> Unit): Completable =
     completableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : CompletableObserver by observer {
+            object : CompletableObserver, CompletableCallbacks by observer {
                 override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
                     action(disposable)
-                    observer.onSubscribe(disposable)
                 }
             }
         )
@@ -19,8 +24,15 @@ fun Completable.doOnBeforeSubscribe(action: (Disposable) -> Unit): Completable =
 
 fun Completable.doOnBeforeComplete(action: () -> Unit): Completable =
     completableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : CompletableObserver by observer {
+            object : CompletableObserver, ErrorCallback by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onComplete() {
                     action()
                     observer.onComplete()
@@ -31,8 +43,15 @@ fun Completable.doOnBeforeComplete(action: () -> Unit): Completable =
 
 fun Completable.doOnBeforeError(consumer: (Throwable) -> Unit): Completable =
     completableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : CompletableObserver by observer {
+            object : CompletableObserver, CompletableCallbacks by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onError(error: Throwable) {
                     consumer(error)
                     observer.onError(error)
@@ -43,8 +62,15 @@ fun Completable.doOnBeforeError(consumer: (Throwable) -> Unit): Completable =
 
 fun Completable.doOnBeforeTerminate(action: () -> Unit): Completable =
     completableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : CompletableObserver by observer {
+            object : CompletableObserver {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onComplete() {
                     action()
                     observer.onComplete()
@@ -60,10 +86,13 @@ fun Completable.doOnBeforeTerminate(action: () -> Unit): Completable =
 
 fun Completable.doOnBeforeDispose(action: () -> Unit): Completable =
     completableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper.wrap(onBeforeDispose = action))
+
         subscribeSafe(
-            object : CompletableObserver by observer {
+            object : CompletableObserver, CompletableCallbacks by observer {
                 override fun onSubscribe(disposable: Disposable) {
-                    observer.onSubscribe(disposable.wrap(onBeforeDispose = action))
+                    disposableWrapper.set(disposable)
                 }
             }
         )
@@ -71,13 +100,31 @@ fun Completable.doOnBeforeDispose(action: () -> Unit): Completable =
 
 fun Completable.doOnBeforeFinally(action: () -> Unit): Completable =
     completableUnsafe { observer ->
-        subscribeSafe(
-            object : CompletableObserver by observer {
-                private val lock = newLock()
-                private var isFinished = false
+        val lock = newLock()
+        var isFinished = false
 
+        fun onFinally() {
+            if (isFinished) {
+                return
+            }
+
+            lock.synchronized {
+                if (isFinished) {
+                    return
+                }
+                isFinished = true
+            }
+
+            action()
+        }
+
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper.wrap(onBeforeDispose = ::onFinally))
+
+        subscribeSafe(
+            object : CompletableObserver {
                 override fun onSubscribe(disposable: Disposable) {
-                    observer.onSubscribe(disposable.wrap(onBeforeDispose = ::onFinally))
+                    disposableWrapper.set(disposable)
                 }
 
                 override fun onComplete() {
@@ -88,21 +135,6 @@ fun Completable.doOnBeforeFinally(action: () -> Unit): Completable =
                 override fun onError(error: Throwable) {
                     onFinally()
                     observer.onError(error)
-                }
-
-                private fun onFinally() {
-                    if (isFinished) {
-                        return
-                    }
-
-                    lock.synchronized {
-                        if (isFinished) {
-                            return
-                        }
-                        isFinished = true
-                    }
-
-                    action()
                 }
             }
         )

@@ -1,13 +1,20 @@
 package com.badoo.reaktive.completable
 
-import com.badoo.reaktive.base.Observer
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observableUnsafe
 
 fun <T> Completable.asObservable(): Observable<T> =
     observableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : CompletableObserver, Observer by observer, CompletableCallbacks by observer {
+            object : CompletableObserver, CompletableCallbacks by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
             }
         )
     }

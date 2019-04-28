@@ -13,7 +13,7 @@ fun <T> Maybe<T>.subscribeOn(scheduler: Scheduler): Maybe<T> =
 
         executor.submit {
             subscribeSafe(
-                object : MaybeObserver<T> by observer {
+                object : MaybeObserver<T>, MaybeCallbacks<T> by observer {
                     override fun onSubscribe(disposable: Disposable) {
                         disposables += disposable
                     }

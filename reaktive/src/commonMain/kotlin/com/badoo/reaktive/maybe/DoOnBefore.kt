@@ -1,17 +1,23 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
+import com.badoo.reaktive.single.SingleCallbacks
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
 fun <T> Maybe<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : MaybeObserver<T> by observer {
+            object : MaybeObserver<T>, MaybeCallbacks<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
                     action(disposable)
-                    observer.onSubscribe(disposable)
                 }
             }
         )
@@ -19,8 +25,15 @@ fun <T> Maybe<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Maybe<T> =
 
 fun <T> Maybe<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : MaybeObserver<T> by observer {
+            object : MaybeObserver<T>, CompletableCallbacks by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onSuccess(value: T) {
                     consumer(value)
                     observer.onSuccess(value)
@@ -31,8 +44,15 @@ fun <T> Maybe<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Maybe<T> =
 
 fun <T> Maybe<T>.doOnBeforeComplete(action: () -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : MaybeObserver<T> by observer {
+            object : MaybeObserver<T>, SingleCallbacks<T> by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onComplete() {
                     action()
                     observer.onComplete()
@@ -43,8 +63,15 @@ fun <T> Maybe<T>.doOnBeforeComplete(action: () -> Unit): Maybe<T> =
 
 fun <T> Maybe<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : MaybeObserver<T> by observer {
+            object : MaybeObserver<T>, MaybeCallbacks<T> by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onError(error: Throwable) {
                     consumer(error)
                     observer.onError(error)
@@ -55,8 +82,15 @@ fun <T> Maybe<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Maybe<T> =
 
 fun <T> Maybe<T>.doOnBeforeTerminate(action: () -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : MaybeObserver<T> by observer {
+            object : MaybeObserver<T> {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onSuccess(value: T) {
                     action()
                     observer.onSuccess(value)
@@ -77,10 +111,13 @@ fun <T> Maybe<T>.doOnBeforeTerminate(action: () -> Unit): Maybe<T> =
 
 fun <T> Maybe<T>.doOnBeforeDispose(action: () -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper.wrap(onBeforeDispose = action))
+
         subscribeSafe(
-            object : MaybeObserver<T> by observer {
+            object : MaybeObserver<T>, MaybeCallbacks<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
-                    observer.onSubscribe(disposable.wrap(onBeforeDispose = action))
+                    disposableWrapper.set(disposable)
                 }
             }
         )
@@ -88,13 +125,31 @@ fun <T> Maybe<T>.doOnBeforeDispose(action: () -> Unit): Maybe<T> =
 
 fun <T> Maybe<T>.doOnBeforeFinally(action: () -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
-        subscribeSafe(
-            object : MaybeObserver<T> by observer {
-                private val lock = newLock()
-                private var isFinished = false
+        val lock = newLock()
+        var isFinished = false
 
+        fun onFinally() {
+            if (isFinished) {
+                return
+            }
+
+            lock.synchronized {
+                if (isFinished) {
+                    return
+                }
+                isFinished = true
+            }
+
+            action()
+        }
+
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper.wrap(onBeforeDispose = ::onFinally))
+
+        subscribeSafe(
+            object : MaybeObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
-                    observer.onSubscribe(disposable.wrap(onBeforeDispose = ::onFinally))
+                    disposableWrapper.set(disposable)
                 }
 
                 override fun onSuccess(value: T) {
@@ -110,21 +165,6 @@ fun <T> Maybe<T>.doOnBeforeFinally(action: () -> Unit): Maybe<T> =
                 override fun onError(error: Throwable) {
                     onFinally()
                     observer.onError(error)
-                }
-
-                private fun onFinally() {
-                    if (isFinished) {
-                        return
-                    }
-
-                    lock.synchronized {
-                        if (isFinished) {
-                            return
-                        }
-                        isFinished = true
-                    }
-
-                    action()
                 }
             }
         )
