@@ -2,27 +2,33 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.single.Single
-import com.badoo.reaktive.single.singleUnsafe
+import com.badoo.reaktive.single.single
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomicreference.update
 
-fun <T, C> Observable<T>.collect(collection: C, accumulator: (C, T) -> Unit): Single<C> =
-    singleUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
+fun <T, C> Observable<T>.collect(initialCollection: C, accumulator: (C, T) -> C): Single<C> =
+    single { emitter ->
         subscribeSafe(
-            object : ObservableObserver<T>, ErrorCallback by observer {
+            object : ObservableObserver<T>, ErrorCallback by emitter {
+                private val collection = AtomicReference(initialCollection, true)
+
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onNext(value: T) {
-                    accumulator(collection, value)
+                    collection.value =
+                        try {
+                            accumulator(collection.value, value)
+                        } catch (e: Throwable) {
+                            emitter.onError(e)
+                            return
+                        }
                 }
 
                 override fun onComplete() {
-                    observer.onSuccess(collection)
+                    emitter.onSuccess(collection.value)
                 }
             }
         )

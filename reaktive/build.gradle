@@ -44,6 +44,7 @@ if (target.isCommon() || target.isMeta()) {
             fromPreset(presets.jvm, 'jvm')
             fromPreset(presets.android, 'android')
             fromPreset(presets.js, 'js')
+            fromPreset(presets.linuxX64, 'linuxX64')
         }
 
         sourceSets {
@@ -75,6 +76,15 @@ if (target.isCommon() || target.isMeta()) {
                     implementation 'org.jetbrains.kotlin:kotlin-test-js'
                 }
             }
+
+            nativeCommonMain.dependsOn commonMain
+            nativeCommonTest.dependsOn commonTest
+
+            linuxCommonMain.dependsOn nativeCommonMain
+            linuxCommonTest.dependsOn nativeCommonTest
+          
+            linuxX64Main.dependsOn linuxCommonMain
+            linuxX64Test.dependsOn linuxCommonTest
         }
 
         android {
@@ -99,17 +109,17 @@ if (target.isIos()) {
         }
 
         sourceSets {
-            iosCommonMain.dependsOn commonMain
-            iosCommonTest.dependsOn commonMainTest
+            iosCommonMain.dependsOn nativeCommonMain
+            iosCommonTest.dependsOn nativeCommonTest
 
             ios32Main.dependsOn iosCommonMain
             ios32Test.dependsOn iosCommonTest
 
             ios64Main.dependsOn iosCommonMain
-            ios64Main.dependsOn iosCommonTest
+            ios64Test.dependsOn iosCommonTest
 
             iosSimMain.dependsOn iosCommonMain
-            iosSimMain.dependsOn iosCommonTest
+            iosSimTest.dependsOn iosCommonTest
         }
     }
 

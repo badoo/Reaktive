@@ -1,36 +1,29 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
-import com.badoo.reaktive.utils.serializer.serializer
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomicreference.updateAndGet
 
 fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
+        val serializedEmitter = emitter.serialize()
 
         subscribeSafe(
-            object : ObservableObserver<T> {
-                private val lock = newLock()
-                private var activeSourceCount = 1
+            object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
+                private val activeSourceCount = AtomicReference(1)
 
-                private val serializer =
-                    serializer<Any?> {
-                        if (it is FlatMapEvent) {
-                            when (it) {
-                                is FlatMapEvent.OnComplete -> emitter.onComplete()
-                                is FlatMapEvent.OnError -> emitter.onError(it.error)
-                            }
-                        } else {
-                            @Suppress("UNCHECKED_CAST") // Either FlatMapEvent or R, to avoid unnecessary allocations
-                            emitter.onNext(it as R)
+                private val mappedObserver =
+                    object : ObservableObserver<R>, Observer by this, CompletableCallbacks by this {
+                        override fun onNext(value: R) {
+                            serializedEmitter.onNext(value)
                         }
-
-                        true
                     }
 
                 override fun onSubscribe(disposable: Disposable) {
@@ -38,45 +31,25 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
                 }
 
                 override fun onNext(value: T) {
-                    lock.synchronized {
-                        activeSourceCount++
-                    }
+                    activeSourceCount.update { it + 1 }
 
-                    try {
-                        mapper(value)
-                    } catch (e: Throwable) {
-                        onError(e)
-                        return
-                    }
-                        .subscribeSafe(
-                            object : ObservableObserver<R>, Observer by this, CompletableCallbacks by this {
-                                override fun onNext(value: R) {
-                                    serializer.accept(value)
-                                }
-                            }
-                        )
+                    val mappedSource =
+                        try {
+                            mapper(value)
+                        } catch (e: Throwable) {
+                            onError(e)
+                            return
+                        }
+
+
+                    mappedSource.subscribeSafe(mappedObserver)
                 }
 
                 override fun onComplete() {
-                    lock.synchronized {
-                        activeSourceCount--
-                        if (activeSourceCount > 0) {
-                            return
-                        }
+                    if (activeSourceCount.updateAndGet { it - 1 } <= 0) {
+                        serializedEmitter.onComplete()
                     }
-
-                    serializer.accept(FlatMapEvent.OnComplete)
-                }
-
-                override fun onError(error: Throwable) {
-                    serializer.accept(FlatMapEvent.OnError(error))
                 }
             }
         )
     }
-
-private sealed class FlatMapEvent {
-
-    object OnComplete : FlatMapEvent()
-    class OnError(val error: Throwable) : FlatMapEvent()
-}

@@ -1,29 +1,39 @@
 package com.badoo.reaktive.scheduler
 
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import kotlin.native.concurrent.SharedImmutable
+
 /**
  * Provides the global instance of Main [Scheduler]
  */
-val mainScheduler: Scheduler by lazy { mainSchedulerFactory() }
+val mainScheduler: Scheduler get() = mainSchedulerFactory.value()
 
 /**
  * Provides the global instance of Computation [Scheduler]
  */
-val computationScheduler: Scheduler by lazy { computationSchedulerFactory() }
+val computationScheduler: Scheduler get() = computationSchedulerFactory.value()
 
 /**
  * Provides the global instance of IO [Scheduler]
  */
-val ioScheduler: Scheduler by lazy { ioSchedulerFactory() }
+val ioScheduler: Scheduler get() = ioSchedulerFactory.value()
 
 /**
  * Provides the global instance of Trampoline [Scheduler]
  */
-val trampolineScheduler: Scheduler by lazy { trampolineSchedulerFactory() }
+val trampolineScheduler: Scheduler get() = trampolineSchedulerFactory.value()
 
-private var mainSchedulerFactory: () -> Scheduler = ::createMainScheduler
-private var computationSchedulerFactory: () -> Scheduler = ::createComputationScheduler
-private var ioSchedulerFactory: () -> Scheduler = ::createIoScheduler
-private var trampolineSchedulerFactory: () -> Scheduler = ::createTrampolineScheduler
+@SharedImmutable
+private val mainSchedulerFactory: AtomicReference<() -> Scheduler> = AtomicReference(::createMainScheduler, true)
+
+@SharedImmutable
+private val computationSchedulerFactory: AtomicReference<() -> Scheduler> = AtomicReference(::createComputationScheduler, true)
+
+@SharedImmutable
+private val ioSchedulerFactory: AtomicReference<() -> Scheduler> = AtomicReference(::createIoScheduler, true)
+
+@SharedImmutable
+private val trampolineSchedulerFactory: AtomicReference<() -> Scheduler> = AtomicReference(::createTrampolineScheduler, true)
 
 /**
  * Creates a new instance of Main [Scheduler]
@@ -59,8 +69,8 @@ fun overrideSchedulers(
     io: () -> Scheduler = ::createIoScheduler,
     trampoline: () -> Scheduler = ::createTrampolineScheduler
 ) {
-    mainSchedulerFactory = main
-    computationSchedulerFactory = computation
-    ioSchedulerFactory = io
-    trampolineSchedulerFactory = trampoline
+    mainSchedulerFactory.value = main
+    computationSchedulerFactory.value = computation
+    ioSchedulerFactory.value = io
+    trampolineSchedulerFactory.value = trampoline
 }

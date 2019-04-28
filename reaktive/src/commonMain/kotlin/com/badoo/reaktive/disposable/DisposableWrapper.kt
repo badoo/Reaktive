@@ -1,31 +1,17 @@
 package com.badoo.reaktive.disposable
 
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
 
 /**
  * Thread-safe container of one [Disposable]
  */
-class DisposableWrapper(
-    private var disposable: Disposable? = null
-) : Disposable {
+class DisposableWrapper : Disposable {
 
-    private val lock = newLock()
-    private var _isDisposed = false
-    override val isDisposed: Boolean get() = lock.synchronized { _isDisposed }
+    private val ref = AtomicReference<Holder?>(Holder(null), true)
+    override val isDisposed: Boolean get() = ref.value == null
 
     override fun dispose() {
-        if (!_isDisposed) {
-            var disposableToDispose: Disposable? = null
-            lock.synchronized {
-                if (!_isDisposed) {
-                    _isDisposed = true
-                    disposableToDispose = disposable
-                    disposable = null
-                }
-            }
-            disposableToDispose?.dispose()
-        }
+        setHolder(null)
     }
 
     /**
@@ -33,16 +19,15 @@ class DisposableWrapper(
      * Also disposes any replaced [Disposable].
      */
     fun set(disposable: Disposable?) {
-        var disposableToDispose: Disposable? = disposable
-        if (!_isDisposed) {
-            lock.synchronized {
-                if (!_isDisposed) {
-                    disposableToDispose = this.disposable
-                    this.disposable = disposable
-                }
-            }
-        }
-
-        disposableToDispose?.dispose()
+        setHolder(Holder(disposable))
     }
+
+    private fun setHolder(holder: Holder?) {
+        ref
+            .getAndSet(holder)
+            ?.disposable
+            ?.dispose()
+    }
+
+    private class Holder(val disposable: Disposable?)
 }

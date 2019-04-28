@@ -1,0 +1,26 @@
+plugins {
+    id 'kotlin-multiplatform'
+}
+
+kotlin {
+    linuxX64("linux") {
+        binaries {
+            executable {
+                entryPoint = 'com.badoo.reaktive.sample.linux.main'
+                runTask?.args('')
+            }
+        }
+    }
+
+    sourceSets {
+        linuxMain {
+            dependencies {
+                implementation project(':reaktive')
+            }
+        }
+    }
+}
+
+// Use the following Gradle tasks to run your application:
+// :runReleaseExecutableLinux - without debug symbols
+// :runDebugExecutableLinux - with debug symbols
