@@ -2,17 +2,23 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.freeze
+import com.badoo.reaktive.utils.atomicreference.updateAndGet
 
 fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
     observableUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 
-        val iterator = iterator()
-        if (!iterator.hasNext()) {
+        val sources = toList().freeze()
+
+        if (sources.isEmpty()) {
             observer.onComplete()
             return@observableUnsafe
         }
+
+        val sourceIndex = AtomicReference(0)
 
         val upstreamObserver =
             object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
@@ -21,19 +27,15 @@ fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
                 }
 
                 override fun onComplete() {
-                    if (iterator.hasNext()) {
-                        iterator
-                            .next()
-                            .subscribeSafe(this)
-                    } else {
-                        observer.onComplete()
-                    }
+                    sourceIndex
+                        .updateAndGet { it + 1 }
+                        .let(sources::getOrNull)
+                        ?.subscribeSafe(this)
+                        ?: observer.onComplete()
                 }
             }
 
-        iterator
-            .next()
-            .subscribeSafe(upstreamObserver)
+        sources[0].subscribeSafe(upstreamObserver)
     }
 
 fun <T> concat(vararg sources: Observable<T>): Observable<T> =

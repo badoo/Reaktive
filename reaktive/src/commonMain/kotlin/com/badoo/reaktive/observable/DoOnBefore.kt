@@ -3,8 +3,7 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
 
 fun <T> Observable<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Observable<T> =
     observableUnsafe { observer ->
@@ -118,22 +117,13 @@ fun <T> Observable<T>.doOnBeforeDispose(action: () -> Unit): Observable<T> =
 
 fun <T> Observable<T>.doOnBeforeFinally(action: () -> Unit): Observable<T> =
     observableUnsafe { observer ->
-        val lock = newLock()
-        var isFinished = false
+        val isFinished = AtomicReference(false)
 
         fun onFinally() {
-            if (isFinished) {
-                return
+            @Suppress("BooleanLiteralArgument") // Not allowed for expected classes
+            if (isFinished.compareAndSet(false, true)) {
+                action()
             }
-
-            lock.synchronized {
-                if (isFinished) {
-                    return
-                }
-                isFinished = true
-            }
-
-            action()
         }
 
         val disposableWrapper = DisposableWrapper()

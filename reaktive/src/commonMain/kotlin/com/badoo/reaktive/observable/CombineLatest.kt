@@ -2,31 +2,34 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.replace
 import com.badoo.reaktive.utils.serializer.serializer
+import com.badoo.reaktive.utils.atomicreference.updateAndGet
+import kotlin.native.concurrent.SharedImmutable
 
+@SharedImmutable
 private val dummyValue = Any()
 
 fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val values = MutableList<Any?>(size) { dummyValue }
-        var readyValues: List<T>? = null
-        var activeSourceCount = size
+        val values = AtomicReference<List<Any?>>(List(size) { dummyValue }, true)
+        val activeSourceCount = AtomicReference(size)
 
         val serializer =
             serializer<CombineLatestEvent<T>> { event ->
                 when (event) {
                     is CombineLatestEvent.OnNext -> {
-                        values[event.index] = event.value
+                        values
+                            .updateAndGet { it.replace(event.index, event.value) }
+                            .takeIf { newValues -> newValues.none { it === dummyValue } }
+                            ?.let {
+                                @Suppress("UNCHECKED_CAST")
+                                it as List<T>
+                            }
 
-                        if ((readyValues == null) && values.none { it === dummyValue }) {
-                            @Suppress("UNCHECKED_CAST")
-                            readyValues = values as List<T>
-                        }
-
-                        readyValues
-                            ?.toList()
                             ?.let {
                                 try {
                                     mapper(it)
@@ -41,10 +44,10 @@ fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Obse
                     }
 
                     is CombineLatestEvent.OnComplete -> {
-                        activeSourceCount--
+                        val remainingActiveSources = activeSourceCount.updateAndGet { it - 1 }
 
                         // Complete if all sources are completed or a source is completed without a value
-                        val allCompleted = (activeSourceCount == 0) || (values[event.index] === dummyValue)
+                        val allCompleted = (remainingActiveSources == 0) || (values.value[event.index] === dummyValue)
                         if (allCompleted) {
                             emitter.onComplete()
                         }

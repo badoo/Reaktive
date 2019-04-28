@@ -2,19 +2,23 @@ import com.badoo.reaktive.observable.doOnBeforeFinally
 import com.badoo.reaktive.observable.doOnBeforeSubscribe
 import com.badoo.reaktive.observable.flatten
 import com.badoo.reaktive.observable.subscribe
-import org.w3c.dom.Element
-import org.w3c.dom.Image
-import kotlin.browser.document
-import kotlin.browser.window
 import com.badoo.reaktive.promise.asSingle
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.flatMap
 import com.badoo.reaktive.single.map
 import com.badoo.reaktive.single.merge
+import org.w3c.dom.Element
+import org.w3c.dom.Image
+import kotlin.browser.document
+import kotlin.browser.window
 
 private lateinit var loader: Element
 private lateinit var kittensContainer: Element
 
+/**
+ * How to run: execute "sample-js-browser-app:run" Gradle task
+ * and click on the link in build log (like "http://localhost:8080/")
+ */
 fun main() {
     document.addEventListener("DOMContentLoaded", {
 

@@ -4,8 +4,7 @@ import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
 
 fun Completable.doOnBeforeSubscribe(action: (Disposable) -> Unit): Completable =
     completableUnsafe { observer ->
@@ -100,22 +99,13 @@ fun Completable.doOnBeforeDispose(action: () -> Unit): Completable =
 
 fun Completable.doOnBeforeFinally(action: () -> Unit): Completable =
     completableUnsafe { observer ->
-        val lock = newLock()
-        var isFinished = false
+        val isFinished = AtomicReference(false)
 
         fun onFinally() {
-            if (isFinished) {
-                return
+            @Suppress("BooleanLiteralArgument") // Not allowed for expected classes
+            if (isFinished.compareAndSet(false, true)) {
+                action()
             }
-
-            lock.synchronized {
-                if (isFinished) {
-                    return
-                }
-                isFinished = true
-            }
-
-            action()
         }
 
         val disposableWrapper = DisposableWrapper()

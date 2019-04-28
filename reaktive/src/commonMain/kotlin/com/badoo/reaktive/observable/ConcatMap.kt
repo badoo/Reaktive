@@ -4,96 +4,86 @@ import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.queue.ArrayQueue
-import com.badoo.reaktive.utils.queue.isNotEmpty
-import com.badoo.reaktive.utils.queue.take
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomicreference.getAndUpdate
+import com.badoo.reaktive.utils.atomicreference.updateAndGet
 
 fun <T, R> Observable<T>.concatMap(mapper: (T) -> Observable<R>): Observable<R> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
+        val serializedEmitter = emitter.serialize()
+
+        val state = AtomicReference(ConcatMapState<T>(), true)
 
         subscribeSafe(
-            object : ObservableObserver<T> {
-                private val lock = newLock()
-                private val queue = ArrayQueue<T>()
-                private var isDraining = false
-                private var isUpstreamCompleted = false
+            object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
+                val mappedObserver =
+                    object : ObservableObserver<R>, Observer by this, ObservableCallbacks<R> by serializedEmitter {
+                        override fun onComplete() {
+                            val oldState =
+                                state.getAndUpdate {
+                                    it.copy(
+                                        queue = it.queue.drop(1),
+                                        isMappedSourceActive = it.queue.isNotEmpty()
+                                    )
+                                }
 
-                private val mappedObserver =
-                    object : ObservableObserver<R>, Observer by this, ErrorCallback by this {
-                        override fun onNext(value: R) {
-                            lock.synchronized {
-                                emitter.onNext(value)
+                            if (oldState.queue.isNotEmpty()) {
+                                mapAndSubscribe(oldState.queue[0])
+                            } else if (oldState.isUpstreamCompleted) {
+                                serializedEmitter.onComplete()
                             }
                         }
-
-                        override fun onComplete() {
-                            drain()
-                        }
                     }
+
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable
                 }
 
                 override fun onNext(value: T) {
-                    lock
-                        .synchronized {
-                            queue.offer(value)
-                            if (!isDraining) {
-                                isDraining = true
-                                true
-                            } else {
-                                false
-                            }
+                    val oldState =
+                        state.getAndUpdate {
+                            it.copy(
+                                queue = if (it.isMappedSourceActive) it.queue + value else it.queue,
+                                isMappedSourceActive = true
+                            )
                         }
-                        .takeIf { it }
-                        ?.also { drain() }
+
+                    if (!oldState.isMappedSourceActive) {
+                        mapAndSubscribe(value)
+                    }
                 }
 
                 override fun onComplete() {
-                    lock.synchronized {
-                        isUpstreamCompleted = true
-                        checkCompleted()
-                    }
-                }
-
-                override fun onError(error: Throwable) {
-                    lock.synchronized {
-                        emitter.onError(error)
-                    }
-                }
-
-                private fun drain() {
-                    lock
-                        .synchronized {
-                            if (queue.isNotEmpty) {
-                                queue.take()
-                            } else {
-                                isDraining = false
-                                checkCompleted()
-                                return
-                            }
+                    val newState =
+                        state.updateAndGet {
+                            it.copy(isUpstreamCompleted = true)
                         }
-                        .let {
-                            try {
-                                mapper(it)
-                            } catch (e: Throwable) {
-                                onError(e)
-                                return
-                            }
-                        }
-                        .subscribeSafe(mappedObserver)
+
+                    if (newState.isUpstreamCompleted && !newState.isMappedSourceActive) {
+                        serializedEmitter.onComplete()
+                    }
                 }
 
-                private fun checkCompleted() {
-                    if (isUpstreamCompleted && !isDraining) {
-                        emitter.onComplete()
-                    }
+                private fun mapAndSubscribe(value: T) {
+                    val mappedSource =
+                        try {
+                            mapper(value)
+                        } catch (e: Throwable) {
+                            emitter.onError(e)
+                            return
+                        }
+
+                    mappedSource.subscribeSafe(mappedObserver)
                 }
             }
         )
     }
+
+private data class ConcatMapState<T>(
+    val queue: List<T> = emptyList(),
+    val isMappedSourceActive: Boolean = false,
+    val isUpstreamCompleted: Boolean = false
+)
