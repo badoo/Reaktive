@@ -33,7 +33,7 @@ if (target.isCommon() || target.isMeta()) {
     android {
         buildToolsVersion '28.0.3'
         compileSdkVersion 28
-        
+
         defaultConfig {
             minSdkVersion 1
         }
@@ -83,7 +83,8 @@ if (target.isCommon() || target.isMeta()) {
     }
 }
 
-if (target.isIos() || target.isMeta()) {
+// target.isIos() || target.isMeta() when iOS is ready for publishing
+if (target.isIos()) {
     kotlin {
         targets {
             fromPreset(presets.iosArm32, 'ios32') {
@@ -96,7 +97,7 @@ if (target.isIos() || target.isMeta()) {
                 binaries.framework()
             }
         }
-        
+
         sourceSets {
             iosCommonMain.dependsOn commonMain
             iosCommonTest.dependsOn commonMainTest

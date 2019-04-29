@@ -1,6 +1,7 @@
 # <img src="https://raw.githubusercontent.com/badoo/Reaktive/master/assets/logo_reaktive.png" height="36">
 
 [![](https://jitpack.io/v/badoo/Reaktive.svg)](https://jitpack.io/#badoo/Reaktive)
+[![Build Status](https://travis-ci.org/badoo/Reaktive.svg?branch=master)](https://travis-ci.org/badoo/Reaktive)
 [![](https://img.shields.io/badge/License-Apache/2.0-blue.svg)](https://github.com/badoo/Reaktive/blob/master/LICENSE)
 
 Kotlin multi-platform implementation of Reactive Extensions.
@@ -39,7 +40,7 @@ implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
 ```
 
 ### Features:
-* Multiplatform: JVM and Android, iOS is under development
+* Multiplatform: JVM, Android and JavaScript, iOS is under development
 * Schedulers support: computation, IO, trampoline, main
 * Supported sources: Observable, Maybe, Single, Completable
 * Subjects: PublishSubject, BehaviorSubject
