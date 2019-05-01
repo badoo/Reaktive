@@ -15,7 +15,7 @@ fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
         }
 
         val upstreamObserver =
-            object : ObservableObserver<T> by observer {
+            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
                 }

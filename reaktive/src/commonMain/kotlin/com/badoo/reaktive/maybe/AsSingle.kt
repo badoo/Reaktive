@@ -1,6 +1,7 @@
 package com.badoo.reaktive.maybe
 
-import com.badoo.reaktive.base.Observer
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.SingleCallbacks
 import com.badoo.reaktive.single.SingleObserver
@@ -24,8 +25,15 @@ fun <T> Maybe<T>.asSingle(defaultValueSupplier: () -> T): Single<T> =
 
 internal inline fun <T> Maybe<T>.asSingleOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
     singleUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : MaybeObserver<T>, Observer by observer, SingleCallbacks<T> by observer {
+            object : MaybeObserver<T>, SingleCallbacks<T> by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onComplete() {
                     onComplete(observer)
                 }

@@ -1,17 +1,21 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
 import com.badoo.reaktive.utils.lock.newLock
 import com.badoo.reaktive.utils.lock.synchronized
 
 fun <T> Observable<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Observable<T> =
     observableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : ObservableObserver<T> by observer {
+            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
                     action(disposable)
-                    observer.onSubscribe(disposable)
                 }
             }
         )
@@ -19,8 +23,15 @@ fun <T> Observable<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Observa
 
 fun <T> Observable<T>.doOnBeforeNext(consumer: (T) -> Unit): Observable<T> =
     observableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : ObservableObserver<T> by observer {
+            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onNext(value: T) {
                     consumer(value)
                     observer.onNext(value)
@@ -31,8 +42,15 @@ fun <T> Observable<T>.doOnBeforeNext(consumer: (T) -> Unit): Observable<T> =
 
 fun <T> Observable<T>.doOnBeforeComplete(action: () -> Unit): Observable<T> =
     observableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : ObservableObserver<T> by observer {
+            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onComplete() {
                     action()
                     observer.onComplete()
@@ -43,8 +61,15 @@ fun <T> Observable<T>.doOnBeforeComplete(action: () -> Unit): Observable<T> =
 
 fun <T> Observable<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Observable<T> =
     observableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : ObservableObserver<T> by observer {
+            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onError(error: Throwable) {
                     consumer(error)
                     observer.onError(error)
@@ -55,8 +80,15 @@ fun <T> Observable<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Observable
 
 fun <T> Observable<T>.doOnBeforeTerminate(action: () -> Unit): Observable<T> =
     observableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         subscribeSafe(
-            object : ObservableObserver<T> by observer {
+            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableWrapper.set(disposable)
+                }
+
                 override fun onComplete() {
                     action()
                     observer.onComplete()
@@ -72,10 +104,13 @@ fun <T> Observable<T>.doOnBeforeTerminate(action: () -> Unit): Observable<T> =
 
 fun <T> Observable<T>.doOnBeforeDispose(action: () -> Unit): Observable<T> =
     observableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper.wrap(onBeforeDispose = action))
+
         subscribeSafe(
-            object : ObservableObserver<T> by observer {
+            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
-                    observer.onSubscribe(disposable.wrap(onBeforeDispose = action))
+                    disposableWrapper.set(disposable)
                 }
             }
         )
@@ -83,13 +118,31 @@ fun <T> Observable<T>.doOnBeforeDispose(action: () -> Unit): Observable<T> =
 
 fun <T> Observable<T>.doOnBeforeFinally(action: () -> Unit): Observable<T> =
     observableUnsafe { observer ->
-        subscribeSafe(
-            object : ObservableObserver<T> by observer {
-                private val lock = newLock()
-                private var isFinished = false
+        val lock = newLock()
+        var isFinished = false
 
+        fun onFinally() {
+            if (isFinished) {
+                return
+            }
+
+            lock.synchronized {
+                if (isFinished) {
+                    return
+                }
+                isFinished = true
+            }
+
+            action()
+        }
+
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper.wrap(onBeforeDispose = ::onFinally))
+
+        subscribeSafe(
+            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
-                    observer.onSubscribe(disposable.wrap(onBeforeDispose = ::onFinally))
+                    disposableWrapper.set(disposable)
                 }
 
                 override fun onComplete() {
@@ -100,21 +153,6 @@ fun <T> Observable<T>.doOnBeforeFinally(action: () -> Unit): Observable<T> =
                 override fun onError(error: Throwable) {
                     onFinally()
                     observer.onError(error)
-                }
-
-                private fun onFinally() {
-                    if (isFinished) {
-                        return
-                    }
-
-                    lock.synchronized {
-                        if (isFinished) {
-                            return
-                        }
-                        isFinished = true
-                    }
-
-                    action()
                 }
             }
         )

@@ -15,7 +15,7 @@ fun Iterable<Completable>.concat(): Completable =
         }
 
         val upstreamObserver =
-            object : CompletableObserver by observer {
+            object : CompletableObserver, CompletableCallbacks by observer {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
                 }
