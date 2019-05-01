@@ -13,12 +13,12 @@ fun <T> Observable<T>.subscribe(
     onNext: ((T) -> Unit)? = null
 ): Disposable {
     val disposableWrapper = DisposableWrapper()
+    onSubscribe?.invoke(disposableWrapper)
 
     subscribeSafe(
         object : ObservableObserver<T> {
             override fun onSubscribe(disposable: Disposable) {
                 disposableWrapper.set(disposable)
-                onSubscribe?.invoke(disposable)
             }
 
             override fun onNext(value: T) {
@@ -40,8 +40,7 @@ fun <T> Observable<T>.subscribe(
                     disposableWrapper.dispose()
                 }
             }
-        },
-        onError
+        }
     )
 
     return disposableWrapper
