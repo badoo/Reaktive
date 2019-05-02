@@ -25,7 +25,7 @@ class DistinctUntilChangedTests {
     }
 
     @Test
-    fun `distinctUntilChanged with a different key`() {
+    fun `distinctUntilChanged with a keySelector`() {
         val actual = observableOf(thirteen, thirteen, fortyTwo, fortyTwo)
             .distinctUntilChanged(keySelector = { it.answer })
             .record()
@@ -34,7 +34,7 @@ class DistinctUntilChangedTests {
     }
 
     @Test
-    fun `distinctUntilChanged which checks whether it is the same instance`() {
+    fun `distinctUntilChanged that checks whether it is not the same instance`() {
         val actual = observableOf(thirteen, thirteen, fortyTwo, fortyTwo)
             .distinctUntilChanged(comparer = { l, r -> l !== r })
             .record()
