@@ -123,7 +123,7 @@ fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
         subscribeSafe(
             object : SingleObserver<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
-                    observer.onSubscribe(disposable.wrap(onBeforeDispose = ::onFinally))
+                    disposableWrapper.set(disposable)
                 }
 
                 override fun onSuccess(value: T) {
