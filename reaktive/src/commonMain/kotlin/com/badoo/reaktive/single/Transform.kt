@@ -1,19 +1,15 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 
 internal inline fun <T, R> Single<T>.transform(
     crossinline onSuccess: (value: T, onSuccess: (R) -> Unit) -> Unit
 ): Single<R> =
     single { emitter ->
-        val disposableWrapper = DisposableWrapper()
-        emitter.setDisposable(disposableWrapper)
-
         subscribeSafe(
             object : SingleObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onSuccess(value: T) {
