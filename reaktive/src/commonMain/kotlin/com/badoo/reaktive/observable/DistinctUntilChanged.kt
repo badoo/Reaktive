@@ -17,31 +17,31 @@ fun <T, R> Observable<T>.distinctUntilChanged(
     comparer: (R, R) -> Boolean = ::inEqualityComparer
 ): Observable<T> =
     observable { emitter ->
-        subscribeSafe(object : ObservableObserver<T>, CompletableCallbacks by emitter {
+        subscribeSafe(
+            object : ObservableObserver<T>, CompletableCallbacks by emitter {
+                val lock = newLock()
+                var cache: Any? = Uninitialized
 
-            val lock = newLock()
-            var cache: Any? = Uninitialized
+                override fun onNext(value: T) {
+                    val previous = lock.synchronized {
+                        val result = cache
+                        cache = value
+                        result
+                    }
+                    val next = try {
+                        if (previous == Uninitialized || comparer(keySelector(previous as T), keySelector(value)))
+                            value
+                        else
+                            return
+                    } catch (e: Throwable) {
+                        emitter.onError(e)
+                        return
+                    }
 
-            override fun onNext(value: T) {
-                val previous = lock.synchronized {
-                    val result = cache
-                    cache = value
-                    result
+                    emitter.onNext(next)
                 }
-                val next = try {
-                    if (previous == Uninitialized || comparer(keySelector(previous as T), keySelector(value)))
-                        value
-                    else
-                        null
-                } catch (e: Throwable) {
-                    emitter.onError(e)
-                    return
-                }
 
-                next?.let(emitter::onNext)
-            }
+                override fun onSubscribe(disposable: Disposable) = emitter.setDisposable(disposable)
 
-            override fun onSubscribe(disposable: Disposable) = emitter.setDisposable(disposable)
-
-        })
+            })
     }
