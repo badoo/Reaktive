@@ -1,5 +1,6 @@
 package com.badoo.reaktive.testutils
 
+import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.testutils.TestObservableObserver.Event
 
 fun <T> TestObservableObserver<T>.getOnNextEvent(index: Int): Event.OnNext<T> =
@@ -21,3 +22,7 @@ val TestObservableObserver<*>.hasOnNext: Boolean get() = events.any { it is Even
 
 fun TestObservableObserver<*>.isError(error: Throwable): Boolean =
     isError && events.any { (it as? Event.OnError)?.error == error }
+
+fun <T> Observable<T>.test(): TestObservableObserver<T> =
+    TestObservableObserver<T>()
+        .also(::subscribe)

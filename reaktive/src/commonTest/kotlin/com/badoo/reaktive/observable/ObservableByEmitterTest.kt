@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.testutils.TestObservableObserver
 import com.badoo.reaktive.testutils.TestObservableObserver.Event
 import com.badoo.reaktive.testutils.getOnErrorEvent
 import com.badoo.reaktive.testutils.getOnNextEvent
@@ -8,6 +7,7 @@ import com.badoo.reaktive.testutils.hasOnNext
 import com.badoo.reaktive.testutils.isCompleted
 import com.badoo.reaktive.testutils.isError
 import com.badoo.reaktive.testutils.isOnCompleteEvent
+import com.badoo.reaktive.testutils.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -17,11 +17,7 @@ import kotlin.test.assertTrue
 class ObservableByEmitterTest {
 
     private lateinit var emitter: ObservableEmitter<Int>
-    private val observer = TestObservableObserver<Int>()
-
-    init {
-        observable<Int> { emitter = it }.subscribe(observer)
-    }
+    private val observer = observable<Int> { emitter = it }.test()
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
