@@ -45,6 +45,7 @@ if (target.isCommon() || target.isMeta()) {
             fromPreset(presets.android, 'android')
             fromPreset(presets.js, 'js')
             fromPreset(presets.linuxX64, 'linuxX64')
+            fromPreset(presets.linuxArm32Hfp, 'linuxArm32Hfp')
         }
 
         sourceSets {
@@ -85,6 +86,9 @@ if (target.isCommon() || target.isMeta()) {
           
             linuxX64Main.dependsOn linuxCommonMain
             linuxX64Test.dependsOn linuxCommonTest
+
+            linuxArm32HfpMain.dependsOn linuxCommonMain
+            linuxArm32HfpTest.dependsOn linuxCommonTest
         }
 
         android {

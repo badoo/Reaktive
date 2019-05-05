@@ -2,6 +2,7 @@ package com.badoo.reaktive.utils
 
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.ptr
 import platform.posix.pthread_cond_destroy
 import platform.posix.pthread_cond_init
@@ -27,8 +28,7 @@ internal class Condition(
         val a = Arena()
         try {
             val t: timespec = a.alloc()
-            t.tv_sec = 0
-            t.tv_nsec = getTimeNanos() + timeoutNanos
+            (getTimeNanos() + timeoutNanos).toTimespec(t)
             pthread_cond_timedwait(cond.ptr, lock.ptr, t.ptr)
         } finally {
             a.clear()
@@ -46,5 +46,15 @@ internal class Condition(
     fun destroy() {
         pthread_cond_destroy(cond.ptr)
         arena.clear()
+    }
+
+    private companion object {
+        private const val SECOND_IN_NANOS = 1000000000L
+
+        private fun Long.toTimespec(time: timespec) {
+            val secs = this / SECOND_IN_NANOS
+            time.tv_sec = secs.convert()
+            time.tv_nsec = (this - (secs * SECOND_IN_NANOS)).convert()
+        }
     }
 }
