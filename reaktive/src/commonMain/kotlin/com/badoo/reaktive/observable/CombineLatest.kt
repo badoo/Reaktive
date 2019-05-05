@@ -2,15 +2,14 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.serializer.serializer
-
-private val dummyValue = Any()
 
 fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val values = MutableList<Any?>(size) { dummyValue }
+        val values = MutableList<Any?>(size) { Uninitialized }
         var readyValues: List<T>? = null
         var activeSourceCount = size
 
@@ -20,7 +19,7 @@ fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Obse
                     is CombineLatestEvent.OnNext -> {
                         values[event.index] = event.value
 
-                        if ((readyValues == null) && values.none { it === dummyValue }) {
+                        if ((readyValues == null) && values.none { it === Uninitialized }) {
                             @Suppress("UNCHECKED_CAST")
                             readyValues = values as List<T>
                         }
@@ -44,7 +43,7 @@ fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Obse
                         activeSourceCount--
 
                         // Complete if all sources are completed or a source is completed without a value
-                        val allCompleted = (activeSourceCount == 0) || (values[event.index] === dummyValue)
+                        val allCompleted = (activeSourceCount == 0) || (values[event.index] === Uninitialized)
                         if (allCompleted) {
                             emitter.onComplete()
                         }

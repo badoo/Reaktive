@@ -6,6 +6,8 @@ import com.badoo.reaktive.utils.lock.synchronized
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+internal object Uninitialized
+
 internal fun handleSourceError(error: Throwable, onError: ((Throwable) -> Unit)? = null) {
     try {
         if (onError == null) {
