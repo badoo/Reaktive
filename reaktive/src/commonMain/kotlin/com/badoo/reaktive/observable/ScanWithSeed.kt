@@ -10,29 +10,30 @@ fun <T, R> Observable<T>.scan(seed: R, accumulator: (acc: R, value: T) -> R): Ob
 
 fun <T, R> Observable<T>.scan(getSeed: () -> R, accumulate: (acc: R, value: T) -> R): Observable<R> =
     observable { emitter ->
-        subscribeSafe(object : ObservableObserver<T>, CompletableCallbacks by emitter {
-            val lock = newLock()
-            var previous: R = getSeed()
+        subscribeSafe(
+            object : ObservableObserver<T>, CompletableCallbacks by emitter {
+                val lock = newLock()
+                var previous: R = getSeed()
 
-            override fun onNext(value: T) {
-                val next = try {
-                    accumulate(previous, value)
-                } catch (e: Throwable) {
-                    emitter.onError(e)
-                    return
+                override fun onNext(value: T) {
+                    val next = try {
+                        accumulate(previous, value)
+                    } catch (e: Throwable) {
+                        emitter.onError(e)
+                        return
+                    }
+
+                    lock.synchronized {
+                        previous = next
+                    }
+
+                    emitter.onNext(next)
                 }
 
-                lock.synchronized {
-                    previous = next
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                    emitter.onNext(previous)
                 }
 
-                emitter.onNext(next)
-            }
-
-            override fun onSubscribe(disposable: Disposable) {
-                emitter.setDisposable(disposable)
-                emitter.onNext(previous)
-            }
-
-        })
+            })
     }
