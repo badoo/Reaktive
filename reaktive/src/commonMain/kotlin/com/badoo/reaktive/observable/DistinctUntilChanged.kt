@@ -3,46 +3,45 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.Uninitialized
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
 
-private fun <T> inEqualityComparer(l: T, r: T) = l != r
+fun <T> Observable<T>.distinctUntilChanged(comparator: (T, T) -> Boolean = ::equals): Observable<T> =
+    distinctUntilChanged({ it }, comparator)
 
-fun <T> Observable<T>.distinctUntilChanged(comparer: (T, T) -> Boolean = ::inEqualityComparer): Observable<T> =
-    distinctUntilChanged({ it }, comparer)
-
-@Suppress("UNCHECKED_CAST")
 fun <T, R> Observable<T>.distinctUntilChanged(
     keySelector: (T) -> R,
-    comparer: (R, R) -> Boolean = ::inEqualityComparer
+    comparator: (R, R) -> Boolean = ::equals
 ): Observable<T> =
     observable { emitter ->
         subscribeSafe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
-                val lock = newLock()
-                var cache: Any? = Uninitialized
+                val cache = AtomicReference<Any?>(Uninitialized, true)
 
                 override fun onNext(value: T) {
-                    val previous = lock.synchronized {
-                        val result = cache
-                        cache = value
-                        result
-                    }
-                    val next = try {
-                        if (previous == Uninitialized || comparer(keySelector(previous as T), keySelector(value))) {
-                            value
-                        } else {
+                    val previous = cache.value
+                    cache.value = value
+
+                    val next =
+                        try {
+                            @Suppress("UNCHECKED_CAST")
+                            if ((previous === Uninitialized) || !comparator(keySelector(previous as T), keySelector(value))) {
+                                value
+                            } else {
+                                return
+                            }
+                        } catch (e: Throwable) {
+                            emitter.onError(e)
                             return
                         }
-                    } catch (e: Throwable) {
-                        emitter.onError(e)
-                        return
-                    }
 
                     emitter.onNext(next)
                 }
 
-                override fun onSubscribe(disposable: Disposable) = emitter.setDisposable(disposable)
-
-            })
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                }
+            }
+        )
     }
+
+private fun equals(a: Any?, b: Any?): Boolean = a == b
