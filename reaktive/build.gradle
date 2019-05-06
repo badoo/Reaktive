@@ -131,8 +131,12 @@ if (target.isIos()) {
         group 'verification'
         doLast {
             final binary = kotlin.targets.iosSim.compilations.test.getBinary('EXECUTABLE', 'DEBUG')
-            exec {
-                commandLine 'xcrun', 'simctl', 'spawn', 'iPhone X', binary.absolutePath
+            if (binary.exists()) {
+                exec {
+                    commandLine 'xcrun', 'simctl', 'spawn', 'iPhone X', binary.absolutePath
+                }
+            } else {
+                logger.warn('No test executable for iOS')
             }
         }
     }
