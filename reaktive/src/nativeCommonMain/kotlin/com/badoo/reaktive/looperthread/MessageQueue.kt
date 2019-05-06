@@ -1,6 +1,5 @@
 package com.badoo.reaktive.looperthread
 
-import com.badoo.reaktive.utils.Condition
 import com.badoo.reaktive.utils.Lock
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
 import com.badoo.reaktive.utils.atomicreference.update
@@ -11,7 +10,7 @@ import kotlin.system.getTimeNanos
 internal class MessageQueue {
 
     private val lock = Lock()
-    private val condition = Condition(lock)
+    private val condition = lock.newCondition()
     private val queue = AtomicReference(emptyList<Entry>(), true)
 
     fun offer(token: Any, startTimeNanos: Long, task: () -> Unit) {
