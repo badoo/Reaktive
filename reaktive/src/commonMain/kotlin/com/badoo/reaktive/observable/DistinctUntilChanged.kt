@@ -29,10 +29,11 @@ fun <T, R> Observable<T>.distinctUntilChanged(
                         result
                     }
                     val next = try {
-                        if (previous == Uninitialized || comparer(keySelector(previous as T), keySelector(value)))
+                        if (previous == Uninitialized || comparer(keySelector(previous as T), keySelector(value))) {
                             value
-                        else
+                        } else {
                             return
+                        }
                     } catch (e: Throwable) {
                         emitter.onError(e)
                         return
