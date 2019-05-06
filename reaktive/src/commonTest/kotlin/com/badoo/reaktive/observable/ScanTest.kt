@@ -33,7 +33,7 @@ class ScanTest {
     }
 
     @Test
-    fun sum_numbers_with_seed_that_contains_null() {
+    fun sum_numbers_with_seed_and_null() {
         val actual = observableOf(2, null, 3)
             .scan(1) { acc, value -> acc + (value ?: 0) }
             .record()
