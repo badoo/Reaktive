@@ -4,3 +4,5 @@
 .idea
 /build
 /classes
+/out
+.DS_Store*
