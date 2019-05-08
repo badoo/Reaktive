@@ -1,6 +1,7 @@
 package com.badoo.reaktive.utils
 
-import java.util.*
+import java.util.PriorityQueue
+import java.util.Queue
 
 /**
  * Similar to [Serializer][com.badoo.reaktive.utils.serializer.Serializer]
