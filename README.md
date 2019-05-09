@@ -10,7 +10,7 @@ Library status: under development, alpha pre-release is available, public API is
 
 ### Setup
 Add JitPack repository into your root build.gradle file:
-```
+```groovy
 allprojects {
     repositories {
         ...
@@ -22,32 +22,32 @@ allprojects {
 Add the following dependencies into your module's build.gradle file:
 #### Main library
 Kotlin multi-platform:
-```
+```groovy
 implementation 'com.github.badoo.reaktive:reaktive:<latest-version>'
 ```
 Kotlin Android:
-```
+```groovy
 implementation 'com.github.badoo.reaktive:reaktive-android:<latest-version>'
 ```
 Kotlin JVM:
-```
+```groovy
 implementation 'com.github.badoo.reaktive:reaktive-jvm:<latest-version>'
 ```
 Kotlin JavaScript:
-```
+```groovy
 implementation 'com.github.badoo.reaktive:reaktive-js:<latest-version>'
 ```
 Kotlin Linux x64:
-```
+```groovy
 implementation 'com.github.badoo.reaktive:reaktive-linuxx64:<latest-version>'
 ```
 Kotlin Linux ARM 32 hfp:
-```
+```groovy
 implementation 'com.github.badoo.reaktive:reaktive-linuxarm32hfp:<latest-version>'
 ```
 
 #### RxJava2 interoperability
-```
+```groovy
 implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
 ```
 
