@@ -7,7 +7,9 @@ import com.badoo.reaktive.utils.atomicreference.update
 /**
  * Serializes all calls to "accept" method and synchronously calls "onValue" method with corresponding values
  */
-internal abstract class Serializer<in T> {
+internal abstract class Serializer<in T>(
+    private val comparator: Comparator<in T>? = null
+) {
 
     private val state = AtomicReference<State<T>?>(State(), true)
 
@@ -21,9 +23,9 @@ internal abstract class Serializer<in T> {
      */
     fun accept(value: T) {
         state
-            .getAndUpdate {
-                it?.copy(
-                    queue = it.queue.plus(value),
+            .getAndUpdate { state ->
+                state?.copy(
+                    queue = state.queue.plus(value).let { comparator?.let(it::sortedWith) ?: it },
                     isDraining = true
                 )
             }

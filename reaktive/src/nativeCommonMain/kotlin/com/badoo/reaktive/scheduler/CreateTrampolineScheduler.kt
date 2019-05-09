@@ -1,3 +1,12 @@
 package com.badoo.reaktive.scheduler
 
-actual fun createTrampolineScheduler(): Scheduler = TODO("No trampoline scheduler so far :-(")
+import kotlinx.cinterop.convert
+import platform.posix.usleep
+
+actual fun createTrampolineScheduler(): Scheduler =
+    TrampolineScheduler(
+        sleep = {
+            usleep((it * 1000L).convert())
+            true
+        }
+    )

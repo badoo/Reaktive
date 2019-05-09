@@ -1,17 +1,21 @@
 package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.disposable.CompositeDisposable
-import com.badoo.reaktive.utils.PrioritySerializer
-import java.util.concurrent.atomic.AtomicLong
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomicreference.updateAndGet
+import com.badoo.reaktive.utils.serializer.Serializer
+import com.badoo.reaktive.utils.serializer.serializer
+import com.badoo.reaktive.utils.uptimeMillis
 
 internal class TrampolineScheduler(
-    private val getUptimeMillis: () -> Long
+    private val getUptimeMillis: () -> Long = ::uptimeMillis,
+    private val sleep: (mills: Long) -> Boolean
 ) : Scheduler {
 
     private val disposables = CompositeDisposable()
 
     override fun newExecutor(): Scheduler.Executor =
-        ExecutorImpl(getUptimeMillis)
+        ExecutorImpl(getUptimeMillis, sleep)
             .also(disposables::add)
 
     override fun destroy() {
@@ -19,27 +23,17 @@ internal class TrampolineScheduler(
     }
 
     private class ExecutorImpl(
-        private val getUptimeMillis: () -> Long
+        private val getUptimeMillis: () -> Long,
+        private val sleep: (mills: Long) -> Boolean
     ) : Scheduler.Executor {
 
-        @Volatile
-        private var serializer: PrioritySerializer<Task>? =
-            object : PrioritySerializer<Task>() {
-                override fun onValue(value: Task): Boolean = execute(value)
-            }
-
-        private val monitor = Any()
-
-        override val isDisposed: Boolean get() = serializer == null
+        private val serializer = serializer(comparator = Comparator(Task::compareTo), onValue = ::execute)
+        private val _isDisposed = AtomicReference(false)
+        override val isDisposed: Boolean get() = _isDisposed.value
 
         override fun dispose() {
-            if (serializer != null) {
-                val serializerToClear: PrioritySerializer<*>
-                synchronized(monitor) {
-                    serializerToClear = serializer ?: return
-                    serializer = null
-                }
-                serializerToClear.clear()
+            if (_isDisposed.compareAndSet(false, true)) {
+                serializer.clear()
             }
         }
 
@@ -52,7 +46,7 @@ internal class TrampolineScheduler(
         }
 
         override fun cancel() {
-            executeIfNotDisposed(PrioritySerializer<*>::clear)
+            serializer.clear()
         }
 
         private fun submit(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
@@ -60,7 +54,9 @@ internal class TrampolineScheduler(
         }
 
         private fun submit(task: Task) {
-            executeIfNotDisposed { it.accept(task) }
+            if (!isDisposed) {
+                serializer.accept(task)
+            }
         }
 
         private fun execute(task: Task): Boolean {
@@ -69,13 +65,8 @@ internal class TrampolineScheduler(
             }
 
             val delay = task.startTime - getUptimeMillis()
-            if (delay > 0) {
-                try {
-                    Thread.sleep(delay)
-                } catch (e: InterruptedException) {
-                    Thread.currentThread().interrupt()
-                    return false
-                }
+            if ((delay > 0) && !sleep(delay)) {
+                return false
             }
 
             if (isDisposed) {
@@ -93,22 +84,12 @@ internal class TrampolineScheduler(
             return true
         }
 
-        private inline fun <T> executeIfNotDisposed(block: (PrioritySerializer<Task>) -> T): T? {
-            if (serializer != null) {
-                synchronized(monitor) {
-                    return serializer?.let(block)
-                }
-            }
-
-            return null
-        }
-
         private data class Task(
             val startTime: Long,
             val periodMillis: Long,
             val task: () -> Unit
         ) : Comparable<Task> {
-            private val sequenceNumber = sequencer.getAndIncrement()
+            private val sequenceNumber = sequencer.updateAndGet(Long::inc)
 
             override fun compareTo(other: Task): Int =
                 if (this === other) {
@@ -121,7 +102,7 @@ internal class TrampolineScheduler(
                 }
 
             private companion object {
-                private val sequencer = AtomicLong()
+                private val sequencer = AtomicReference(0L)
             }
         }
     }

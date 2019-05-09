@@ -10,7 +10,7 @@ import com.badoo.reaktive.utils.atomicreference.update
 internal open class DefaultSubject<T> : Subject<T> {
 
     private var observers = AtomicReference(emptySet<ObservableObserver<T>>(), true)
-    private val serializer = serializer(::onSerializedValue)
+    private val serializer = serializer(onValue = ::onSerializedValue)
     private val _status = AtomicReference<Subject.Status>(Subject.Status.Active, true)
     override val status: Subject.Status get() = _status.value
 
