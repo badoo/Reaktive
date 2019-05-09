@@ -9,6 +9,8 @@ kotlin {
             'js'                 : target.isCommon(),
             'androidDebug'       : target.isCommon(),
             'androidRelease'     : target.isCommon(),
+            'linuxX64'           : target.isCommon(),
+            'linuxArm32Hfp'      : target.isCommon(),
             'ios32'              : target.isIos(),
             'ios64'              : target.isIos(),
             'iosSim'             : target.isIos()

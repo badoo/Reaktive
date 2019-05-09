@@ -1,6 +1,6 @@
 package com.badoo.reaktive.utils
 
-import java.util.*
+import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.DelayQueue
 import java.util.concurrent.Delayed

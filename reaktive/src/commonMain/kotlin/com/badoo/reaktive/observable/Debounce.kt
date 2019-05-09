@@ -3,8 +3,8 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.scheduler.Scheduler
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomicreference.update
 
 fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Observable<T> =
     observable { emitter ->
@@ -15,29 +15,21 @@ fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Obser
 
         subscribeSafe(
             object : ObservableObserver<T> {
-                private val lock = newLock()
-                private var pendingValue: T? = null
-                private var pendingValueCounter = 0
+                private val pendingValue = AtomicReference<DebouncePendingValue<T>?>(null, true)
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper += disposable
                 }
 
                 override fun onNext(value: T) {
-                    val valueCounter =
-                        lock.synchronized {
-                            pendingValue = value
-                            ++pendingValueCounter
-                        }
+                    val newPendingValue = DebouncePendingValue(value)
+                    pendingValue.value = newPendingValue
 
                     executor.cancel()
 
                     executor.submit(timeoutMillis) {
-                        lock.synchronized {
-                            if (pendingValueCounter == valueCounter) {
-                                pendingValue = null
-                                pendingValueCounter = 0
-                            }
+                        pendingValue.update {
+                            if (it === newPendingValue) null else it
                         }
 
                         emitter.onNext(value)
@@ -48,13 +40,10 @@ fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Obser
                     executor.cancel()
 
                     executor.submit {
-                        lock
-                            .synchronized(::pendingValueCounter)
-                            .takeIf { it != 0 }
-                            ?.also {
-                                @Suppress("UNCHECKED_CAST")
-                                emitter.onNext(pendingValue as T)
-                            }
+                        pendingValue
+                            .value
+                            ?.value
+                            ?.also(emitter::onNext)
 
                         emitter.onComplete()
                     }
@@ -70,3 +59,7 @@ fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Obser
             }
         )
     }
+
+private class DebouncePendingValue<T>(
+    val value: T
+)

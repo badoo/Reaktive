@@ -3,18 +3,16 @@ package com.badoo.reaktive.subject
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.observable.ObservableObserver
-import com.badoo.reaktive.utils.lock.Lock
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
 import com.badoo.reaktive.utils.serializer.serializer
-import com.badoo.reaktive.utils.synchronizedReadWriteProperty
+import com.badoo.reaktive.utils.atomicreference.update
 
 internal open class DefaultSubject<T> : Subject<T> {
 
-    private val lock: Lock = newLock()
-    private var observers: Set<ObservableObserver<T>> = emptySet()
-    private val serializer = serializer(onValue = ::onSerializedValue)
-    override var status: Subject.Status by synchronizedReadWriteProperty(Subject.Status.Active, lock)
+    private var observers = AtomicReference(emptySet<ObservableObserver<T>>(), true)
+    private val serializer = serializer(::onSerializedValue)
+    private val _status = AtomicReference<Subject.Status>(Subject.Status.Active, true)
+    override val status: Subject.Status get() = _status.value
 
     override fun subscribe(observer: ObservableObserver<T>) {
         serializer.accept(Event.OnSubscribe(observer))
@@ -74,18 +72,21 @@ internal open class DefaultSubject<T> : Subject<T> {
                     observer.onError(it.error)
                     return
                 }
+
+                else -> {
+                }
             }
         }
 
         val disposable =
             disposable {
-                lock.synchronized {
-                    observers = observers - observer
+                observers.update {
+                    it - observer
                 }
             }
 
-        lock.synchronized {
-            observers = observers + observer
+        observers.update {
+            it + observer
         }
 
         disposableWrapper.set(disposable)
@@ -95,27 +96,27 @@ internal open class DefaultSubject<T> : Subject<T> {
     private fun onSerializedNext(value: T) {
         onBeforeNext(value)
 
-        lock
-            .synchronized { observers }
+        observers
+            .value
             .forEach { it.onNext(value) }
     }
 
     private fun onSerializedComplete() {
         if (status is Subject.Status.Active) {
-            status = Subject.Status.Completed
+            _status.value = Subject.Status.Completed
 
-            lock
-                .synchronized { observers }
+            observers
+                .value
                 .forEach(ObservableObserver<*>::onComplete)
         }
     }
 
     private fun onSerializedError(error: Throwable) {
         if (status is Subject.Status.Active) {
-            status = Subject.Status.Error(error)
+            _status.value = Subject.Status.Error(error)
 
-            lock
-                .synchronized { observers }
+            observers
+                .value
                 .forEach { it.onError(error) }
         }
     }

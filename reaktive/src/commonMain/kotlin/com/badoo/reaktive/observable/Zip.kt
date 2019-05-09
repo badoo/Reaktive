@@ -2,35 +2,46 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.queue.ArrayQueue
-import com.badoo.reaktive.utils.queue.isEmpty
-import com.badoo.reaktive.utils.queue.isNotEmpty
-import com.badoo.reaktive.utils.queue.take
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.replace
 import com.badoo.reaktive.utils.serializer.serializer
+import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomicreference.updateAndGet
 
 fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val values = List<ArrayQueue<T>>(size) { ArrayQueue() }
-        val completed = Array(size) { false }
+        val values = AtomicReference(List(size) { emptyList<T>() }, true)
+        val completed = AtomicReference(List(size) { false }, true)
 
         val serializer =
             serializer<ZipEvent<T>> { event ->
                 when (event) {
                     is ZipEvent.OnNext -> {
-                        values[event.index].offer(event.value)
+                        var readyValues: List<T>? = null
 
-                        val readyValues =
-                            if (values.all(ArrayQueue<*>::isNotEmpty)) {
-                                values.map(ArrayQueue<T>::take)
-                            } else {
-                                return@serializer true
+                        val newValues =
+                            values.updateAndGet { oldValues ->
+                                oldValues
+                                    .replace(event.index, oldValues[event.index] + event.value)
+                                    .let { newValues ->
+                                        if (newValues.all(List<*>::isNotEmpty)) {
+                                            readyValues = newValues.map { it[0] }
+                                            newValues.map { it.drop(1) }
+                                        } else {
+                                            newValues
+                                        }
+                                    }
                             }
+
+                        if (readyValues == null) {
+                            return@serializer true
+                        }
 
                         val result =
                             try {
-                                mapper(readyValues)
+                                mapper(readyValues!!)
                             } catch (e: Throwable) {
                                 emitter.onError(e)
                                 return@serializer false
@@ -39,8 +50,8 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
                         emitter.onNext(result)
 
                         // Complete if for any completed source there are no values left in the queue
-                        values.forEachIndexed { index, queue ->
-                            if (queue.isEmpty && completed[index]) {
+                        newValues.forEachIndexed { index, queue ->
+                            if (queue.isEmpty() && completed.value[index]) {
                                 emitter.onComplete()
                                 return@serializer false
                             }
@@ -50,10 +61,12 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
                     }
 
                     is ZipEvent.OnComplete -> {
-                        completed[event.index] = true
+                        completed.update {
+                            it.replace(event.index, true)
+                        }
 
                         // Complete if a source is completed and no values left in its queue
-                        val isEmpty = values[event.index].isEmpty
+                        val isEmpty = values.value[event.index].isEmpty()
                         if (isEmpty) {
                             emitter.onComplete()
                         }

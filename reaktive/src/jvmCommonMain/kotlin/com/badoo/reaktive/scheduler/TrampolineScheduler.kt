@@ -1,10 +1,7 @@
 package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.disposable.CompositeDisposable
-import com.badoo.reaktive.utils.queue.toReaktive
-import com.badoo.reaktive.utils.serializer.Serializer
-import com.badoo.reaktive.utils.serializer.serializer
-import java.util.PriorityQueue
+import com.badoo.reaktive.utils.PrioritySerializer
 import java.util.concurrent.atomic.AtomicLong
 
 internal class TrampolineScheduler(
@@ -26,14 +23,18 @@ internal class TrampolineScheduler(
     ) : Scheduler.Executor {
 
         @Volatile
-        private var serializer: Serializer<Task>? = serializer<Task>(PriorityQueue<Task>().toReaktive(), ::execute)
+        private var serializer: PrioritySerializer<Task>? =
+            object : PrioritySerializer<Task>() {
+                override fun onValue(value: Task): Boolean = execute(value)
+            }
+
         private val monitor = Any()
 
         override val isDisposed: Boolean get() = serializer == null
 
         override fun dispose() {
             if (serializer != null) {
-                val serializerToClear: Serializer<*>
+                val serializerToClear: PrioritySerializer<*>
                 synchronized(monitor) {
                     serializerToClear = serializer ?: return
                     serializer = null
@@ -51,7 +52,7 @@ internal class TrampolineScheduler(
         }
 
         override fun cancel() {
-            executeIfNotDisposed(Serializer<*>::clear)
+            executeIfNotDisposed(PrioritySerializer<*>::clear)
         }
 
         private fun submit(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
@@ -92,7 +93,7 @@ internal class TrampolineScheduler(
             return true
         }
 
-        private inline fun <T> executeIfNotDisposed(block: (Serializer<Task>) -> T): T? {
+        private inline fun <T> executeIfNotDisposed(block: (PrioritySerializer<Task>) -> T): T? {
             if (serializer != null) {
                 synchronized(monitor) {
                     return serializer?.let(block)

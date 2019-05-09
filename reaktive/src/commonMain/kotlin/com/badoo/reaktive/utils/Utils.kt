@@ -1,13 +1,5 @@
 package com.badoo.reaktive.utils
 
-import com.badoo.reaktive.utils.lock.Lock
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
-
-internal object Uninitialized
-
 internal fun handleSourceError(error: Throwable, onError: ((Throwable) -> Unit)? = null) {
     try {
         if (onError == null) {
@@ -20,17 +12,11 @@ internal fun handleSourceError(error: Throwable, onError: ((Throwable) -> Unit)?
             }
         }
     } catch (e: Throwable) {
-        println("Error delivering uncaught error: e")
+        println("Error delivering uncaught error: $e")
     }
 }
 
-internal fun <T> synchronizedReadWriteProperty(initialValue: T, lock: Lock = newLock()): ReadWriteProperty<Any, T> =
-    object : ReadWriteProperty<Any, T> {
-        private var value: T = initialValue
+internal fun <T> List<T>.replace(index: Int, element: T): List<T> =
+    mapIndexed { i, item -> if (i == index) element else item }
 
-        override fun getValue(thisRef: Any, property: KProperty<*>): T = lock.synchronized(::value)
-
-        override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
-            this.value = value
-        }
-    }
+internal object Uninitialized

@@ -5,8 +5,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
 import com.badoo.reaktive.single.SingleCallbacks
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
 
 fun <T> Maybe<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
@@ -125,22 +124,13 @@ fun <T> Maybe<T>.doOnBeforeDispose(action: () -> Unit): Maybe<T> =
 
 fun <T> Maybe<T>.doOnBeforeFinally(action: () -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
-        val lock = newLock()
-        var isFinished = false
+        val isFinished = AtomicReference(false)
 
         fun onFinally() {
-            if (isFinished) {
-                return
+            @Suppress("BooleanLiteralArgument") // Not allowed for expected classes
+            if (isFinished.compareAndSet(false, true)) {
+                action()
             }
-
-            lock.synchronized {
-                if (isFinished) {
-                    return
-                }
-                isFinished = true
-            }
-
-            action()
         }
 
         val disposableWrapper = DisposableWrapper()

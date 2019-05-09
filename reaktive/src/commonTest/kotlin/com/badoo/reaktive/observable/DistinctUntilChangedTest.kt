@@ -52,7 +52,7 @@ class DistinctUntilChangedTest {
     @Test
     fun checks_whether_the_emissions_are_not_the_same_instance() {
         val actual = observableOf(thirteen, thirteen, fortyTwo, fortyTwo)
-            .distinctUntilChanged(comparer = { l, r -> l !== r })
+            .distinctUntilChanged(comparator = { l, r -> l === r })
             .record()
 
         assertEquals(listOf(thirteen, fortyTwo), actual)
@@ -65,13 +65,10 @@ class DistinctUntilChangedTest {
             }
         }
 
+    @Suppress("EqualsOrHashCode")
     private data class NotEqualsValue<T>(val value: T) {
-
         override fun equals(other: Any?): Boolean = false
-
     }
 
     private data class Question(val answer: Int)
-
 }
-
