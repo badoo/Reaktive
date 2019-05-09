@@ -1,0 +1,69 @@
+package com.badoo.reaktive.scheduler
+
+import com.badoo.reaktive.disposable.CompositeDisposable
+import com.badoo.reaktive.looperthread.LooperThreadStrategy
+import kotlin.native.concurrent.AtomicInt
+import kotlin.system.getTimeNanos
+
+internal class SchedulerImpl(
+    private val looperThreadStrategy: LooperThreadStrategy
+) : Scheduler {
+
+    private val disposables = CompositeDisposable()
+
+    override fun newExecutor(): Scheduler.Executor =
+        ExecutorImpl(looperThreadStrategy)
+            .also(disposables::add)
+
+    override fun destroy() {
+        disposables.dispose()
+        looperThreadStrategy.destroy()
+    }
+
+    private class ExecutorImpl(
+        private val looperThreadStrategy: LooperThreadStrategy
+    ) : Scheduler.Executor {
+
+        private val looperThread = looperThreadStrategy.get()
+        private val _isDisposed = AtomicInt(0)
+        override val isDisposed: Boolean get() = _isDisposed.value != 0
+
+        override fun dispose() {
+            _isDisposed.value = 1
+            cancel()
+            looperThreadStrategy.recycle(looperThread)
+        }
+
+        override fun submit(delayMillis: Long, task: () -> Unit) {
+            if (!isDisposed) {
+                looperThread.schedule(this, getStartTimeNanos(delayMillis), task)
+            }
+        }
+
+        override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
+            lateinit var t: () -> Unit
+            t = {
+                if (!isDisposed) {
+                    val nextStartTimeNanos = getStartTimeNanos(periodMillis)
+                    task()
+                    if (!isDisposed) {
+                        looperThread.schedule(this, nextStartTimeNanos, t)
+                    }
+                }
+            }
+            if (!isDisposed) {
+                looperThread.schedule(this, getStartTimeNanos(startDelayMillis), t)
+            }
+        }
+
+        override fun cancel() {
+            looperThread.cancel(this)
+        }
+
+        private companion object {
+            private fun getStartTimeNanos(delayMillis: Long): Long = getTimeNanos() + delayMillis.toNanos()
+
+            private fun Long.toNanos(): Long = this * 1000000L
+        }
+    }
+}

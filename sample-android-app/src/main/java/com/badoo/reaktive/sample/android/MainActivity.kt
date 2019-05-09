@@ -11,7 +11,7 @@ import com.badoo.reaktive.observable.subscribeOn
 import com.badoo.reaktive.scheduler.ioScheduler
 import com.badoo.reaktive.scheduler.mainScheduler
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
 

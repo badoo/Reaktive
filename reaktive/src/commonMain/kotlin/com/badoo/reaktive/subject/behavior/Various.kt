@@ -2,11 +2,13 @@ package com.badoo.reaktive.subject.behavior
 
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.subject.DefaultSubject
-import com.badoo.reaktive.utils.synchronizedReadWriteProperty
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
 
 fun <T> behaviorSubject(initialValue: T): BehaviorSubject<T> =
     object : DefaultSubject<T>(), BehaviorSubject<T> {
-        override var value: T by synchronizedReadWriteProperty(initialValue)
+        @Suppress("ObjectPropertyName")
+        private val _value = AtomicReference(initialValue, true)
+        override val value: T get() = _value.value
 
         override fun onAfterSubscribe(observer: ObservableObserver<T>) {
             super.onAfterSubscribe(observer)
@@ -17,6 +19,6 @@ fun <T> behaviorSubject(initialValue: T): BehaviorSubject<T> =
         override fun onBeforeNext(value: T) {
             super.onBeforeNext(value)
 
-            this.value = value
+            _value.value = value
         }
     }

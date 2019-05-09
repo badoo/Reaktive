@@ -1,20 +1,15 @@
 package com.badoo.reaktive.utils.serializer
 
-import com.badoo.reaktive.utils.lock.newLock
-import com.badoo.reaktive.utils.lock.synchronized
-import com.badoo.reaktive.utils.queue.ArrayQueue
-import com.badoo.reaktive.utils.queue.Queue
-import com.badoo.reaktive.utils.queue.isNotEmpty
-import com.badoo.reaktive.utils.queue.take
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomicreference.getAndUpdate
+import com.badoo.reaktive.utils.atomicreference.update
 
 /**
  * Serializes all calls to "accept" method and synchronously calls "onValue" method with corresponding values
  */
-internal abstract class Serializer<in T>(queue: Queue<T> = ArrayQueue()) {
+internal abstract class Serializer<in T> {
 
-    private val lock = newLock()
-    private var queue: Queue<T>? = queue
-    private var isDraining = false
+    private val state = AtomicReference<State<T>?>(State(), true)
 
     /**
      * Either calls "onValue" with the specified value or queues the value.
@@ -25,48 +20,42 @@ internal abstract class Serializer<in T>(queue: Queue<T> = ArrayQueue()) {
      * @param value the value
      */
     fun accept(value: T) {
-        lock
-            .synchronized {
-                queue
-                    ?.apply { offer(value) }
-                    ?.takeUnless { isDraining }
-                    ?.also { isDraining = true }
+        state
+            .getAndUpdate {
+                it?.copy(
+                    queue = it.queue.plus(value),
+                    isDraining = true
+                )
             }
-            ?.drain()
+            ?.isDraining
+            ?.takeUnless { it }
+            ?.run { drain() }
     }
 
     fun clear() {
-        lock.synchronized {
-            queue?.clear()
+        state.update {
+            it?.copy(queue = emptyList())
         }
     }
 
-    private fun Queue<T>.drain() {
+    private fun drain() {
         while (true) {
-            lock
-                .synchronized {
-                    if (isNotEmpty) {
-                        take()
-                    } else {
-                        onDrainFinished(false)
-                        return
-                    }
+            val oldState =
+                state.getAndUpdate {
+                    it?.copy(
+                        queue = it.queue.drop(1),
+                        isDraining = it.queue.isNotEmpty()
+                    )
                 }
-                .let(::onValue)
-                .takeUnless { it }
-                ?.also {
-                    lock.synchronized {
-                        onDrainFinished(true)
-                        return
-                    }
-                }
-        }
-    }
 
-    private fun onDrainFinished(terminate: Boolean) {
-        isDraining = false
-        if (terminate) {
-            queue = null
+            if ((oldState == null) || oldState.queue.isEmpty()) {
+                return
+            }
+
+            if (!onValue(oldState.queue[0])) {
+                state.value = null
+                return
+            }
         }
     }
 
@@ -77,4 +66,9 @@ internal abstract class Serializer<in T>(queue: Queue<T> = ArrayQueue()) {
      * @return true if processing should continue, false otherwise
      */
     protected abstract fun onValue(value: T): Boolean
+
+    private data class State<out T>(
+        val queue: List<T> = emptyList(),
+        val isDraining: Boolean = false
+    )
 }
