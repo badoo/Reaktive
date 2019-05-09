@@ -10,7 +10,7 @@ Library status: under development, alpha pre-release is available, public API is
 
 ### Setup
 Add JitPack repository into your root build.gradle file:
-```
+```groovy
 allprojects {
     repositories {
         ...
@@ -21,33 +21,45 @@ allprojects {
 
 Add the following dependencies into your module's build.gradle file:
 #### Main library
-If you are developing a Kotlin multi-platform library:
-```
+Kotlin multi-platform:
+```groovy
 implementation 'com.github.badoo.reaktive:reaktive:<latest-version>'
 ```
-If you are developing a Kotlin Android app:
-```
+Kotlin Android:
+```groovy
 implementation 'com.github.badoo.reaktive:reaktive-android:<latest-version>'
 ```
-If you are developing a Kotlin JVM project
-```
+Kotlin JVM:
+```groovy
 implementation 'com.github.badoo.reaktive:reaktive-jvm:<latest-version>'
+```
+Kotlin JavaScript:
+```groovy
+implementation 'com.github.badoo.reaktive:reaktive-js:<latest-version>'
+```
+Kotlin Linux x64:
+```groovy
+implementation 'com.github.badoo.reaktive:reaktive-linuxx64:<latest-version>'
+```
+Kotlin Linux ARM 32 hfp:
+```groovy
+implementation 'com.github.badoo.reaktive:reaktive-linuxarm32hfp:<latest-version>'
 ```
 
 #### RxJava2 interoperability
-```
+```groovy
 implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
 ```
 
 ### Features:
-* Multiplatform: JVM, Android and JavaScript, iOS is under development
+* Multiplatform: JVM, Android, JavaScript, Linux X64, Linux ARM 32 hfp, iOS is under development
 * Schedulers support: computation, IO, trampoline, main
 * Supported sources: Observable, Maybe, Single, Completable
 * Subjects: PublishSubject, BehaviorSubject
 * Interoperability with RxJava2: convertion of sources between Reaktive and RxJava2, ability to reuse RxJava2's schedulers
 * Supported operators:
-  * Observable: asCompletable, collect, combineLatest, concatMap, debounce, doOnBeforeXxx, filter, firstOrComplete, firstOrDefault, firstOrError, flatMap, flatMapCompletable, flatMapMaybe, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, sample, subscribeOn, throttle, toCompletable, toList, zip
+  * Observable: asCompletable, collect, combineLatest, concatMap, debounce, distinctUntilChanged, doOnBeforeXxx, filter, firstOrComplete, firstOrDefault, firstOrError, flatMap, flatMapCompletable, flatMapMaybe, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, sample, scan, subscribeOn, throttle, toCompletable, toList, withLatestFrom, zip
   * Maybe: asCompletable, asObservable, asSingle, concat, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapObservable, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, subscribeOn, zip
-  * Single: asCompletable, asMaybe, asObservable, concat, doOnBeforeXxx, flatMap, flatMapCompletable, flatMapMaybe, flatMapObservable, flatten, map, merge, notNull, observeOn, subscribeOn, zip
+  * Single: asCompletable, asMaybe, asObservable, blockingGet, concat, doOnBeforeXxx, flatMap, flatMapCompletable, flatMapMaybe, flatMapObservable, flatten, map, merge, notNull, observeOn, subscribeOn, zip
   * Completable: asMaybe, asObservable, asSingle, concat, doOnBeforeXxx, merge, observeOn, subscribeOn
   * Plus multiple factory and conversion functions
