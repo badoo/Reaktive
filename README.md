@@ -54,6 +54,7 @@ implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
 ### Features:
 * Multiplatform: JVM, Android, JavaScript, Linux X64, Linux ARM 32 hfp, iOS is under development
 * Schedulers support: computation, IO, trampoline, main
+* True multithreading for Kotlin/Native (there are some [limitations](https://kotlinlang.org/docs/reference/native/concurrency.html#object-transfer-and-freezing))
 * Supported sources: Observable, Maybe, Single, Completable
 * Subjects: PublishSubject, BehaviorSubject
 * Interoperability with RxJava2: convertion of sources between Reaktive and RxJava2, ability to reuse RxJava2's schedulers
@@ -63,3 +64,8 @@ implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
   * Single: asCompletable, asMaybe, asObservable, blockingGet, concat, doOnBeforeXxx, flatMap, flatMapCompletable, flatMapMaybe, flatMapObservable, flatten, map, merge, notNull, observeOn, subscribeOn, zip
   * Completable: asMaybe, asObservable, asSingle, concat, doOnBeforeXxx, merge, observeOn, subscribeOn
   * Plus multiple factory and conversion functions
+
+### Samples:
+* [Android app](https://github.com/badoo/Reaktive/tree/master/sample-android-app)
+* [JavaScript browser app](https://github.com/badoo/Reaktive/tree/master/sample-js-browser-app)
+* [Linux x64 app](https://github.com/badoo/Reaktive/tree/master/sample-linuxx64-app)

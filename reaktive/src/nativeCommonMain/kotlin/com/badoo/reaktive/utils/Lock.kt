@@ -64,7 +64,7 @@ internal actual class Lock {
         }
 
         override fun await(timeoutNanos: Long) {
-            if (timeoutNanos > 0L) {
+            if (timeoutNanos >= 0L) {
                 val a = Arena()
                 try {
                     val t: timespec = a.alloc()
