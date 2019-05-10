@@ -24,7 +24,11 @@ internal actual class Lock {
         private val delegate: java.util.concurrent.locks.Condition
     ) : Condition {
         override fun await(timeoutNanos: Long) {
-            delegate.await(timeoutNanos, TimeUnit.NANOSECONDS)
+            if (timeoutNanos >= 0L) {
+                delegate.awaitNanos(timeoutNanos)
+            } else {
+                delegate.await()
+            }
         }
 
         override fun signal() {
