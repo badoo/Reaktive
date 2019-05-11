@@ -2,6 +2,7 @@ package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.freeze
 import platform.darwin.DISPATCH_TIME_NOW
 import platform.darwin.dispatch_after
 import platform.darwin.dispatch_get_main_queue
@@ -61,7 +62,7 @@ class MainScheduler : Scheduler {
             task: () -> Unit
         ) : () -> Unit, Disposable {
 
-            private val taskReference = AtomicReference<(() -> Unit)?>(task)
+            private val taskReference = AtomicReference<(() -> Unit)?>(task.freeze())
 
             override fun invoke() {
                 taskReference.value?.invoke()
