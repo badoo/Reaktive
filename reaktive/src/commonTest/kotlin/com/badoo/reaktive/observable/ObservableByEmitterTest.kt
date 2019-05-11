@@ -1,10 +1,13 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.testutils.TestObservableObserver.Event
-import com.badoo.reaktive.testutils.getOnErrorEvent
+import com.badoo.reaktive.testutils.dispose
+import com.badoo.reaktive.testutils.getOnErrorValue
 import com.badoo.reaktive.testutils.getOnNextEvent
+import com.badoo.reaktive.testutils.getOnNextValue
 import com.badoo.reaktive.testutils.hasOnNext
 import com.badoo.reaktive.testutils.isCompleted
+import com.badoo.reaktive.testutils.isDisposed
 import com.badoo.reaktive.testutils.isError
 import com.badoo.reaktive.testutils.isOnCompleteEvent
 import com.badoo.reaktive.testutils.test
@@ -48,10 +51,10 @@ class ObservableByEmitterTest {
         emitter.onError(error)
 
         assertEquals(4, observer.events.size)
-        assertEquals(1, observer.getOnNextEvent(0).value)
-        assertEquals(2, observer.getOnNextEvent(1).value)
-        assertEquals(3, observer.getOnNextEvent(2).value)
-        assertSame(error, observer.getOnErrorEvent(3).error)
+        assertEquals(1, observer.getOnNextValue(0))
+        assertEquals(2, observer.getOnNextValue(1))
+        assertEquals(3, observer.getOnNextValue(2))
+        assertSame(error, observer.getOnErrorValue(3))
     }
 
     @Test
@@ -59,11 +62,11 @@ class ObservableByEmitterTest {
         emitter.onNext(1)
         emitter.onNext(2)
         emitter.onNext(3)
-        observer.disposables[0].dispose()
+        observer.dispose()
 
-        assertEquals(1, observer.getOnNextEvent(0).value)
-        assertEquals(2, observer.getOnNextEvent(1).value)
-        assertEquals(3, observer.getOnNextEvent(2).value)
+        assertEquals(1, observer.getOnNextValue(0))
+        assertEquals(2, observer.getOnNextValue(1))
+        assertEquals(3, observer.getOnNextValue(2))
     }
 
     @Test
@@ -80,7 +83,7 @@ class ObservableByEmitterTest {
         emitter.onError(error)
 
         assertTrue(observer.isError)
-        assertSame(error, observer.getOnErrorEvent(0).error)
+        assertSame(error, observer.getOnErrorValue(0))
     }
 
     @Test
@@ -143,7 +146,7 @@ class ObservableByEmitterTest {
 
     @Test
     fun onNext_ignored_AFTER_dispose() {
-        observer.disposables[0].dispose()
+        observer.dispose()
 
         emitter.onNext(1)
 
@@ -154,14 +157,14 @@ class ObservableByEmitterTest {
     fun disposable_disposed_AHTER_onComplete_signalled() {
         emitter.onComplete()
 
-        assertTrue(observer.disposables[0].isDisposed)
+        assertTrue(observer.isDisposed)
     }
 
     @Test
     fun disposable_disposed_AHTER_onError_signalled() {
         emitter.onError(Throwable())
 
-        assertTrue(observer.disposables[0].isDisposed)
+        assertTrue(observer.isDisposed)
     }
 
     @Test
