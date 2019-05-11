@@ -59,7 +59,7 @@ class SerializerTest {
     }
 
     @Test
-    fun value_enqueued_WHEN_sent_from_callback() {
+    fun onValue_not_called_recursively_WHEN_value_sent_from_callback() {
         var count = 0
         var success = false
 
