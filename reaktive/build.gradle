@@ -83,7 +83,7 @@ if (target.isCommon() || target.isMeta()) {
 
             linuxCommonMain.dependsOn nativeCommonMain
             linuxCommonTest.dependsOn nativeCommonTest
-          
+
             linuxX64Main.dependsOn linuxCommonMain
             linuxX64Test.dependsOn linuxCommonTest
 
