@@ -9,7 +9,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         showLoading()
-        TimerKt.calculateFibonacci().subscribe(observer: ResultObserver(showResult: showResult(text:)))
+        ComputationKt.calculate().subscribe(observer: ResultObserver(showResult: showResult(text:)))
     }
     
     private func showLoading() {

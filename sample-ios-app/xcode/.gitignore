@@ -1,4 +1,3 @@
-build/
 DerivedData/
 *.pbxuser
 !default.pbxuser

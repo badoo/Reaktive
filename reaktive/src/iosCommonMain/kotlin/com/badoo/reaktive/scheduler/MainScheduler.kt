@@ -2,14 +2,13 @@ package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.freeze
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
 import platform.darwin.DISPATCH_TIME_NOW
 import platform.darwin.dispatch_after
 import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_time
-import kotlin.native.concurrent.AtomicReference
 
-class MainScheduler : Scheduler {
+internal class MainScheduler : Scheduler {
 
     private val disposables = CompositeDisposable()
 
@@ -62,7 +61,7 @@ class MainScheduler : Scheduler {
             task: () -> Unit
         ) : () -> Unit, Disposable {
 
-            private val taskReference = AtomicReference<(() -> Unit)?>(task.freeze())
+            private val taskReference = AtomicReference<(() -> Unit)?>(task, true)
 
             override fun invoke() {
                 taskReference.value?.invoke()
