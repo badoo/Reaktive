@@ -64,7 +64,7 @@ internal class MainScheduler : Scheduler {
             private val taskReference = AtomicReference<(() -> Unit)?>(task, true)
 
             override fun invoke() {
-                taskReference.value?.invoke()
+                taskReference.getAndSet(null)?.invoke()
             }
 
             override val isDisposed: Boolean
