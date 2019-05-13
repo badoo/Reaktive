@@ -27,6 +27,12 @@ val TestObservableObserver<*>.isError: Boolean
 
 val TestObservableObserver<*>.hasOnNext: Boolean get() = events.any { it is Event.OnNext }
 
+val <T> TestObservableObserver<T>.values: List<T>
+    get() =
+        events
+            .takeWhile { it is TestObservableObserver.Event.OnNext }
+            .map { (it as TestObservableObserver.Event.OnNext).value }
+
 fun TestObservableObserver<*>.isError(error: Throwable): Boolean =
     isError && events.any { (it as? Event.OnError)?.error == error }
 

@@ -1,26 +1,35 @@
 package com.badoo.reaktive.testutils
 
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableCallbacks
 import com.badoo.reaktive.observable.ObservableObserver
 
-class TestObservable<T> : Observable<T>, ObservableCallbacks<T> {
+class TestObservable<T> : Observable<T>, ObservableCallbacks<T>, Disposable {
 
-    private lateinit var observer: ObservableObserver<T>
+    val observers: MutableList<ObservableObserver<T>> = arrayListOf()
+
+    override var isDisposed: Boolean = false
+        private set
+
+    override fun dispose() {
+        isDisposed = true
+    }
 
     override fun subscribe(observer: ObservableObserver<T>) {
-        this.observer = observer
+        observers.add(observer)
+        observer.onSubscribe(this)
     }
 
     override fun onNext(value: T) {
-        observer.onNext(value)
+        observers.forEach { it.onNext(value) }
     }
 
     override fun onComplete() {
-        observer.onComplete()
+        observers.forEach(ObservableObserver<*>::onComplete)
     }
 
     override fun onError(error: Throwable) {
-        observer.onError(error)
+        observers.forEach { it.onError(error) }
     }
 }
