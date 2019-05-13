@@ -27,7 +27,7 @@ internal class LooperThread {
 
     fun destroy() {
         isDestroyed.value = 1
-        queue.destroy()
+        queue.clear()
         worker.requestTermination(processScheduledJobs = false)
     }
 
