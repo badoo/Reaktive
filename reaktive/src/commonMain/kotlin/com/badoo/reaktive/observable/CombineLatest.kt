@@ -27,15 +27,17 @@ fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Obse
                                 it as List<T>
                             }
 
-                            ?.let {
-                                try {
-                                    mapper(it)
-                                } catch (e: Throwable) {
-                                    emitter.onError(e)
-                                    return@serializer false
-                                }
+                            ?.also {
+                                val mappedValue =
+                                    try {
+                                        mapper(it)
+                                    } catch (e: Throwable) {
+                                        emitter.onError(e)
+                                        return@serializer false
+                                    }
+
+                                emitter.onNext(mappedValue)
                             }
-                            ?.also(emitter::onNext)
 
                         true
                     }
