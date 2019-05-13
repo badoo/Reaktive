@@ -14,10 +14,6 @@ internal actual class Lock {
         delegate.unlock()
     }
 
-    actual fun destroy() {
-        // no-op
-    }
-
     actual fun newCondition(): Condition = ConditionImpl(this@Lock.delegate.newCondition())
 
     private class ConditionImpl(
@@ -33,10 +29,6 @@ internal actual class Lock {
 
         override fun signal() {
             delegate.signalAll()
-        }
-
-        override fun destroy() {
-            // no-op
         }
     }
 }

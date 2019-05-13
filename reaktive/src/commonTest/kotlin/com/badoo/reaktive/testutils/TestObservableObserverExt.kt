@@ -1,16 +1,23 @@
 package com.badoo.reaktive.testutils
 
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.testutils.TestObservableObserver.Event
 
 fun <T> TestObservableObserver<T>.getOnNextEvent(index: Int): Event.OnNext<T> =
     events[index] as Event.OnNext<T>
 
+fun <T> TestObservableObserver<T>.getOnNextValue(index: Int): T =
+    getOnNextEvent(index).value
+
 fun <T> TestObservableObserver<T>.isOnCompleteEvent(index: Int): Boolean =
     events.getOrNull(index) is Event.OnComplete
 
 fun TestObservableObserver<*>.getOnErrorEvent(index: Int): Event.OnError =
     events[index] as Event.OnError
+
+fun TestObservableObserver<*>.getOnErrorValue(index: Int): Throwable =
+    getOnErrorEvent(index).error
 
 val TestObservableObserver<*>.isCompleted: Boolean
     get() = (events.count { it is Event.OnComplete } == 1) && events.none { it is Event.OnError }
@@ -22,6 +29,17 @@ val TestObservableObserver<*>.hasOnNext: Boolean get() = events.any { it is Even
 
 fun TestObservableObserver<*>.isError(error: Throwable): Boolean =
     isError && events.any { (it as? Event.OnError)?.error == error }
+
+fun TestObservableObserver<*>.reset() {
+    events.clear()
+}
+
+fun TestObservableObserver<*>.dispose() {
+    disposables.forEach(Disposable::dispose)
+}
+
+val TestObservableObserver<*>.isDisposed: Boolean
+    get() = disposables.all(Disposable::isDisposed)
 
 fun <T> Observable<T>.test(): TestObservableObserver<T> =
     TestObservableObserver<T>()

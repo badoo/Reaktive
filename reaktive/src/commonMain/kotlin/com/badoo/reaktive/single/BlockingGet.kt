@@ -53,6 +53,6 @@ fun <T> Single<T>.blockingGet(): T {
 }
 
 private sealed class BlockingGetResult<out T> {
-    class Success<T>(val value: T) : BlockingGetResult<T>()
+    class Success<out T>(val value: T) : BlockingGetResult<T>()
     class Error(val error: Throwable) : BlockingGetResult<Nothing>()
 }

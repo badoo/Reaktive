@@ -25,7 +25,7 @@ class TestObservableObserver<T> : ObservableObserver<T> {
     }
 
     sealed class Event<out T> {
-        data class OnNext<T>(val value: T) : Event<T>()
+        data class OnNext<out T>(val value: T) : Event<T>()
         object OnComplete : Event<Nothing>()
         data class OnError(val error: Throwable) : Event<Nothing>()
     }

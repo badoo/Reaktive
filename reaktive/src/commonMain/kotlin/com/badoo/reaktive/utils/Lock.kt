@@ -6,7 +6,5 @@ internal expect class Lock constructor() {
 
     fun release()
 
-    fun destroy()
-
     fun newCondition(): Condition
 }

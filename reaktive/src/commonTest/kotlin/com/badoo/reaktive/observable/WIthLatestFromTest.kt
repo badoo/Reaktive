@@ -1,7 +1,7 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.testutils.TestObservable
-import com.badoo.reaktive.testutils.getOnNextEvent
+import com.badoo.reaktive.testutils.getOnNextValue
 import com.badoo.reaktive.testutils.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -55,7 +55,7 @@ class WIthLatestFromTest {
         source.onNext(4)
 
         assertEquals(1, observer.events.size)
-        assertEquals(listOf(4, 1, 2, 3), observer.getOnNextEvent(0).value)
+        assertEquals(listOf(4, 1, 2, 3), observer.getOnNextValue(0))
     }
 
     @Test
@@ -67,7 +67,7 @@ class WIthLatestFromTest {
         source.onNext(5)
 
         assertEquals(1, observer.events.size)
-        assertEquals(listOf(5, 2, 3, 4), observer.getOnNextEvent(0).value)
+        assertEquals(listOf(5, 2, 3, 4), observer.getOnNextValue(0))
     }
 
     @Test
@@ -89,9 +89,9 @@ class WIthLatestFromTest {
         other3.onNext(15)
 
         assertEquals(3, observer.events.size)
-        assertEquals(listOf(7, 5, 2, 6), observer.getOnNextEvent(0).value)
-        assertEquals(listOf(9, 8, 2, 6), observer.getOnNextEvent(1).value)
-        assertEquals(listOf(12, 8, 11, 10), observer.getOnNextEvent(2).value)
+        assertEquals(listOf(7, 5, 2, 6), observer.getOnNextValue(0))
+        assertEquals(listOf(9, 8, 2, 6), observer.getOnNextValue(1))
+        assertEquals(listOf(12, 8, 11, 10), observer.getOnNextValue(2))
     }
 }
 
