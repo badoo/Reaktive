@@ -14,7 +14,7 @@ matrix:
       language: java
       env: MP_TARGET=IOS
       install: true
-      script: ./gradlew reaktive:ios32MainBinaries reaktive:ios64MainBinaries reaktive:iosSimMainBinaries reaktive:check -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive:ios32MainBinaries reaktive:ios64MainBinaries reaktive:iosSimMainBinaries reaktive:check reaktive:iosTest -DMP_TARGET=$MP_TARGET
     - os: linux
       language: android
       android:

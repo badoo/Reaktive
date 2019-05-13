@@ -1,0 +1,25 @@
+plugins {
+    id 'kotlin-multiplatform'
+}
+
+kotlin {
+    targets {
+        // fromPreset(presets.iosArm64, 'iosCommon')
+        fromPreset(presets.iosArm64, 'ios64') {
+            binaries.framework('ReactiveSample')
+        }
+        fromPreset(presets.iosX64, 'iosSim') {
+            binaries.framework('ReactiveSample')
+        }
+    }
+    sourceSets {
+        iosCommonMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                implementation project(':reaktive')
+            }
+        }
+        ios64Main.dependsOn iosCommonMain
+        iosSimMain.dependsOn iosCommonMain
+    }
+}

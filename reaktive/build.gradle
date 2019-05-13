@@ -41,9 +41,11 @@ if (target.isCommon() || target.isMeta()) {
 
     kotlin {
         targets {
+            // fromPreset(presets.jvm, 'jvmCommon')
             fromPreset(presets.jvm, 'jvm')
             fromPreset(presets.android, 'android')
             fromPreset(presets.js, 'js')
+            // fromPreset(presets.linuxX64, 'nativeCommon')
             fromPreset(presets.linuxX64, 'linuxX64')
             fromPreset(presets.linuxArm32Hfp, 'linuxArm32Hfp')
         }
@@ -97,10 +99,10 @@ if (target.isCommon() || target.isMeta()) {
     }
 }
 
-// target.isIos() || target.isMeta() when iOS is ready for publishing
-if (target.isIos()) {
+if (target.isIos() || target.isMeta()) {
     kotlin {
         targets {
+            // fromPreset(presets.iosX64, 'iosCommon')
             fromPreset(presets.iosArm32, 'ios32') {
                 binaries.framework()
             }
@@ -140,7 +142,8 @@ if (target.isIos()) {
             }
         }
     }
-    tasks.check.dependsOn iosTest
+    // TODO Uncomment when TravisCI will be used for publishing
+    // tasks.check.dependsOn iosTest
 }
 
 apply from: '../publication.gradle'

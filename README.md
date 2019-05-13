@@ -52,12 +52,12 @@ implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
 ```
 
 ### Features:
-* Multiplatform: JVM, Android, JavaScript, Linux X64, Linux ARM 32 hfp, iOS is under development
+* Multiplatform: JVM, Android, JavaScript, Linux X64, Linux ARM 32 hfp, iOS in next release
 * Schedulers support: computation, IO, trampoline, main
 * True multithreading for Kotlin/Native (there are some [limitations](https://kotlinlang.org/docs/reference/native/concurrency.html#object-transfer-and-freezing))
 * Supported sources: Observable, Maybe, Single, Completable
 * Subjects: PublishSubject, BehaviorSubject
-* Interoperability with RxJava2: convertion of sources between Reaktive and RxJava2, ability to reuse RxJava2's schedulers
+* Interoperability with RxJava2: conversion of sources between Reaktive and RxJava2, ability to reuse RxJava2's schedulers
 * Supported operators:
   * Observable: asCompletable, collect, combineLatest, concatMap, debounce, distinctUntilChanged, doOnBeforeXxx, filter, firstOrComplete, firstOrDefault, firstOrError, flatMap, flatMapCompletable, flatMapMaybe, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, sample, scan, subscribeOn, throttle, toCompletable, toList, withLatestFrom, zip
   * Maybe: asCompletable, asObservable, asSingle, concat, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapObservable, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, subscribeOn, zip
@@ -69,3 +69,4 @@ implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
 * [Android app](https://github.com/badoo/Reaktive/tree/master/sample-android-app)
 * [JavaScript browser app](https://github.com/badoo/Reaktive/tree/master/sample-js-browser-app)
 * [Linux x64 app](https://github.com/badoo/Reaktive/tree/master/sample-linuxx64-app)
+* [iOS app](https://github.com/badoo/Reaktive/tree/master/sample-ios-app)
