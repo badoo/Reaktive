@@ -14,25 +14,21 @@ internal actual class Lock {
         delegate.unlock()
     }
 
-    actual fun destroy() {
-        // no-op
-    }
-
     actual fun newCondition(): Condition = ConditionImpl(this@Lock.delegate.newCondition())
 
     private class ConditionImpl(
         private val delegate: java.util.concurrent.locks.Condition
     ) : Condition {
         override fun await(timeoutNanos: Long) {
-            delegate.await(timeoutNanos, TimeUnit.NANOSECONDS)
+            if (timeoutNanos >= 0L) {
+                delegate.awaitNanos(timeoutNanos)
+            } else {
+                delegate.await()
+            }
         }
 
         override fun signal() {
             delegate.signalAll()
-        }
-
-        override fun destroy() {
-            // no-op
         }
     }
 }
