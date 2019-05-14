@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class FlatMapTest {
+class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ flatMap { TestObservable<Int>() } }) {
 
     private val source = TestObservable<Int>()
 
@@ -103,15 +103,6 @@ class FlatMapTest {
         inners[2].onComplete()
 
         assertFalse(observer.isCompleted)
-    }
-
-    @Test
-    fun produces_error_WHEN_upstream_produced_error() {
-        val observer = testFlatMap { TestObservable() }
-
-        source.onError(Throwable())
-
-        assertTrue(observer.isError)
     }
 
     @Test
