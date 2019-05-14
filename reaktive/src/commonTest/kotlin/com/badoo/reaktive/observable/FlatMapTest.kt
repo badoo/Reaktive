@@ -120,7 +120,6 @@ class FlatMapTest {
         val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
         val observer = testFlatMap(inners::get)
 
-        source.onNext(0)
         source.onNext(1)
         inners[1].onError(Throwable())
 
@@ -142,16 +141,7 @@ class FlatMapTest {
     }
 
     @Test
-    fun disposes_upstream_WHEN_disposed() {
-        val observer = source.flatMap { TestObservable<String>() }.test()
-
-        observer.dispose()
-
-        assertTrue(source.isDisposed)
-    }
-
-    @Test
-    fun disposes_inner_sources_WHEN_disposed() {
+    fun disposes_streams_WHEN_disposed() {
         val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
         val observer = testFlatMap(inners::get)
         source.onNext(0)
@@ -159,6 +149,51 @@ class FlatMapTest {
 
         observer.dispose()
 
+        assertTrue(source.isDisposed)
+        assertTrue(inners[0].isDisposed)
+        assertTrue(inners[1].isDisposed)
+    }
+
+    @Test
+    fun disposes_streams_WHEN_completed() {
+        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
+        testFlatMap(inners::get)
+        source.onNext(0)
+        source.onNext(1)
+
+        source.onComplete()
+        inners[0].onComplete()
+        inners[1].onComplete()
+
+        assertTrue(source.isDisposed)
+        assertTrue(inners[0].isDisposed)
+        assertTrue(inners[1].isDisposed)
+    }
+
+    @Test
+    fun disposes_streams_WHEN_upstream_produced_error() {
+        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
+        testFlatMap(inners::get)
+        source.onNext(0)
+        source.onNext(1)
+
+        source.onError(Throwable())
+
+        assertTrue(source.isDisposed)
+        assertTrue(inners[0].isDisposed)
+        assertTrue(inners[1].isDisposed)
+    }
+
+    @Test
+    fun disposes_streams_WHEN_inner_source_produced_error() {
+        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
+        testFlatMap(inners::get)
+        source.onNext(0)
+        source.onNext(1)
+
+        inners[1].onError(Throwable())
+
+        assertTrue(source.isDisposed)
         assertTrue(inners[0].isDisposed)
         assertTrue(inners[1].isDisposed)
     }
