@@ -5,7 +5,6 @@ import com.badoo.reaktive.testutils.getOnNextValue
 import com.badoo.reaktive.testutils.hasOnNext
 import com.badoo.reaktive.testutils.isCompleted
 import com.badoo.reaktive.testutils.isError
-import com.badoo.reaktive.testutils.reset
 import com.badoo.reaktive.testutils.test
 import kotlin.test.Test
 import kotlin.test.assertEquals

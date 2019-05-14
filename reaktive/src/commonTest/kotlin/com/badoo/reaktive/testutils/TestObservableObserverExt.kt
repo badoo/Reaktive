@@ -36,10 +36,6 @@ val <T> TestObservableObserver<T>.values: List<T>
 fun TestObservableObserver<*>.isError(error: Throwable): Boolean =
     isError && events.any { (it as? Event.OnError)?.error == error }
 
-fun TestObservableObserver<*>.reset() {
-    events.clear()
-}
-
 fun TestObservableObserver<*>.dispose() {
     disposables.forEach(Disposable::dispose)
 }
