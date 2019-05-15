@@ -42,13 +42,16 @@ class TestScheduler : Scheduler {
         private val timer: Timer
     ) : Scheduler.Executor {
 
+        private val tasks: AtomicReference<List<Task>> = AtomicReference(emptyList(), true)
+
+        private val _isDisposed = AtomicReference(false)
+        override val isDisposed: Boolean get() = _isDisposed.value
+
         private val timerListener = ::process
 
         init {
             timer.addOnChangeListener(timerListener)
         }
-
-        private val tasks: AtomicReference<List<Task>> = AtomicReference(emptyList(), true)
 
         override fun submit(delayMillis: Long, task: () -> Unit) {
             addTask(delayMillis, null, task)
@@ -61,9 +64,6 @@ class TestScheduler : Scheduler {
         override fun cancel() {
             tasks.value = emptyList()
         }
-
-        private val _isDisposed = AtomicReference(false)
-        override val isDisposed: Boolean get() = _isDisposed.value
 
         override fun dispose() {
             _isDisposed.value = true
