@@ -5,7 +5,6 @@ import com.badoo.reaktive.testutils.dispose
 import com.badoo.reaktive.testutils.hasOnNext
 import com.badoo.reaktive.testutils.isCompleted
 import com.badoo.reaktive.testutils.isError
-import com.badoo.reaktive.testutils.reset
 import com.badoo.reaktive.testutils.test
 import com.badoo.reaktive.testutils.values
 import kotlin.test.Test
