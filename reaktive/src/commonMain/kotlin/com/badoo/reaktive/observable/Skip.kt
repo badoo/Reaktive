@@ -1,31 +1,27 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomicreference.update
 
 fun <T> Observable<T>.skip(count: Long): Observable<T> =
-    observable { emitter ->
+    observableUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
-        emitter.setDisposable(disposableWrapper)
+        observer.onSubscribe(disposableWrapper)
 
         subscribeSafe(
-            object : ObservableObserver<T>, CompletableCallbacks by emitter {
-                private var remaining = count
-
+            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
+                private var remaining = AtomicReference(count)
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
                 }
 
                 override fun onNext(value: T) {
-                    try {
-                        if (remaining != 0L) {
-                            remaining--
-                        } else {
-                            emitter.onNext(value)
-                        }
-                    } catch (e: Throwable) {
-                        emitter.onError(e)
+                    if (remaining.value != 0L) {
+                        remaining.update { it - 1 }
+                    } else {
+                        observer.onNext(value)
                     }
                 }
             }

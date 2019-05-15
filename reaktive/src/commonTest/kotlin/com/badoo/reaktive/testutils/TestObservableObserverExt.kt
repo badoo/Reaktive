@@ -10,9 +10,6 @@ fun <T> TestObservableObserver<T>.getOnNextEvent(index: Int): Event.OnNext<T> =
 fun <T> TestObservableObserver<T>.getOnNextValue(index: Int): T =
     getOnNextEvent(index).value
 
-fun <T> TestObservableObserver<T>.getOnNextValues(): List<T> =
-    events.filter { it is Event.OnNext<T> }.map { it as Event.OnNext<T> }.map { it.value }
-
 fun <T> TestObservableObserver<T>.isOnCompleteEvent(index: Int): Boolean =
     events.getOrNull(index) is Event.OnComplete
 
