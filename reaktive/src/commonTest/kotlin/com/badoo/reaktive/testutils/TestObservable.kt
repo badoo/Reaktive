@@ -9,18 +9,19 @@ import com.badoo.reaktive.utils.atomicreference.update
 
 class TestObservable<T> : Observable<T>, ObservableCallbacks<T>, Disposable {
 
-    private val observersRef: AtomicReference<List<ObservableObserver<T>>> = AtomicReference(emptyList(), true)
-    val observers get() = observersRef.value
+    private val _observers: AtomicReference<List<ObservableObserver<T>>> = AtomicReference(emptyList(), true)
+    val observers get() = _observers.value
 
-    private val isDisposedRef = AtomicReference(false)
-    override val isDisposed: Boolean get() = isDisposedRef.value
+    private val _isDisposed = AtomicReference(false)
+    override val isDisposed: Boolean get() = _isDisposed.value
 
     override fun dispose() {
-        isDisposedRef.value = true
+        _isDisposed.value = true
+        _observers.value = emptyList()
     }
 
     override fun subscribe(observer: ObservableObserver<T>) {
-        observersRef.update { it + observer }
+        _observers.update { it + observer }
         observer.onSubscribe(this)
     }
 
