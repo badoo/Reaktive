@@ -1,26 +1,39 @@
 package com.badoo.reaktive.testutils
 
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableCallbacks
 import com.badoo.reaktive.observable.ObservableObserver
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomicreference.update
 
-class TestObservable<T> : Observable<T>, ObservableCallbacks<T> {
+class TestObservable<T> : Observable<T>, ObservableCallbacks<T>, Disposable {
 
-    private lateinit var observer: ObservableObserver<T>
+    private val _observers: AtomicReference<List<ObservableObserver<T>>> = AtomicReference(emptyList(), true)
+    val observers get() = _observers.value
+
+    private val _isDisposed = AtomicReference(false)
+    override val isDisposed: Boolean get() = _isDisposed.value
+
+    override fun dispose() {
+        _isDisposed.value = true
+        _observers.value = emptyList()
+    }
 
     override fun subscribe(observer: ObservableObserver<T>) {
-        this.observer = observer
+        _observers.update { it + observer }
+        observer.onSubscribe(this)
     }
 
     override fun onNext(value: T) {
-        observer.onNext(value)
+        observers.forEach { it.onNext(value) }
     }
 
     override fun onComplete() {
-        observer.onComplete()
+        observers.forEach(ObservableObserver<*>::onComplete)
     }
 
     override fun onError(error: Throwable) {
-        observer.onError(error)
+        observers.forEach { it.onError(error) }
     }
 }
