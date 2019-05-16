@@ -58,7 +58,7 @@ internal actual abstract class Serializer<in T> actual constructor(
             list.addAll(this)
             list.add(item)
             if (comparator != null) {
-                list.sortWith(comparator)
+                list.sortWith(comparator) // TODO: Optimise later
             }
 
             return list

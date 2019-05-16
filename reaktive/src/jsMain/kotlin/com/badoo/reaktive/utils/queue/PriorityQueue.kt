@@ -1,6 +1,6 @@
 package com.badoo.reaktive.utils.queue
 
-internal class PriorityQueue<T>(
+internal actual class PriorityQueue<T> actual constructor(
     private val comparator: Comparator<in T>
 ) : Queue<T> {
 
@@ -13,7 +13,7 @@ internal class PriorityQueue<T>(
         list.sortWith(comparator) // TODO: Optimise later
     }
 
-    override fun poll(): T? = if (list.isNotEmpty()) list.removeAt(0) else null
+    override fun poll(): T? = if (list.isEmpty()) null else list.removeAt(0)
 
     override fun clear() {
         list.clear()

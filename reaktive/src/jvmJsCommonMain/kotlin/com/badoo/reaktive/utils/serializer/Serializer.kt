@@ -1,44 +1,57 @@
 package com.badoo.reaktive.utils.serializer
 
+import com.badoo.reaktive.utils.Lock
 import com.badoo.reaktive.utils.queue.ArrayQueue
 import com.badoo.reaktive.utils.queue.PriorityQueue
 import com.badoo.reaktive.utils.queue.Queue
 import com.badoo.reaktive.utils.queue.isNotEmpty
 import com.badoo.reaktive.utils.queue.take
+import com.badoo.reaktive.utils.synchronized
 
 internal actual abstract class Serializer<in T> actual constructor(
     comparator: Comparator<in T>?
 ) {
 
+    private val lock = Lock()
     private var queue: Queue<T>? = comparator?.let(::PriorityQueue) ?: ArrayQueue()
     private var isDraining = false
 
     actual fun accept(value: T) {
-        queue
-            ?.apply { offer(value) }
-            ?.takeUnless { isDraining }
-            ?.also { isDraining = true }
+        lock
+            .synchronized {
+                queue
+                    ?.apply { offer(value) }
+                    ?.takeUnless { isDraining }
+                    ?.also { isDraining = true }
+            }
             ?.drain()
     }
 
     actual fun clear() {
-        queue?.clear()
+        lock.synchronized {
+            queue?.clear()
+        }
     }
 
     private fun Queue<T>.drain() {
         while (true) {
-            if (isNotEmpty) {
-                take()
-                    .let(::onValue)
-                    .takeUnless { it }
-                    ?.also {
+            lock
+                .synchronized {
+                    if (isNotEmpty) {
+                        take()
+                    } else {
+                        onDrainFinished(false)
+                        return
+                    }
+                }
+                .let(::onValue)
+                .takeUnless { it }
+                ?.also {
+                    lock.synchronized {
                         onDrainFinished(true)
                         return
                     }
-            } else {
-                onDrainFinished(false)
-                return
-            }
+                }
         }
     }
 

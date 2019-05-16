@@ -41,26 +41,37 @@ if (target.isCommon() || target.isMeta()) {
 
     kotlin {
         targets {
-            // fromPreset(presets.jvm, 'jvmCommon')
+//             fromPreset(presets.jvm, 'jvmCommon')
+//             fromPreset(presets.jvm, 'jvmJsCommon')
             fromPreset(presets.jvm, 'jvm')
             fromPreset(presets.android, 'android')
             fromPreset(presets.js, 'js')
-            // fromPreset(presets.linuxX64, 'nativeCommon')
+//             fromPreset(presets.linuxX64, 'nativeCommon')
             fromPreset(presets.linuxX64, 'linuxX64')
             fromPreset(presets.linuxArm32Hfp, 'linuxArm32Hfp')
         }
 
         sourceSets {
+            jvmJsCommonMain {
+                dependsOn commonMain
+            }
+            jvmJsCommonTest.dependsOn commonTest
+
             jvmCommonMain {
+                dependsOn jvmJsCommonMain
+
                 dependencies {
                     implementation 'org.jetbrains.kotlin:kotlin-stdlib'
                 }
             }
+            jvmCommonTest.dependsOn jvmJsCommonTest
 
             jvmMain.dependsOn jvmCommonMain
             androidMain.dependsOn jvmCommonMain
 
             jsMain {
+                dependsOn jvmJsCommonMain
+
                 dependencies {
                     implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
                 }
@@ -75,6 +86,8 @@ if (target.isCommon() || target.isMeta()) {
             }
 
             jsTest {
+                dependsOn jvmJsCommonTest
+                
                 dependencies {
                     implementation 'org.jetbrains.kotlin:kotlin-test-js'
                 }

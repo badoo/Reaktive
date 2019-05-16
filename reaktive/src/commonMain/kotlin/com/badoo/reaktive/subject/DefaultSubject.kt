@@ -4,8 +4,8 @@ import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.serializer.serializer
 import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.serializer.serializer
 
 internal open class DefaultSubject<T> : Subject<T> {
 

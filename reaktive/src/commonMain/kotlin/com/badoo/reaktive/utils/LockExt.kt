@@ -1,9 +1,9 @@
 package com.badoo.reaktive.utils
 
-internal inline fun Lock.synchronized(block: () -> Unit) {
+internal inline fun <T> Lock.synchronized(block: () -> T): T {
     acquire()
     try {
-        block()
+        return block()
     } finally {
         release()
     }

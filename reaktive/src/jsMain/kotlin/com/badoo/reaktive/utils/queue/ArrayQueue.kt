@@ -1,6 +1,6 @@
 package com.badoo.reaktive.utils.queue
 
-internal class ArrayQueue<T> : Queue<T> {
+internal actual class ArrayQueue<T> actual constructor() : Queue<T> {
 
     private var queue: Array<T?> = createArray(INITIAL_CAPACITY)
     private var head = 0
