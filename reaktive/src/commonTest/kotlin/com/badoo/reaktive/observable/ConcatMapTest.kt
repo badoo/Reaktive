@@ -20,7 +20,7 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
 
     @Test
     fun subscribes_to_upstream() {
-        testConcatMap { TestObservable() }
+        concatMapUpstreamAndSubscribe { TestObservable() }
 
         assertTrue(upstream.hasSubscribers)
     }
@@ -28,7 +28,7 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
     @Test
     fun subscribes_to_first_inner_source() {
         val inner = TestObservable<String>()
-        testConcatMap { inner }
+        concatMapUpstreamAndSubscribe { inner }
 
         upstream.onNext(0)
 
@@ -37,8 +37,8 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
 
     @Test
     fun does_not_subscribe_to_second_inner_source_WHEN_first_inner_source_is_not_finished() {
-        val inners = innerSources(2)
-        testConcatMap(inners)
+        val inners = createInnerSources(2)
+        concatMapUpstreamAndSubscribe(inners)
 
         upstream.onNext(0)
         upstream.onNext(1)
@@ -48,8 +48,8 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
 
     @Test
     fun subscribes_to_second_source_WHEN_upstream_emitted_second_value_and_first_source_is_finished() {
-        val inners = innerSources(2)
-        testConcatMap(inners)
+        val inners = createInnerSources(2)
+        concatMapUpstreamAndSubscribe(inners)
 
         upstream.onNext(0)
         upstream.onNext(1)
@@ -60,8 +60,8 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
 
     @Test
     fun subscribes_to_second_source_WHEN_first_source_is_finished_and_upstream_emitted_second_value() {
-        val inners = innerSources(2)
-        testConcatMap(inners)
+        val inners = createInnerSources(2)
+        concatMapUpstreamAndSubscribe(inners)
 
         upstream.onNext(0)
         inners[0].onComplete()
@@ -72,8 +72,8 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
 
     @Test
     fun produces_values_in_correct_order() {
-        val inners = innerSources(3)
-        val observer = testConcatMap() { inners[it ?: 0] }
+        val inners = createInnerSources(3)
+        val observer = concatMapUpstreamAndSubscribe() { inners[it ?: 0] }
 
         upstream.onNext(null)
         inners[0].onNext("0a")
@@ -97,7 +97,7 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
 
     @Test
     fun completes_WHEN_upstream_completed_without_values() {
-        val observer = testConcatMap { TestObservable() }
+        val observer = concatMapUpstreamAndSubscribe { TestObservable() }
 
         upstream.onComplete()
 
@@ -106,7 +106,7 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
 
     @Test
     fun does_not_complete_WHEN_upstream_produced_values_and_completed() {
-        val observer = testConcatMap { TestObservable() }
+        val observer = concatMapUpstreamAndSubscribe { TestObservable() }
 
         upstream.onNext(0)
         upstream.onComplete()
@@ -116,8 +116,8 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
 
     @Test
     fun completes_WHEN_upstream_produced_values_and_completed_and_all_sources_are_completed() {
-        val inners = innerSources(3)
-        val observer = testConcatMap(inners)
+        val inners = createInnerSources(3)
+        val observer = concatMapUpstreamAndSubscribe(inners)
 
         upstream.onNext(0)
         inners[0].onComplete()
@@ -132,8 +132,8 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
 
     @Test
     fun does_not_complete_WHEN_upstream_produced_values_and_completed_and_not_all_inner_sources_are_completed() {
-        val inners = innerSources(3)
-        val observer = testConcatMap(inners)
+        val inners = createInnerSources(3)
+        val observer = concatMapUpstreamAndSubscribe(inners)
 
         upstream.onNext(0)
         inners[0].onComplete()
@@ -148,7 +148,7 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
     @Test
     fun produces_error_WHEN_inner_source_produced_error() {
         val inner = TestObservable<String>()
-        val observer = testConcatMap { inner }
+        val observer = concatMapUpstreamAndSubscribe { inner }
 
         upstream.onNext(0)
         inner.onError(Throwable())
@@ -159,7 +159,7 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
     @Test
     fun does_not_produce_more_values_WHEN_disposed() {
         val inner = TestObservable<String>()
-        val observer = testConcatMap { inner }
+        val observer = concatMapUpstreamAndSubscribe { inner }
         upstream.onNext(0)
         inner.onNext("a")
         observer.reset()
@@ -173,7 +173,7 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
     @Test
     fun disposes_source_WHEN_disposed() {
         val inner = TestObservable<String>()
-        val observer = testConcatMap { inner }
+        val observer = concatMapUpstreamAndSubscribe { inner }
         upstream.onNext(0)
 
         observer.dispose()
@@ -184,7 +184,7 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
     @Test
     fun disposes_source_WHEN_upstream_produced_error() {
         val inner = TestObservable<String>()
-        testConcatMap { inner }
+        concatMapUpstreamAndSubscribe { inner }
         upstream.onNext(0)
 
         upstream.onError(Throwable())
@@ -195,7 +195,7 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
     @Test
     fun disposes_upstream_WHEN_source_produced_error() {
         val inner = TestObservable<String>()
-        testConcatMap { inner }
+        concatMapUpstreamAndSubscribe { inner }
         upstream.onNext(0)
 
         inner.onError(Throwable())
@@ -203,12 +203,12 @@ class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGener
         assertTrue(upstream.isDisposed)
     }
 
-    private fun testConcatMap(innerSources: List<Observable<String?>>): TestObservableObserver<String?> =
-        testConcatMap { innerSources[it!!] }
+    private fun concatMapUpstreamAndSubscribe(innerSources: List<Observable<String?>>): TestObservableObserver<String?> =
+        concatMapUpstreamAndSubscribe { innerSources[it!!] }
 
-    private fun testConcatMap(mapper: (Int?) -> Observable<String?>): TestObservableObserver<String?> =
+    private fun concatMapUpstreamAndSubscribe(mapper: (Int?) -> Observable<String?>): TestObservableObserver<String?> =
         upstream.concatMap(mapper).test()
 
-    private fun innerSources(count: Int): List<TestObservable<String?>> =
+    private fun createInnerSources(count: Int): List<TestObservable<String?>> =
         List(count) { TestObservable<String?>() }
 }
