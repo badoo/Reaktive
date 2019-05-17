@@ -1,22 +1,35 @@
 package com.badoo.reaktive.testutils
 
-import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
 import com.badoo.reaktive.utils.atomicreference.getAndUpdate
 import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomicreference.updateAndGet
 
-class TestScheduler : Scheduler {
+class TestScheduler(
+    private val isManualProcessing: Boolean = false
+) : Scheduler {
 
     val timer = Timer()
-    private val disposables = CompositeDisposable()
+    private val _executors: AtomicReference<List<Executor>> = AtomicReference(emptyList(), true)
+    val executors: List<Executor> = _executors.value
 
     override fun newExecutor(): Scheduler.Executor =
-        ExecutorImpl(timer)
-            .also(disposables::add)
+        Executor(timer, isManualProcessing)
+            .also { executor ->
+                _executors.update { it + executor }
+            }
 
     override fun destroy() {
-        disposables.dispose()
+        _executors
+            .getAndUpdate { emptyList() }
+            .forEach(Scheduler.Executor::dispose)
+    }
+
+    fun process() {
+        _executors
+            .value
+            .forEach(Executor::process)
     }
 
     class Timer {
@@ -38,16 +51,15 @@ class TestScheduler : Scheduler {
         }
     }
 
-    private class ExecutorImpl(
-        private val timer: Timer
+    class Executor(
+        private val timer: Timer,
+        private val isManualProcessing: Boolean
     ) : Scheduler.Executor {
 
         private val tasks: AtomicReference<List<Task>> = AtomicReference(emptyList(), true)
-
         private val _isDisposed = AtomicReference(false)
         override val isDisposed: Boolean get() = _isDisposed.value
-
-        private val timerListener = ::process
+        private val timerListener = ::processIfNeeded
 
         init {
             timer.addOnChangeListener(timerListener)
@@ -74,38 +86,44 @@ class TestScheduler : Scheduler {
         fun process() {
             val timeMillis = timer.millis
 
-            val oldTasks =
-                tasks.getAndUpdate { list ->
-                    arrayListOf<Task>()
-                        .apply {
-                            list.forEach { task ->
-                                if (task.startMillis > timeMillis) {
-                                    add(task)
-                                } else if (task.periodMillis != null) {
-                                    add(task.copy(startMillis = timeMillis + task.periodMillis))
-                                }
-                            }
-                        }
-                }
-
-            oldTasks
+            tasks
+                .getAndUpdate { it.removeExpiredTasks(timeMillis) }
                 .asSequence()
                 .filter { it.startMillis <= timeMillis }
                 .forEach { it.task() }
         }
 
+        private fun processIfNeeded() {
+            if (!isManualProcessing) {
+                process()
+            }
+        }
+
         private fun addTask(startDelayMillis: Long, periodMillis: Long?, task: () -> Unit) {
             tasks.update {
-                it.plus(
-                    Task(
-                        startMillis = timer.millis + startDelayMillis,
-                        periodMillis = periodMillis,
-                        task = task
+                it
+                    .plus(
+                        Task(
+                            startMillis = timer.millis + startDelayMillis,
+                            periodMillis = periodMillis,
+                            task = task
+                        )
                     )
-                )
+                    .sorted()
             }
 
-            process()
+            processIfNeeded()
+        }
+
+        private companion object {
+            private fun List<Task>.removeExpiredTasks(timeMillis: Long): List<Task> =
+                mapNotNull {
+                    when {
+                        it.startMillis > timeMillis -> it
+                        it.periodMillis != null -> it.copy(startMillis = timeMillis + it.periodMillis)
+                        else -> null
+                    }
+                }
         }
     }
 
@@ -113,5 +131,21 @@ class TestScheduler : Scheduler {
         val startMillis: Long,
         val periodMillis: Long?,
         val task: () -> Unit
-    )
+    ) : Comparable<Task> {
+        private val sequenceNumber = sequencer.updateAndGet(Long::inc)
+
+        override fun compareTo(other: Task): Int =
+            if (this === other) {
+                0
+            } else {
+                startMillis
+                    .compareTo(other.startMillis)
+                    .takeUnless { it == 0 }
+                    ?: sequenceNumber.compareTo(other.sequenceNumber)
+            }
+
+        private companion object {
+            private val sequencer = AtomicReference(0L)
+        }
+    }
 }
