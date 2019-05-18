@@ -2,6 +2,7 @@ package com.badoo.reaktive.subject
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.ObservableObserver
+import com.badoo.reaktive.testutils.TestObservableObserver
 import com.badoo.reaktive.testutils.hasOnNext
 import com.badoo.reaktive.testutils.isCompleted
 import com.badoo.reaktive.testutils.isError
@@ -14,6 +15,42 @@ import kotlin.test.assertTrue
 
 interface SubjectGenericTests {
 
+    @Test
+    fun broadcasts_values_to_all_observers()
+
+    @Test
+    fun does_not_emit_values_recursively()
+
+    @Test
+    fun completes_all_observers_WHEN_completed()
+
+    @Test
+    fun delivers_error_to_all_observers_WHEN_error_produced()
+
+    @Test
+    fun does_not_emit_values_WHEN_completed()
+
+    @Test
+    fun does_not_emit_values_WHEN_error_produced()
+
+    @Test
+    fun does_not_produce_completion_WHEN_completed()
+
+    @Test
+    fun does_not_produce_completion_WHEN_error_produced()
+
+    @Test
+    fun does_not_produce_error_WHEN_completed()
+
+    @Test
+    fun does_not_produce_error_WHEN_error_produced()
+
+    @Test
+    fun does_not_emit_anything_WHEN_subscribed_after_completion()
+
+    @Test
+    fun does_not_emit_anything_WHEN_subscribed_after_error()
+
     companion object {
         operator fun invoke(subject: Subject<Int?>): SubjectGenericTests = SubjectGenericTestsImpl(subject)
     }
@@ -23,9 +60,9 @@ private class SubjectGenericTestsImpl(
     private val subject: Subject<Int?>
 ) : SubjectGenericTests {
 
-    @Test
-    fun broadcasts_values_to_all_observers() {
+    override fun broadcasts_values_to_all_observers() {
         val observers = List(5) { subject.test() }
+        observers.forEach(TestObservableObserver<*>::reset)
         subject.onNext(0)
         subject.onNext(null)
         subject.onNext(1)
@@ -37,8 +74,7 @@ private class SubjectGenericTestsImpl(
         }
     }
 
-    @Test
-    fun does_not_emit_values_recursively() {
+    override fun does_not_emit_values_recursively() {
         var count = 0
         var success = false
 
@@ -62,13 +98,13 @@ private class SubjectGenericTestsImpl(
                 }
             }
         )
+        count = 0
         subject.onNext(0)
 
         assertTrue(success)
     }
 
-    @Test
-    fun completes_all_observers_WHEN_completed() {
+    override fun completes_all_observers_WHEN_completed() {
         val observers = List(5) { subject.test() }
         subject.onNext(0)
         subject.onComplete()
@@ -78,8 +114,7 @@ private class SubjectGenericTestsImpl(
         }
     }
 
-    @Test
-    fun delivers_error_to_all_observers_WHEN_error_produced() {
+    override fun delivers_error_to_all_observers_WHEN_error_produced() {
         val observers = List(5) { subject.test() }
         val error = Throwable()
         subject.onNext(0)
@@ -90,26 +125,25 @@ private class SubjectGenericTestsImpl(
         }
     }
 
-    @Test
-    fun does_not_emit_values_WHEN_completed() {
+    override fun does_not_emit_values_WHEN_completed() {
         val observer = subject.test()
         subject.onComplete()
+        observer.reset()
         subject.onNext(0)
 
         assertFalse(observer.hasOnNext)
     }
 
-    @Test
-    fun does_not_emit_values_WHEN_error_produced() {
+    override fun does_not_emit_values_WHEN_error_produced() {
         val observer = subject.test()
         subject.onError(Throwable())
+        observer.reset()
         subject.onNext(0)
 
         assertFalse(observer.hasOnNext)
     }
 
-    @Test
-    fun does_not_produce_completion_WHEN_completed() {
+    override fun does_not_produce_completion_WHEN_completed() {
         val observer = subject.test()
         subject.onComplete()
         observer.reset()
@@ -118,8 +152,7 @@ private class SubjectGenericTestsImpl(
         assertFalse(observer.isCompleted)
     }
 
-    @Test
-    fun does_not_produce_completion_WHEN_error_produced() {
+    override fun does_not_produce_completion_WHEN_error_produced() {
         val observer = subject.test()
         subject.onError(Throwable())
         subject.onComplete()
@@ -127,8 +160,7 @@ private class SubjectGenericTestsImpl(
         assertFalse(observer.isCompleted)
     }
 
-    @Test
-    fun does_not_produce_error_WHEN_completed() {
+    override fun does_not_produce_error_WHEN_completed() {
         val observer = subject.test()
         subject.onComplete()
         subject.onError(Throwable())
@@ -136,8 +168,7 @@ private class SubjectGenericTestsImpl(
         assertFalse(observer.isError)
     }
 
-    @Test
-    fun does_not_produce_error_WHEN_error_produced() {
+    override fun does_not_produce_error_WHEN_error_produced() {
         val observer = subject.test()
         subject.onError(Throwable())
         observer.reset()
@@ -146,8 +177,7 @@ private class SubjectGenericTestsImpl(
         assertFalse(observer.isError)
     }
 
-    @Test
-    fun does_not_emit_anything_WHEN_subscribed_after_completion() {
+    override fun does_not_emit_anything_WHEN_subscribed_after_completion() {
         subject.onNext(0)
         subject.onComplete()
         val observer = subject.test()
@@ -155,9 +185,7 @@ private class SubjectGenericTestsImpl(
         assertFalse(observer.hasOnNext)
     }
 
-
-    @Test
-    fun does_not_emit_anything_WHEN_subscribed_after_error() {
+    override fun does_not_emit_anything_WHEN_subscribed_after_error() {
         subject.onNext(0)
         subject.onError(Throwable())
         val observer = subject.test()
