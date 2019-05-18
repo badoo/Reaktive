@@ -1,9 +1,6 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.testutils.TestObservable
-import com.badoo.reaktive.testutils.isOnCompleteEvent
-import com.badoo.reaktive.testutils.test
-import com.badoo.reaktive.testutils.values
+import com.badoo.reaktive.testutils.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -69,5 +66,17 @@ class SwitchIfEmptyTest :
 
         assertEquals(2, observer.events.size)
         assertEquals(listOf(42), observer.values)
+    }
+
+    @Test
+    fun should_emit_error_when_lambda_throws() {
+        val error = RuntimeException()
+        val source = TestObservable<Int>()
+        val observer = source.switchIfEmpty { throw error }.test()
+
+        source.onComplete()
+
+        assertEquals(1, observer.events.size)
+        assertTrue(observer.isError(error))
     }
 }

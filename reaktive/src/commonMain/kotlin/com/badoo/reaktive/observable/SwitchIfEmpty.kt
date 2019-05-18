@@ -9,12 +9,12 @@ fun <T> Observable<T>.switchIfEmpty(otherObservable: Observable<T>): Observable<
     switchIfEmpty { otherObservable }
 
 fun <T> Observable<T>.switchIfEmpty(otherObservable: () -> Observable<T>): Observable<T> =
-    observableUnsafe { observer ->
+    observable { emitter ->
         val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
+        emitter.setDisposable(disposableWrapper)
 
         subscribeSafe(
-            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
+            object : ObservableObserver<T>, ErrorCallback by emitter {
                 private val isEmpty = AtomicReference(true)
 
                 override fun onSubscribe(disposable: Disposable) {
@@ -23,28 +23,27 @@ fun <T> Observable<T>.switchIfEmpty(otherObservable: () -> Observable<T>): Obser
 
                 override fun onNext(value: T) {
                     isEmpty.value = false
-                    observer.onNext(value)
+                    emitter.onNext(value)
                 }
 
                 override fun onComplete() {
                     if (isEmpty.value) {
-                        otherObservable().subscribeSafe(
-                            object : ObservableObserver<T>, ErrorCallback by this {
+                        val nextObservable = try {
+                            otherObservable()
+                        } catch (e: Throwable) {
+                            emitter.onError(e)
+                            return
+                        }
+
+                        nextObservable.subscribeSafe(
+                            object : ObservableObserver<T>, ObservableCallbacks<T> by emitter {
                                 override fun onSubscribe(disposable: Disposable) {
                                     disposableWrapper.set(disposable)
-                                }
-
-                                override fun onNext(value: T) {
-                                    observer.onNext(value)
-                                }
-
-                                override fun onComplete() {
-                                    observer.onComplete()
                                 }
                             }
                         )
                     } else {
-                        observer.onComplete()
+                        emitter.onComplete()
                     }
                 }
             }
