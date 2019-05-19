@@ -4,7 +4,6 @@ import com.moowork.gradle.node.task.NodeTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.AbstractTask
-import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFile
@@ -48,9 +47,7 @@ abstract class JsPlugin : Plugin<Project> {
         }
 
         val nodeModuleTaskProvider = target.tasks.register("populateNodeModule", PopulateNodeModuleTask::class.java) {
-            val compileJsTasks = target.tasks.named("compileKotlinJs", Kotlin2JsCompile::class.java)
-            input.set(compileJsTasks.flatMap { Providers.of(it.outputFile) })
-            output.set(compileJsTasks.flatMap { Providers.of(it.project.file("node_modules/${it.outputFile.name}")) })
+            input.set(target.tasks.named("compileKotlinJs", Kotlin2JsCompile::class.java).map { it.outputFile })
         }
 
         val compileTestJsTask = target.tasks.named("compileTestKotlinJs", Kotlin2JsCompile::class.java)
@@ -78,6 +75,10 @@ abstract class JsPlugin : Plugin<Project> {
 
         @get:OutputFile
         abstract val output: Property<File>
+
+        init {
+            output.set(input.map { project.file("node_modules/${it.name}") })
+        }
 
         @TaskAction
         open fun populate() {
