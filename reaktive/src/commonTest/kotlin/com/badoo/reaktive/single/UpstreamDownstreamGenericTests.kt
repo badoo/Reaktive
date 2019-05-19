@@ -1,10 +1,9 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.single
 
+import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.base.dispose
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.isCompleted
-import com.badoo.reaktive.test.observable.isError
-import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.test.single.isError
+import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -15,28 +14,19 @@ interface UpstreamDownstreamGenericTests {
     fun calls_onSubscribe_only_once_WHEN_subscribed()
 
     @Test
-    fun completes_WHEN_upstream_is_completed()
-
-    @Test
     fun produces_error_WHEN_upstream_produced_error()
 
     @Test
     fun disposes_upstream_WHEN_disposed()
 
     companion object {
-        operator fun <T> invoke(transform: Observable<T>.() -> Observable<*>): UpstreamDownstreamGenericTests =
+        operator fun <T> invoke(transform: Single<T>.() -> Single<*>): UpstreamDownstreamGenericTests =
             object : UpstreamDownstreamGenericTests {
-                private val upstream = TestObservable<T>()
+                private val upstream = TestSingle<T>()
                 private val observer = upstream.transform().test()
 
                 override fun calls_onSubscribe_only_once_WHEN_subscribed() {
                     assertEquals(1, observer.disposables.size)
-                }
-
-                override fun completes_WHEN_upstream_is_completed() {
-                    upstream.onComplete()
-
-                    assertTrue(observer.isCompleted)
                 }
 
                 override fun produces_error_WHEN_upstream_produced_error() {

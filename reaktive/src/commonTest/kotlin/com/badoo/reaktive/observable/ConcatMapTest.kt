@@ -1,10 +1,10 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.test.base.dispose
+import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.TestObservableObserver
-import com.badoo.reaktive.test.observable.dispose
 import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.hasSubscribers
 import com.badoo.reaktive.test.observable.isCompleted
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.test
@@ -14,7 +14,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ConcatMapTest :  UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ concatMap { TestObservable<Int>() } }){
+class ConcatMapTest
+    : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ concatMap { TestObservable<Int>() } }) {
 
     private val upstream = TestObservable<Int?>()
 
