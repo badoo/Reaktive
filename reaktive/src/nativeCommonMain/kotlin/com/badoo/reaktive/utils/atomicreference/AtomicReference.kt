@@ -2,7 +2,7 @@ package com.badoo.reaktive.utils.atomicreference
 
 import com.badoo.reaktive.utils.freeze
 
-internal actual class AtomicReference<T> actual constructor(
+actual class AtomicReference<T> actual constructor(
     initialValue: T,
     private val autoFreeze: Boolean
 ) {
