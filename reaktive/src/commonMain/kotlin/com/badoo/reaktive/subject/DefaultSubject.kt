@@ -4,8 +4,8 @@ import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.serializer.serializer
 import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.serializer.serializer
 
 internal open class DefaultSubject<T> : Subject<T> {
 
@@ -36,22 +36,31 @@ internal open class DefaultSubject<T> : Subject<T> {
     open fun onBeforeNext(value: T) {
     }
 
-    private fun onSerializedValue(value: Any?): Boolean {
+    private fun onSerializedValue(value: Any?): Boolean =
         if (value is Event<*>) {
             @Suppress("UNCHECKED_CAST") // Either Event<T> or T, to avoid unnecessary allocations
             val event = value as Event<T>
             when (event) {
-                is Event.OnSubscribe -> onSerializedSubscribe(event.observer)
-                is Event.OnComplete -> onSerializedComplete()
-                is Event.OnError -> onSerializedError(event.error)
+                is Event.OnSubscribe -> {
+                    onSerializedSubscribe(event.observer)
+                    true
+                }
+
+                is Event.OnComplete -> {
+                    onSerializedComplete()
+                    false
+                }
+
+                is Event.OnError -> {
+                    onSerializedError(event.error)
+                    false
+                }
             }
         } else {
             @Suppress("UNCHECKED_CAST") // Either Event<T> or T, to avoid unnecessary allocations
             onSerializedNext(value as T)
+            true
         }
-
-        return true
-    }
 
     private fun onSerializedSubscribe(observer: ObservableObserver<T>) {
         val disposableWrapper = DisposableWrapper()
@@ -102,23 +111,19 @@ internal open class DefaultSubject<T> : Subject<T> {
     }
 
     private fun onSerializedComplete() {
-        if (status is Subject.Status.Active) {
-            _status.value = Subject.Status.Completed
+        _status.value = Subject.Status.Completed
 
-            observers
-                .value
-                .forEach(ObservableObserver<*>::onComplete)
-        }
+        observers
+            .value
+            .forEach(ObservableObserver<*>::onComplete)
     }
 
     private fun onSerializedError(error: Throwable) {
-        if (status is Subject.Status.Active) {
-            _status.value = Subject.Status.Error(error)
+        _status.value = Subject.Status.Error(error)
 
-            observers
-                .value
-                .forEach { it.onError(error) }
-        }
+        observers
+            .value
+            .forEach { it.onError(error) }
     }
 
     private sealed class Event<out T> {
