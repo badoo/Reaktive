@@ -63,9 +63,9 @@ if (target.isCommon() || target.isMeta()) {
             }
 
             jvmMain.dependsOn jvmCommonMain
-            androidMain.dependsOn jvmCommonMain
-
             jvmTest.dependsOn jvmCommonTest
+
+            androidMain.dependsOn jvmCommonMain
             androidTest.dependsOn jvmCommonTest
 
             nativeCommonMain.dependsOn commonMain
