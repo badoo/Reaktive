@@ -58,7 +58,7 @@ abstract class JsPlugin : Plugin<Project> {
         }
 
         val dependenciesTaskProvider = target.tasks.register("installJsTestDependencies", NpmTask::class.java) {
-            setArgs(listOf("install", "kotlin", "kotlin-test", "mocha"))
+            setArgs(listOf("install", "kotlin@1.3.31", "kotlin-test@1.3.31", "mocha@6.1.4"))
         }
 
         val nodeModuleTaskProvider = target.tasks.register("populateNodeModule", PopulateNodeModuleTask::class.java) {
