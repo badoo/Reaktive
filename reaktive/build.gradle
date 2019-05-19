@@ -16,7 +16,6 @@ kotlin {
         commonTest {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-test'
-                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
                 implementation 'org.jetbrains.kotlin:kotlin-test-common'
                 implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
             }
@@ -44,7 +43,6 @@ if (target.isCommon() || target.isMeta()) {
             // fromPreset(presets.jvm, 'jvmCommon')
             fromPreset(presets.jvm, 'jvm')
             fromPreset(presets.android, 'android')
-            fromPreset(presets.js, 'js')
             // fromPreset(presets.linuxX64, 'nativeCommon')
             fromPreset(presets.linuxX64, 'linuxX64')
             fromPreset(presets.linuxArm32Hfp, 'linuxArm32Hfp')
@@ -56,29 +54,19 @@ if (target.isCommon() || target.isMeta()) {
                     implementation 'org.jetbrains.kotlin:kotlin-stdlib'
                 }
             }
+            
+            jvmCommonTest {
+                dependsOn commonTest
+                dependencies {
+                    implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+                }
+            }
 
             jvmMain.dependsOn jvmCommonMain
             androidMain.dependsOn jvmCommonMain
 
-            jsMain {
-                dependencies {
-                    implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
-                }
-
-                compileKotlinJs {
-                    kotlinOptions.metaInfo = true
-                    kotlinOptions.sourceMap = true
-                    kotlinOptions.verbose = true
-                    kotlinOptions.main = 'call'
-                    kotlinOptions.moduleKind = 'umd'
-                }
-            }
-
-            jsTest {
-                dependencies {
-                    implementation 'org.jetbrains.kotlin:kotlin-test-js'
-                }
-            }
+            jvmTest.dependsOn jvmCommonTest
+            androidTest.dependsOn jvmCommonTest
 
             nativeCommonMain.dependsOn commonMain
             nativeCommonTest.dependsOn commonTest
@@ -97,6 +85,8 @@ if (target.isCommon() || target.isMeta()) {
             publishLibraryVariants('release', 'debug')
         }
     }
+
+    apply plugin: JsPlugin
 }
 
 if (target.isIos() || target.isMeta()) {
