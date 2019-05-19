@@ -1,8 +1,10 @@
+import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.npm.NpmTask
 import com.moowork.gradle.node.task.NodeTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.internal.AbstractTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.InputFile
@@ -40,7 +42,20 @@ abstract class JsPlugin : Plugin<Project> {
     }
 
     private fun configureJsTest(target: Project) {
+        // workaround for https://github.com/srs/gradle-node-plugin/issues/301
+        target.repositories.whenObjectAdded {
+            if (this is IvyArtifactRepository) {
+                metadataSources {
+                    artifact()
+                }
+            }
+        }
+
         target.pluginManager.apply(NodePlugin::class.java)
+        target.extensions.configure(NodeExtension::class.java) {
+            download = true
+            version = "12.2.0"
+        }
 
         val dependenciesTaskProvider = target.tasks.register("installJsTestDependencies", NpmTask::class.java) {
             setArgs(listOf("install", "kotlin", "kotlin-test", "mocha"))
