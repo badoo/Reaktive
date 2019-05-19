@@ -1,10 +1,12 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.base.CompleteCallback
+import com.badoo.reaktive.base.ErrorCallback
+import com.badoo.reaktive.base.SuccessCallback
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
-import com.badoo.reaktive.single.SingleCallbacks
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
 
 fun <T> Maybe<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Maybe<T> =
@@ -47,7 +49,7 @@ fun <T> Maybe<T>.doOnBeforeComplete(action: () -> Unit): Maybe<T> =
         observer.onSubscribe(disposableWrapper)
 
         subscribeSafe(
-            object : MaybeObserver<T>, SingleCallbacks<T> by observer {
+            object : MaybeObserver<T>, SuccessCallback<T> by observer, ErrorCallback by observer {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
                 }
@@ -66,7 +68,7 @@ fun <T> Maybe<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Maybe<T> =
         observer.onSubscribe(disposableWrapper)
 
         subscribeSafe(
-            object : MaybeObserver<T>, MaybeCallbacks<T> by observer {
+            object : MaybeObserver<T>, SuccessCallback<T> by observer, CompleteCallback by observer {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
                 }

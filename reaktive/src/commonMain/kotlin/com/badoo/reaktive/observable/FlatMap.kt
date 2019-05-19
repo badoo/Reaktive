@@ -2,6 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
+import com.badoo.reaktive.base.ValueCallback
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
@@ -20,10 +21,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
                 private val activeSourceCount = AtomicReference(1)
 
                 private val mappedObserver =
-                    object : ObservableObserver<R>, Observer by this, CompletableCallbacks by this {
-                        override fun onNext(value: R) {
-                            serializedEmitter.onNext(value)
-                        }
+                    object : ObservableObserver<R>, Observer by this, CompletableCallbacks by this, ValueCallback<R> by serializedEmitter {
                     }
 
                 override fun onSubscribe(disposable: Disposable) {

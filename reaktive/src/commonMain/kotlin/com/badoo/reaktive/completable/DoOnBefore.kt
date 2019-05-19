@@ -1,5 +1,6 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.base.CompleteCallback
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
@@ -46,7 +47,7 @@ fun Completable.doOnBeforeError(consumer: (Throwable) -> Unit): Completable =
         observer.onSubscribe(disposableWrapper)
 
         subscribeSafe(
-            object : CompletableObserver, CompletableCallbacks by observer {
+            object : CompletableObserver, CompleteCallback by observer {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
                 }
