@@ -1,24 +1,24 @@
 package com.badoo.reaktive.utils.atomicreference
 
-internal inline fun <T> AtomicReference<T>.getAndUpdate(update: (T) -> T): T {
-    var var2: T
+inline fun <T> AtomicReference<T>.getAndUpdate(update: (T) -> T): T {
+    var prev: T
     do {
-        var2 = value
-    } while (!compareAndSet(var2, update(var2)))
+        prev = value
+    } while (!compareAndSet(prev, update(prev)))
 
-    return var2
+    return prev
 }
 
-internal inline fun <T> AtomicReference<T>.updateAndGet(update: (T) -> T): T {
-    var var3: T
+inline fun <T> AtomicReference<T>.updateAndGet(update: (T) -> T): T {
+    var next: T
     do {
-        val var2 = value
-        var3 = update(var2)
-    } while (!compareAndSet(var2, var3))
+        val prev = value
+        next = update(prev)
+    } while (!compareAndSet(prev, next))
 
-    return var3
+    return next
 }
 
-internal inline fun <T> AtomicReference<T>.update(update: (T) -> T) {
+inline fun <T> AtomicReference<T>.update(update: (T) -> T) {
     getAndUpdate(update)
 }
