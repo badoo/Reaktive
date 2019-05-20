@@ -10,6 +10,10 @@ internal actual class Lock {
         // no-op
     }
 
+    actual fun destroy() {
+        // no-op
+    }
+
     actual fun newCondition(): Condition = condition
 
     private companion object {
@@ -20,6 +24,10 @@ internal actual class Lock {
                 }
 
                 override fun signal() {
+                    // no-op
+                }
+
+                override fun destroy() {
                     // no-op
                 }
             }
