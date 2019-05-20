@@ -67,6 +67,12 @@ internal class MessageQueue {
         }
     }
 
+    fun destroy() {
+        clear()
+        condition.destroy()
+        lock.destroy()
+    }
+
     private class Entry(
         val token: Any,
         val startTimeNanos: Long,

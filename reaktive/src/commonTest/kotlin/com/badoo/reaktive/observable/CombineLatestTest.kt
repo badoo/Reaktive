@@ -109,11 +109,13 @@ class CombineLatestTest {
 
     @Test
     fun erred_WHEN_one_source_erred_without_a_value() {
+        val error = Throwable()
+
         emitter1.onNext("1")
         emitter2.onNext("2")
-        emitter3.onError(Throwable())
+        emitter3.onError(error)
 
-        assertTrue(observer.isError)
+        assertTrue(observer.isError(error))
     }
 
     @Test
@@ -127,12 +129,14 @@ class CombineLatestTest {
 
     @Test
     fun erred_WHEN_all_sources_produced_values_and_one_source_erred() {
+        val error = Throwable()
+
         emitter1.onNext("1")
         emitter2.onNext("2")
         emitter3.onNext("3")
-        emitter2.onError(Throwable())
+        emitter2.onError(error)
 
-        assertTrue(observer.isError)
+        assertTrue(observer.isError(error))
     }
 
     @Test
