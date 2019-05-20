@@ -1,11 +1,10 @@
 package com.badoo.reaktive.utils.serializer
 
 /**
- * Serializes all calls to "accept" method and synchronously calls "onValue" method with corresponding values
+ * Serializes all calls to [Serializer.accept] method.
+ * Each implementation should normally have a callback which should be synchronously called with corresponding values.
  */
-internal expect abstract class Serializer<in T>(
-    comparator: Comparator<in T>? = null
-) {
+internal interface Serializer<in T> {
 
     /**
      * Either calls "onValue" with the specified value or queues the value.
@@ -21,13 +20,4 @@ internal expect abstract class Serializer<in T>(
      * Clears the queue
      */
     fun clear()
-
-
-    /**
-     * Called synchronously for every value
-     *
-     * @param value a value
-     * @return true if processing should continue, false otherwise
-     */
-    protected abstract fun onValue(value: T): Boolean
 }

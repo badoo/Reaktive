@@ -4,13 +4,13 @@ import com.badoo.reaktive.utils.atomicreference.AtomicReference
 import com.badoo.reaktive.utils.atomicreference.getAndUpdate
 import com.badoo.reaktive.utils.atomicreference.update
 
-internal actual abstract class Serializer<in T> actual constructor(
-    private val comparator: Comparator<in T>?
-) {
+internal abstract class SerializerImpl<in T>(
+    private val comparator: Comparator<in T>? = null
+) : Serializer<T> {
 
     private val state = AtomicReference<State<T>?>(State(), true)
 
-    actual fun accept(value: T) {
+    override fun accept(value: T) {
         state
             .getAndUpdate { state ->
                 state?.copy(
@@ -23,7 +23,7 @@ internal actual abstract class Serializer<in T> actual constructor(
             ?.run { drain() }
     }
 
-    actual fun clear() {
+    override fun clear() {
         state.update {
             it?.copy(queue = emptyList())
         }
@@ -50,7 +50,7 @@ internal actual abstract class Serializer<in T> actual constructor(
         }
     }
 
-    protected actual abstract fun onValue(value: T): Boolean
+    protected abstract fun onValue(value: T): Boolean
 
     private companion object {
         private fun <T> List<T>.addAndSort(item: T, comparator: Comparator<in T>?): List<T> {

@@ -52,9 +52,7 @@ if (target.isCommon() || target.isMeta()) {
         }
 
         sourceSets {
-            jvmJsCommonMain {
-                dependsOn commonMain
-            }
+            jvmJsCommonMain.dependsOn commonMain
             jvmJsCommonTest.dependsOn commonTest
 
             jvmCommonMain {
@@ -67,7 +65,10 @@ if (target.isCommon() || target.isMeta()) {
             jvmCommonTest.dependsOn jvmJsCommonTest
 
             jvmMain.dependsOn jvmCommonMain
+            jvmTest.dependsOn jvmCommonTest
+
             androidMain.dependsOn jvmCommonMain
+            androidTest.dependsOn jvmCommonTest
 
             jsMain {
                 dependsOn jvmJsCommonMain
