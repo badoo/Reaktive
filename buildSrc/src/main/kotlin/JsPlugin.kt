@@ -5,15 +5,10 @@ import com.moowork.gradle.node.task.NodeTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
-import org.gradle.api.internal.AbstractTask
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.Copy
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import java.io.File
 
 @Suppress("UnstableApiUsage")
 abstract class JsPlugin : Plugin<Project> {
@@ -54,21 +49,32 @@ abstract class JsPlugin : Plugin<Project> {
         target.pluginManager.apply(NodePlugin::class.java)
         target.extensions.configure(NodeExtension::class.java) {
             download = true
-            version = "12.2.0"
+            version = Versions.node
         }
 
-        val dependenciesTaskProvider = target.tasks.register("installJsTestDependencies", NpmTask::class.java) {
-            setArgs(listOf("install", "kotlin@1.3.31", "kotlin-test@1.3.31", "mocha@6.1.4"))
+        val dependenciesTask = target.tasks.register("installJsTestDependencies", NpmTask::class.java) {
+            setArgs(
+                listOf(
+                    "install",
+                    "kotlin@${Versions.kotlin}",
+                    "kotlin-test@${Versions.kotlin}",
+                    "mocha@${Versions.mocha}"
+                )
+            )
         }
 
-        val nodeModuleTaskProvider = target.tasks.register("populateNodeModule", PopulateNodeModuleTask::class.java) {
-            input.set(target.tasks.named("compileKotlinJs", Kotlin2JsCompile::class.java).map { it.outputFile })
+        val nodeModuleTask = target.tasks.register("populateNodeModule", Copy::class.java) {
+            val compileTask = target.tasks.named("compileKotlinJs", Kotlin2JsCompile::class.java).get()
+            // dependenciesTask remove all files from node_modules that are not defined in package.json
+            dependsOn(compileTask, dependenciesTask)
+            from(compileTask.outputFile)
+            into("node_modules")
         }
 
         val compileTestJsTask = target.tasks.named("compileTestKotlinJs", Kotlin2JsCompile::class.java)
 
         target.tasks.register("runMocha", NodeTask::class.java) {
-            dependsOn(dependenciesTaskProvider, nodeModuleTaskProvider, compileTestJsTask)
+            dependsOn(dependenciesTask, compileTestJsTask, nodeModuleTask)
             setScript(project.file("node_modules/mocha/bin/mocha"))
             // NodeTask does not support lazy configuration through properties
             setArgs(listOf(compileTestJsTask.get().outputFile.relativeTo(project.projectDir)))
@@ -81,24 +87,6 @@ abstract class JsPlugin : Plugin<Project> {
         sourceMapEmbedSources = "always"
         moduleKind = "umd"
         main = "call"
-    }
-
-    abstract class PopulateNodeModuleTask : AbstractTask() {
-
-        @get:InputFile
-        abstract val input: Property<File>
-
-        @get:OutputFile
-        abstract val output: Property<File>
-
-        init {
-            output.set(input.map { project.file("node_modules/${it.name}") })
-        }
-
-        @TaskAction
-        open fun populate() {
-            input.get().copyTo(target = output.get(), overwrite = true)
-        }
     }
 
 }

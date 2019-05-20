@@ -10,14 +10,14 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                implementation kotlin('stdlib-common')
             }
         }
         commonTest {
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-test'
-                implementation 'org.jetbrains.kotlin:kotlin-test-common'
-                implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                implementation kotlin('test')
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
             }
         }
     }
@@ -51,14 +51,14 @@ if (target.isCommon() || target.isMeta()) {
         sourceSets {
             jvmCommonMain {
                 dependencies {
-                    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+                    implementation kotlin('stdlib')
                 }
             }
             
             jvmCommonTest {
                 dependsOn commonTest
                 dependencies {
-                    implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+                    implementation kotlin('test-junit')
                 }
             }
 

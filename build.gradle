@@ -1,5 +1,4 @@
 buildscript {
-    ext.kotlin_version = '1.3.31'
     ext.reaktive_version = '1.0.0-alpha3'
     ext.reaktive_group_id = 'com.github.badoo.reaktive'
 
@@ -10,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
         classpath 'org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.45'
     }
 }
