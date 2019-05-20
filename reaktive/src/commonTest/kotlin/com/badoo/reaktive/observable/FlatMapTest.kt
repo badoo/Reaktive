@@ -109,11 +109,12 @@ class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
     fun produces_error_WHEN_inner_source_produced_error() {
         val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
         val observer = testFlatMap(inners::get)
+        val error = Throwable()
 
         source.onNext(1)
-        inners[1].onError(Throwable())
+        inners[1].onError(error)
 
-        assertTrue(observer.isError)
+        assertTrue(observer.isError(error))
     }
 
     @Test

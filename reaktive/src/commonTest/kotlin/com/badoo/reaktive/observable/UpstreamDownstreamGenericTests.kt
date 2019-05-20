@@ -6,9 +6,13 @@ import com.badoo.reaktive.testutils.isCompleted
 import com.badoo.reaktive.testutils.isError
 import com.badoo.reaktive.testutils.test
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 interface UpstreamDownstreamGenericTests {
+
+    @Test
+    fun calls_onSubscribe_only_once_WHEN_subscribed()
 
     @Test
     fun completes_WHEN_upstream_is_completed()
@@ -24,6 +28,10 @@ interface UpstreamDownstreamGenericTests {
             object : UpstreamDownstreamGenericTests {
                 private val upstream = TestObservable<T>()
                 private val observer = upstream.transform().test()
+
+                override fun calls_onSubscribe_only_once_WHEN_subscribed() {
+                    assertEquals(1, observer.disposables.size)
+                }
 
                 override fun completes_WHEN_upstream_is_completed() {
                     upstream.onComplete()
