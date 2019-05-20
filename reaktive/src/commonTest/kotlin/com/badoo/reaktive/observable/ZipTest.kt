@@ -95,12 +95,14 @@ class ZipTest {
 
     @Test
     fun produces_error_WHEN_a_source_emitted_a_value_and_produced_an_error() {
+        val error = Throwable()
+
         sources[0].onNext(0)
         sources[2].onNext(2)
         observer.reset()
-        sources[2].onError(Throwable())
+        sources[2].onError(error)
 
-        assertTrue(observer.isError)
+        assertTrue(observer.isError(error))
     }
 
     @Test

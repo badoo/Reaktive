@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/badoo/Reaktive.svg?branch=master)](https://travis-ci.org/badoo/Reaktive)
 [![](https://img.shields.io/badge/License-Apache/2.0-blue.svg)](https://github.com/badoo/Reaktive/blob/master/LICENSE)
 
-Kotlin multi-platform implementation of Reactive Extensions.
+Kotlin multiplatform implementation of Reactive Extensions.
 
 Library status: under development, alpha pre-release is available, public API is subject to change
 
@@ -21,9 +21,13 @@ allprojects {
 
 Add the following dependencies into your module's build.gradle file:
 #### Main library
-Kotlin multi-platform:
+Kotlin multiplatform:
 ```groovy
 implementation 'com.github.badoo.reaktive:reaktive:<latest-version>'
+```
+Kotlin metadata:
+```groovy
+implementation 'com.github.badoo.reaktive:reaktive-metadata:<latest-version>'
 ```
 Kotlin Android:
 ```groovy
@@ -59,7 +63,7 @@ implementation 'com.github.badoo.reaktive:rxjava2-interop:<latest-version>'
 * Subjects: PublishSubject, BehaviorSubject
 * Interoperability with RxJava2: conversion of sources between Reaktive and RxJava2, ability to reuse RxJava2's schedulers
 * Supported operators:
-  * Observable: asCompletable, collect, combineLatest, concatMap, debounce, distinctUntilChanged, doOnBeforeXxx, filter, firstOrComplete, firstOrDefault, firstOrError, flatMap, flatMapCompletable, flatMapMaybe, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, sample, scan, subscribeOn, throttle, toCompletable, toList, withLatestFrom, zip
+  * Observable: asCompletable, collect, combineLatest, concatMap, debounce, defaultIfEmpty, distinctUntilChanged, doOnBeforeXxx, filter, firstOrComplete, firstOrDefault, firstOrError, flatMap, flatMapCompletable, flatMapMaybe, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, sample, scan, skip, subscribeOn, switchIfEmpty, throttle, toCompletable, toList, withLatestFrom, zip
   * Maybe: asCompletable, asObservable, asSingle, concat, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapObservable, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, subscribeOn, zip
   * Single: asCompletable, asMaybe, asObservable, blockingGet, concat, doOnBeforeXxx, flatMap, flatMapCompletable, flatMapMaybe, flatMapObservable, flatten, map, merge, notNull, observeOn, subscribeOn, zip
   * Completable: asMaybe, asObservable, asSingle, concat, doOnBeforeXxx, merge, observeOn, subscribeOn
