@@ -82,8 +82,7 @@ class ObservableByEmitterTest {
 
         emitter.onError(error)
 
-        assertTrue(observer.isError)
-        assertSame(error, observer.getOnErrorValue(0))
+        assertTrue(observer.isError(error))
     }
 
     @Test
