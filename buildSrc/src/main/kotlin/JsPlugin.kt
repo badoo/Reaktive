@@ -73,11 +73,15 @@ abstract class JsPlugin : Plugin<Project> {
 
         val compileTestJsTask = target.tasks.named("compileTestKotlinJs", Kotlin2JsCompile::class.java)
 
-        target.tasks.register("runMocha", NodeTask::class.java) {
+        val runMochaTask = target.tasks.register("runMocha", NodeTask::class.java) {
             dependsOn(dependenciesTask, compileTestJsTask, nodeModuleTask)
             setScript(project.file("node_modules/mocha/bin/mocha"))
             // NodeTask does not support lazy configuration through properties
             setArgs(listOf(compileTestJsTask.get().outputFile.relativeTo(project.projectDir)))
+        }
+
+        target.tasks.named("check") {
+            dependsOn(runMochaTask)
         }
     }
 

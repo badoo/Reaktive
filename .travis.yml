@@ -8,7 +8,7 @@ matrix:
           - android-28
       env: MP_TARGET=COMMON
       install: true
-      script: ./gradlew reaktive:check reaktive:runMocha rxjava2-interop:check -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive:check rxjava2-interop:check -DMP_TARGET=$MP_TARGET
     - os: osx
       osx_image: xcode10.2
       language: java
