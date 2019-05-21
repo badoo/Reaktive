@@ -1,5 +1,6 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 
 internal inline fun <T, R> Maybe<T>.transform(
@@ -7,7 +8,7 @@ internal inline fun <T, R> Maybe<T>.transform(
 ): Maybe<R> =
     maybe { emitter ->
         subscribeSafe(
-            object : MaybeObserver<T> {
+            object : MaybeObserver<T>, CompletableCallbacks by emitter {
                 private val onSuccessFunction = emitter::onSuccess
                 private val onCompleteFunction = emitter::onComplete
 
@@ -21,14 +22,6 @@ internal inline fun <T, R> Maybe<T>.transform(
                     } catch (e: Throwable) {
                         emitter.onError(e)
                     }
-                }
-
-                override fun onComplete() {
-                    emitter.onComplete()
-                }
-
-                override fun onError(error: Throwable) {
-                    emitter.onError(error)
                 }
             }
         )
