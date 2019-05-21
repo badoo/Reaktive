@@ -16,19 +16,19 @@ import kotlin.test.assertTrue
 
 class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ flatMap { TestObservable<Int>() } }) {
 
-    private val source = TestObservable<Int>()
+    private val source = TestObservable<Int?>()
 
     @Test
     fun subscribes_to_upstream() {
-        testFlatMap { TestObservable() }
+        flatMapUpstreamAndSubscribe { TestObservable() }
 
         assertTrue(source.hasSubscribers)
     }
 
     @Test
     fun subscribes_to_inner_sources() {
-        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
-        testFlatMap(inners::get)
+        val inners = createInnerSources(2)
+        flatMapUpstreamAndSubscribe(inners)
 
         source.onNext(0)
         source.onNext(1)
@@ -39,25 +39,32 @@ class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
 
     @Test
     fun produces_values_in_correct_order() {
-        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable(), TestObservable())
-        val observer = testFlatMap(inners::get)
+        val inners = createInnerSources(3)
+        val observer = flatMapUpstreamAndSubscribe { inners[it ?: 0] }
 
-        source.onNext(0)
+        source.onNext(null)
         inners[0].onNext("0a")
         source.onNext(1)
         inners[0].onNext("0b")
         inners[1].onNext("1a")
+        inners[0].onNext("0c")
         source.onNext(2)
+        inners[1].onNext(null)
+        inners[0].onComplete()
+        inners[2].onNext(null)
         inners[1].onNext("1b")
-        inners[2].onNext("2a")
+        inners[1].onComplete()
         inners[2].onNext("2b")
+        source.onComplete()
+        inners[2].onNext("2c")
+        inners[2].onComplete()
 
-        assertEquals(listOf("0a", "0b", "1a", "1b", "2a", "2b"), observer.values)
+        assertEquals(listOf("0a", "0b", "1a", "0c", null, null, "1b", "2b", "2c"), observer.values)
     }
 
     @Test
     fun completes_WHEN_upstream_completed_without_values() {
-        val observer = testFlatMap { TestObservable() }
+        val observer = flatMapUpstreamAndSubscribe { TestObservable() }
 
         source.onComplete()
 
@@ -66,7 +73,7 @@ class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
 
     @Test
     fun does_not_complete_WHEN_upstream_produced_values_and_completed() {
-        val observer = testFlatMap { TestObservable() }
+        val observer = flatMapUpstreamAndSubscribe { TestObservable() }
 
         source.onNext(0)
         source.onComplete()
@@ -76,8 +83,8 @@ class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
 
     @Test
     fun completes_WHEN_upstream_produced_values_and_completed_and_all_inner_sources_are_completed() {
-        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable(), TestObservable())
-        val observer = testFlatMap(inners::get)
+        val inners = createInnerSources(3)
+        val observer = flatMapUpstreamAndSubscribe(inners)
 
         source.onNext(0)
         inners[0].onComplete()
@@ -92,8 +99,8 @@ class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
 
     @Test
     fun does_not_complete_WHEN_upstream_produced_values_and_completed_and_not_all_inner_sources_are_completed() {
-        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable(), TestObservable())
-        val observer = testFlatMap(inners::get)
+        val inners = createInnerSources(3)
+        val observer = flatMapUpstreamAndSubscribe(inners)
 
         source.onNext(0)
         inners[0].onComplete()
@@ -107,8 +114,8 @@ class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
 
     @Test
     fun produces_error_WHEN_inner_source_produced_error() {
-        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
-        val observer = testFlatMap(inners::get)
+        val inners = createInnerSources(2)
+        val observer = flatMapUpstreamAndSubscribe(inners)
         val error = Throwable()
 
         source.onNext(1)
@@ -120,7 +127,7 @@ class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
     @Test
     fun does_not_produce_more_values_WHEN_disposed() {
         val inner = TestObservable<String>()
-        val observer = testFlatMap { inner }
+        val observer = flatMapUpstreamAndSubscribe { inner }
         source.onNext(0)
         inner.onNext("a")
         observer.reset()
@@ -133,8 +140,8 @@ class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
 
     @Test
     fun disposes_streams_WHEN_disposed() {
-        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
-        val observer = testFlatMap(inners::get)
+        val inners = createInnerSources(2)
+        val observer = flatMapUpstreamAndSubscribe(inners)
         source.onNext(0)
         source.onNext(1)
 
@@ -146,25 +153,9 @@ class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
     }
 
     @Test
-    fun disposes_streams_WHEN_completed() {
-        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
-        testFlatMap(inners::get)
-        source.onNext(0)
-        source.onNext(1)
-
-        source.onComplete()
-        inners[0].onComplete()
-        inners[1].onComplete()
-
-        assertTrue(source.isDisposed)
-        assertTrue(inners[0].isDisposed)
-        assertTrue(inners[1].isDisposed)
-    }
-
-    @Test
     fun disposes_streams_WHEN_upstream_produced_error() {
-        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
-        testFlatMap(inners::get)
+        val inners = createInnerSources(2)
+        flatMapUpstreamAndSubscribe(inners)
         source.onNext(0)
         source.onNext(1)
 
@@ -177,8 +168,8 @@ class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
 
     @Test
     fun disposes_streams_WHEN_inner_source_produced_error() {
-        val inners = listOf<TestObservable<String>>(TestObservable(), TestObservable())
-        testFlatMap(inners::get)
+        val inners = createInnerSources(2)
+        flatMapUpstreamAndSubscribe(inners)
         source.onNext(0)
         source.onNext(1)
 
@@ -189,6 +180,12 @@ class FlatMapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
         assertTrue(inners[1].isDisposed)
     }
 
-    private fun testFlatMap(mapper: (Int) -> Observable<String>): TestObservableObserver<String> =
+    private fun flatMapUpstreamAndSubscribe(innerSources: List<Observable<String?>>): TestObservableObserver<String?> =
+        flatMapUpstreamAndSubscribe { innerSources[it!!] }
+
+    private fun flatMapUpstreamAndSubscribe(mapper: (Int?) -> Observable<String?>): TestObservableObserver<String?> =
         source.flatMap(mapper).test()
+
+    private fun createInnerSources(count: Int): List<TestObservable<String?>> =
+        List(count) { TestObservable<String?>() }
 }
