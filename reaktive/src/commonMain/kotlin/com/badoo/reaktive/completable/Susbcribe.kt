@@ -2,6 +2,7 @@ package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.utils.UseReturnValue
 import com.badoo.reaktive.utils.handleSourceError
 

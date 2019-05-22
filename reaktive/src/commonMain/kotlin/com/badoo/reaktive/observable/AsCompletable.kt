@@ -1,5 +1,6 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.completable.completableUnsafe

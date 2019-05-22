@@ -2,6 +2,7 @@ package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.scheduler.Scheduler
 
 fun <T> Single<T>.observeOn(scheduler: Scheduler): Single<T> =

@@ -7,12 +7,12 @@ internal fun handleSourceError(error: Throwable, onError: ((Throwable) -> Unit)?
         } else {
             try {
                 onError(error)
-            } catch (ignored: Throwable) {
-                reaktiveUncaughtErrorHandler(error)
+            } catch (e: Throwable) {
+                reaktiveUncaughtErrorHandler(e)
             }
         }
     } catch (e: Throwable) {
-        println("Error delivering uncaught error: $e")
+        println("Error delivering uncaught error ($error): $e")
     }
 }
 

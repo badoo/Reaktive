@@ -3,6 +3,7 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.CompleteCallback
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.ValueCallback
+import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
