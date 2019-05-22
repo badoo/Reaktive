@@ -1,19 +1,26 @@
 package com.badoo.reaktive.utils
 
+import kotlinx.cinterop.Arena
+import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CValue
+import kotlinx.cinterop.alloc
 import kotlinx.cinterop.cValue
 import kotlinx.cinterop.convert
+import kotlinx.cinterop.ptr
 import kotlinx.cinterop.useContents
 import platform.posix.PTHREAD_MUTEX_RECURSIVE
+import platform.posix.pthread_cond_broadcast
+import platform.posix.pthread_cond_destroy
 import platform.posix.pthread_cond_init
-import platform.posix.pthread_cond_signal
 import platform.posix.pthread_cond_t
 import platform.posix.pthread_cond_timedwait
 import platform.posix.pthread_cond_wait
+import platform.posix.pthread_mutex_destroy
 import platform.posix.pthread_mutex_init
 import platform.posix.pthread_mutex_lock
 import platform.posix.pthread_mutex_t
 import platform.posix.pthread_mutex_unlock
+import platform.posix.pthread_mutexattr_destroy
 import platform.posix.pthread_mutexattr_init
 import platform.posix.pthread_mutexattr_settype
 import platform.posix.pthread_mutexattr_t
@@ -22,47 +29,60 @@ import kotlin.system.getTimeNanos
 
 internal actual class Lock {
 
-    private val attr = cValue<pthread_mutexattr_t>()
-    private val mutex = cValue<pthread_mutex_t>()
+    private val arena = Arena()
+    private val attr = arena.alloc<pthread_mutexattr_t>()
+    private val mutex = arena.alloc<pthread_mutex_t>()
 
     init {
-        pthread_mutexattr_init(attr)
-        pthread_mutexattr_settype(attr, PTHREAD_MUTEX_RECURSIVE.toInt())
-        pthread_mutex_init(mutex, attr)
+        pthread_mutexattr_init(attr.ptr)
+        pthread_mutexattr_settype(attr.ptr, PTHREAD_MUTEX_RECURSIVE.toInt())
+        pthread_mutex_init(mutex.ptr, attr.ptr)
     }
 
     actual fun acquire() {
-        pthread_mutex_lock(mutex)
+        pthread_mutex_lock(mutex.ptr)
     }
 
     actual fun release() {
-        pthread_mutex_unlock(mutex)
+        pthread_mutex_unlock(mutex.ptr)
     }
 
-    actual fun newCondition(): Condition = ConditionImpl(mutex)
+    actual fun destroy() {
+        pthread_mutex_destroy(mutex.ptr)
+        pthread_mutexattr_destroy(attr.ptr)
+        arena.clear()
+    }
 
-    internal class ConditionImpl(
-        private val lockPtr: CValue<pthread_mutex_t>
+    actual fun newCondition(): Condition = ConditionImpl(mutex.ptr)
+
+    private class ConditionImpl(
+        private val lockPtr: CPointer<pthread_mutex_t>
     ) : Condition {
 
-        private val cond = cValue<pthread_cond_t>()
+        private val arena = Arena()
+        private val cond = arena.alloc<pthread_cond_t>()
 
         init {
-            pthread_cond_init(cond, null)
+            pthread_cond_init(cond.ptr, null)
         }
 
         override fun await(timeoutNanos: Long) {
             if (timeoutNanos >= 0L) {
                 val t = cValue<timespec>()
                 (getTimeNanos() + timeoutNanos).toTimespec(t)
-                pthread_cond_timedwait(cond, lockPtr, t)
+                pthread_cond_timedwait(cond.ptr, lockPtr, t)
             } else {
-                pthread_cond_wait(cond, lockPtr)
+                pthread_cond_wait(cond.ptr, lockPtr)
             }
         }
 
         override fun signal() {
-            pthread_cond_signal(cond)
+            pthread_cond_broadcast(cond.ptr)
+        }
+
+        override fun destroy() {
+            pthread_cond_destroy(cond.ptr)
+            arena.clear()
         }
 
         private companion object {

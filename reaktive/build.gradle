@@ -41,6 +41,7 @@ if (target.isCommon() || target.isMeta()) {
     kotlin {
         targets {
             // fromPreset(presets.jvm, 'jvmCommon')
+            // fromPreset(presets.jvm, 'jvmJsCommon')
             fromPreset(presets.jvm, 'jvm')
             fromPreset(presets.android, 'android')
             // fromPreset(presets.linuxX64, 'nativeCommon')
@@ -49,14 +50,20 @@ if (target.isCommon() || target.isMeta()) {
         }
 
         sourceSets {
+            jvmJsCommonMain.dependsOn commonMain
+            jvmJsCommonTest.dependsOn commonTest
+
             jvmCommonMain {
+                dependsOn jvmJsCommonMain
+
                 dependencies {
                     implementation kotlin('stdlib')
                 }
             }
-            
+
             jvmCommonTest {
-                dependsOn commonTest
+                dependsOn jvmJsCommonTest
+                
                 dependencies {
                     implementation kotlin('test-junit')
                 }

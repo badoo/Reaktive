@@ -1,6 +1,6 @@
 package com.badoo.reaktive.utils.atomicreference
 
-internal actual class AtomicReference<T> actual constructor(
+actual class AtomicReference<T> actual constructor(
     initialValue: T,
     autoFreeze: Boolean
 ) {
