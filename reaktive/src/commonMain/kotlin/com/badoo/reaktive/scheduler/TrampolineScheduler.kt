@@ -3,7 +3,6 @@ package com.badoo.reaktive.scheduler
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
 import com.badoo.reaktive.utils.atomicreference.updateAndGet
-import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
 import com.badoo.reaktive.utils.uptimeMillis
 

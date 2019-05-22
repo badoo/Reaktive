@@ -1,12 +1,5 @@
 package com.badoo.reaktive.utils.serializer
 
-/**
- * See [Serializer]
- */
-internal inline fun <T> serializer(
-    comparator: Comparator<in T>? = null,
-    crossinline onValue: (T) -> Boolean
-): Serializer<T> =
-    object : Serializer<T>(comparator) {
-        override fun onValue(value: T): Boolean = onValue(value)
-    }
+internal expect inline fun <T> serializer(crossinline onValue: (T) -> Boolean): Serializer<T>
+
+internal expect inline fun <T : Any> serializer(comparator: Comparator<in T>, crossinline onValue: (T) -> Boolean): Serializer<T>
