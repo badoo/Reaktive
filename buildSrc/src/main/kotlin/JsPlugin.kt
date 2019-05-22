@@ -21,11 +21,17 @@ abstract class JsPlugin : Plugin<Project> {
     private fun configureJsCompilation(target: Project) {
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
             targetFromPreset(presets.getByName("js"), "js")
-            sourceSets.getByName("jsMain").dependencies {
-                implementation(kotlin("stdlib-js"))
+            sourceSets.getByName("jsMain") {
+                dependsOn(sourceSets.getByName("jvmJsCommonMain"))
+                dependencies {
+                    implementation(kotlin("stdlib-js"))
+                }
             }
-            sourceSets.getByName("jsTest").dependencies {
-                implementation(kotlin("test-js"))
+            sourceSets.getByName("jsTest") {
+                dependsOn(sourceSets.getByName("jvmJsCommonTest"))
+                dependencies {
+                    implementation(kotlin("test-js"))
+                }
             }
         }
         target.tasks.named("compileKotlinJs", Kotlin2JsCompile::class.java) {
