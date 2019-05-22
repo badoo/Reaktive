@@ -1,15 +1,9 @@
 package com.badoo.reaktive.maybe
 
-/**
- * Represents a source that can complete with or without a value or produce an error.
- * See [MaybeCallbacks] for more information.
- */
-interface Maybe<out T> {
+import com.badoo.reaktive.base.Source
 
-    /**
-     * Subscribes the specified [MaybeObserver] to this [Maybe]
-     *
-     * @param observer the [MaybeObserver] to be subscribed
-     */
-    fun subscribe(observer: MaybeObserver<T>)
-}
+/**
+ * Represents a [Source] that can complete with or without a value or produce an error.
+ * See [Source] and [MaybeCallbacks] for more information.
+ */
+interface Maybe<out T> : Source<MaybeObserver<T>>

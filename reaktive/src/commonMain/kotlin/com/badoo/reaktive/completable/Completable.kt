@@ -1,15 +1,9 @@
 package com.badoo.reaktive.completable
 
-/**
- * Represents a source that either completes or produces an error.
- * See [CompletableCallbacks] for more information.
- */
-interface Completable {
+import com.badoo.reaktive.base.Source
 
-    /**
-     * Subscribes the specified [CompletableObserver] to this [Completable]
-     *
-     * @param observer the [CompletableObserver] to be subscribed
-     */
-    fun subscribe(observer: CompletableObserver)
-}
+/**
+ * Represents a [Source] that either completes or produces an error.
+ * See [Source] and [CompletableCallbacks] for more information.
+ */
+interface Completable : Source<CompletableObserver>
