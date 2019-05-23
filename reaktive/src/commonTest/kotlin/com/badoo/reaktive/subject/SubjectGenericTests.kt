@@ -2,12 +2,12 @@ package com.badoo.reaktive.subject
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.ObservableObserver
-import com.badoo.reaktive.testutils.TestObservableObserver
-import com.badoo.reaktive.testutils.hasOnNext
-import com.badoo.reaktive.testutils.isCompleted
-import com.badoo.reaktive.testutils.isError
-import com.badoo.reaktive.testutils.test
-import com.badoo.reaktive.testutils.values
+import com.badoo.reaktive.test.observable.TestObservableObserver
+import com.badoo.reaktive.test.observable.hasOnNext
+import com.badoo.reaktive.test.observable.isCompleted
+import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.test.observable.values
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
 import com.badoo.reaktive.utils.atomicreference.update
 import kotlin.test.Test
