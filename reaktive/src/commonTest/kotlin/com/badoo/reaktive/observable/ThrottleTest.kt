@@ -1,9 +1,9 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.testutils.TestObservable
-import com.badoo.reaktive.testutils.hasOnNext
-import com.badoo.reaktive.testutils.test
-import com.badoo.reaktive.testutils.values
+import com.badoo.reaktive.test.observable.TestObservable
+import com.badoo.reaktive.test.observable.hasOnNext
+import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.test.observable.values
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertEquals

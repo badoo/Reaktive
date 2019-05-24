@@ -1,4 +1,4 @@
-package com.badoo.reaktive.testutils
+package com.badoo.reaktive.test.observable
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.ObservableObserver

@@ -1,84 +1,42 @@
-plugins {
-    id 'org.jetbrains.kotlin.multiplatform'
-    id 'maven-publish'
-}
-
-group = reaktive_group_id
-version = reaktive_version
+setupMultiplatformLibrary(project)
 
 kotlin {
     sourceSets {
-        commonMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-            }
-        }
         commonTest {
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-test'
-                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
-                implementation 'org.jetbrains.kotlin:kotlin-test-common'
-                implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                implementation project(':reaktive-test')
             }
         }
     }
 }
 
-apply from: '../target.gradle'
 final target = currentTarget()
 
 if (target.isCommon() || target.isMeta()) {
-    apply plugin: 'com.android.library'
-
-    android {
-        buildToolsVersion '28.0.3'
-        compileSdkVersion 28
-
-        defaultConfig {
-            minSdkVersion 1
-        }
-    }
+    setupCommonTargets(project)
 
     kotlin {
-        targets {
-            // fromPreset(presets.jvm, 'jvmCommon')
-            fromPreset(presets.jvm, 'jvm')
-            fromPreset(presets.android, 'android')
-            fromPreset(presets.js, 'js')
-            // fromPreset(presets.linuxX64, 'nativeCommon')
-            fromPreset(presets.linuxX64, 'linuxX64')
-            fromPreset(presets.linuxArm32Hfp, 'linuxArm32Hfp')
+        targets { 
+//            fromPreset(presets.jvm, 'jvmCommon')
+//            fromPreset(presets.jvm, 'jvmJsCommon')
+//            fromPreset(presets.linuxX64, 'nativeCommon')
         }
 
         sourceSets {
-            jvmCommonMain {
-                dependencies {
-                    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                }
-            }
+            jvmJsCommonMain.dependsOn commonMain
+            jvmJsCommonTest.dependsOn commonTest
+
+            jvmCommonMain.dependsOn jvmJsCommonMain
+            jvmCommonTest.dependsOn jvmJsCommonTest
 
             jvmMain.dependsOn jvmCommonMain
+            jvmTest.dependsOn jvmCommonTest
+
             androidMain.dependsOn jvmCommonMain
+            androidTest.dependsOn jvmCommonTest
 
-            jsMain {
-                dependencies {
-                    implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
-                }
-
-                compileKotlinJs {
-                    kotlinOptions.metaInfo = true
-                    kotlinOptions.sourceMap = true
-                    kotlinOptions.verbose = true
-                    kotlinOptions.main = 'call'
-                    kotlinOptions.moduleKind = 'umd'
-                }
-            }
-
-            jsTest {
-                dependencies {
-                    implementation 'org.jetbrains.kotlin:kotlin-test-js'
-                }
-            }
+            jsMain.dependsOn jvmJsCommonMain
+            jsTest.dependsOn jvmJsCommonTest
 
             nativeCommonMain.dependsOn commonMain
             nativeCommonTest.dependsOn commonTest
@@ -92,26 +50,15 @@ if (target.isCommon() || target.isMeta()) {
             linuxArm32HfpMain.dependsOn linuxCommonMain
             linuxArm32HfpTest.dependsOn linuxCommonTest
         }
-
-        android {
-            publishLibraryVariants('release', 'debug')
-        }
     }
 }
 
 if (target.isIos() || target.isMeta()) {
+    setupIosTargets(project)
+
     kotlin {
-        targets {
-            // fromPreset(presets.iosX64, 'iosCommon')
-            fromPreset(presets.iosArm32, 'ios32') {
-                binaries.framework()
-            }
-            fromPreset(presets.iosArm64, 'ios64') {
-                binaries.framework()
-            }
-            fromPreset(presets.iosX64, 'iosSim') {
-                binaries.framework()
-            }
+        targets { 
+//            fromPreset(presets.iosX64, 'iosCommon')
         }
 
         sourceSets {
@@ -128,22 +75,4 @@ if (target.isIos() || target.isMeta()) {
             iosSimTest.dependsOn iosCommonTest
         }
     }
-
-    task iosTest(dependsOn: 'linkTestDebugExecutableIosSim') {
-        group 'verification'
-        doLast {
-            final binary = kotlin.targets.iosSim.compilations.test.getBinary('EXECUTABLE', 'DEBUG')
-            if (binary.exists()) {
-                exec {
-                    commandLine 'xcrun', 'simctl', 'spawn', 'iPhone X', binary.absolutePath
-                }
-            } else {
-                logger.warn('No test executable for iOS')
-            }
-        }
-    }
-    // TODO Uncomment when TravisCI will be used for publishing
-    // tasks.check.dependsOn iosTest
 }
-
-apply from: '../publication.gradle'

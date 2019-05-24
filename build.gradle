@@ -1,5 +1,4 @@
 buildscript {
-    ext.kotlin_version = '1.3.30'
     ext.reaktive_version = '1.0.0-alpha3'
     ext.reaktive_group_id = 'com.github.badoo.reaktive'
 
@@ -9,8 +8,8 @@ buildscript {
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap/' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:3.4.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
         classpath 'org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.45'
     }
 }
@@ -43,4 +42,141 @@ allprojects {
             }
         }
     }
+}
+
+void setupMultiplatformLibrary(Project project) {
+    project.apply plugin: 'org.jetbrains.kotlin.multiplatform'
+    project.apply plugin: 'maven-publish'
+
+    project.group = reaktive_group_id
+    project.version = reaktive_version
+
+    project.kotlin {
+        sourceSets {
+            commonMain {
+                dependencies {
+                    implementation kotlin('stdlib-common')
+                }
+            }
+
+            commonTest {
+                dependencies {
+                    implementation kotlin('test')
+                    implementation kotlin('test-common')
+                    implementation kotlin('test-annotations-common')
+                }
+            }
+        }
+    }
+
+    project.apply from: '../target.gradle'
+    project.apply from: '../publication.gradle'
+}
+
+void setupAndroidTarget(Project project) {
+    project.apply plugin: 'com.android.library'
+
+    project.android {
+        buildToolsVersion '28.0.3'
+        compileSdkVersion 28
+
+        defaultConfig {
+            minSdkVersion 1
+        }
+    }
+
+    project.kotlin {
+        targets.fromPreset(presets.android, 'android')
+
+        sourceSets {
+            androidMain {
+                dependencies {
+                    implementation kotlin('stdlib')
+                }
+            }
+            
+            androidTest {
+                dependencies {
+                    implementation kotlin('test-junit')
+                }
+            }
+        }
+        
+        android {
+            publishLibraryVariants('release', 'debug')
+        }
+    }
+}
+
+void setupJvmTarget(Project project) {
+    project.kotlin {
+        targets.fromPreset(presets.jvm, 'jvm')
+
+        sourceSets {
+            jvmMain {
+                dependencies {
+                    implementation kotlin('stdlib')
+                }
+            }
+            
+            jvmTest {
+                dependencies {
+                    implementation kotlin('test-junit')
+                }
+            }
+        }
+    }
+}
+
+
+void setupJsTarget(Project project) {
+    project.apply plugin: JsPlugin
+}
+
+void setupLinuxTargets(Project project) {
+    project.kotlin {
+        targets {
+            fromPreset(presets.linuxX64, 'linuxX64')
+            fromPreset(presets.linuxArm32Hfp, 'linuxArm32Hfp')
+        }
+    }
+}
+
+void setupCommonTargets(Project project) {
+    setupAndroidTarget(project)
+    setupJvmTarget(project)
+    setupJsTarget(project)
+    setupLinuxTargets(project)
+}
+
+void setupIosTargets(Project project) {
+    project.kotlin {
+        targets {
+            fromPreset(presets.iosArm32, 'ios32') {
+                binaries.framework()
+            }
+            fromPreset(presets.iosArm64, 'ios64') {
+                binaries.framework()
+            }
+            fromPreset(presets.iosX64, 'iosSim') {
+                binaries.framework()
+            }
+        }
+    }
+
+    project.task(dependsOn: 'linkTestDebugExecutableIosSim', 'iosTest') {
+        group 'verification'
+        doLast {
+            final binary = project.kotlin.targets.iosSim.compilations.test.getBinary('EXECUTABLE', 'DEBUG')
+            if (binary.exists()) {
+                exec {
+                    commandLine 'xcrun', 'simctl', 'spawn', 'iPhone X', binary.absolutePath
+                }
+            } else {
+                logger.warn('No test executable for iOS')
+            }
+        }
+    }
+    // TODO Uncomment when TravisCI will be used for publishing
+    // tasks.check.dependsOn iosTest
 }

@@ -1,12 +1,12 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.testutils.TestObservable
-import com.badoo.reaktive.testutils.getOnNextValue
-import com.badoo.reaktive.testutils.test
+import com.badoo.reaktive.test.observable.TestObservable
+import com.badoo.reaktive.test.observable.getOnNextValue
+import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class WIthLatestFromTest {
+class WithLatestFromTest {
 
     private val source = TestObservable<Int>()
     private val other1 = TestObservable<Int>()

@@ -4,6 +4,7 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.scheduler.Scheduler
+import com.badoo.reaktive.utils.freeze
 
 fun <T> Single<T>.observeOn(scheduler: Scheduler): Single<T> =
     single { emitter ->
@@ -25,6 +26,8 @@ fun <T> Single<T>.observeOn(scheduler: Scheduler): Single<T> =
                 }
 
                 override fun onError(error: Throwable) {
+                    error.freeze()
+
                     executor.submit {
                         emitter.onError(error)
                     }

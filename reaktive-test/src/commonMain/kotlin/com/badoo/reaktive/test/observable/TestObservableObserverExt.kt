@@ -1,8 +1,8 @@
-package com.badoo.reaktive.testutils
+package com.badoo.reaktive.test.observable
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.testutils.TestObservableObserver.Event
+import com.badoo.reaktive.test.observable.TestObservableObserver.Event
 
 fun <T> TestObservableObserver<T>.getOnNextEvent(index: Int): Event.OnNext<T> =
     events[index] as Event.OnNext<T>

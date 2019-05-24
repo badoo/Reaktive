@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:${Versions.kotlin}"
     compile project(':reaktive')
 }
 
@@ -12,21 +12,21 @@ compileKotlin2Js {
     kotlinOptions.metaInfo = true
     kotlinOptions.sourceMap = true
     kotlinOptions.verbose = true
-    kotlinOptions.main = "call"
-    kotlinOptions.moduleKind = "umd"
+    kotlinOptions.main = 'call'
+    kotlinOptions.moduleKind = 'umd'
 }
 
 kotlinFrontend {
-    downloadNodeJsVersion = "latest"
+    downloadNodeJsVersion = 'latest'
 
     webpackBundle {
-        bundleName = "main"
+        bundleName = 'main'
         sourceMapEnabled = true
         contentPath = file('src/main/web')
-        publicPath = "/"
+        publicPath = '/'
         port = 8088
-        proxyUrl = ""
-        stats = "errors-only"
+        proxyUrl = ''
+        stats = 'errors-only'
     }
 }
 

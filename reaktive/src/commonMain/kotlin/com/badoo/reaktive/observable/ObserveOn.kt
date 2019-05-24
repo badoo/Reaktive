@@ -5,6 +5,7 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.scheduler.BufferedExecutor
 import com.badoo.reaktive.scheduler.Scheduler
+import com.badoo.reaktive.utils.freeze
 
 fun <T> Observable<T>.observeOn(scheduler: Scheduler): Observable<T> =
     observable { emitter ->
@@ -32,6 +33,8 @@ fun <T> Observable<T>.observeOn(scheduler: Scheduler): Observable<T> =
                 }
 
                 override fun onError(error: Throwable) {
+                    error.freeze()
+
                     executor.submit {
                         emitter.onError(error)
                     }
