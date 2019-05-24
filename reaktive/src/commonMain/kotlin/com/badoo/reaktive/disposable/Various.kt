@@ -2,7 +2,7 @@ package com.badoo.reaktive.disposable
 
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
 
-internal inline fun disposable(crossinline onDispose: () -> Unit = {}): Disposable =
+inline fun disposable(crossinline onDispose: () -> Unit = {}): Disposable =
     object : Disposable {
         @Suppress("ObjectPropertyName") // Backing property
         private var _isDisposed = AtomicReference(false)
