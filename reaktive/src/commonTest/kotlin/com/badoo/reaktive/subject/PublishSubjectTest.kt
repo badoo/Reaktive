@@ -1,8 +1,8 @@
 package com.badoo.reaktive.subject
 
 import com.badoo.reaktive.subject.publish.publishSubject
-import com.badoo.reaktive.testutils.hasOnNext
-import com.badoo.reaktive.testutils.test
+import com.badoo.reaktive.test.observable.hasOnNext
+import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 import kotlin.test.assertFalse
 

@@ -1,9 +1,9 @@
 package com.badoo.reaktive.subject
 
 import com.badoo.reaktive.subject.behavior.behaviorSubject
-import com.badoo.reaktive.testutils.getOnNextValue
-import com.badoo.reaktive.testutils.test
-import com.badoo.reaktive.testutils.values
+import com.badoo.reaktive.test.observable.getOnNextValue
+import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.test.observable.values
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

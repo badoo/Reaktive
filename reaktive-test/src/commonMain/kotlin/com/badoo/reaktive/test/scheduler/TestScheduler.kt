@@ -1,4 +1,4 @@
-package com.badoo.reaktive.testutils
+package com.badoo.reaktive.test.scheduler
 
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.atomicreference.AtomicReference

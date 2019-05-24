@@ -1,6 +1,6 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.testutils.*
+import com.badoo.reaktive.test.observable.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

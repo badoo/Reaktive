@@ -22,5 +22,6 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava'
     implementation 'io.reactivex.rxjava2:rxandroid'
     implementation project(':reaktive')
+    implementation project(':reaktive-test')
     implementation project(':rxjava2-interop')
 }

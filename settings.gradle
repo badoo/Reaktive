@@ -23,6 +23,7 @@ final target = currentTarget()
 println("Current environment: $target")
 
 include ':reaktive'
+include ':reaktive-test'
 if (target.isCommon()) {
     include ':sample-android-app'
     include ':sample-js-browser-app'
