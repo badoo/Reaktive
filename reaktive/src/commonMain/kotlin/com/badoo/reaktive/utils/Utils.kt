@@ -8,11 +8,15 @@ internal fun handleSourceError(error: Throwable, onError: ((Throwable) -> Unit)?
             try {
                 onError(error)
             } catch (e: Throwable) {
+                println("onError callback failed: ($error): $e")
+                error.printStack()
                 reaktiveUncaughtErrorHandler(e)
             }
         }
     } catch (e: Throwable) {
         println("Error delivering uncaught error ($error): $e")
+        error.printStack()
+        e.printStack()
     }
 }
 
