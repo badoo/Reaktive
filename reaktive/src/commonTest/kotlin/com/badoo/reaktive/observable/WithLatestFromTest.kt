@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class WIthLatestFromTest {
+class WithLatestFromTest {
 
     private val source = TestObservable<Int>()
     private val other1 = TestObservable<Int>()
