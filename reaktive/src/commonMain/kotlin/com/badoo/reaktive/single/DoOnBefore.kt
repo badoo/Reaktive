@@ -5,6 +5,7 @@ import com.badoo.reaktive.base.SuccessCallback
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
+import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
 
 fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =

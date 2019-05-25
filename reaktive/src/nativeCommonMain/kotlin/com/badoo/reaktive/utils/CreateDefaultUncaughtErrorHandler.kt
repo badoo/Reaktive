@@ -7,7 +7,7 @@ import kotlin.system.exitProcess
 
 internal actual fun createDefaultUncaughtErrorHandler(): (Throwable) -> Unit =
     { e ->
-        fprintf(stderr, "Uncaught exception: $e")
+        printError("Uncaught exception: $e")
         e.printStackTrace()
         exitProcess(EXIT_FAILURE)
     }

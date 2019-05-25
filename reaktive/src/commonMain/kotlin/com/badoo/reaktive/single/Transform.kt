@@ -1,6 +1,7 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.base.subscribeSafe
 
 internal inline fun <T, R> Single<T>.transform(
     crossinline onSuccess: (value: T, onSuccess: (R) -> Unit) -> Unit

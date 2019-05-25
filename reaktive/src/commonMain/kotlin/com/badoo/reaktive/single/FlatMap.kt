@@ -4,6 +4,7 @@ import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.base.subscribeSafe
 
 fun <T, R> Single<T>.flatMap(mapper: (T) -> Single<R>): Single<R> =
     singleUnsafe { observer ->

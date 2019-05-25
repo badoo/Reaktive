@@ -3,6 +3,7 @@ package com.badoo.reaktive.maybe
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.base.subscribeSafe
 
 fun <T, R> Maybe<T>.flatMap(mapper: (T) -> Maybe<R>): Maybe<R> =
     maybeUnsafe { observer ->

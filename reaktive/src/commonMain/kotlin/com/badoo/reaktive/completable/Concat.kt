@@ -2,6 +2,7 @@ package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.base.subscribeSafe
 
 fun Iterable<Completable>.concat(): Completable =
     completableUnsafe { observer ->

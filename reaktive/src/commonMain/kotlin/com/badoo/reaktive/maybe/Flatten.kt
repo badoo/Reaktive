@@ -4,6 +4,7 @@ import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observable
+import com.badoo.reaktive.base.subscribeSafe
 
 fun <T> Maybe<Iterable<T>>.flatten(): Observable<T> =
     observable { emitter ->

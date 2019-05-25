@@ -6,7 +6,7 @@ import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.observable.observableUnsafe
-import com.badoo.reaktive.observable.subscribeSafe
+import com.badoo.reaktive.base.subscribeSafe
 
 fun <T, R> Maybe<T>.flatMapObservable(mapper: (T) -> Observable<R>): Observable<R> =
     observableUnsafe { observer ->

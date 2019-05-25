@@ -2,6 +2,7 @@ package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.base.subscribeSafe
 
 internal inline fun <T, R> Maybe<T>.transform(
     crossinline onSuccess: (value: T, onSuccess: (R) -> Unit, onComplete: () -> Unit) -> Unit

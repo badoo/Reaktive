@@ -4,6 +4,7 @@ import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observable
+import com.badoo.reaktive.base.subscribeSafe
 
 fun <T> Single<Iterable<T>>.flatten(): Observable<T> =
     observable { emitter ->

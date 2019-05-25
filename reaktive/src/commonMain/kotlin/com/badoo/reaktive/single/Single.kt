@@ -1,15 +1,9 @@
 package com.badoo.reaktive.single
 
-/**
- * Represents a source that can complete with a value or produce an error.
- * See [SingleCallbacks] for more information.
- */
-interface Single<out T> {
+import com.badoo.reaktive.base.Source
 
-    /**
-     * Subscribes the specified [SingleObserver] to this [Single]
-     *
-     * @param observer the [SingleObserver] to be subscribed
-     */
-    fun subscribe(observer: SingleObserver<T>)
-}
+/**
+ * Represents a [Source] that can complete with a value or produce an error.
+ * See [Source] and [SingleCallbacks] for more information.
+ */
+interface Single<out T> : Source<SingleObserver<T>>
