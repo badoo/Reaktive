@@ -10,44 +10,4 @@ kotlin {
     }
 }
 
-final target = currentTarget()
-
-if (target.isCommon() || target.isMeta()) {
-    setupCommonTargets(project)
-
-    kotlin {
-        sourceSets {
-            jvmMain.dependsOn commonMain
-            jvmTest.dependsOn commonTest
-            
-            androidMain.dependsOn commonMain
-            androidTest.dependsOn commonTest
-
-            jsMain.dependsOn commonMain
-            jsTest.dependsOn commonTest
-
-            linuxX64Main.dependsOn commonMain
-            linuxX64Test.dependsOn commonTest
-
-            linuxArm32HfpMain.dependsOn commonMain
-            linuxArm32HfpTest.dependsOn commonTest
-        }
-    }
-}
-
-if (target.isIos() || target.isMeta()) {
-    setupIosTargets(project)
-
-    kotlin {
-        sourceSets {
-            ios32Main.dependsOn commonMain
-            ios32Test.dependsOn commonTest
-
-            ios64Main.dependsOn commonMain
-            ios64Test.dependsOn commonTest
-
-            iosSimMain.dependsOn commonMain
-            iosSimTest.dependsOn commonTest
-        }
-    }
-}
+setupAllTargetsWithDefaultSourceSets(project)
