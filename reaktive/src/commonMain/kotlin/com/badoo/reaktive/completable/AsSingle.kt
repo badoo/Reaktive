@@ -1,9 +1,10 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.ErrorCallback
+import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.SingleObserver
 import com.badoo.reaktive.single.singleUnsafe
@@ -15,13 +16,7 @@ fun <T> Completable.asSingle(defaultValue: T): Single<T> =
 
 fun <T> Completable.asSingle(defaultValueSupplier: () -> T): Single<T> =
     asSingleOrAction { observer ->
-        try {
-            defaultValueSupplier()
-        } catch (e: Throwable) {
-            observer.onError(e)
-            return@asSingleOrAction
-        }
-            .also(observer::onSuccess)
+        observer.tryCatch(defaultValueSupplier, observer::onSuccess)
     }
 
 private inline fun <T> Completable.asSingleOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
