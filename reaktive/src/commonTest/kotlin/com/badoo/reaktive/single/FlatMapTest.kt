@@ -1,6 +1,5 @@
 package com.badoo.reaktive.single
 
-import com.badoo.reaktive.test.base.dispose
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.TestSingleObserver

@@ -1,7 +1,6 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.test.single.TestSingle
-import com.badoo.reaktive.test.base.dispose
 import com.badoo.reaktive.test.single.isError
 import com.badoo.reaktive.test.single.test
 import kotlin.test.Test

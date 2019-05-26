@@ -1,7 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.test.base.dispose
-import com.badoo.reaktive.test.base.isDisposed
 import com.badoo.reaktive.test.observable.TestObservableObserver.Event
 import com.badoo.reaktive.test.observable.getOnErrorValue
 import com.badoo.reaktive.test.observable.getOnNextEvent

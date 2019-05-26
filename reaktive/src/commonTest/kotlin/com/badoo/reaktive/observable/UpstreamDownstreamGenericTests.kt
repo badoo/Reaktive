@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.test.base.dispose
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.isCompleted
 import com.badoo.reaktive.test.observable.isError

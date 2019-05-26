@@ -5,7 +5,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
 import com.badoo.reaktive.utils.atomicreference.update
 
-open class TestObserver<Event> : Observer {
+open class TestObserver<Event> : Observer, Disposable {
 
     private val _disposables: AtomicReference<List<Disposable>> = AtomicReference(emptyList(), true)
     val disposables get() = _disposables.value
@@ -13,8 +13,14 @@ open class TestObserver<Event> : Observer {
     private val _events: AtomicReference<List<Event>> = AtomicReference(emptyList(), true)
     val events: List<Event> get() = _events.value
 
+    override val isDisposed: Boolean get() = disposables.all(Disposable::isDisposed)
+
     override fun onSubscribe(disposable: Disposable) {
         _disposables.update { it + disposable }
+    }
+
+    override fun dispose() {
+        disposables.forEach(Disposable::dispose)
     }
 
     fun reset() {
