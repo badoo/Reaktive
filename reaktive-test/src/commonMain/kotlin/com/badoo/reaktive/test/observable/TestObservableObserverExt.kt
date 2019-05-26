@@ -1,6 +1,5 @@
 package com.badoo.reaktive.test.observable
 
-import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.test.observable.TestObservableObserver.Event
 
@@ -35,13 +34,6 @@ val <T> TestObservableObserver<T>.values: List<T>
 
 fun TestObservableObserver<*>.isError(error: Throwable): Boolean =
     isError && events.any { (it as? Event.OnError)?.error == error }
-
-fun TestObservableObserver<*>.dispose() {
-    disposables.forEach(Disposable::dispose)
-}
-
-val TestObservableObserver<*>.isDisposed: Boolean
-    get() = disposables.all(Disposable::isDisposed)
 
 fun <T> Observable<T>.test(): TestObservableObserver<T> =
     TestObservableObserver<T>()
