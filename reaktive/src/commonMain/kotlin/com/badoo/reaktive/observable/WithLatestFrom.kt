@@ -2,6 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
@@ -10,7 +11,10 @@ import com.badoo.reaktive.utils.atomicreference.AtomicReference
 import com.badoo.reaktive.utils.atomicreference.update
 import com.badoo.reaktive.utils.replace
 
-fun <T, U, R> Observable<T>.withLatestFrom(others: Collection<Observable<U>>, mapper: (value: T, others: List<U>) -> R): Observable<R> =
+fun <T, U, R> Observable<T>.withLatestFrom(
+    others: Collection<Observable<U>>,
+    mapper: (value: T, others: List<U>) -> R
+): Observable<R> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
@@ -53,15 +57,7 @@ fun <T, U, R> Observable<T>.withLatestFrom(others: Collection<Observable<U>>, ma
                             }
                             ?: return
 
-                    val mappedValue =
-                        try {
-                            mapper(value, valueList)
-                        } catch (e: Throwable) {
-                            emitter.onError(e)
-                            return
-                        }
-
-                    emitter.onNext(mappedValue)
+                    emitter.tryCatch({ mapper(value, valueList) }, emitter::onNext)
                 }
             }
         )

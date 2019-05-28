@@ -1,8 +1,9 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.SingleCallbacks
 import com.badoo.reaktive.single.SingleObserver
@@ -15,13 +16,7 @@ fun <T> Maybe<T>.asSingle(defaultValue: T): Single<T> =
 
 fun <T> Maybe<T>.asSingle(defaultValueSupplier: () -> T): Single<T> =
     asSingleOrAction { observer ->
-        try {
-            defaultValueSupplier()
-        } catch (e: Throwable) {
-            observer.onError(e)
-            return@asSingleOrAction
-        }
-            .also(observer::onSuccess)
+        observer.tryCatch(defaultValueSupplier, observer::onSuccess)
     }
 
 internal inline fun <T> Maybe<T>.asSingleOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
