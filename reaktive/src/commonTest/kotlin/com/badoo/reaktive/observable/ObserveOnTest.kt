@@ -1,20 +1,20 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.scheduler.TestScheduler
-import com.badoo.reaktive.test.observable.dispose
 import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.hasSubscribers
 import com.badoo.reaktive.test.observable.isCompleted
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.observable.values
+import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ObserveOnTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ observeOn(TestScheduler()) }) {
+class ObserveOnTest
+    : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ observeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
     private val upstream = TestObservable<Int>()
