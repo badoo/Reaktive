@@ -1,12 +1,11 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.single
 
 import com.badoo.reaktive.test.base.hasSubscribers
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.isCompleted
-import com.badoo.reaktive.test.observable.isError
-import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import com.badoo.reaktive.test.scheduler.TestScheduler
+import com.badoo.reaktive.test.single.TestSingle
+import com.badoo.reaktive.test.single.isError
+import com.badoo.reaktive.test.single.test
+import com.badoo.reaktive.test.single.value
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -16,7 +15,7 @@ class SubscribeOnTest
     : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ subscribeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
-    private val upstream = TestObservable<Int>()
+    private val upstream = TestSingle<Int>()
     private val observer = upstream.subscribeOn(scheduler).test()
 
     @Test
@@ -32,23 +31,12 @@ class SubscribeOnTest
     }
 
     @Test
-    fun emits_values_synchronously() {
+    fun succeeds_synchronously() {
         scheduler.process()
         observer.reset()
-        upstream.onNext(0)
-        upstream.onNext(1)
-        upstream.onNext(2)
+        upstream.onSuccess(0)
 
-        assertEquals(listOf(0, 1, 2), observer.values)
-    }
-
-    @Test
-    fun completes_synchronously() {
-        scheduler.process()
-        observer.reset()
-        upstream.onComplete()
-
-        assertTrue(observer.isCompleted)
+        assertEquals(0, observer.value)
     }
 
     @Test

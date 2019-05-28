@@ -2,6 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.single.Single
@@ -15,13 +16,7 @@ fun <T> Observable<T>.firstOrDefault(defaultValue: T): Single<T> =
 
 fun <T> Observable<T>.firstOrDefault(defaultValueSupplier: () -> T): Single<T> =
     firstOrAction { emitter ->
-        try {
-            defaultValueSupplier()
-        } catch (e: Throwable) {
-            emitter.onError(e)
-            return@firstOrAction
-        }
-            .also(emitter::onSuccess)
+        emitter.tryCatch(defaultValueSupplier, emitter::onSuccess)
     }
 
 internal inline fun <T> Observable<T>.firstOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =

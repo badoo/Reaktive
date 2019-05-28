@@ -1,13 +1,8 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.single
 
 import com.badoo.reaktive.test.base.hasSubscribers
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isCompleted
-import com.badoo.reaktive.test.observable.isError
-import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import com.badoo.reaktive.test.scheduler.TestScheduler
+import com.badoo.reaktive.test.single.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -17,7 +12,7 @@ class ObserveOnTest
     : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ observeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
-    private val upstream = TestObservable<Int>()
+    private val upstream = TestSingle<Int>()
     private val observer = upstream.observeOn(scheduler).test()
 
     @Test
@@ -26,39 +21,18 @@ class ObserveOnTest
     }
 
     @Test
-    fun does_not_emit_values_synchronously() {
-        upstream.onNext(0)
-        upstream.onNext(1)
-        upstream.onNext(2)
+    fun does_no_succeed_synchronously() {
+        upstream.onSuccess(0)
 
-        assertFalse(observer.hasOnNext)
+        assertFalse(observer.isSuccess)
     }
 
     @Test
-    fun emits_values_through_scheduler() {
-        upstream.onNext(0)
-        upstream.onNext(1)
-        scheduler.process()
-        upstream.onNext(2)
-        scheduler.process()
+    fun succeeds_through_scheduler() {
+        upstream.onSuccess(0)
         scheduler.process()
 
-        assertEquals(listOf(0, 1, 2), observer.values)
-    }
-
-    @Test
-    fun does_no_complete_synchronously() {
-        upstream.onComplete()
-
-        assertFalse(observer.isCompleted)
-    }
-
-    @Test
-    fun completes_through_scheduler() {
-        upstream.onComplete()
-        scheduler.process()
-
-        assertTrue(observer.isCompleted)
+        assertEquals(0, observer.value)
     }
 
     @Test
