@@ -1,9 +1,10 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.base.subscribeSafe
 
 fun <T, R> Maybe<T>.flatMap(mapper: (T) -> Maybe<R>): Maybe<R> =
     maybeUnsafe { observer ->
@@ -17,19 +18,15 @@ fun <T, R> Maybe<T>.flatMap(mapper: (T) -> Maybe<R>): Maybe<R> =
                 }
 
                 override fun onSuccess(value: T) {
-                    try {
-                        mapper(value)
-                    } catch (e: Throwable) {
-                        onError(e)
-                        return
-                    }
-                        .subscribeSafe(
+                    observer.tryCatch({ mapper(value) }) {
+                        it.subscribeSafe(
                             object : MaybeObserver<R> by observer {
                                 override fun onSubscribe(disposable: Disposable) {
                                     disposableWrapper.set(disposable)
                                 }
                             }
                         )
+                    }
                 }
             }
         )
