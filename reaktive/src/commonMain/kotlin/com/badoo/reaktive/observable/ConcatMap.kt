@@ -3,6 +3,7 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
@@ -69,15 +70,9 @@ fun <T, R> Observable<T>.concatMap(mapper: (T) -> Observable<R>): Observable<R> 
                 }
 
                 private fun mapAndSubscribe(value: T) {
-                    val mappedSource =
-                        try {
-                            mapper(value)
-                        } catch (e: Throwable) {
-                            emitter.onError(e)
-                            return
-                        }
-
-                    mappedSource.subscribeSafe(mappedObserver)
+                    serializedEmitter.tryCatch({ mapper(value) }) {
+                        it.subscribeSafe(mappedObserver)
+                    }
                 }
             }
         )
