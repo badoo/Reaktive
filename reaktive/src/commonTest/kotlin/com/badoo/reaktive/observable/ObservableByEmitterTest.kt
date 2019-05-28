@@ -123,22 +123,20 @@ class ObservableByEmitterTest {
     fun second_onComplete_ignored_AFTER_first_onComplete_signalled() {
         emitter.onNext(1)
         emitter.onComplete()
+        observer.reset()
         emitter.onComplete()
 
-        assertTrue(observer.events.last() is Event.OnComplete)
-        assertEquals(1, observer.events.count { it is Event.OnComplete })
+        assertFalse(observer.isCompleted)
     }
 
     @Test
     fun second_onError_ignored_AFTER_first_onError_signalled() {
-        val error1 = Throwable()
-
         emitter.onNext(1)
-        emitter.onError(error1)
+        emitter.onError(Throwable())
+        observer.reset()
         emitter.onError(Throwable())
 
-        assertSame(error1, (observer.events.last() as Event.OnError).error)
-        assertEquals(1, observer.events.count { it is Event.OnError })
+        assertFalse(observer.isError)
     }
 
     @Test
@@ -151,14 +149,14 @@ class ObservableByEmitterTest {
     }
 
     @Test
-    fun disposable_disposed_AHTER_onComplete_signalled() {
+    fun disposable_disposed_AFTER_onComplete_signalled() {
         emitter.onComplete()
 
         assertTrue(observer.isDisposed)
     }
 
     @Test
-    fun disposable_disposed_AHTER_onError_signalled() {
+    fun disposable_disposed_AFTER_onError_signalled() {
         emitter.onError(Throwable())
 
         assertTrue(observer.isDisposed)
