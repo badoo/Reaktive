@@ -4,6 +4,7 @@ import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.ValueCallback
 import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
@@ -22,7 +23,8 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
                 private val activeSourceCount = AtomicReference(1)
 
                 private val mappedObserver =
-                    object : ObservableObserver<R>, Observer by this, CompletableCallbacks by this, ValueCallback<R> by serializedEmitter {
+                    object : ObservableObserver<R>, Observer by this, CompletableCallbacks by this,
+                        ValueCallback<R> by serializedEmitter {
                     }
 
                 override fun onSubscribe(disposable: Disposable) {
@@ -32,16 +34,9 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
                 override fun onNext(value: T) {
                     activeSourceCount.update { it + 1 }
 
-                    val mappedSource =
-                        try {
-                            mapper(value)
-                        } catch (e: Throwable) {
-                            onError(e)
-                            return
-                        }
-
-
-                    mappedSource.subscribeSafe(mappedObserver)
+                    serializedEmitter.tryCatch({ mapper(value) }) {
+                        it.subscribeSafe(mappedObserver)
+                    }
                 }
 
                 override fun onComplete() {
