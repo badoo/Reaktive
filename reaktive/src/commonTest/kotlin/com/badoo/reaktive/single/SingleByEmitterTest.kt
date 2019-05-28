@@ -1,5 +1,6 @@
 package com.badoo.reaktive.single
 
+import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.single.isError
 import com.badoo.reaktive.test.single.isSuccess
 import com.badoo.reaktive.test.single.test
@@ -108,5 +109,24 @@ class SingleByEmitterTest {
         single<Int> { throw error }.subscribe(observer)
 
         assertTrue(observer.isError(error))
+    }
+
+    @Test
+    fun disposable_is_not_disposed_WHEN_assigned() {
+        val disposable = disposable()
+
+        emitter.setDisposable(disposable)
+
+        assertFalse(disposable.isDisposed)
+    }
+
+    @Test
+    fun assigned_disposable_is_disposed_WHEN_disposed() {
+        val disposable = disposable()
+
+        emitter.setDisposable(disposable)
+        observer.dispose()
+
+        assertTrue(disposable.isDisposed)
     }
 }

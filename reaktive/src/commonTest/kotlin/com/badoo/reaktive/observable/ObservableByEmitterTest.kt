@@ -1,5 +1,6 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.observable.TestObservableObserver.Event
 import com.badoo.reaktive.test.observable.getOnErrorValue
 import com.badoo.reaktive.test.observable.getOnNextEvent
@@ -169,5 +170,25 @@ class ObservableByEmitterTest {
         observable<Int> { throw error }.subscribe(observer)
 
         assertTrue(observer.isError(error))
+    }
+
+
+    @Test
+    fun disposable_is_not_disposed_WHEN_assigned() {
+        val disposable = disposable()
+
+        emitter.setDisposable(disposable)
+
+        assertFalse(disposable.isDisposed)
+    }
+
+    @Test
+    fun assigned_disposable_is_disposed_WHEN_disposed() {
+        val disposable = disposable()
+
+        emitter.setDisposable(disposable)
+        observer.dispose()
+
+        assertTrue(disposable.isDisposed)
     }
 }
