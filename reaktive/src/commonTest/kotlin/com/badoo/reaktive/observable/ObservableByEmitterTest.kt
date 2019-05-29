@@ -1,13 +1,11 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.observable.TestObservableObserver.Event
-import com.badoo.reaktive.test.observable.dispose
 import com.badoo.reaktive.test.observable.getOnErrorValue
 import com.badoo.reaktive.test.observable.getOnNextEvent
 import com.badoo.reaktive.test.observable.getOnNextValue
 import com.badoo.reaktive.test.observable.hasOnNext
 import com.badoo.reaktive.test.observable.isCompleted
-import com.badoo.reaktive.test.observable.isDisposed
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.isOnCompleteEvent
 import com.badoo.reaktive.test.observable.test

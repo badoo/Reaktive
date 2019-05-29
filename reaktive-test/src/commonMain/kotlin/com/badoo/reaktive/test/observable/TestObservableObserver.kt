@@ -1,36 +1,21 @@
 package com.badoo.reaktive.test.observable
 
-import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.ObservableObserver
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.test.observable.TestObservableObserver.Event
+import com.badoo.reaktive.test.base.TestObserver
 
-class TestObservableObserver<T> : ObservableObserver<T> {
-
-    private val _disposables: AtomicReference<List<Disposable>> = AtomicReference(emptyList(), true)
-    val disposables get() = _disposables.value
-
-    private val _events: AtomicReference<List<Event<T>>> = AtomicReference(emptyList(), true)
-    val events get() = _events.value
-
-    override fun onSubscribe(disposable: Disposable) {
-        _disposables.update { it + disposable }
-    }
+class TestObservableObserver<T> : TestObserver<Event<T>>(), ObservableObserver<T> {
 
     override fun onNext(value: T) {
-        _events.update { it + Event.OnNext(value) }
+        onEvent(Event.OnNext(value))
     }
 
     override fun onComplete() {
-        _events.update { it + Event.OnComplete }
+        onEvent(Event.OnComplete)
     }
 
     override fun onError(error: Throwable) {
-        _events.update { it + Event.OnError(error) }
-    }
-
-    fun reset() {
-        _events.update { emptyList() }
+        onEvent(Event.OnError(error))
     }
 
     sealed class Event<out T> {
