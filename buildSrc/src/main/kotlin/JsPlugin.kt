@@ -1,14 +1,18 @@
+import JsPlugin.CopyLocalNodeModulesTask.Companion.FOLDER_NODE_MODULES
 import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.npm.NpmTask
 import com.moowork.gradle.node.task.NodeTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.InputFiles
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import java.io.File
 
 @Suppress("UnstableApiUsage")
 abstract class JsPlugin : Plugin<Project> {
@@ -32,10 +36,10 @@ abstract class JsPlugin : Plugin<Project> {
                 }
             }
         }
-        target.tasks.named("compileKotlinJs", Kotlin2JsCompile::class.java) {
+        target.tasks.named(TASK_COMPILE_KOTLIN_JS, Kotlin2JsCompile::class.java) {
             kotlinOptions.configure()
         }
-        target.tasks.named("compileTestKotlinJs", Kotlin2JsCompile::class.java) {
+        target.tasks.named(TASK_COMPILE_KOTLIN_JS_TEST, Kotlin2JsCompile::class.java) {
             kotlinOptions.configure()
         }
     }
@@ -67,28 +71,21 @@ abstract class JsPlugin : Plugin<Project> {
             )
         }
 
-        val nodeModuleTask = target.tasks.register("populateNodeModule", Copy::class.java) {
-            val compileTask = target.tasks.named("compileKotlinJs", Kotlin2JsCompile::class.java).get()
+        val nodeModulesTask = target.tasks.register("populateNodeModules", CopyLocalNodeModulesTask::class.java) {
             // dependenciesTask remove all files from node_modules that are not defined in package.json
-            dependsOn(compileTask, dependenciesTask)
-            from(compileTask.outputFile)
-            into("node_modules")
+            // that is why dependenciesTask should be executed before this task
+            dependsOn(dependenciesTask)
         }
 
-        val compileTestJsTask = target.tasks.named("compileTestKotlinJs", Kotlin2JsCompile::class.java)
+        val compileTestJsTask = target.tasks.named(TASK_COMPILE_KOTLIN_JS_TEST, Kotlin2JsCompile::class.java)
 
-        val runMochaTask = target.tasks.register("runMocha", NodeTask::class.java) {
-            dependsOn(dependenciesTask, compileTestJsTask, nodeModuleTask)
-            setScript(project.file("node_modules/mocha/bin/mocha"))
-            // NodeTask does not support lazy configuration through properties
-            setArgs(listOf(compileTestJsTask.get().outputFile.relativeTo(project.projectDir)))
+        val runMochaTask = target.tasks.register("runMocha", RunMochaTask::class.java) {
+            dependsOn(dependenciesTask, compileTestJsTask, nodeModulesTask)
+            testJsFiles = listOf(compileTestJsTask.get().outputFile)
         }
 
-        target.tasks.named("check") {
-            // JS tests are failing for "reaktive"
-            // because of some problems with its dependency on "reaktive-test" module
-            // FIXME: To be fixed by @CherryPerry
-//            dependsOn(runMochaTask)
+        target.tasks.named("jsTest") {
+            dependsOn(runMochaTask)
         }
     }
 
@@ -98,6 +95,73 @@ abstract class JsPlugin : Plugin<Project> {
         sourceMapEmbedSources = "always"
         moduleKind = "umd"
         main = "call"
+    }
+
+    /**
+     * Copy all js files from current project and project dependencies into [FOLDER_NODE_MODULES]
+     * to make them discoverable by NodeJS.
+     */
+    @Suppress("LeakingThis")
+    abstract class CopyLocalNodeModulesTask : Copy() {
+
+        init {
+            val compileTasks = project
+                .configurations
+                .asSequence()
+                .filter {
+                    // quite fragile check, but I don't know better way to filter out only JS configurations
+                    it.name.contains("js", ignoreCase = true)
+                }
+                .flatMap { it.allDependencies.asSequence() }
+                .filterIsInstance<ProjectDependency>()
+                .distinctBy { it.name }
+                .map { it.dependencyProject.getCompileJsTask() }
+                .toMutableList()
+                .plus(project.getCompileJsTask())
+
+            dependsOn(compileTasks)
+            from(compileTasks.map { it.outputFile })
+            into(FOLDER_NODE_MODULES)
+        }
+
+        private fun Project.getCompileJsTask(): Kotlin2JsCompile =
+            tasks.named(TASK_COMPILE_KOTLIN_JS, Kotlin2JsCompile::class.java).get()
+
+        private companion object {
+            private const val FOLDER_NODE_MODULES = "node_modules"
+        }
+    }
+
+    /**
+     * Execute provided test files with mocha test framework.
+     */
+    abstract class RunMochaTask : NodeTask() {
+
+        @InputFiles
+        var testJsFiles: Collection<File> = emptyList()
+
+        override fun exec() {
+            val files = testJsFiles.mapNotNull {
+                if (it.exists()) {
+                    it.relativeTo(project.projectDir)
+                } else {
+                    logger.error("Test file ($it) was not found!")
+                    null
+                }
+            }
+            if (files.isNotEmpty()) {
+                // these configuration parameters are not tasks input
+                setScript(project.file(PATH_MOCHA))
+                setArgs(files)
+                super.exec()
+            }
+        }
+    }
+
+    private companion object {
+        private const val TASK_COMPILE_KOTLIN_JS = "compileKotlinJs"
+        private const val TASK_COMPILE_KOTLIN_JS_TEST = "compileTestKotlinJs"
+        private const val PATH_MOCHA = "node_modules/mocha/bin/mocha"
     }
 
 }
