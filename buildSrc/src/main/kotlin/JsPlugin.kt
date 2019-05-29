@@ -7,12 +7,12 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.InputFiles
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import java.io.File
 
 @Suppress("UnstableApiUsage")
 abstract class JsPlugin : Plugin<Project> {
@@ -81,7 +81,7 @@ abstract class JsPlugin : Plugin<Project> {
 
         val runMochaTask = target.tasks.register("runMocha", RunMochaTask::class.java) {
             dependsOn(dependenciesTask, compileTestJsTask, nodeModulesTask)
-            testJsFiles = listOf(compileTestJsTask.get().outputFile)
+            testJsFiles.from(compileTestJsTask.get().outputFile)
         }
 
         target.tasks.named("jsTest") {
@@ -138,7 +138,7 @@ abstract class JsPlugin : Plugin<Project> {
     abstract class RunMochaTask : NodeTask() {
 
         @InputFiles
-        var testJsFiles: Collection<File> = emptyList()
+        open var testJsFiles: ConfigurableFileCollection = project.objects.fileCollection()
 
         override fun exec() {
             val files = testJsFiles.mapNotNull {

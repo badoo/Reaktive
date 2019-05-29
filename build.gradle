@@ -150,33 +150,7 @@ void setupCommonTargets(Project project) {
 }
 
 void setupIosTargets(Project project) {
-    project.kotlin {
-        targets {
-            fromPreset(presets.iosArm32, 'ios32') {
-                binaries.framework()
-            }
-            fromPreset(presets.iosArm64, 'ios64') {
-                binaries.framework()
-            }
-            fromPreset(presets.iosX64, 'iosSim') {
-                binaries.framework()
-            }
-        }
-    }
-
-    project.task(dependsOn: 'linkTestDebugExecutableIosSim', 'iosTest') {
-        group 'verification'
-        doLast {
-            final binary = project.kotlin.targets.iosSim.compilations.test.getBinary('EXECUTABLE', 'DEBUG')
-            if (binary.exists()) {
-                exec {
-                    commandLine 'xcrun', 'simctl', 'spawn', 'iPhone X', binary.absolutePath
-                }
-            } else {
-                logger.warn('No test executable for iOS')
-            }
-        }
-    }
+    project.apply plugin: IosPlugin
     // TODO Uncomment when TravisCI will be used for publishing
     // tasks.check.dependsOn iosTest
 }
