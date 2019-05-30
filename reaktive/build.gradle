@@ -2,6 +2,12 @@ setupMultiplatformLibrary(project)
 
 kotlin {
     sourceSets {
+        commonMain {
+            dependencies {
+                implementation project(':reaktive-annotations')
+            }
+        }
+
         commonTest {
             dependencies {
                 implementation project(':reaktive-test')

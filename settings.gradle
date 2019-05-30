@@ -24,6 +24,7 @@ println("Current environment: $target")
 
 include ':reaktive'
 include ':reaktive-test'
+include ':reaktive-annotations'
 if (target.isCommon()) {
     include ':sample-android-app'
     include ':sample-js-browser-app'
