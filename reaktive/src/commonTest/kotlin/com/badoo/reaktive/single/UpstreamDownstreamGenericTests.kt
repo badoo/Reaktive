@@ -1,5 +1,6 @@
 package com.badoo.reaktive.single
 
+import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.test.maybe.isError
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.single.TestSingle
@@ -45,7 +46,7 @@ interface UpstreamDownstreamGenericTests {
     }
 
     object TransformToMaybe {
-        operator fun <T> invoke(transform: Single<T>.() -> com.badoo.reaktive.maybe.Maybe<*>): UpstreamDownstreamGenericTests =
+        operator fun <T> invoke(transform: Single<T>.() -> Maybe<*>): UpstreamDownstreamGenericTests =
             object : UpstreamDownstreamGenericTests {
                 private val upstream = TestSingle<T>()
                 private val observer = upstream.transform().test()
