@@ -191,4 +191,35 @@ class ObservableByEmitterTest {
 
         assertTrue(disposable.isDisposed)
     }
+
+    @Test
+    fun reassigned_disposable_is_disposed_WHEN_disposed() {
+        emitter.setDisposable(disposable())
+        observer.dispose()
+
+        val disposable = disposable()
+        emitter.setDisposable(disposable)
+
+        assertTrue(disposable.isDisposed)
+    }
+
+    @Test
+    fun assigned_disposable_is_disposed_WHEN_onComplete_is_signalled() {
+        val disposable = disposable()
+        emitter.setDisposable(disposable)
+
+        emitter.onComplete()
+
+        assertTrue(disposable.isDisposed)
+    }
+
+    @Test
+    fun assigned_disposable_is_disposed_WHEN_onError_is_signalled() {
+        val disposable = disposable()
+        emitter.setDisposable(disposable)
+
+        emitter.onError(Throwable())
+
+        assertTrue(disposable.isDisposed)
+    }
 }
