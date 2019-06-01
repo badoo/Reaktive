@@ -35,10 +35,10 @@ class DisposableWrapper : Disposable {
             ?.dispose()
     }
 
-    private class Holder(val disposable: Disposable?)
-
-    private companion object {
-        private fun Holder.dispose() {
+    private class Holder(
+        private val disposable: Disposable?
+    ) {
+        fun dispose() {
             disposable?.dispose()
         }
     }
