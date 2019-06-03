@@ -1,6 +1,7 @@
 package com.badoo.reaktive.disposable
 
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomicreference.getAndUpdate
 
 /**
  * Thread-safe container of one [Disposable]
@@ -24,10 +25,21 @@ class DisposableWrapper : Disposable {
 
     private fun setHolder(holder: Holder?) {
         ref
-            .getAndSet(holder)
-            ?.disposable
+            .getAndUpdate { oldHolder ->
+                if (oldHolder == null) {
+                    holder?.dispose()
+                }
+
+                holder
+            }
             ?.dispose()
     }
 
-    private class Holder(val disposable: Disposable?)
+    private class Holder(
+        private val disposable: Disposable?
+    ) {
+        fun dispose() {
+            disposable?.dispose()
+        }
+    }
 }
