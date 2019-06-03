@@ -8,13 +8,13 @@ matrix:
           - android-28
       env: MP_TARGET=COMMON
       install: true
-      script: ./gradlew reaktive:check rxjava2-interop:check -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive:check reaktive-test:check rxjava2-interop:check -DMP_TARGET=$MP_TARGET
     - os: osx
       osx_image: xcode10.2
       language: java
       env: MP_TARGET=IOS
       install: true
-      script: ./gradlew reaktive:ios32MainBinaries reaktive:ios64MainBinaries reaktive:iosSimMainBinaries reaktive:check reaktive:iosTest -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive:ios32MainBinaries reaktive:ios64MainBinaries reaktive:iosSimMainBinaries reaktive:check reaktive:iosTest reaktive-test:ios32MainBinaries reaktive-test:ios64MainBinaries reaktive-test:iosSimMainBinaries reaktive-test:check reaktive-test:iosTest -DMP_TARGET=$MP_TARGET
     - os: linux
       language: android
       android:
