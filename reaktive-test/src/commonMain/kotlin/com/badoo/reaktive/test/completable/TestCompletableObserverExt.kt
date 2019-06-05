@@ -4,10 +4,10 @@ import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.test.completable.TestCompletableObserver.Event
 
 val TestCompletableObserver.isCompleted: Boolean
-    get() = (events.count { it is Event.OnSuccess } == 1) && events.none { it is Event.OnError }
+    get() = (events.count { it is Event.OnComplete } == 1) && events.none { it is Event.OnError }
 
 val TestCompletableObserver.isError: Boolean
-    get() = (events.count { it is Event.OnError } == 1) && events.none { it is Event.OnSuccess }
+    get() = (events.count { it is Event.OnError } == 1) && events.none { it is Event.OnComplete }
 
 fun TestCompletableObserver.isError(error: Throwable): Boolean =
     isError && events.any { (it as? Event.OnError)?.error == error }

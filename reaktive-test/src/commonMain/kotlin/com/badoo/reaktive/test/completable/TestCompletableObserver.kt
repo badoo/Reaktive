@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.base.TestObserver
 class TestCompletableObserver : TestObserver<TestCompletableObserver.Event>(), CompletableObserver {
 
     override fun onComplete() {
-        onEvent(Event.OnSuccess)
+        onEvent(Event.OnComplete)
     }
 
     override fun onError(error: Throwable) {
@@ -14,7 +14,7 @@ class TestCompletableObserver : TestObserver<TestCompletableObserver.Event>(), C
     }
 
     sealed class Event {
-        object OnSuccess : Event()
+        object OnComplete : Event()
         data class OnError(val error: Throwable) : Event()
     }
 }
