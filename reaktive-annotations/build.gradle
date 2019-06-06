@@ -1,0 +1,3 @@
+setupMultiplatformLibrary(project)
+
+setupAllTargetsWithDefaultSourceSets(project)
