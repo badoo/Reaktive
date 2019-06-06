@@ -8,8 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class NotNullTest :
-    UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests.TransformToMaybe<Unit>({ notNull() }) {
+class NotNullTest : SingleToMaybeTests by SingleToMaybeTests.Companion<Unit>({ notNull() }) {
 
     private val upstream = TestSingle<Int?>()
     private val observer = upstream.notNull().test()

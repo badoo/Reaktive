@@ -6,7 +6,8 @@ import com.badoo.reaktive.test.observable.values
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DefaultIfEmptyTest: UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Int>({ defaultIfEmpty(10) }) {
+class DefaultIfEmptyTest
+    : ObservableToObservableTests by ObservableToObservableTests<Int>({ defaultIfEmpty(10) }) {
 
     @Test
     fun should_return_default_value_when_source_is_empty() {

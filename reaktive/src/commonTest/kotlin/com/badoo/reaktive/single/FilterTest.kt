@@ -10,8 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class FilterTest :
-    UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests.TransformToMaybe<Unit>({ filter { true } }) {
+class FilterTest : SingleToMaybeTests by SingleToMaybeTests.Companion<Unit>({ filter { true } }) {
 
     private val upstream = TestSingle<Int?>()
     private val observer = upstream.filter { it == null || it > 0 }.test()
