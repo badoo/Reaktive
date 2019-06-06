@@ -18,7 +18,7 @@ fun Completable.andThen(completable: Completable): Completable =
 
                 override fun onComplete() {
                     completable.subscribeSafe(
-                        object : CompletableObserver, CompletableCallbacks by this {
+                        object : CompletableObserver, CompletableCallbacks by observer {
                             override fun onSubscribe(disposable: Disposable) {
                                 disposableWrapper.set(disposable)
                             }
