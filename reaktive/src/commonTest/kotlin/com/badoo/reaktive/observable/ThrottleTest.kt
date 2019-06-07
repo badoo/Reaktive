@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-class ThrottleTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ throttle(0L) }) {
+class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<Unit>({ throttle(0L) }) {
 
     private val timeMillis = AtomicReference(0L)
     private val upstream = TestObservable<Int>()

@@ -13,7 +13,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SubscribeOnTest
-    : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ subscribeOn(TestScheduler()) }) {
+    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ subscribeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
     private val upstream = TestObservable<Int>()

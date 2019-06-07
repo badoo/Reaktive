@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class SwitchIfEmptyTest :
-    UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Int>({ switchIfEmpty(observableOf(10)) }) {
+    ObservableToObservableTests by ObservableToObservableTests<Int>({ switchIfEmpty(observableOf(10)) }) {
 
     @Test
     fun should_switch_streams_when_source_is_empty() {

@@ -4,7 +4,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-class DistinctUntilChangedTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ distinctUntilChanged() }) {
+class DistinctUntilChangedTest
+    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ distinctUntilChanged() }) {
 
     private val thirteen = Question(13)
     private val fortyTwo = Question(42)
