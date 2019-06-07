@@ -14,7 +14,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ConcatMapTest
-    : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ concatMap { TestObservable<Int>() } }) {
+    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ concatMap { TestObservable<Int>() } }) {
 
     private val upstream = TestObservable<Int?>()
 

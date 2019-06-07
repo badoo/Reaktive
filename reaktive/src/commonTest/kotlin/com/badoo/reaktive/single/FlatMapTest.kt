@@ -12,8 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class FlatMapTest
-    : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ flatMap { TestSingle<Int>() } }) {
+class FlatMapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ flatMap { TestSingle<Int>() } }) {
 
     private val upstream = TestSingle<Int?>()
     private val inner = TestSingle<String?>()

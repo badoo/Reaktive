@@ -8,7 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-interface UpstreamDownstreamGenericTests {
+interface ObservableToObservableTests {
 
     @Test
     fun calls_onSubscribe_only_once_WHEN_subscribed()
@@ -23,8 +23,8 @@ interface UpstreamDownstreamGenericTests {
     fun disposes_upstream_WHEN_disposed()
 
     companion object {
-        operator fun <T> invoke(transform: Observable<T>.() -> Observable<*>): UpstreamDownstreamGenericTests =
-            object : UpstreamDownstreamGenericTests {
+        operator fun <T> invoke(transform: Observable<T>.() -> Observable<*>): ObservableToObservableTests =
+            object : ObservableToObservableTests {
                 private val upstream = TestObservable<T>()
                 private val observer = upstream.transform().test()
 

@@ -6,7 +6,8 @@ import com.badoo.reaktive.test.observable.values
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SkipTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ skip(0) }) {
+class SkipTest : ObservableToObservableTests by ObservableToObservableTests<Unit>({ skip(0) }) {
+
     @Test
     fun should_skip_n_values() {
         val source = TestObservable<Int>()

@@ -14,7 +14,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FlatMapTest
-    : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ flatMap { TestObservable<Int>() } }) {
+    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ flatMap { TestObservable<Int>() } }) {
 
     private val source = TestObservable<Int?>()
 
