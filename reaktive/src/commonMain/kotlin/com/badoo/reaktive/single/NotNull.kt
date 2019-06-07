@@ -8,7 +8,7 @@ import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.maybeUnsafe
 
-fun <T> Single<T?>.notNull(): Maybe<T> =
+fun <T : Any> Single<T?>.notNull(): Maybe<T> =
     maybeUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
