@@ -2,7 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.observable.getOnNextValue
 import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isCompleted
+import com.badoo.reaktive.test.observable.isComplete
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
@@ -84,7 +84,7 @@ class CombineLatestTest {
         emitter3.onComplete()
 
         assertFalse(observer.hasOnNext)
-        assertTrue(observer.isCompleted)
+        assertTrue(observer.isComplete)
     }
 
     @Test
@@ -93,7 +93,7 @@ class CombineLatestTest {
         emitter2.onNext("2")
         emitter2.onComplete()
 
-        assertFalse(observer.isCompleted)
+        assertFalse(observer.isComplete)
     }
 
     @Test
@@ -103,7 +103,7 @@ class CombineLatestTest {
         emitter3.onNext("3")
         emitter2.onComplete()
 
-        assertFalse(observer.isCompleted)
+        assertFalse(observer.isComplete)
     }
 
     @Test
@@ -123,7 +123,7 @@ class CombineLatestTest {
         emitter2.onNext("2")
         emitter2.onError(Throwable())
 
-        assertFalse(observer.isCompleted)
+        assertFalse(observer.isComplete)
     }
 
     @Test

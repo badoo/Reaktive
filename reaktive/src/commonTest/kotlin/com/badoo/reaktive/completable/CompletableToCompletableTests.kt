@@ -7,7 +7,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-interface UpstreamDownstreamGenericTests {
+interface CompletableToCompletableTests {
 
     @Test
     fun calls_onSubscribe_only_once_WHEN_subscribed()
@@ -19,8 +19,8 @@ interface UpstreamDownstreamGenericTests {
     fun disposes_upstream_WHEN_disposed()
 
     companion object {
-        operator fun invoke(transform: Completable.() -> Completable): UpstreamDownstreamGenericTests =
-            object : UpstreamDownstreamGenericTests {
+        operator fun invoke(transform: Completable.() -> Completable): CompletableToCompletableTests =
+            object : CompletableToCompletableTests {
                 private val upstream = TestCompletable()
                 private val observer = upstream.transform().test()
 

@@ -1,7 +1,7 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.isCompleted
+import com.badoo.reaktive.test.observable.isComplete
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
@@ -35,7 +35,7 @@ interface ObservableToObservableTests {
                 override fun completes_WHEN_upstream_is_completed() {
                     upstream.onComplete()
 
-                    assertTrue(observer.isCompleted)
+                    assertTrue(observer.isComplete)
                 }
 
                 override fun produces_error_WHEN_upstream_produced_error() {

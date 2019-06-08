@@ -3,7 +3,7 @@ package com.badoo.reaktive.test.completable
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.test.completable.TestCompletableObserver.Event
 
-val TestCompletableObserver.isCompleted: Boolean
+val TestCompletableObserver.isComplete: Boolean
     get() = (events.count { it is Event.OnComplete } == 1) && events.none { it is Event.OnError }
 
 val TestCompletableObserver.isError: Boolean
