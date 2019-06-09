@@ -18,7 +18,7 @@ fun TestObservableObserver<*>.getOnErrorEvent(index: Int): Event.OnError =
 fun TestObservableObserver<*>.getOnErrorValue(index: Int): Throwable =
     getOnErrorEvent(index).error
 
-val TestObservableObserver<*>.isCompleted: Boolean
+val TestObservableObserver<*>.isComplete: Boolean
     get() = (events.count { it is Event.OnComplete } == 1) && events.none { it is Event.OnError }
 
 val TestObservableObserver<*>.isError: Boolean

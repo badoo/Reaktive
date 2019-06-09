@@ -2,14 +2,14 @@ package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
-import com.badoo.reaktive.test.completable.isCompleted
+import com.badoo.reaktive.test.completable.isComplete
 import com.badoo.reaktive.test.completable.isError
 import com.badoo.reaktive.test.completable.test
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class AndThenTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests({ andThen(TestCompletable()) }) {
+class AndThenTest : CompletableToCompletableTests by CompletableToCompletableTests({ andThen(TestCompletable()) }) {
 
     private val upstream = TestCompletable()
     private val inner = TestCompletable()
@@ -37,7 +37,7 @@ class AndThenTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
         upstream.onComplete()
         inner.onComplete()
 
-        assertTrue(observer.isCompleted)
+        assertTrue(observer.isComplete)
     }
 
     @Test
@@ -58,7 +58,7 @@ class AndThenTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericT
 
         inner.onComplete()
 
-        assertFalse(observer.isCompleted)
+        assertFalse(observer.isComplete)
     }
 
     @Test

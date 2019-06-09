@@ -2,7 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.TestObservableObserver
-import com.badoo.reaktive.test.observable.isCompleted
+import com.badoo.reaktive.test.observable.isComplete
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.values
 import kotlin.test.Test
@@ -54,7 +54,7 @@ class SubscribeTest {
 
         upstream.onComplete()
 
-        assertTrue(observer.isCompleted)
+        assertTrue(observer.isComplete)
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.badoo.reaktive.single
 
-import com.badoo.reaktive.test.observable.isCompleted
+import com.badoo.reaktive.test.observable.isComplete
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.observable.values
@@ -24,21 +24,21 @@ class FlattenTest {
 
     @Test
     fun does_not_complete_WHEN_upstream_not_succeeded() {
-        assertFalse(observer.isCompleted)
+        assertFalse(observer.isComplete)
     }
 
     @Test
     fun completes_WHEN_upstream_succeeded_with_values() {
         upstream.onSuccess(listOf(1))
 
-        assertTrue(observer.isCompleted)
+        assertTrue(observer.isComplete)
     }
 
     @Test
     fun completes_WHEN_upstream_succeeded_without_values() {
         upstream.onSuccess(emptyList())
 
-        assertTrue(observer.isCompleted)
+        assertTrue(observer.isComplete)
     }
 
     @Test

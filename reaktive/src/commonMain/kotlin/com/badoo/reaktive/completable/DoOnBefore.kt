@@ -11,13 +11,22 @@ import com.badoo.reaktive.utils.atomicreference.AtomicReference
 fun Completable.doOnBeforeSubscribe(action: (Disposable) -> Unit): Completable =
     completableUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
+
+        try {
+            action(disposableWrapper)
+        } catch (e: Throwable) {
+            observer.onSubscribe(disposableWrapper)
+            observer.onError(e)
+
+            return@completableUnsafe
+        }
+
         observer.onSubscribe(disposableWrapper)
 
         subscribeSafe(
             object : CompletableObserver, CompletableCallbacks by observer {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
-                    action(disposable)
                 }
             }
         )

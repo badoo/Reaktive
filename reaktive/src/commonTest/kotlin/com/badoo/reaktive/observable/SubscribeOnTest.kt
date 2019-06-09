@@ -2,7 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.isCompleted
+import com.badoo.reaktive.test.observable.isComplete
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.observable.values
@@ -48,7 +48,7 @@ class SubscribeOnTest
         observer.reset()
         upstream.onComplete()
 
-        assertTrue(observer.isCompleted)
+        assertTrue(observer.isComplete)
     }
 
     @Test

@@ -2,22 +2,31 @@ package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.SuccessCallback
+import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
 
 fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =
     singleUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
+
+        try {
+            action(disposableWrapper)
+        } catch (e: Throwable) {
+            observer.onSubscribe(disposableWrapper)
+            observer.onError(e)
+
+            return@singleUnsafe
+        }
+
         observer.onSubscribe(disposableWrapper)
 
         subscribeSafe(
             object : SingleObserver<T>, SingleCallbacks<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
-                    action(disposable)
                 }
             }
         )

@@ -13,13 +13,22 @@ import com.badoo.reaktive.utils.atomicreference.AtomicReference
 fun <T> Observable<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Observable<T> =
     observableUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
+
+        try {
+            action(disposableWrapper)
+        } catch (e: Throwable) {
+            observer.onSubscribe(disposableWrapper)
+            observer.onError(e)
+
+            return@observableUnsafe
+        }
+
         observer.onSubscribe(disposableWrapper)
 
         subscribeSafe(
             object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
-                    action(disposable)
                 }
             }
         )

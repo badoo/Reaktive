@@ -4,7 +4,7 @@ import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isCompleted
+import com.badoo.reaktive.test.observable.isComplete
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.observable.values
@@ -101,7 +101,7 @@ class ConcatMapTest
 
         upstream.onComplete()
 
-        assertTrue(observer.isCompleted)
+        assertTrue(observer.isComplete)
     }
 
     @Test
@@ -111,7 +111,7 @@ class ConcatMapTest
         upstream.onNext(0)
         upstream.onComplete()
 
-        assertFalse(observer.isCompleted)
+        assertFalse(observer.isComplete)
     }
 
     @Test
@@ -127,7 +127,7 @@ class ConcatMapTest
         upstream.onComplete()
         inners[2].onComplete()
 
-        assertTrue(observer.isCompleted)
+        assertTrue(observer.isComplete)
     }
 
     @Test
@@ -142,7 +142,7 @@ class ConcatMapTest
         upstream.onComplete()
         inners[1].onComplete()
 
-        assertFalse(observer.isCompleted)
+        assertFalse(observer.isComplete)
     }
 
     @Test

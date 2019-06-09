@@ -2,7 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isCompleted
+import com.badoo.reaktive.test.observable.isComplete
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.observable.values
@@ -68,7 +68,7 @@ class ZipTest {
         sources[0].onNext(0)
         sources[1].onComplete()
 
-        assertTrue(observer.isCompleted)
+        assertTrue(observer.isComplete)
     }
 
 
@@ -78,7 +78,7 @@ class ZipTest {
         sources[1].onNext(1)
         sources[1].onComplete()
 
-        assertFalse(observer.isCompleted)
+        assertFalse(observer.isComplete)
     }
 
     @Test
@@ -89,7 +89,7 @@ class ZipTest {
         observer.reset()
         sources[1].onNext(1)
 
-        assertTrue(observer.isCompleted)
+        assertTrue(observer.isComplete)
     }
 
     @Test
