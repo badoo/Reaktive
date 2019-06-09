@@ -29,3 +29,31 @@ kotlin {
         }
     }
 }
+
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+    user = findProperty('bintray_user')
+    key = findProperty('bintray_key')
+
+    pkg {
+        repo = 'maven'
+        name = 'reaktive'
+        userOrg = 'badoo'
+        vcsUrl = 'https://github.com/badoo/Reaktive.git'
+        licenses = ['Apache-2.0']
+        version.name = reaktive_version
+    }
+}
+
+// This is required for K/N publishing
+tasks.named('bintrayUpload') {
+    dependsOn tasks.named('publishToMavenLocal')
+
+    doFirst {
+        publications = project.publishing.publications.collect {
+            println("Uploading artifact '$it.groupId:$it.artifactId:$it.version' from publication '$it.name'")
+            it.name
+        }
+    }
+}

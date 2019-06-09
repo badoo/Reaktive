@@ -1,6 +1,6 @@
 buildscript {
-    ext.reaktive_version = '1.0.0-alpha3'
-    ext.reaktive_group_id = 'com.github.badoo.reaktive'
+    ext.reaktive_version = '1.0.0-beta1'
+    ext.reaktive_group_id = 'com.badoo.reaktive'
 
     repositories {
         google()
@@ -11,6 +11,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.4.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
         classpath 'org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.45'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
     }
 }
 
