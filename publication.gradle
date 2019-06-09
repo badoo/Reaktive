@@ -47,11 +47,13 @@ bintray {
 }
 
 // This is required for K/N publishing
-bintrayUpload.dependsOn publishToMavenLocal
+tasks.named('bintrayUpload') {
+    dependsOn tasks.named('publishToMavenLocal')
 
-bintrayUpload.doFirst {
-    publications = project.publishing.publications.collect {
-        println("Uploading artifact '$it.groupId:$it.artifactId:$it.version' from publication '$it.name'")
-        it.name
+    doFirst {
+        publications = project.publishing.publications.collect {
+            println("Uploading artifact '$it.groupId:$it.artifactId:$it.version' from publication '$it.name'")
+            it.name
+        }
     }
 }
