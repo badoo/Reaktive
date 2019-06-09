@@ -1,6 +1,6 @@
 buildscript {
-    ext.reaktive_version = '1.0.0-alpha3'
-    ext.reaktive_group_id = 'com.github.badoo.reaktive'
+    ext.reaktive_version = '1.0.0-beta1'
+    ext.reaktive_group_id = 'com.badoo.reaktive'
 
     repositories {
         google()
@@ -11,6 +11,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.4.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
         classpath 'org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.45'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
     }
 }
 
@@ -73,6 +74,50 @@ void setupMultiplatformLibrary(Project project) {
     project.apply from: '../publication.gradle'
 }
 
+void setupAllTargetsWithDefaultSourceSets(Project project) {
+    final target = project.currentTarget()
+
+    if (target.isCommon() || target.isMeta()) {
+        setupCommonTargets(project)
+
+        project.kotlin {
+            sourceSets {
+                jvmMain.dependsOn commonMain
+                jvmTest.dependsOn commonTest
+
+                androidMain.dependsOn commonMain
+                androidTest.dependsOn commonTest
+
+                jsMain.dependsOn commonMain
+                jsTest.dependsOn commonTest
+
+                linuxX64Main.dependsOn commonMain
+                linuxX64Test.dependsOn commonTest
+
+                linuxArm32HfpMain.dependsOn commonMain
+                linuxArm32HfpTest.dependsOn commonTest
+            }
+        }
+    }
+
+    if (target.isIos() || target.isMeta()) {
+        setupIosTargets(project)
+
+        project.kotlin {
+            sourceSets {
+                ios32Main.dependsOn commonMain
+                ios32Test.dependsOn commonTest
+
+                ios64Main.dependsOn commonMain
+                ios64Test.dependsOn commonTest
+
+                iosSimMain.dependsOn commonMain
+                iosSimTest.dependsOn commonTest
+            }
+        }
+    }
+}
+
 void setupAndroidTarget(Project project) {
     project.apply plugin: 'com.android.library'
 
@@ -94,14 +139,14 @@ void setupAndroidTarget(Project project) {
                     implementation kotlin('stdlib')
                 }
             }
-            
+
             androidTest {
                 dependencies {
                     implementation kotlin('test-junit')
                 }
             }
         }
-        
+
         android {
             publishLibraryVariants('release', 'debug')
         }
@@ -118,7 +163,7 @@ void setupJvmTarget(Project project) {
                     implementation kotlin('stdlib')
                 }
             }
-            
+
             jvmTest {
                 dependencies {
                     implementation kotlin('test-junit')

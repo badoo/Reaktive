@@ -8,8 +8,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ObserveOnTest
-    : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ observeOn(TestScheduler()) }) {
+class ObserveOnTest : SingleToSingleTests by SingleToSingleTests<Unit>({ observeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
     private val upstream = TestSingle<Int>()

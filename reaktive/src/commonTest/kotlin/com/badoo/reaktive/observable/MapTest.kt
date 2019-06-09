@@ -8,7 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class MapTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Unit>({ map {} }) {
+class MapTest : ObservableToObservableTests by ObservableToObservableTests<Unit>({ map {} }) {
 
     private val upstream = TestObservable<String?>()
     private val observer = upstream.map { it?.length }.test()

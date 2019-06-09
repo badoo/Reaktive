@@ -1,15 +1,16 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.scheduler.TestScheduler
 import com.badoo.reaktive.test.observable.hasOnNext
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.observable.values
+import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-class DebounceTest : UpstreamDownstreamGenericTests by UpstreamDownstreamGenericTests<Int>({ debounce(0L, TestScheduler()) }) {
+class DebounceTest
+    : ObservableToObservableTests by ObservableToObservableTests<Int>({ debounce(0L, TestScheduler()) }) {
 
     private val upstream = TestObservable<Int>()
     private val scheduler = TestScheduler()
