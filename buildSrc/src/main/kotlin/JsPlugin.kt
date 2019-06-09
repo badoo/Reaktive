@@ -1,4 +1,4 @@
-import JsPlugin.CopyLocalNodeModulesTask.Companion.FOLDER_NODE_MODULES
+import com.android.utils.appendCapitalized
 import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.npm.NpmTask
@@ -26,12 +26,12 @@ abstract class JsPlugin : Plugin<Project> {
     private fun configureJsCompilation(target: Project) {
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
             js(TARGET_NAME_JS)
-            sourceSets.getByName("$TARGET_NAME_JS${SourceSet.MAIN_SOURCE_SET_NAME}") {
+            sourceSets.getByName(TARGET_NAME_JS.appendCapitalized(SourceSet.MAIN_SOURCE_SET_NAME)) {
                 dependencies {
                     implementation(kotlin("stdlib-js"))
                 }
             }
-            sourceSets.getByName("$TARGET_NAME_JS${SourceSet.TEST_SOURCE_SET_NAME}") {
+            sourceSets.getByName(TARGET_NAME_JS.appendCapitalized(SourceSet.TEST_SOURCE_SET_NAME)) {
                 dependencies {
                     implementation(kotlin("test-js"))
                 }
@@ -99,7 +99,8 @@ abstract class JsPlugin : Plugin<Project> {
     }
 
     /**
-     * Copy all js files from current project and project dependencies into [FOLDER_NODE_MODULES]
+     * Copy all js files from current project and project dependencies
+     * into [CopyLocalNodeModulesTask.FOLDER_NODE_MODULES]
      * to make them discoverable by NodeJS.
      */
     @Suppress("LeakingThis")
