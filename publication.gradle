@@ -33,9 +33,8 @@ kotlin {
 apply plugin: 'com.jfrog.bintray'
 
 bintray {
-    user = property('user')
-    key = property('key')
-    override = true // for multi-platform Kotlin/Native publishing
+    user = findProperty('user')
+    key = findProperty('key')
 
     pkg {
         repo = 'maven'
