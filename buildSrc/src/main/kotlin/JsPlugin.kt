@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -24,13 +25,13 @@ abstract class JsPlugin : Plugin<Project> {
 
     private fun configureJsCompilation(target: Project) {
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
-            targetFromPreset(presets.getByName("js"), "js")
-            sourceSets.getByName("jsMain") {
+            js(TARGET_NAME_JS)
+            sourceSets.getByName("$TARGET_NAME_JS${SourceSet.MAIN_SOURCE_SET_NAME}") {
                 dependencies {
                     implementation(kotlin("stdlib-js"))
                 }
             }
-            sourceSets.getByName("jsTest") {
+            sourceSets.getByName("$TARGET_NAME_JS${SourceSet.TEST_SOURCE_SET_NAME}") {
                 dependencies {
                     implementation(kotlin("test-js"))
                 }
@@ -84,7 +85,7 @@ abstract class JsPlugin : Plugin<Project> {
             testJsFiles.from(compileTestJsTask.get().outputFile)
         }
 
-        target.tasks.named("jsTest") {
+        target.tasks.named(TASK_NAME_JS_TEST) {
             dependsOn(runMochaTask)
         }
     }
@@ -158,10 +159,14 @@ abstract class JsPlugin : Plugin<Project> {
         }
     }
 
-    private companion object {
+    companion object {
         private const val TASK_COMPILE_KOTLIN_JS = "compileKotlinJs"
         private const val TASK_COMPILE_KOTLIN_JS_TEST = "compileTestKotlinJs"
         private const val PATH_MOCHA = "node_modules/mocha/bin/mocha"
+
+        const val TARGET_NAME_JS = "js"
+
+        const val TASK_NAME_JS_TEST = "jsTest"
     }
 
 }

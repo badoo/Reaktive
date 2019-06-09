@@ -196,6 +196,4 @@ void setupCommonTargets(Project project) {
 
 void setupIosTargets(Project project) {
     project.apply plugin: IosPlugin
-    // TODO Uncomment when TravisCI will be used for publishing
-    // tasks.check.dependsOn iosTest
 }
