@@ -9,11 +9,12 @@ import com.badoo.reaktive.utils.atomicreference.AtomicReference
 import com.badoo.reaktive.utils.atomicreference.update
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class DoOnBeforeFinallyTest
     : ObservableToObservableTests by ObservableToObservableTests<Unit>({ doOnBeforeFinally {} }) {
 
-    private val upstream = TestObservable<Nothing>()
+    private val upstream = TestObservable<Int>()
 
     @Test
     fun calls_action_before_completion() {
@@ -24,7 +25,7 @@ class DoOnBeforeFinallyTest
                 callOrder += "action"
             }
             .subscribe(
-                object : DefaultObservableObserver<Nothing> {
+                object : DefaultObservableObserver<Int> {
                     override fun onComplete() {
                         callOrder += "onComplete"
                     }
@@ -46,7 +47,7 @@ class DoOnBeforeFinallyTest
                 callOrder += "action"
             }
             .subscribe(
-                object : DefaultObservableObserver<Nothing> {
+                object : DefaultObservableObserver<Int> {
                     override fun onError(error: Throwable) {
                         callOrder += "onError"
                     }
@@ -142,5 +143,20 @@ class DoOnBeforeFinallyTest
         observer.dispose()
 
         assertEquals(1, count.value)
+    }
+
+    @Test
+    fun does_not_call_action_WHEN_emitted_value() {
+        val isCalled = AtomicReference(false)
+
+        upstream
+            .doOnBeforeFinally {
+                isCalled.value = true
+            }
+            .test()
+
+        upstream.onNext(0)
+
+        assertFalse(isCalled.value)
     }
 }

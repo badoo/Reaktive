@@ -3,6 +3,7 @@ package com.badoo.reaktive.single
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.single.DefaultSingleObserver
+import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
 import com.badoo.reaktive.test.utils.SafeMutableList
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
@@ -68,6 +69,40 @@ class DoOnBeforeSubscribeTest
                 isCalled.value = true
             }
             .test()
+
+        assertFalse(isCalled.value)
+    }
+
+    @Test
+    fun does_not_call_action_WHEN_succeeded() {
+        val isCalled = AtomicReference(false)
+        val upstream = TestSingle<Int>()
+
+        upstream
+            .doOnBeforeSubscribe {
+                isCalled.value = true
+            }
+            .test()
+
+        isCalled.value = false
+        upstream.onSuccess(0)
+
+        assertFalse(isCalled.value)
+    }
+
+    @Test
+    fun does_not_call_action_WHEN_produced_error() {
+        val isCalled = AtomicReference(false)
+        val upstream = TestSingle<Nothing>()
+
+        upstream
+            .doOnBeforeSubscribe {
+                isCalled.value = true
+            }
+            .test()
+
+        isCalled.value = false
+        upstream.onError(Throwable())
 
         assertFalse(isCalled.value)
     }

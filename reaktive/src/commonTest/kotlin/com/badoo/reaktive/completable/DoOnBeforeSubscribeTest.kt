@@ -3,6 +3,7 @@ package com.badoo.reaktive.completable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
+import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.utils.SafeMutableList
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
@@ -68,6 +69,41 @@ class DoOnBeforeSubscribeTest
                 isCalled.value = true
             }
             .test()
+
+        assertFalse(isCalled.value)
+    }
+
+    @Test
+    fun does_not_call_action_WHEN_completed() {
+        val isCalled = AtomicReference(false)
+        val upstream = TestCompletable()
+
+        upstream
+            .doOnBeforeSubscribe {
+                isCalled.value = true
+            }
+            .test()
+
+        isCalled.value = false
+        upstream.onComplete()
+
+        assertFalse(isCalled.value)
+    }
+
+
+    @Test
+    fun does_not_call_action_WHEN_produced_error() {
+        val isCalled = AtomicReference(false)
+        val upstream = TestCompletable()
+
+        upstream
+            .doOnBeforeSubscribe {
+                isCalled.value = true
+            }
+            .test()
+
+        isCalled.value = false
+        upstream.onError(Throwable())
 
         assertFalse(isCalled.value)
     }

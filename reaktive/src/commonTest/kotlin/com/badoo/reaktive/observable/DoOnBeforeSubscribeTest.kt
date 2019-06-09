@@ -3,6 +3,7 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
+import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.utils.SafeMutableList
 import com.badoo.reaktive.utils.atomicreference.AtomicReference
@@ -68,6 +69,58 @@ class DoOnBeforeSubscribeTest
                 isCalled.value = true
             }
             .test()
+
+        assertFalse(isCalled.value)
+    }
+
+    @Test
+    fun does_not_call_action_WHEN_emitted_value() {
+        val isCalled = AtomicReference(false)
+        val upstream = TestObservable<Int>()
+
+        upstream
+            .doOnBeforeSubscribe {
+                isCalled.value = true
+            }
+            .test()
+
+        isCalled.value = false
+        upstream.onNext(0)
+
+        assertFalse(isCalled.value)
+    }
+
+    @Test
+    fun does_not_call_action_WHEN_completed() {
+        val isCalled = AtomicReference(false)
+        val upstream = TestObservable<Nothing>()
+
+        upstream
+            .doOnBeforeSubscribe {
+                isCalled.value = true
+            }
+            .test()
+
+        isCalled.value = false
+        upstream.onComplete()
+
+        assertFalse(isCalled.value)
+    }
+
+
+    @Test
+    fun does_not_call_action_WHEN_produced_error() {
+        val isCalled = AtomicReference(false)
+        val upstream = TestObservable<Nothing>()
+
+        upstream
+            .doOnBeforeSubscribe {
+                isCalled.value = true
+            }
+            .test()
+
+        isCalled.value = false
+        upstream.onError(Throwable())
 
         assertFalse(isCalled.value)
     }
