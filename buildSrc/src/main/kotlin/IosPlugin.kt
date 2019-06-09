@@ -41,7 +41,6 @@ abstract class IosPlugin : Plugin<Project> {
                 buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
             }
         }
-        target.logger.error(buildBinariesTasks.toString())
         setupBuildAll(target, buildBinariesTasks)
     }
 
