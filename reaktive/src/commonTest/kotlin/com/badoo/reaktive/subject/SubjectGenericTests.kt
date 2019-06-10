@@ -4,7 +4,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isCompleted
+import com.badoo.reaktive.test.observable.isComplete
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.observable.values
@@ -112,7 +112,7 @@ private class SubjectGenericTestsImpl(
         subject.onComplete()
 
         observers.forEach {
-            assertTrue(it.isCompleted)
+            assertTrue(it.isComplete)
         }
     }
 
@@ -151,7 +151,7 @@ private class SubjectGenericTestsImpl(
         observer.reset()
         subject.onComplete()
 
-        assertFalse(observer.isCompleted)
+        assertFalse(observer.isComplete)
     }
 
     override fun does_not_produce_completion_WHEN_error_produced() {
@@ -159,7 +159,7 @@ private class SubjectGenericTestsImpl(
         subject.onError(Throwable())
         subject.onComplete()
 
-        assertFalse(observer.isCompleted)
+        assertFalse(observer.isComplete)
     }
 
     override fun does_not_produce_error_WHEN_completed() {

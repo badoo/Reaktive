@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.observable.getOnErrorValue
 import com.badoo.reaktive.test.observable.getOnNextEvent
 import com.badoo.reaktive.test.observable.getOnNextValue
 import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isCompleted
+import com.badoo.reaktive.test.observable.isComplete
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.isOnCompleteEvent
 import com.badoo.reaktive.test.observable.test
@@ -72,7 +72,7 @@ class ObservableByEmitterTest {
     fun completed_WHEN_onComplete_signalled() {
         emitter.onComplete()
 
-        assertTrue(observer.isCompleted)
+        assertTrue(observer.isComplete)
     }
 
     @Test
@@ -127,7 +127,7 @@ class ObservableByEmitterTest {
         observer.reset()
         emitter.onComplete()
 
-        assertFalse(observer.isCompleted)
+        assertFalse(observer.isComplete)
     }
 
     @Test
