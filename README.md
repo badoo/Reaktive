@@ -29,13 +29,9 @@ Each multiplatform module is compiled against each target and published in
 
 #### Multiplatform modules
 
-Kotlin common (metadata mode):
+Kotlin common:
 ```groovy
 implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
-```
-Kotlin metadata:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-metadata:<latest-version>'
 ```
 JVM:
 ```groovy
