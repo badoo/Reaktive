@@ -1,4 +1,4 @@
-import JsPlugin.CopyLocalNodeModulesTask.Companion.FOLDER_NODE_MODULES
+import com.android.utils.appendCapitalized
 import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.npm.NpmTask
@@ -7,12 +7,13 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import java.io.File
 
 @Suppress("UnstableApiUsage")
 abstract class JsPlugin : Plugin<Project> {
@@ -24,13 +25,13 @@ abstract class JsPlugin : Plugin<Project> {
 
     private fun configureJsCompilation(target: Project) {
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
-            targetFromPreset(presets.getByName("js"), "js")
-            sourceSets.getByName("jsMain") {
+            js(TARGET_NAME_JS)
+            sourceSets.getByName(TARGET_NAME_JS.appendCapitalized(SourceSet.MAIN_SOURCE_SET_NAME)) {
                 dependencies {
                     implementation(kotlin("stdlib-js"))
                 }
             }
-            sourceSets.getByName("jsTest") {
+            sourceSets.getByName(TARGET_NAME_JS.appendCapitalized(SourceSet.TEST_SOURCE_SET_NAME)) {
                 dependencies {
                     implementation(kotlin("test-js"))
                 }
@@ -81,10 +82,10 @@ abstract class JsPlugin : Plugin<Project> {
 
         val runMochaTask = target.tasks.register("runMocha", RunMochaTask::class.java) {
             dependsOn(dependenciesTask, compileTestJsTask, nodeModulesTask)
-            testJsFiles = listOf(compileTestJsTask.get().outputFile)
+            testJsFiles.from(compileTestJsTask.get().outputFile)
         }
 
-        target.tasks.named("jsTest") {
+        target.tasks.named(TASK_NAME_JS_TEST) {
             dependsOn(runMochaTask)
         }
     }
@@ -98,7 +99,8 @@ abstract class JsPlugin : Plugin<Project> {
     }
 
     /**
-     * Copy all js files from current project and project dependencies into [FOLDER_NODE_MODULES]
+     * Copy all js files from current project and project dependencies
+     * into [CopyLocalNodeModulesTask.FOLDER_NODE_MODULES]
      * to make them discoverable by NodeJS.
      */
     @Suppress("LeakingThis")
@@ -138,7 +140,7 @@ abstract class JsPlugin : Plugin<Project> {
     abstract class RunMochaTask : NodeTask() {
 
         @InputFiles
-        var testJsFiles: Collection<File> = emptyList()
+        open var testJsFiles: ConfigurableFileCollection = project.objects.fileCollection()
 
         override fun exec() {
             val files = testJsFiles.mapNotNull {
@@ -158,10 +160,14 @@ abstract class JsPlugin : Plugin<Project> {
         }
     }
 
-    private companion object {
+    companion object {
         private const val TASK_COMPILE_KOTLIN_JS = "compileKotlinJs"
         private const val TASK_COMPILE_KOTLIN_JS_TEST = "compileTestKotlinJs"
         private const val PATH_MOCHA = "node_modules/mocha/bin/mocha"
+
+        const val TARGET_NAME_JS = "js"
+
+        const val TASK_NAME_JS_TEST = "jsTest"
     }
 
 }
