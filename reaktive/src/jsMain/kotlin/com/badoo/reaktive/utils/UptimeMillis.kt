@@ -1,6 +1,6 @@
 package com.badoo.reaktive.utils
 
-import kotlin.browser.window
+import kotlin.js.Date
 
 internal actual val uptimeMillis: Long
-    get() = window.performance.now().toLong()
+    get() = Date.now().toLong()
