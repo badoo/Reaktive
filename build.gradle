@@ -70,12 +70,11 @@ void setupMultiplatformLibrary(Project project) {
         }
     }
 
-    project.apply from: '../target.gradle'
-    project.apply from: '../publication.gradle'
+    project.apply plugin: PublishPlugin
 }
 
 void setupAllTargetsWithDefaultSourceSets(Project project) {
-    final target = project.currentTarget()
+    final target = Target.currentTarget()
 
     if (target.isCommon() || target.isMeta()) {
         setupCommonTargets(project)

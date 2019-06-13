@@ -16,7 +16,7 @@ kotlin {
     }
 }
 
-final target = currentTarget()
+final target = Target.currentTarget()
 
 if (target.isCommon() || target.isMeta()) {
     setupCommonTargets(project)

@@ -18,8 +18,7 @@ pluginManagement {
 
 enableFeaturePreview('GRADLE_METADATA')
 
-apply from: 'target.gradle'
-final target = currentTarget()
+final target = Target.currentTarget()
 println("Current environment: $target")
 
 include ':reaktive'
