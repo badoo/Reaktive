@@ -1,11 +1,11 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.test.base.hasSubscribers
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
-import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
+import com.badoo.reaktive.test.maybe.TestMaybe
+import com.badoo.reaktive.test.maybe.isComplete
+import com.badoo.reaktive.test.maybe.isError
+import com.badoo.reaktive.test.maybe.test
+import com.badoo.reaktive.test.maybe.value
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,10 +13,10 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SubscribeOnTest
-    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ subscribeOn(TestScheduler()) }) {
+    : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ subscribeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
-    private val upstream = TestObservable<Int?>()
+    private val upstream = TestMaybe<Int?>()
     private val observer = upstream.subscribeOn(scheduler).test()
 
     @Test
@@ -32,14 +32,21 @@ class SubscribeOnTest
     }
 
     @Test
-    fun emits_values_synchronously() {
+    fun succeeds_with_non_null_synchronously() {
         scheduler.process()
         observer.reset()
-        upstream.onNext(null)
-        upstream.onNext(1)
-        upstream.onNext(2)
+        upstream.onSuccess(0)
 
-        assertEquals(listOf(null, 1, 2), observer.values)
+        assertEquals(0, observer.value)
+    }
+
+    @Test
+    fun succeeds_with_null_synchronously() {
+        scheduler.process()
+        observer.reset()
+        upstream.onSuccess(null)
+
+        assertEquals(null, observer.value)
     }
 
     @Test

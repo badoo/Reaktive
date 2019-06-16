@@ -1,49 +1,25 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.test.base.hasSubscribers
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
-import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
+import com.badoo.reaktive.test.completable.TestCompletable
+import com.badoo.reaktive.test.completable.isComplete
+import com.badoo.reaktive.test.completable.isError
+import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ObserveOnTest
-    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ observeOn(TestScheduler()) }) {
+    : CompletableToCompletableTests by CompletableToCompletableTests({ observeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
-    private val upstream = TestObservable<Int?>()
+    private val upstream = TestCompletable()
     private val observer = upstream.observeOn(scheduler).test()
 
     @Test
     fun subscribes_synchronously() {
         assertTrue(upstream.hasSubscribers)
-    }
-
-    @Test
-    fun does_not_emit_values_synchronously() {
-        upstream.onNext(null)
-        upstream.onNext(1)
-        upstream.onNext(2)
-
-        assertFalse(observer.hasOnNext)
-    }
-
-    @Test
-    fun emits_values_through_scheduler() {
-        upstream.onNext(null)
-        upstream.onNext(1)
-        scheduler.process()
-        upstream.onNext(2)
-        scheduler.process()
-        scheduler.process()
-
-        assertEquals(listOf(null, 1, 2), observer.values)
     }
 
     @Test
