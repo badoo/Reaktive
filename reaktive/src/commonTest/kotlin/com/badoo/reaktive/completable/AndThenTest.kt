@@ -15,6 +15,10 @@ class AndThenTest : CompletableToCompletableTests by CompletableToCompletableTes
     private val inner = TestCompletable()
     private val observer = upstream.andThen(inner).test()
 
+    override fun completes_WHEN_upstream_completed() {
+        // Does not apply
+    }
+
     @Test
     fun subscribes_to_upstream() {
         assertTrue(upstream.hasSubscribers)
