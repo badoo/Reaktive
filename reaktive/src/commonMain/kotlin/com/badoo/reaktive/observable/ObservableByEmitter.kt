@@ -10,6 +10,8 @@ fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observ
 
         val emitter =
             object : ObservableEmitter<T> {
+                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
+
                 override fun onNext(value: T) {
                     if (!disposableWrapper.isDisposed) {
                         observer.onNext(value)
