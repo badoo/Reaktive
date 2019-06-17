@@ -2,6 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.observable.values
 import kotlin.test.Test
@@ -25,6 +26,13 @@ class MapTest : ObservableToObservableTests by ObservableToObservableTests<Unit>
         upstream.onNext(null)
 
         assertEquals(listOf(null), observer.values)
+    }
+
+    @Test
+    fun maps_values_WHEN_stream_of_values_is_emitted() {
+        upstream.onNext(null, "abc", "a")
+
+        assertEquals(listOf(null, 3, 1), observer.values)
     }
 
     @Test
