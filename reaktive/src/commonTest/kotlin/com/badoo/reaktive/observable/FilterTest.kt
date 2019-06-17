@@ -2,6 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.observable.values
 import kotlin.test.Test
@@ -33,6 +34,13 @@ class FilterTest : ObservableToObservableTests by ObservableToObservableTests<Un
         upstream.onNext(-1)
 
         assertEquals(emptyList(), observer.values)
+    }
+
+    @Test
+    fun filter_values_WHEN_stream_of_values_is_emitted() {
+        upstream.onNext(null, -1, 0, 1)
+
+        assertEquals(listOf(null, 1), observer.values)
     }
 
     @Test
