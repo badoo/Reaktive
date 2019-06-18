@@ -24,7 +24,7 @@ class ViewController: UIViewController {
         indicator.isHidden = true
     }
     
-    class ResultObserver: ReaktiveSingleObserver {
+    class ResultObserver: SingleObserver {
         
         let showResult: (String) -> Void
         
@@ -32,7 +32,7 @@ class ViewController: UIViewController {
             self.showResult = showResult
         }
         
-        func onSubscribe(disposable: ReaktiveDisposable) {
+        func onSubscribe(disposable: Disposable) {
             // no-op
         }
         
