@@ -26,14 +26,14 @@ class ConcatTests : CompletableToCompletableTests by CompletableToCompletableTes
     }
 
     @Test
-    fun subscribes_to_second_upstream_WHEN_first_is_completed() {
+    fun subscribes_to_second_upstream_WHEN_first_upstream_is_completed() {
         upstream1.onComplete()
 
         assertTrue(upstream2.hasSubscribers)
     }
 
     @Test
-    fun does_not_subscribes_to_second_upstream_WHEN_first_has_error() {
+    fun does_not_subscribes_to_second_upstream_WHEN_first_upstream_has_error() {
         upstream1.onError(Throwable())
 
         assertFalse(upstream2.hasSubscribers)
@@ -49,14 +49,14 @@ class ConcatTests : CompletableToCompletableTests by CompletableToCompletableTes
     }
 
     @Test
-    fun does_not_complete_WHEN_first_is_completed() {
+    fun does_not_complete_WHEN_first_upstream_is_completed() {
         upstream1.onComplete()
 
         assertFalse(inner.isComplete)
     }
 
     @Test
-    fun completes_WHEN_second_is_completed() {
+    fun completes_WHEN_second_upstream_is_completed() {
         upstream1.onComplete()
         upstream2.onComplete()
 
