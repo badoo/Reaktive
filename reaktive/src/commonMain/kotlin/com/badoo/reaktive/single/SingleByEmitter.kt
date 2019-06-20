@@ -10,6 +10,8 @@ fun <T> single(onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
 
         val emitter =
             object : SingleEmitter<T> {
+                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
+
                 override fun onSuccess(value: T) {
                     if (!disposableWrapper.isDisposed) {
                         try {
