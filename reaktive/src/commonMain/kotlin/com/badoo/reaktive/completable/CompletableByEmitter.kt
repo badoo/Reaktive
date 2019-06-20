@@ -10,6 +10,8 @@ fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable
 
         val emitter =
             object : CompletableEmitter {
+                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
+
                 override fun onComplete() {
                     if (!disposableWrapper.isDisposed) {
                         try {

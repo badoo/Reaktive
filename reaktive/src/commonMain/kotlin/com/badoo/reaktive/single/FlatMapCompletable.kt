@@ -1,8 +1,10 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.completable.Completable
-import com.badoo.reaktive.maybe.flatMapCompletable
+import com.badoo.reaktive.completable.asSingle
 
 fun <T> Single<T>.flatMapCompletable(mapper: (T) -> Completable): Completable =
-    asMaybe()
-        .flatMapCompletable(mapper)
+    flatMap {
+        mapper(it).asSingle(Unit)
+    }
+        .asCompletable()

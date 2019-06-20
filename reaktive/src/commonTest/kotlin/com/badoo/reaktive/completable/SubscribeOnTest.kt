@@ -1,22 +1,20 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.test.base.hasSubscribers
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
-import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
+import com.badoo.reaktive.test.completable.TestCompletable
+import com.badoo.reaktive.test.completable.isComplete
+import com.badoo.reaktive.test.completable.isError
+import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SubscribeOnTest
-    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ subscribeOn(TestScheduler()) }) {
+    : CompletableToCompletableTests by CompletableToCompletableTests({ subscribeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
-    private val upstream = TestObservable<Int?>()
+    private val upstream = TestCompletable()
     private val observer = upstream.subscribeOn(scheduler).test()
 
     @Test
@@ -29,17 +27,6 @@ class SubscribeOnTest
         scheduler.process()
 
         assertTrue(upstream.hasSubscribers)
-    }
-
-    @Test
-    fun emits_values_synchronously() {
-        scheduler.process()
-        observer.reset()
-        upstream.onNext(null)
-        upstream.onNext(1)
-        upstream.onNext(2)
-
-        assertEquals(listOf(null, 1, 2), observer.values)
     }
 
     @Test
