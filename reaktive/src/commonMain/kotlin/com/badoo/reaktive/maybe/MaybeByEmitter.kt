@@ -10,6 +10,8 @@ fun <T> maybe(onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T> =
 
         val emitter =
             object : MaybeEmitter<T> {
+                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
+
                 override fun onSuccess(value: T) {
                     if (!disposableWrapper.isDisposed) {
                         try {

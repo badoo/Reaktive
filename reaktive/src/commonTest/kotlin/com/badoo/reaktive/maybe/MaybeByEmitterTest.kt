@@ -1,19 +1,20 @@
-package com.badoo.reaktive.single
+package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.disposable.disposable
-import com.badoo.reaktive.test.single.isError
-import com.badoo.reaktive.test.single.isSuccess
-import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.test.single.value
+import com.badoo.reaktive.test.maybe.isComplete
+import com.badoo.reaktive.test.maybe.isError
+import com.badoo.reaktive.test.maybe.isSuccess
+import com.badoo.reaktive.test.maybe.test
+import com.badoo.reaktive.test.maybe.value
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class SingleByEmitterTest {
+class MaybeByEmitterTest {
 
-    private lateinit var emitter: SingleEmitter<Int?>
-    private val observer = single<Int?> { emitter = it }.test()
+    private lateinit var emitter: MaybeEmitter<Int?>
+    private val observer = maybe<Int?> { emitter = it }.test()
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
@@ -35,6 +36,13 @@ class SingleByEmitterTest {
     }
 
     @Test
+    fun completed_WHEN_onComplete_signalled() {
+        emitter.onComplete()
+
+        assertTrue(observer.isComplete)
+    }
+
+    @Test
     fun produces_same_error() {
         val error = Throwable()
 
@@ -53,6 +61,15 @@ class SingleByEmitterTest {
     }
 
     @Test
+    fun onSuccess_ignored_AFTER_onComplete_is_signalled() {
+        emitter.onError(Throwable())
+        observer.reset()
+        emitter.onSuccess(1)
+
+        assertFalse(observer.isSuccess)
+    }
+
+    @Test
     fun onSuccess_ignored_AFTER_onError_is_signalled() {
         emitter.onError(Throwable())
         observer.reset()
@@ -62,8 +79,44 @@ class SingleByEmitterTest {
     }
 
     @Test
+    fun onComplete_ignored_AFTER_onSuccess_signalled() {
+        emitter.onSuccess(0)
+        observer.reset()
+        emitter.onComplete()
+
+        assertFalse(observer.isComplete)
+    }
+
+    @Test
+    fun second_onComplete_ignored_AFTER_first_onComplete_is_signalled() {
+        emitter.onComplete()
+        observer.reset()
+        emitter.onComplete()
+
+        assertFalse(observer.isComplete)
+    }
+
+    @Test
+    fun onComplete_ignored_AFTER_onError_signalled() {
+        emitter.onError(Throwable())
+        observer.reset()
+        emitter.onComplete()
+
+        assertFalse(observer.isComplete)
+    }
+
+    @Test
     fun onError_ignored_AFTER_onSuccess_is_signalled() {
         emitter.onSuccess(0)
+        observer.reset()
+        emitter.onError(Throwable())
+
+        assertFalse(observer.isError)
+    }
+
+    @Test
+    fun onError_ignored_AFTER_onComplete_is_signalled() {
+        emitter.onComplete()
         observer.reset()
         emitter.onError(Throwable())
 
@@ -89,8 +142,24 @@ class SingleByEmitterTest {
     }
 
     @Test
+    fun onComplete_ignored_AFTER_dispose() {
+        observer.dispose()
+
+        emitter.onComplete()
+
+        assertFalse(observer.isComplete)
+    }
+
+    @Test
     fun disposable_disposed_AFTER_onSuccess_is_signalled() {
         emitter.onSuccess(0)
+
+        assertTrue(observer.isDisposed)
+    }
+
+    @Test
+    fun disposable_disposed_AFTER_onComplete_is_signalled() {
+        emitter.onComplete()
 
         assertTrue(observer.isDisposed)
     }
@@ -106,7 +175,7 @@ class SingleByEmitterTest {
     fun completed_with_error_WHEN_exception_during_subscribe() {
         val error = RuntimeException()
 
-        single<Int> { throw error }.subscribe(observer)
+        maybe<Int> { throw error }.subscribe(observer)
 
         assertTrue(observer.isError(error))
     }
@@ -147,6 +216,16 @@ class SingleByEmitterTest {
         emitter.setDisposable(disposable)
 
         emitter.onSuccess(0)
+
+        assertTrue(disposable.isDisposed)
+    }
+
+    @Test
+    fun assigned_disposable_is_disposed_WHEN_onComplete_is_signalled() {
+        val disposable = disposable()
+        emitter.setDisposable(disposable)
+
+        emitter.onComplete()
 
         assertTrue(disposable.isDisposed)
     }
