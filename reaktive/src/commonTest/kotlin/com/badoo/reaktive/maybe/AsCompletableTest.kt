@@ -12,13 +12,6 @@ class AsCompletableTest : MaybeToCompletableTests by MaybeToCompletableTests({ a
     private val observer = upstream.asCompletable().test()
 
     @Test
-    fun completes_WHEN_upstream_completed() {
-        upstream.onComplete()
-
-        assertTrue(observer.isComplete)
-    }
-
-    @Test
     fun completes_WHEN_upstream_succeeded_with_non_null_value() {
         upstream.onSuccess(0)
 
