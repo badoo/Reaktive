@@ -29,8 +29,8 @@ val TestObservableObserver<*>.hasOnNext: Boolean get() = events.any { it is Even
 val <T> TestObservableObserver<T>.values: List<T>
     get() =
         events
-            .takeWhile { it is TestObservableObserver.Event.OnNext }
-            .map { (it as TestObservableObserver.Event.OnNext).value }
+            .takeWhile { it is Event.OnNext }
+            .map { (it as Event.OnNext).value }
 
 fun TestObservableObserver<*>.isError(error: Throwable): Boolean =
     isError && events.any { (it as? Event.OnError)?.error == error }

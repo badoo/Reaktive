@@ -4,6 +4,7 @@ import com.badoo.reaktive.utils.Lock
 import com.badoo.reaktive.utils.queue.ArrayQueue
 import com.badoo.reaktive.utils.queue.Queue
 import com.badoo.reaktive.utils.queue.isNotEmpty
+import com.badoo.reaktive.utils.queue.take
 import com.badoo.reaktive.utils.synchronized
 
 internal actual class BufferedExecutor<in T> actual constructor(
@@ -31,7 +32,7 @@ internal actual class BufferedExecutor<in T> actual constructor(
             lock
                 .synchronized {
                     if (queue.isNotEmpty) {
-                        queue.poll()!!
+                        queue.take()
                     } else {
                         isDraining = false
                         return
