@@ -1,14 +1,15 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.test.completable.TestCompletable
-import com.badoo.reaktive.test.completable.isComplete
-import com.badoo.reaktive.test.completable.isError
-import com.badoo.reaktive.test.completable.test
+import com.badoo.reaktive.test.observable.isComplete
+import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-interface CompletableToCompletableTests {
+interface CompletableToObservableTests {
 
     @Test
     fun calls_onSubscribe_only_once_WHEN_subscribed()
@@ -23,8 +24,8 @@ interface CompletableToCompletableTests {
     fun disposes_upstream_WHEN_disposed()
 
     companion object {
-        operator fun invoke(transform: Completable.() -> Completable): CompletableToCompletableTests =
-            object : CompletableToCompletableTests {
+        operator fun invoke(transform: Completable.() -> Observable<*>): CompletableToObservableTests =
+            object : CompletableToObservableTests {
                 private val upstream = TestCompletable()
                 private val observer = upstream.transform().test()
 

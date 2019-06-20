@@ -1,19 +1,18 @@
-package com.badoo.reaktive.single
+package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.disposable.disposable
-import com.badoo.reaktive.test.single.isError
-import com.badoo.reaktive.test.single.isSuccess
-import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.test.single.value
+import com.badoo.reaktive.test.completable.isComplete
+import com.badoo.reaktive.test.completable.isError
+import com.badoo.reaktive.test.completable.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class SingleByEmitterTest {
+class CompletableByEmitterTest {
 
-    private lateinit var emitter: SingleEmitter<Int?>
-    private val observer = single<Int?> { emitter = it }.test()
+    private lateinit var emitter: CompletableEmitter
+    private val observer = completable { emitter = it }.test()
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
@@ -21,17 +20,10 @@ class SingleByEmitterTest {
     }
 
     @Test
-    fun succeeds_with_non_null_value() {
-        emitter.onSuccess(0)
+    fun completed_WHEN_onComplete_signalled() {
+        emitter.onComplete()
 
-        assertEquals(0, observer.value)
-    }
-
-    @Test
-    fun succeeds_with_null_value() {
-        emitter.onSuccess(null)
-
-        assertEquals(null, observer.value)
+        assertTrue(observer.isComplete)
     }
 
     @Test
@@ -44,26 +36,26 @@ class SingleByEmitterTest {
     }
 
     @Test
-    fun second_onSuccess_ignored_AFTER_first_onSuccess_is_signalled() {
-        emitter.onSuccess(0)
+    fun second_onComplete_ignored_AFTER_first_onComplete_is_signalled() {
+        emitter.onComplete()
         observer.reset()
-        emitter.onSuccess(1)
+        emitter.onComplete()
 
-        assertFalse(observer.isSuccess)
+        assertFalse(observer.isComplete)
     }
 
     @Test
-    fun onSuccess_ignored_AFTER_onError_is_signalled() {
+    fun onComplete_ignored_AFTER_onError_signalled() {
         emitter.onError(Throwable())
         observer.reset()
-        emitter.onSuccess(1)
+        emitter.onComplete()
 
-        assertFalse(observer.isSuccess)
+        assertFalse(observer.isComplete)
     }
 
     @Test
-    fun onError_ignored_AFTER_onSuccess_is_signalled() {
-        emitter.onSuccess(0)
+    fun onError_ignored_AFTER_onComplete_is_signalled() {
+        emitter.onComplete()
         observer.reset()
         emitter.onError(Throwable())
 
@@ -80,17 +72,17 @@ class SingleByEmitterTest {
     }
 
     @Test
-    fun onSuccess_ignored_AFTER_dispose() {
+    fun onComplete_ignored_AFTER_dispose() {
         observer.dispose()
 
-        emitter.onSuccess(0)
+        emitter.onComplete()
 
-        assertFalse(observer.isSuccess)
+        assertFalse(observer.isComplete)
     }
 
     @Test
-    fun disposable_disposed_AFTER_onSuccess_is_signalled() {
-        emitter.onSuccess(0)
+    fun disposable_disposed_AFTER_onComplete_is_signalled() {
+        emitter.onComplete()
 
         assertTrue(observer.isDisposed)
     }
@@ -106,7 +98,7 @@ class SingleByEmitterTest {
     fun completed_with_error_WHEN_exception_during_subscribe() {
         val error = RuntimeException()
 
-        single<Int> { throw error }.subscribe(observer)
+        completable { throw error }.subscribe(observer)
 
         assertTrue(observer.isError(error))
     }
@@ -142,16 +134,6 @@ class SingleByEmitterTest {
     }
 
     @Test
-    fun assigned_disposable_is_disposed_WHEN_onSuccess_is_signalled() {
-        val disposable = disposable()
-        emitter.setDisposable(disposable)
-
-        emitter.onSuccess(0)
-
-        assertTrue(disposable.isDisposed)
-    }
-
-    @Test
     fun assigned_disposable_is_disposed_WHEN_onError_is_signalled() {
         val disposable = disposable()
         emitter.setDisposable(disposable)
@@ -169,13 +151,6 @@ class SingleByEmitterTest {
     @Test
     fun isDisposed_is_true_WHEN_disposed() {
         observer.dispose()
-
-        assertTrue(emitter.isDisposed)
-    }
-
-    @Test
-    fun isDisposed_is_true_WHEN_onSuccess_is_signalled() {
-        emitter.onSuccess(0)
 
         assertTrue(emitter.isDisposed)
     }
