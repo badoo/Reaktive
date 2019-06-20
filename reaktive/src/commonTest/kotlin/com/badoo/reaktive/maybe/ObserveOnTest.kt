@@ -1,12 +1,12 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.test.base.hasSubscribers
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
-import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
+import com.badoo.reaktive.test.maybe.TestMaybe
+import com.badoo.reaktive.test.maybe.isComplete
+import com.badoo.reaktive.test.maybe.isError
+import com.badoo.reaktive.test.maybe.isSuccess
+import com.badoo.reaktive.test.maybe.test
+import com.badoo.reaktive.test.maybe.value
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,10 +14,10 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ObserveOnTest
-    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ observeOn(TestScheduler()) }) {
+    : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ observeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
-    private val upstream = TestObservable<Int?>()
+    private val upstream = TestMaybe<Int?>()
     private val observer = upstream.observeOn(scheduler).test()
 
     @Test
@@ -26,24 +26,26 @@ class ObserveOnTest
     }
 
     @Test
-    fun does_not_emit_values_synchronously() {
-        upstream.onNext(null)
-        upstream.onNext(1)
-        upstream.onNext(2)
+    fun does_not_succeed_synchronously() {
+        upstream.onSuccess(0)
 
-        assertFalse(observer.hasOnNext)
+        assertFalse(observer.isSuccess)
     }
 
     @Test
-    fun emits_values_through_scheduler() {
-        upstream.onNext(null)
-        upstream.onNext(1)
-        scheduler.process()
-        upstream.onNext(2)
-        scheduler.process()
+    fun succeeds_with_non_null_through_scheduler() {
+        upstream.onSuccess(0)
         scheduler.process()
 
-        assertEquals(listOf(null, 1, 2), observer.values)
+        assertEquals(0, observer.value)
+    }
+
+    @Test
+    fun succeeds_with_null_through_scheduler() {
+        upstream.onSuccess(null)
+        scheduler.process()
+
+        assertEquals(null, observer.value)
     }
 
     @Test

@@ -1,16 +1,16 @@
-package com.badoo.reaktive.single
+package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.isComplete
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.maybe.value
-import com.badoo.reaktive.test.single.TestSingle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class NotNullTest : SingleToMaybeTests by SingleToMaybeTests.Companion<Unit>({ notNull() }) {
+class NotNullTest : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ notNull() }) {
 
-    private val upstream = TestSingle<Int?>()
+    private val upstream = TestMaybe<Int?>()
     private val observer = upstream.notNull().test()
 
     @Test
