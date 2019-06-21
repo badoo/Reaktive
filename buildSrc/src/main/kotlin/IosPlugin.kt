@@ -54,12 +54,7 @@ abstract class IosPlugin : Plugin<Project> {
         val iosTestProvider = target.tasks.register(TASK_NAME_IOS_TEST, RunIosTestTask::class.java) {
             group = LifecycleBasePlugin.VERIFICATION_GROUP
             dependsOn(target.tasks.named(testBinariesTaskName))
-            testExecutables.from(
-                kotlinNativeBinaryContainer.getExecutable(
-                    SourceSet.TEST_SOURCE_SET_NAME,
-                    NativeBuildType.DEBUG
-                ).outputFile
-            )
+            testExecutables.from(kotlinNativeBinaryContainer.getTest(NativeBuildType.DEBUG).outputFile)
         }
         if (kotlinNativeTarget.publishable) {
             target.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
