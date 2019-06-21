@@ -1,7 +1,6 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.disposable
-import com.badoo.reaktive.test.observable.TestObservableObserver.Event
 import com.badoo.reaktive.test.observable.getOnErrorValue
 import com.badoo.reaktive.test.observable.getOnNextEvent
 import com.badoo.reaktive.test.observable.getOnNextValue
@@ -18,8 +17,8 @@ import kotlin.test.assertTrue
 
 class ObservableByEmitterTest {
 
-    private lateinit var emitter: ObservableEmitter<Int>
-    private val observer = observable<Int> { emitter = it }.test()
+    private lateinit var emitter: ObservableEmitter<Int?>
+    private val observer = observable<Int?> { emitter = it }.test()
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
@@ -28,15 +27,15 @@ class ObservableByEmitterTest {
 
     @Test
     fun emitted_same_values_and_completed_in_the_same_order() {
+        emitter.onNext(null)
         emitter.onNext(1)
         emitter.onNext(2)
-        emitter.onNext(3)
         emitter.onComplete()
 
         assertEquals(4, observer.events.size)
-        assertEquals(1, observer.getOnNextEvent(0).value)
-        assertEquals(2, observer.getOnNextEvent(1).value)
-        assertEquals(3, observer.getOnNextEvent(2).value)
+        assertEquals(null, observer.getOnNextEvent(0).value)
+        assertEquals(1, observer.getOnNextEvent(1).value)
+        assertEquals(2, observer.getOnNextEvent(2).value)
         assertTrue(observer.isOnCompleteEvent(3))
     }
 
@@ -44,28 +43,28 @@ class ObservableByEmitterTest {
     fun emitted_same_values_and_completed_with_error_in_the_same_order() {
         val error = Throwable()
 
+        emitter.onNext(null)
         emitter.onNext(1)
         emitter.onNext(2)
-        emitter.onNext(3)
         emitter.onError(error)
 
         assertEquals(4, observer.events.size)
-        assertEquals(1, observer.getOnNextValue(0))
-        assertEquals(2, observer.getOnNextValue(1))
-        assertEquals(3, observer.getOnNextValue(2))
+        assertEquals(null, observer.getOnNextValue(0))
+        assertEquals(1, observer.getOnNextValue(1))
+        assertEquals(2, observer.getOnNextValue(2))
         assertSame(error, observer.getOnErrorValue(3))
     }
 
     @Test
     fun emitted_same_values_in_the_same_order_WHEN_disposed_after_producing_values() {
+        emitter.onNext(null)
         emitter.onNext(1)
         emitter.onNext(2)
-        emitter.onNext(3)
         observer.dispose()
 
-        assertEquals(1, observer.getOnNextValue(0))
-        assertEquals(2, observer.getOnNextValue(1))
-        assertEquals(3, observer.getOnNextValue(2))
+        assertEquals(null, observer.getOnNextValue(0))
+        assertEquals(1, observer.getOnNextValue(1))
+        assertEquals(2, observer.getOnNextValue(2))
     }
 
     @Test
@@ -86,43 +85,42 @@ class ObservableByEmitterTest {
 
     @Test
     fun onNext_ignored_AFTER_onCompleted_signalled() {
-        emitter.onNext(1)
         emitter.onComplete()
+        observer.reset()
         emitter.onNext(2)
 
-        assertTrue(observer.events.last() is Event.OnComplete)
+        assertFalse(observer.hasOnNext)
     }
 
     @Test
     fun onNext_ignored_AFTER_onError_signalled() {
-        emitter.onNext(1)
         emitter.onError(Throwable())
+        observer.reset()
         emitter.onNext(2)
 
-        assertTrue(observer.events.last() is Event.OnError)
+        assertFalse(observer.hasOnNext)
     }
 
     @Test
     fun onComplete_ignored_AFTER_onError_signalled() {
-        emitter.onNext(1)
         emitter.onError(Throwable())
+        observer.reset()
         emitter.onComplete()
 
-        assertTrue(observer.events.last() is Event.OnError)
+        assertFalse(observer.isComplete)
     }
 
     @Test
     fun onError_ignored_AFTER_onCompleted_signalled() {
-        emitter.onNext(1)
         emitter.onComplete()
+        observer.reset()
         emitter.onError(Throwable())
 
-        assertTrue(observer.events.last() is Event.OnComplete)
+        assertFalse(observer.isError)
     }
 
     @Test
     fun second_onComplete_ignored_AFTER_first_onComplete_signalled() {
-        emitter.onNext(1)
         emitter.onComplete()
         observer.reset()
         emitter.onComplete()
@@ -132,7 +130,6 @@ class ObservableByEmitterTest {
 
     @Test
     fun second_onError_ignored_AFTER_first_onError_signalled() {
-        emitter.onNext(1)
         emitter.onError(Throwable())
         observer.reset()
         emitter.onError(Throwable())
@@ -221,5 +218,39 @@ class ObservableByEmitterTest {
         emitter.onError(Throwable())
 
         assertTrue(disposable.isDisposed)
+    }
+
+
+    @Test
+    fun isDisposed_is_false_WHEN_created() {
+        assertFalse(emitter.isDisposed)
+    }
+
+    @Test
+    fun isDisposed_is_false_WHEN_onNext_is_signalled() {
+        observer.onNext(0)
+
+        assertFalse(emitter.isDisposed)
+    }
+
+    @Test
+    fun isDisposed_is_true_WHEN_disposed() {
+        observer.dispose()
+
+        assertTrue(emitter.isDisposed)
+    }
+
+    @Test
+    fun isDisposed_is_true_WHEN_onComplete_is_signalled() {
+        emitter.onComplete()
+
+        assertTrue(emitter.isDisposed)
+    }
+
+    @Test
+    fun isDisposed_is_disposed_WHEN_onError_is_signalled() {
+        emitter.onError(Throwable())
+
+        assertTrue(emitter.isDisposed)
     }
 }

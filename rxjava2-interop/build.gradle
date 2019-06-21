@@ -1,5 +1,5 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm"
+    id 'org.jetbrains.kotlin.jvm'
     id 'maven-publish'
 }
 
@@ -19,3 +19,5 @@ dependencies {
     implementation project(':reaktive')
     implementation 'io.reactivex.rxjava2:rxjava'
 }
+
+apply plugin: PublishPlugin

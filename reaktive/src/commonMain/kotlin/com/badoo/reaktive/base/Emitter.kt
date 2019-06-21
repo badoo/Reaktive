@@ -9,6 +9,8 @@ import com.badoo.reaktive.disposable.Disposable
  */
 interface Emitter {
 
+    val isDisposed: Boolean
+
     /**
      * Sets a [Disposable] on this emitter, any previous [Disposable]
      * will be replaced.
