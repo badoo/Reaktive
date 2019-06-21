@@ -12,7 +12,7 @@ fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 
-        val sources = toList().freeze()
+        val sources = toList()
 
         if (sources.isEmpty()) {
             observer.onComplete()
