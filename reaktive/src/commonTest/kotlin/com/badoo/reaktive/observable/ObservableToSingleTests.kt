@@ -1,20 +1,17 @@
-package com.badoo.reaktive.completable
+package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.test.completable.TestCompletable
-import com.badoo.reaktive.test.completable.isComplete
-import com.badoo.reaktive.test.completable.isError
-import com.badoo.reaktive.test.completable.test
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.test.observable.TestObservable
+import com.badoo.reaktive.test.single.isError
+import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-interface CompletableToCompletableTests {
+interface ObservableToSingleTests {
 
     @Test
     fun calls_onSubscribe_only_once_WHEN_subscribed()
-
-    @Test
-    fun completes_WHEN_upstream_completed()
 
     @Test
     fun produces_error_WHEN_upstream_produced_error()
@@ -23,19 +20,13 @@ interface CompletableToCompletableTests {
     fun disposes_upstream_WHEN_disposed()
 
     companion object {
-        operator fun invoke(transform: Completable.() -> Completable): CompletableToCompletableTests =
-            object : CompletableToCompletableTests {
-                private val upstream = TestCompletable()
+        operator fun <T> invoke(transform: Observable<T>.() -> Single<*>): ObservableToSingleTests =
+            object : ObservableToSingleTests {
+                private val upstream = TestObservable<T>()
                 private val observer = upstream.transform().test()
 
                 override fun calls_onSubscribe_only_once_WHEN_subscribed() {
                     assertEquals(1, observer.disposables.size)
-                }
-
-                override fun completes_WHEN_upstream_completed() {
-                    upstream.onComplete()
-
-                    assertTrue(observer.isComplete)
                 }
 
                 override fun produces_error_WHEN_upstream_produced_error() {

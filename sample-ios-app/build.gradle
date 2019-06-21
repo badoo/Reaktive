@@ -6,17 +6,23 @@ kotlin {
     targets {
         // fromPreset(presets.iosArm64, 'iosCommon')
         fromPreset(presets.iosArm64, 'ios64') {
-            binaries.framework('ReactiveSample')
+            binaries.framework('ReactiveSample') {
+                export project(':reaktive')
+                transitiveExport = true
+            }
         }
         fromPreset(presets.iosX64, 'iosSim') {
-            binaries.framework('ReactiveSample')
+            binaries.framework('ReactiveSample') {
+                export project(':reaktive')
+                transitiveExport = true
+            }
         }
     }
     sourceSets {
         iosCommonMain {
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                implementation project(':reaktive')
+                api 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                api project(':reaktive')
             }
         }
         ios64Main.dependsOn iosCommonMain
