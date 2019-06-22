@@ -65,8 +65,8 @@ abstract class JsPlugin : Plugin<Project> {
             setArgs(
                 listOf(
                     "install",
-                    "kotlin@${project.findProperty("kotlin_version")}",
-                    "kotlin-test@${project.findProperty("kotlin_version")}",
+                    "kotlin@${project.property("kotlin_version")}",
+                    "kotlin-test@${project.property("kotlin_version")}",
                     "mocha@6.1.4"
                 )
             )

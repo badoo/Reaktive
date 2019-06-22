@@ -8,6 +8,20 @@ buildscript {
     }
 }
 
+// TODO remove once https://github.com/Kotlin/kotlin-frontend-plugin/issues/141 is fixed
+plugins.whenPluginAdded { plugin ->
+    if (plugin.class.name == 'org.jetbrains.kotlin.gradle.frontend.FrontendPlugin') {
+        def fixTask = tasks.register('webpack-config-fix') {
+            it.doLast { file('webpack.config.d').mkdir() }
+        }
+        afterEvaluate {
+            tasks.named('webpack-config').configure {
+                it.dependsOn(fixTask)
+            }
+        }
+    }
+}
+
 apply plugin: 'kotlin2js'
 apply plugin: 'org.jetbrains.kotlin.frontend'
 
