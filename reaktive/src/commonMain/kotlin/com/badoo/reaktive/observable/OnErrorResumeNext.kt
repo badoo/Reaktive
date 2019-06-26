@@ -7,7 +7,7 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
-fun <T> Observable<T>.onErrorResumeNext(errorResumeNextSupplier: (Throwable) -> Observable<T>): Observable<T> =
+fun <T> Observable<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Observable<T>): Observable<T> =
     observableUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
@@ -20,7 +20,7 @@ fun <T> Observable<T>.onErrorResumeNext(errorResumeNextSupplier: (Throwable) -> 
                 }
 
                 override fun onError(error: Throwable) {
-                    observer.tryCatch({ errorResumeNextSupplier(error) }) {
+                    observer.tryCatch({ nextSupplier(error) }) {
                         it.subscribeSafe(
                             object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
                                 override fun onSubscribe(disposable: Disposable) {
@@ -33,3 +33,6 @@ fun <T> Observable<T>.onErrorResumeNext(errorResumeNextSupplier: (Throwable) -> 
             }
         )
     }
+
+fun <T> Observable<T>.onErrorResumeNext(next: Observable<T>): Observable<T> =
+    onErrorResumeNext { next }
