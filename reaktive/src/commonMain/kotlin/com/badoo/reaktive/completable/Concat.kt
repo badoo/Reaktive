@@ -1,19 +1,24 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomicreference.updateAndGet
 
 fun Iterable<Completable>.concat(): Completable =
     completableUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 
-        val iterator = iterator()
-        if (!iterator.hasNext()) {
+        val sources = toList()
+
+        if (sources.isEmpty()) {
             observer.onComplete()
             return@completableUnsafe
         }
+
+        val sourceIndex = AtomicReference(0)
 
         val upstreamObserver =
             object : CompletableObserver, CompletableCallbacks by observer {
@@ -22,19 +27,15 @@ fun Iterable<Completable>.concat(): Completable =
                 }
 
                 override fun onComplete() {
-                    if (iterator.hasNext()) {
-                        iterator
-                            .next()
-                            .subscribeSafe(this)
-                    } else {
-                        observer.onComplete()
-                    }
+                    sourceIndex
+                        .updateAndGet { it + 1 }
+                        .let(sources::getOrNull)
+                        ?.subscribeSafe(this)
+                        ?: observer.onComplete()
                 }
             }
 
-        iterator
-            .next()
-            .subscribeSafe(upstreamObserver)
+        sources[0].subscribeSafe(upstreamObserver)
     }
 
 fun concat(vararg sources: Completable): Completable =
