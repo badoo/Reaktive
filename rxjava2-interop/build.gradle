@@ -15,7 +15,7 @@ publishing {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation project(':reaktive')
     implementation 'io.reactivex.rxjava2:rxjava'
 }

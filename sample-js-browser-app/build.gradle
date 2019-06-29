@@ -1,10 +1,32 @@
-plugins {
-    id 'kotlin2js'
-    id 'org.jetbrains.kotlin.frontend'
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap/' }
+    }
+    dependencies {
+        classpath 'org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.45'
+    }
 }
 
+// TODO remove once https://github.com/Kotlin/kotlin-frontend-plugin/issues/141 is fixed
+plugins.whenPluginAdded { plugin ->
+    if (plugin.class.name == 'org.jetbrains.kotlin.gradle.frontend.FrontendPlugin') {
+        def fixTask = tasks.register('webpack-config-fix') {
+            it.doLast { file('webpack.config.d').mkdir() }
+        }
+        afterEvaluate {
+            tasks.named('webpack-config').configure {
+                it.dependsOn(fixTask)
+            }
+        }
+    }
+}
+
+apply plugin: 'kotlin2js'
+apply plugin: 'org.jetbrains.kotlin.frontend'
+
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-js:${Versions.kotlin}"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
     compile project(':reaktive')
 }
 
