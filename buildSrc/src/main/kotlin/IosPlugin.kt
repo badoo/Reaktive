@@ -40,6 +40,17 @@ abstract class IosPlugin : Plugin<Project> {
                 }
                 buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
             }
+            // Disable devirtualization for native targets
+            // TODO Remove after https://github.com/JetBrains/kotlin-native/issues/3087 is fixed
+            targets.configureEach {
+                if (this is KotlinNativeTarget) {
+                    compilations.configureEach {
+                        kotlinOptions {
+                            freeCompilerArgs = freeCompilerArgs + "-Xdisable-phases=Devirtualization"
+                        }
+                    }
+                }
+            }
         }
         setupBuildAll(target, buildBinariesTasks)
     }
