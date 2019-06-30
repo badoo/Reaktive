@@ -8,6 +8,13 @@ import kotlin.test.assertTrue
 class AtomicIntTest {
 
     @Test
+    fun foo() {
+        val ref = AtomicReference(128)
+        val v = ref.value
+        assertTrue(ref.compareAndSet(v, 129))
+    }
+
+    @Test
     fun default_initial_value_is_0() {
         assertEquals(0, AtomicInt().value)
     }
