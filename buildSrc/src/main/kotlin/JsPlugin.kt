@@ -58,16 +58,16 @@ abstract class JsPlugin : Plugin<Project> {
         target.pluginManager.apply(NodePlugin::class.java)
         target.extensions.configure(NodeExtension::class.java) {
             download = true
-            version = Versions.node
+            version = "12.2.0"
         }
 
         val dependenciesTask = target.tasks.register("installJsTestDependencies", NpmTask::class.java) {
             setArgs(
                 listOf(
                     "install",
-                    "kotlin@${Versions.kotlin}",
-                    "kotlin-test@${Versions.kotlin}",
-                    "mocha@${Versions.mocha}"
+                    "kotlin@${project.property("kotlin_version")}",
+                    "kotlin-test@${project.property("kotlin_version")}",
+                    "mocha@6.1.4"
                 )
             )
         }

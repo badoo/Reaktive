@@ -7,9 +7,11 @@ repositories {
     jcenter()
 }
 
+apply(from = "../gradle/versions.gradle.kts")
+
 dependencies {
-    implementation("com.moowork.gradle:gradle-node-plugin:1.3.1")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.40")
-    implementation("com.android.tools.build:gradle:3.4.1")
-    implementation("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
+    implementation("com.moowork.gradle:gradle-node-plugin:${property("node_gradle_version")}")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${property("kotlin_version")}")
+    implementation("com.android.tools.build:gradle:${property("android_gradle_version")}")
+    implementation("com.jfrog.bintray.gradle:gradle-bintray-plugin:${property("bintray_gradle_version")}")
 }
