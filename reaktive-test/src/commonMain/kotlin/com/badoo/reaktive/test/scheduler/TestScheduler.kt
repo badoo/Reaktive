@@ -1,10 +1,11 @@
 package com.badoo.reaktive.test.scheduler
 
 import com.badoo.reaktive.scheduler.Scheduler
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.getAndUpdate
-import com.badoo.reaktive.utils.atomicreference.update
-import com.badoo.reaktive.utils.atomicreference.updateAndGet
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.AtomicLong
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.getAndUpdate
+import com.badoo.reaktive.utils.atomic.update
 
 class TestScheduler(
     private val isManualProcessing: Boolean = false
@@ -33,7 +34,7 @@ class TestScheduler(
     }
 
     class Timer {
-        private val timeMillis = AtomicReference(0L)
+        private val timeMillis = AtomicLong()
         private val listeners: AtomicReference<Set<() -> Unit>> = AtomicReference(emptySet(), true)
         val millis: Long get() = timeMillis.value
 
@@ -46,7 +47,7 @@ class TestScheduler(
         }
 
         fun advanceBy(millis: Long) {
-            timeMillis.update { it + millis }
+            timeMillis.incrementAndGet(millis)
             listeners.value.forEach { it() }
         }
     }
@@ -57,7 +58,7 @@ class TestScheduler(
     ) : Scheduler.Executor {
 
         private val tasks: AtomicReference<List<Task>> = AtomicReference(emptyList(), true)
-        private val _isDisposed = AtomicReference(false)
+        private val _isDisposed = AtomicBoolean()
         override val isDisposed: Boolean get() = _isDisposed.value
         private val timerListener = ::processIfNeeded
 
@@ -132,7 +133,7 @@ class TestScheduler(
         val periodMillis: Long?,
         val task: () -> Unit
     ) : Comparable<Task> {
-        private val sequenceNumber = sequencer.updateAndGet(Long::inc)
+        private val sequenceNumber = sequencer.incrementAndGet(1L)
 
         override fun compareTo(other: Task): Int =
             if (this === other) {
@@ -145,7 +146,7 @@ class TestScheduler(
             }
 
         private companion object {
-            private val sequencer = AtomicReference(0L)
+            private val sequencer = AtomicLong()
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.badoo.reaktive.test.utils
 
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.update
 
 class SafeMutableList<T> {
 

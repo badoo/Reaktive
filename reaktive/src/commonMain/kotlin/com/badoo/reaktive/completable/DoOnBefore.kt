@@ -2,11 +2,11 @@ package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.CompleteCallback
 import com.badoo.reaktive.base.ErrorCallback
+import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
-import com.badoo.reaktive.base.subscribeSafe
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 fun Completable.doOnBeforeSubscribe(action: (Disposable) -> Unit): Completable =
     completableUnsafe { observer ->
@@ -110,7 +110,7 @@ fun Completable.doOnBeforeDispose(action: () -> Unit): Completable =
 
 fun Completable.doOnBeforeFinally(action: () -> Unit): Completable =
     completableUnsafe { observer ->
-        val isFinished = AtomicReference(false)
+        val isFinished = AtomicBoolean()
 
         fun onFinally() {
             @Suppress("BooleanLiteralArgument") // Not allowed for expected classes

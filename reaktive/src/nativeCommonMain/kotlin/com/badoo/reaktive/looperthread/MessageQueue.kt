@@ -1,8 +1,8 @@
 package com.badoo.reaktive.looperthread
 
 import com.badoo.reaktive.utils.Lock
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.synchronized
 import kotlin.native.concurrent.AtomicLong
 import kotlin.system.getTimeNanos

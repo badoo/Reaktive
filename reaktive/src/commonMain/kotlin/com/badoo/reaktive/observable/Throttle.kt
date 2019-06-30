@@ -3,7 +3,7 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.uptimeMillis
 
 private val getTimeMillis = ::uptimeMillis
@@ -17,7 +17,7 @@ internal fun <T> Observable<T>.throttle(windowMillis: Long, getTimeMillis: () ->
 
         subscribeSafe(
             object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
-                private val lastTime = AtomicReference(-windowMillis)
+                private val lastTime = AtomicLong(-windowMillis)
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)

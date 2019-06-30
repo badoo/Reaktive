@@ -1,7 +1,7 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.synchronized
 import com.badoo.reaktive.utils.useCondition
 import com.badoo.reaktive.utils.useLock

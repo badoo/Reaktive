@@ -1,4 +1,4 @@
-package com.badoo.reaktive.utils.atomicreference
+package com.badoo.reaktive.utils.atomic
 
 expect class AtomicReference<T>(
     initialValue: T,
@@ -6,8 +6,6 @@ expect class AtomicReference<T>(
 ) {
 
     var value: T
-
-    fun getAndSet(value: T): T
 
     fun compareAndSet(expectedValue: T, newValue: T): Boolean
 }

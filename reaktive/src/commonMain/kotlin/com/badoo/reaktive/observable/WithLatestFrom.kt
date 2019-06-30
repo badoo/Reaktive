@@ -7,8 +7,8 @@ import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.Uninitialized
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.replace
 
 fun <T, U, R> Observable<T>.withLatestFrom(

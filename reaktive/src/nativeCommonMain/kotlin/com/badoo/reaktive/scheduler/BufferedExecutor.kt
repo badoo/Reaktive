@@ -1,7 +1,7 @@
 package com.badoo.reaktive.scheduler
 
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.getAndUpdate
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.getAndUpdate
 
 internal actual class BufferedExecutor<in T> actual constructor(
     private val executor: Scheduler.Executor,

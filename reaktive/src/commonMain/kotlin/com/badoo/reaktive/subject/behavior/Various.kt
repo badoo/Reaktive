@@ -2,7 +2,7 @@ package com.badoo.reaktive.subject.behavior
 
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.subject.DefaultSubject
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicReference
 
 fun <T> behaviorSubject(initialValue: T): BehaviorSubject<T> =
     object : DefaultSubject<T>(), BehaviorSubject<T> {

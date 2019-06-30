@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.utils.SafeMutableList
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -59,7 +59,7 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun does_not_call_action_WHEN_onSubscribe_received_from_upstream() {
-        val isCalled = AtomicReference(false)
+        val isCalled = AtomicBoolean()
 
         maybeUnsafe<Nothing> { observer ->
             isCalled.value = false
@@ -75,7 +75,7 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun does_not_call_action_WHEN_succeeded() {
-        val isCalled = AtomicReference(false)
+        val isCalled = AtomicBoolean()
         val upstream = TestMaybe<Int>()
 
         upstream
@@ -92,7 +92,7 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun does_not_call_action_WHEN_completed() {
-        val isCalled = AtomicReference(false)
+        val isCalled = AtomicBoolean()
         val upstream = TestMaybe<Nothing>()
 
         upstream
@@ -110,7 +110,7 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun does_not_call_action_WHEN_produced_error() {
-        val isCalled = AtomicReference(false)
+        val isCalled = AtomicBoolean()
         val upstream = TestMaybe<Nothing>()
 
         upstream

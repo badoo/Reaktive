@@ -8,9 +8,7 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.update
-import com.badoo.reaktive.utils.atomicreference.updateAndGet
+import com.badoo.reaktive.utils.atomic.AtomicInt
 
 fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
     observable { emitter ->
@@ -20,7 +18,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
 
         subscribeSafe(
             object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
-                private val activeSourceCount = AtomicReference(1)
+                private val activeSourceCount = AtomicInt(1)
 
                 private val mappedObserver =
                     object : ObservableObserver<R>, Observer by this, CompletableCallbacks by this,
@@ -32,7 +30,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
                 }
 
                 override fun onNext(value: T) {
-                    activeSourceCount.update { it + 1 }
+                    activeSourceCount.incrementAndGet(1)
 
                     serializedEmitter.tryCatch({ mapper(value) }) {
                         it.subscribeSafe(mappedObserver)
@@ -40,7 +38,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
                 }
 
                 override fun onComplete() {
-                    if (activeSourceCount.updateAndGet { it - 1 } <= 0) {
+                    if (activeSourceCount.incrementAndGet(-1) <= 0) {
                         serializedEmitter.onComplete()
                     }
                 }

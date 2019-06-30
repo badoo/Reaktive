@@ -3,11 +3,11 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.replace
 import com.badoo.reaktive.utils.serializer.serializer
-import com.badoo.reaktive.utils.atomicreference.update
-import com.badoo.reaktive.utils.atomicreference.updateAndGet
+import com.badoo.reaktive.utils.atomic.update
+import com.badoo.reaktive.utils.atomic.updateAndGet
 
 fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->

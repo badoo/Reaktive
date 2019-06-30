@@ -1,7 +1,8 @@
 package com.badoo.reaktive.disposable
 
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.getAndUpdate
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.getAndSet
+import com.badoo.reaktive.utils.atomic.getAndUpdate
 
 /**
  * Thread-safe collection of [Disposable]
