@@ -9,17 +9,17 @@ import com.badoo.reaktive.utils.atomic.update
 
 fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Observable<T> =
     observable { emitter ->
-        val disposableWrapper = CompositeDisposable()
-        emitter.setDisposable(disposableWrapper)
+        val disposables = CompositeDisposable()
+        emitter.setDisposable(disposables)
         val executor = scheduler.newExecutor()
-        disposableWrapper += executor
+        disposables += executor
 
         subscribeSafe(
             object : ObservableObserver<T> {
                 private val pendingValue = AtomicReference<DebouncePendingValue<T>?>(null, true)
 
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper += disposable
+                    disposables += disposable
                 }
 
                 override fun onNext(value: T) {
