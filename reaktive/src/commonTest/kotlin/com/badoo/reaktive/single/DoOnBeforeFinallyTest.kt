@@ -83,7 +83,7 @@ class DoOnBeforeFinallyTest
 
         upstream
             .doOnBeforeFinally {
-                count.incrementAndGet(1)
+                count.addAndGet(1)
             }
             .test()
             .dispose()
@@ -99,7 +99,7 @@ class DoOnBeforeFinallyTest
 
         upstream
             .doOnBeforeFinally {
-                count.incrementAndGet(1)
+                count.addAndGet(1)
             }
             .test()
             .dispose()
@@ -116,7 +116,7 @@ class DoOnBeforeFinallyTest
         val observer =
             upstream
                 .doOnBeforeFinally {
-                    count.incrementAndGet(1)
+                    count.addAndGet(1)
                 }
                 .test()
 
@@ -133,7 +133,7 @@ class DoOnBeforeFinallyTest
         val observer =
             upstream
                 .doOnBeforeFinally {
-                    count.incrementAndGet(1)
+                    count.addAndGet(1)
                 }
                 .test()
 

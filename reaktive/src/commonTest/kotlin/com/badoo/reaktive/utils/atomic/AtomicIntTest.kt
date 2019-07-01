@@ -13,31 +13,31 @@ class AtomicIntTest {
     }
 
     @Test
-    fun incrementAndGet_MAX_VALUE_minus_one() {
+    fun addAndGet_MAX_VALUE_minus_one() {
         val ref = AtomicInt(Int.MAX_VALUE)
-        ref.incrementAndGet(-1)
+        ref.addAndGet(-1)
         assertEquals(Int.MAX_VALUE - 1, ref.value)
     }
 
     @Test
-    fun incrementAndGet_MAX_VALUE_plus_one() {
+    fun addAndGet_MAX_VALUE_plus_one() {
         val ref = AtomicInt(Int.MAX_VALUE)
-        ref.incrementAndGet(1)
+        ref.addAndGet(1)
         assertEquals(Int.MIN_VALUE, ref.value)
     }
 
 
     @Test
-    fun incrementAndGet_MIN_VALUE_minus_one() {
+    fun addAndGet_MIN_VALUE_minus_one() {
         val ref = AtomicInt(Int.MIN_VALUE)
-        ref.incrementAndGet(-1)
+        ref.addAndGet(-1)
         assertEquals(Int.MAX_VALUE, ref.value)
     }
 
     @Test
-    fun incrementAndGet_MIN_VALUE_plus_one() {
+    fun addAndGet_MIN_VALUE_plus_one() {
         val ref = AtomicInt(Int.MIN_VALUE)
-        ref.incrementAndGet(1)
+        ref.addAndGet(1)
         assertEquals(Int.MIN_VALUE + 1, ref.value)
     }
 

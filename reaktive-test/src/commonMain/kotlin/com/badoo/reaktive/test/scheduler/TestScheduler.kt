@@ -47,7 +47,7 @@ class TestScheduler(
         }
 
         fun advanceBy(millis: Long) {
-            timeMillis.incrementAndGet(millis)
+            timeMillis.addAndGet(millis)
             listeners.value.forEach { it() }
         }
     }
@@ -133,7 +133,7 @@ class TestScheduler(
         val periodMillis: Long?,
         val task: () -> Unit
     ) : Comparable<Task> {
-        private val sequenceNumber = sequencer.incrementAndGet(1L)
+        private val sequenceNumber = sequencer.addAndGet(1L)
 
         override fun compareTo(other: Task): Int =
             if (this === other) {

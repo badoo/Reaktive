@@ -4,7 +4,7 @@ expect class AtomicLong(initialValue: Long = 0L) {
 
     var value: Long
 
-    fun incrementAndGet(delta: Long): Long
+    fun addAndGet(delta: Long): Long
 
     fun compareAndSet(expectedValue: Long, newValue: Long): Boolean
 }

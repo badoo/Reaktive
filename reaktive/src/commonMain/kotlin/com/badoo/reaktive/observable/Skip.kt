@@ -19,7 +19,7 @@ fun <T> Observable<T>.skip(count: Long): Observable<T> =
 
                 override fun onNext(value: T) {
                     if (remaining.value != 0L) {
-                        remaining.incrementAndGet(-1)
+                        remaining.addAndGet(-1)
                     } else {
                         observer.onNext(value)
                     }

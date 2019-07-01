@@ -45,7 +45,7 @@ fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Obse
                     }
 
                     is CombineLatestEvent.OnComplete -> {
-                        val remainingActiveSources = activeSourceCount.incrementAndGet(-1)
+                        val remainingActiveSources = activeSourceCount.addAndGet(-1)
 
                         // Complete if all sources are completed or a source is completed without a value
                         val allCompleted = (remainingActiveSources == 0) || (values.value[event.index] === Uninitialized)

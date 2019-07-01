@@ -86,7 +86,7 @@ private class SubjectGenericTestsImpl(
                 }
 
                 override fun onNext(value: Int?) {
-                    count.incrementAndGet(1)
+                    count.addAndGet(1)
                     if (value == 0) {
                         subject.onNext(1)
                         success.value = count.value == 1

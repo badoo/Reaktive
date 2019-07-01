@@ -58,6 +58,5 @@ class AtomicReferenceTest {
         private const val VALUE_1 = "a"
         private const val VALUE_2 = "b"
         private const val VALUE_3 = "c"
-
     }
 }

@@ -27,7 +27,7 @@ fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
 
                 override fun onComplete() {
                     sourceIndex
-                        .incrementAndGet(1)
+                        .addAndGet(1)
                         .let(sources::getOrNull)
                         ?.subscribeSafe(this)
                         ?: observer.onComplete()

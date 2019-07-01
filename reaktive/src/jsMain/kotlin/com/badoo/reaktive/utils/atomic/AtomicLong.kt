@@ -4,7 +4,7 @@ actual class AtomicLong actual constructor(initialValue: Long) {
 
     actual var value: Long = initialValue
 
-    actual fun incrementAndGet(delta: Long): Long {
+    actual fun addAndGet(delta: Long): Long {
         value += delta
 
         return value

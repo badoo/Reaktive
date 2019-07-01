@@ -10,7 +10,6 @@ actual class AtomicBoolean actual constructor(initialValue: Boolean) {
             delegate.value = value.intValue
         }
 
-
     actual fun compareAndSet(expectedValue: Boolean, newValue: Boolean): Boolean =
         delegate.compareAndSet(expectedValue.intValue, newValue.intValue)
 

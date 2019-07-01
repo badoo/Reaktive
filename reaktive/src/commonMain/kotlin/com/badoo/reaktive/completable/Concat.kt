@@ -27,7 +27,7 @@ fun Iterable<Completable>.concat(): Completable =
 
                 override fun onComplete() {
                     sourceIndex
-                        .incrementAndGet(1)
+                        .addAndGet(1)
                         .let(sources::getOrNull)
                         ?.subscribeSafe(this)
                         ?: observer.onComplete()

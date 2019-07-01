@@ -13,31 +13,30 @@ class AtomicLongTest {
     }
 
     @Test
-    fun incrementAndGet_MAX_VALUE_minus_one() {
+    fun addAndGet_MAX_VALUE_minus_one() {
         val ref = AtomicLong(Long.MAX_VALUE)
-        ref.incrementAndGet(-1L)
+        ref.addAndGet(-1L)
         assertEquals(Long.MAX_VALUE - 1L, ref.value)
     }
 
     @Test
-    fun incrementAndGet_MAX_VALUE_plus_one() {
+    fun addAndGet_MAX_VALUE_plus_one() {
         val ref = AtomicLong(Long.MAX_VALUE)
-        ref.incrementAndGet(1L)
+        ref.addAndGet(1L)
         assertEquals(Long.MIN_VALUE, ref.value)
     }
 
-
     @Test
-    fun incrementAndGet_MIN_VALUE_minus_one() {
+    fun addAndGet_MIN_VALUE_minus_one() {
         val ref = AtomicLong(Long.MIN_VALUE)
-        ref.incrementAndGet(-1L)
+        ref.addAndGet(-1L)
         assertEquals(Long.MAX_VALUE, ref.value)
     }
 
     @Test
-    fun incrementAndGet_MIN_VALUE_plus_one() {
+    fun addAndGet_MIN_VALUE_plus_one() {
         val ref = AtomicLong(Long.MIN_VALUE)
-        ref.incrementAndGet(1L)
+        ref.addAndGet(1L)
         assertEquals(Long.MIN_VALUE + 1L, ref.value)
     }
 

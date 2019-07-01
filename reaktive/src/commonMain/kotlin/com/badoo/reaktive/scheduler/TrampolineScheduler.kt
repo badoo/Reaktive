@@ -88,7 +88,7 @@ internal class TrampolineScheduler(
             val periodMillis: Long,
             val task: () -> Unit
         ) : Comparable<Task> {
-            private val sequenceNumber = sequencer.incrementAndGet(1)
+            private val sequenceNumber = sequencer.addAndGet(1)
 
             override fun compareTo(other: Task): Int =
                 if (this === other) {

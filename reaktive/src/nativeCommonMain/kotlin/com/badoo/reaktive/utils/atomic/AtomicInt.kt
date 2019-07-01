@@ -10,7 +10,7 @@ actual class AtomicInt actual constructor(initialValue: Int) {
             delegate.value = value
         }
 
-    actual fun incrementAndGet(delta: Int): Int = delegate.addAndGet(delta)
+    actual fun addAndGet(delta: Int): Int = delegate.addAndGet(delta)
 
     actual fun compareAndSet(expectedValue: Int, newValue: Int): Boolean = delegate.compareAndSet(expectedValue, newValue)
 }

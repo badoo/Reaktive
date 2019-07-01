@@ -4,7 +4,7 @@ actual class AtomicInt actual constructor(initialValue: Int) {
 
     actual var value: Int = initialValue
 
-    actual fun incrementAndGet(delta: Int): Int {
+    actual fun addAndGet(delta: Int): Int {
         value += delta
 
         return value
