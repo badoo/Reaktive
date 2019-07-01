@@ -5,7 +5,7 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 fun <T> Observable<T>.switchIfEmpty(otherObservable: Observable<T>): Observable<T> =
     switchIfEmpty { otherObservable }
@@ -17,7 +17,7 @@ fun <T> Observable<T>.switchIfEmpty(otherObservable: () -> Observable<T>): Obser
 
         subscribeSafe(
             object : ObservableObserver<T>, ErrorCallback by emitter {
-                private val isEmpty = AtomicReference(true)
+                private val isEmpty = AtomicBoolean(true)
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)

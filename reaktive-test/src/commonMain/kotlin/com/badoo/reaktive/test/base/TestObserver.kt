@@ -2,8 +2,8 @@ package com.badoo.reaktive.test.base
 
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.update
 
 open class TestObserver<Event> : Observer, Disposable {
 

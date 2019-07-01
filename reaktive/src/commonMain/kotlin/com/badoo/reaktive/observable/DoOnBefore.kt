@@ -8,7 +8,7 @@ import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 fun <T> Observable<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Observable<T> =
     observableUnsafe { observer ->
@@ -131,7 +131,7 @@ fun <T> Observable<T>.doOnBeforeDispose(action: () -> Unit): Observable<T> =
 
 fun <T> Observable<T>.doOnBeforeFinally(action: () -> Unit): Observable<T> =
     observableUnsafe { observer ->
-        val isFinished = AtomicReference(false)
+        val isFinished = AtomicBoolean()
 
         fun onFinally() {
             @Suppress("BooleanLiteralArgument") // Not allowed for expected classes

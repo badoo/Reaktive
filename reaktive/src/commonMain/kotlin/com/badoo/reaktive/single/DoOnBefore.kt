@@ -6,7 +6,7 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.wrap
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =
     singleUnsafe { observer ->
@@ -110,7 +110,7 @@ fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
 
 fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
     singleUnsafe { observer ->
-        val isFinished = AtomicReference(false)
+        val isFinished = AtomicBoolean()
 
         fun onFinally() {
             @Suppress("BooleanLiteralArgument") // Not allowed for expected classes

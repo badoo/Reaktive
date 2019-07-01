@@ -4,15 +4,16 @@ import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.Source
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.update
 
 open class TestSource<O> : Source<O>, Disposable, ErrorCallback where O : Observer, O : ErrorCallback {
 
     private val _observers: AtomicReference<List<O>> = AtomicReference(emptyList(), true)
     val observers get() = _observers.value
 
-    private val _isDisposed = AtomicReference(false)
+    private val _isDisposed = AtomicBoolean()
     override val isDisposed: Boolean get() = _isDisposed.value
 
     override fun subscribe(observer: O) {

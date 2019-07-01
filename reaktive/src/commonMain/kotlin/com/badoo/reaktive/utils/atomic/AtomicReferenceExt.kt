@@ -1,4 +1,6 @@
-package com.badoo.reaktive.utils.atomicreference
+package com.badoo.reaktive.utils.atomic
+
+fun <T> AtomicReference<T>.getAndSet(value: T): T = getAndUpdate { value }
 
 inline fun <T> AtomicReference<T>.getAndUpdate(update: (T) -> T): T {
     var prev: T

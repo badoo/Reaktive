@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.utils.SafeMutableList
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -59,7 +59,7 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun does_not_call_action_WHEN_onSubscribe_received_from_upstream() {
-        val isCalled = AtomicReference(false)
+        val isCalled = AtomicBoolean()
 
         completableUnsafe { observer ->
             isCalled.value = false
@@ -75,7 +75,7 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun does_not_call_action_WHEN_completed() {
-        val isCalled = AtomicReference(false)
+        val isCalled = AtomicBoolean()
         val upstream = TestCompletable()
 
         upstream
@@ -93,7 +93,7 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun does_not_call_action_WHEN_produced_error() {
-        val isCalled = AtomicReference(false)
+        val isCalled = AtomicBoolean()
         val upstream = TestCompletable()
 
         upstream

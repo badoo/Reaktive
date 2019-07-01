@@ -3,8 +3,7 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomic.AtomicLong
 
 fun <T> Observable<T>.skip(count: Long): Observable<T> =
     observableUnsafe { observer ->
@@ -13,14 +12,14 @@ fun <T> Observable<T>.skip(count: Long): Observable<T> =
 
         subscribeSafe(
             object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
-                private var remaining = AtomicReference(count)
+                private var remaining = AtomicLong(count)
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
                 }
 
                 override fun onNext(value: T) {
                     if (remaining.value != 0L) {
-                        remaining.update { it - 1 }
+                        remaining.addAndGet(-1)
                     } else {
                         observer.onNext(value)
                     }

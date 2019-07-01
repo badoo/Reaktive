@@ -1,4 +1,4 @@
-package com.badoo.reaktive.utils.atomicreference
+package com.badoo.reaktive.utils.atomic
 
 import com.badoo.reaktive.utils.freeze
 
@@ -14,16 +14,6 @@ actual class AtomicReference<T> actual constructor(
         set(value) {
             delegate.value = value.freezeIfNeeded()
         }
-
-    actual fun getAndSet(value: T): T {
-        value.freezeIfNeeded()
-        var v: T
-        do {
-            v = delegate.value
-        } while (!delegate.compareAndSet(v, value))
-
-        return v
-    }
 
     actual fun compareAndSet(expectedValue: T, newValue: T): Boolean =
         delegate.compareAndSet(expectedValue, newValue.freezeIfNeeded())

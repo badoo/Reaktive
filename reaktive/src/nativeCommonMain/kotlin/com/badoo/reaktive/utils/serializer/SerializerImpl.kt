@@ -1,8 +1,8 @@
 package com.badoo.reaktive.utils.serializer
 
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.getAndUpdate
-import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.getAndUpdate
+import com.badoo.reaktive.utils.atomic.update
 
 internal abstract class SerializerImpl<in T>(
     private val comparator: Comparator<in T>? = null

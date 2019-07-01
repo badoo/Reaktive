@@ -8,8 +8,8 @@ import com.badoo.reaktive.test.observable.isComplete
 import com.badoo.reaktive.test.observable.isError
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.observable.values
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.AtomicInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -77,8 +77,8 @@ private class SubjectGenericTestsImpl(
     }
 
     override fun does_not_emit_values_recursively() {
-        val count = AtomicReference(0)
-        val success = AtomicReference(false)
+        val count = AtomicInt()
+        val success = AtomicBoolean()
 
         subject.subscribe(
             object : ObservableObserver<Int?> {
@@ -86,7 +86,7 @@ private class SubjectGenericTestsImpl(
                 }
 
                 override fun onNext(value: Int?) {
-                    count.update { it + 1 }
+                    count.addAndGet(1)
                     if (value == 0) {
                         subject.onNext(1)
                         success.value = count.value == 1

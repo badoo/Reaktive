@@ -4,8 +4,9 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.Uninitialized
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.updateAndGet
+import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.updateAndGet
 import com.badoo.reaktive.utils.replace
 import com.badoo.reaktive.utils.serializer.serializer
 
@@ -14,7 +15,7 @@ fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Obse
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val values = AtomicReference<List<Any?>>(List(size) { Uninitialized }, true)
-        val activeSourceCount = AtomicReference(size)
+        val activeSourceCount = AtomicInt(size)
 
         val serializer =
             serializer<CombineLatestEvent<T>> { event ->
@@ -44,7 +45,7 @@ fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Obse
                     }
 
                     is CombineLatestEvent.OnComplete -> {
-                        val remainingActiveSources = activeSourceCount.updateAndGet { it - 1 }
+                        val remainingActiveSources = activeSourceCount.addAndGet(-1)
 
                         // Complete if all sources are completed or a source is completed without a value
                         val allCompleted = (remainingActiveSources == 0) || (values.value[event.index] === Uninitialized)

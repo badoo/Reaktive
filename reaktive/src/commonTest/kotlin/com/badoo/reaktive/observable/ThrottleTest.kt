@@ -4,14 +4,14 @@ import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.hasOnNext
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.observable.values
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicLong
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<Unit>({ throttle(0L) }) {
 
-    private val timeMillis = AtomicReference(0L)
+    private val timeMillis = AtomicLong(0L)
     private val upstream = TestObservable<Int>()
     private val observer = upstream.throttle(100L, timeMillis::value).test()
 

@@ -1,4 +1,4 @@
-package com.badoo.reaktive.utils.atomicreference
+package com.badoo.reaktive.utils.atomic
 
 actual class AtomicReference<T> actual constructor(
     initialValue: T,
@@ -6,13 +6,6 @@ actual class AtomicReference<T> actual constructor(
 ) {
 
     actual var value: T = initialValue
-
-    actual fun getAndSet(value: T): T {
-        val oldValue = this.value
-        this.value = value
-
-        return oldValue
-    }
 
     actual fun compareAndSet(expectedValue: T, newValue: T): Boolean =
         if (value == expectedValue) {

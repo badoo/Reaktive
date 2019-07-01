@@ -1,6 +1,6 @@
 package com.badoo.reaktive.utils
 
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.native.concurrent.SharedImmutable
 
 @SharedImmutable

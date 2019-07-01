@@ -3,9 +3,7 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.freeze
-import com.badoo.reaktive.utils.atomicreference.updateAndGet
+import com.badoo.reaktive.utils.atomic.AtomicInt
 
 fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
     observableUnsafe { observer ->
@@ -19,7 +17,7 @@ fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
             return@observableUnsafe
         }
 
-        val sourceIndex = AtomicReference(0)
+        val sourceIndex = AtomicInt()
 
         val upstreamObserver =
             object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
@@ -29,7 +27,7 @@ fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
 
                 override fun onComplete() {
                     sourceIndex
-                        .updateAndGet { it + 1 }
+                        .addAndGet(1)
                         .let(sources::getOrNull)
                         ?.subscribeSafe(this)
                         ?: observer.onComplete()

@@ -5,8 +5,8 @@ import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.utils.SafeMutableList
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
-import com.badoo.reaktive.utils.atomicreference.update
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.AtomicInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -81,11 +81,11 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun does_not_call_action_second_time_WHEN_downstream_disposed_and_upstream_completed() {
-        val count = AtomicReference(0)
+        val count = AtomicInt()
 
         upstream
             .doOnBeforeFinally {
-                count.update(Int::inc)
+                count.addAndGet(1)
             }
             .test()
             .dispose()
@@ -97,11 +97,11 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun does_not_call_action_second_time_WHEN_downstream_disposed_and_upstream_produced_error() {
-        val count = AtomicReference(0)
+        val count = AtomicInt()
 
         upstream
             .doOnBeforeFinally {
-                count.update(Int::inc)
+                count.addAndGet(1)
             }
             .test()
             .dispose()
@@ -113,12 +113,12 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun does_not_call_action_second_time_WHEN_upstream_completed_and_downstream_disposed() {
-        val count = AtomicReference(0)
+        val count = AtomicInt()
 
         val observer =
             upstream
                 .doOnBeforeFinally {
-                    count.update(Int::inc)
+                    count.addAndGet(1)
                 }
                 .test()
 
@@ -130,12 +130,12 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun does_not_call_action_second_time_WHEN_upstream_produced_error_and_downstream_disposed() {
-        val count = AtomicReference(0)
+        val count = AtomicInt()
 
         val observer =
             upstream
                 .doOnBeforeFinally {
-                    count.update(Int::inc)
+                    count.addAndGet(1)
                 }
                 .test()
 
@@ -147,7 +147,7 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun does_not_call_action_WHEN_emitted_value() {
-        val isCalled = AtomicReference(false)
+        val isCalled = AtomicBoolean()
 
         upstream
             .doOnBeforeFinally {

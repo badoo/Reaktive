@@ -4,7 +4,7 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.Uninitialized
-import com.badoo.reaktive.utils.atomicreference.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicReference
 
 fun <T> Observable<T>.scan(accumulate: (acc: T, value: T) -> T): Observable<T> =
     observable { emitter ->
