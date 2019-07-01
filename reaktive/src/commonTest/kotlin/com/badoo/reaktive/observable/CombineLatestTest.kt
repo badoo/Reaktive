@@ -1,14 +1,14 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.test.observable.getOnNextValue
-import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertNotComplete
+import com.badoo.reaktive.test.observable.assertValue
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class CombineLatestTest {
 
@@ -31,7 +31,7 @@ class CombineLatestTest {
         emitter1.onNext("1")
         emitter3.onNext("3")
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     @Test
@@ -40,8 +40,7 @@ class CombineLatestTest {
         emitter3.onNext("3")
         emitter2.onNext("2")
 
-        assertEquals(1, observer.events.size)
-        assertEquals("1,2,3", observer.getOnNextValue(0))
+        observer.assertValues("1,2,3")
     }
 
     @Test
@@ -52,8 +51,7 @@ class CombineLatestTest {
         observer.reset()
         emitter2.onNext("4")
 
-        assertEquals(1, observer.events.size)
-        assertEquals("1,4,3", observer.getOnNextValue(0))
+        observer.assertValues("1,4,3")
     }
 
     @Test
@@ -62,8 +60,7 @@ class CombineLatestTest {
         emitter3.onNext(null)
         emitter2.onNext(null)
 
-        assertEquals(1, observer.events.size)
-        assertEquals("null,null,null", observer.getOnNextValue(0))
+        observer.assertValues("null,null,null")
     }
 
     @Test
@@ -73,8 +70,7 @@ class CombineLatestTest {
         emitter3.onNext(null)
         emitter2.onNext(null)
 
-        assertEquals(1, observer.events.size)
-        assertEquals(null, observer.getOnNextValue(0))
+        observer.assertValue(null)
     }
 
     @Test
@@ -83,8 +79,8 @@ class CombineLatestTest {
         emitter2.onNext("2")
         emitter3.onComplete()
 
-        assertFalse(observer.hasOnNext)
-        assertTrue(observer.isComplete)
+        observer.assertNoValues()
+        observer.assertComplete()
     }
 
     @Test
@@ -93,7 +89,7 @@ class CombineLatestTest {
         emitter2.onNext("2")
         emitter2.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -103,7 +99,7 @@ class CombineLatestTest {
         emitter3.onNext("3")
         emitter2.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -114,7 +110,7 @@ class CombineLatestTest {
         emitter2.onNext("2")
         emitter3.onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test
@@ -123,7 +119,7 @@ class CombineLatestTest {
         emitter2.onNext("2")
         emitter2.onError(Throwable())
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -135,12 +131,12 @@ class CombineLatestTest {
         emitter3.onNext("3")
         emitter2.onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
-        assertEquals(1, observer.disposables.size)
+        observer.assertSubscribed()
     }
 
     @Test
@@ -153,6 +149,6 @@ class CombineLatestTest {
         observer.dispose()
         emitter1.onNext("4")
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 }

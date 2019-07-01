@@ -1,12 +1,10 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.maybe.TestMaybe
-import com.badoo.reaktive.test.maybe.isError
+import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.test.maybe.value
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class MapTest : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ map {} }) {
 
@@ -17,14 +15,14 @@ class MapTest : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ map {} }) {
     fun maps_non_null_value() {
         upstream.onSuccess("abc")
 
-        assertEquals(3, observer.value)
+        observer.assertSuccess(3)
     }
 
     @Test
     fun maps_null_value() {
         upstream.onSuccess(null)
 
-        assertEquals(null, observer.value)
+        observer.assertSuccess(null)
     }
 
     @Test
@@ -34,6 +32,6 @@ class MapTest : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ map {} }) {
         val observer = upstream.map { throw error }.test()
         upstream.onSuccess("abc")
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 }

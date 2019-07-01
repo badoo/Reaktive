@@ -1,9 +1,12 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.test.observable.*
+import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.observable.TestObservable
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertValue
+import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class SwitchIfEmptyTest :
     ObservableToObservableTests by ObservableToObservableTests<Int>({ switchIfEmpty(observableOf(10)) }) {
@@ -15,8 +18,7 @@ class SwitchIfEmptyTest :
 
         source.onComplete()
 
-        assertEquals(2, observer.events.size)
-        assertEquals(listOf(42), observer.values)
+        observer.assertValue(42)
     }
 
     @Test
@@ -27,8 +29,7 @@ class SwitchIfEmptyTest :
         source.onNext(1)
         source.onComplete()
 
-        assertEquals(2, observer.events.size)
-        assertEquals(listOf(1), observer.values)
+        observer.assertValue(1)
     }
 
     @Test
@@ -39,8 +40,7 @@ class SwitchIfEmptyTest :
         source.onNext(null)
         source.onComplete()
 
-        assertEquals(2, observer.events.size)
-        assertEquals(listOf(null), observer.values)
+        observer.assertValue(null)
     }
 
     @Test
@@ -50,9 +50,8 @@ class SwitchIfEmptyTest :
 
         source.onComplete()
 
-        assertEquals(1, observer.events.size)
-        assertTrue(observer.isOnCompleteEvent(0))
-        assertTrue(observer.values.isEmpty())
+        observer.assertNoValues()
+        observer.assertComplete()
     }
 
     @Test
@@ -64,8 +63,7 @@ class SwitchIfEmptyTest :
 
         source.onComplete()
 
-        assertEquals(2, observer.events.size)
-        assertEquals(listOf(42), observer.values)
+        observer.assertValue(42)
     }
 
     @Test
@@ -76,7 +74,6 @@ class SwitchIfEmptyTest :
 
         source.onComplete()
 
-        assertEquals(1, observer.events.size)
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 }

@@ -1,16 +1,16 @@
 package com.badoo.reaktive.test.completable
 
 import com.badoo.reaktive.completable.Completable
-import com.badoo.reaktive.test.completable.TestCompletableObserver.Event
+import com.badoo.reaktive.test.utils.assertFalse
+import com.badoo.reaktive.test.utils.assertTrue
 
-val TestCompletableObserver.isComplete: Boolean
-    get() = (events.count { it is Event.OnComplete } == 1) && events.none { it is Event.OnError }
+fun TestCompletableObserver.assertComplete() {
+    assertTrue(isComplete, "Completable did not complete")
+}
 
-val TestCompletableObserver.isError: Boolean
-    get() = (events.count { it is Event.OnError } == 1) && events.none { it is Event.OnComplete }
-
-fun TestCompletableObserver.isError(error: Throwable): Boolean =
-    isError && events.any { (it as? Event.OnError)?.error == error }
+fun TestCompletableObserver.assertNotComplete() {
+    assertFalse(isComplete, "Completable is complete")
+}
 
 fun Completable.test(): TestCompletableObserver =
     TestCompletableObserver()

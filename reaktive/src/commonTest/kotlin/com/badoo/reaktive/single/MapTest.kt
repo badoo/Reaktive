@@ -1,12 +1,10 @@
 package com.badoo.reaktive.single
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.single.TestSingle
-import com.badoo.reaktive.test.single.isError
+import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.test.single.value
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class MapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ map {} }) {
 
@@ -17,14 +15,14 @@ class MapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ map {} }) {
     fun maps_non_null_value() {
         upstream.onSuccess("abc")
 
-        assertEquals(3, observer.value)
+        observer.assertSuccess(3)
     }
 
     @Test
     fun maps_null_value() {
         upstream.onSuccess(null)
 
-        assertEquals(null, observer.value)
+        observer.assertSuccess(null)
     }
 
     @Test
@@ -34,6 +32,6 @@ class MapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ map {} }) {
         val observer = upstream.map { throw error }.test()
         upstream.onSuccess("abc")
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 }

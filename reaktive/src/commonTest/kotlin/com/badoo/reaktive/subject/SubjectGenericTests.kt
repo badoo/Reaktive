@@ -2,17 +2,17 @@ package com.badoo.reaktive.subject
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.ObservableObserver
+import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.observable.TestObservableObserver
-import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertNotComplete
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 interface SubjectGenericTests {
@@ -36,10 +36,10 @@ interface SubjectGenericTests {
     fun does_not_emit_values_WHEN_error_produced()
 
     @Test
-    fun does_not_produce_completion_WHEN_completed()
+    fun does_not_complete_WHEN_completed()
 
     @Test
-    fun does_not_produce_completion_WHEN_error_produced()
+    fun does_not_complete_WHEN_error_produced()
 
     @Test
     fun does_not_produce_error_WHEN_completed()
@@ -72,7 +72,7 @@ private class SubjectGenericTestsImpl(
         subject.onNext(2)
 
         observers.forEach {
-            assertEquals(listOf(0, null, 1, null, 2), it.values)
+            it.assertValues(0, null, 1, null, 2)
         }
     }
 
@@ -111,9 +111,7 @@ private class SubjectGenericTestsImpl(
         subject.onNext(0)
         subject.onComplete()
 
-        observers.forEach {
-            assertTrue(it.isComplete)
-        }
+        observers.forEach(TestObservableObserver<*>::assertComplete)
     }
 
     override fun delivers_error_to_all_observers_WHEN_error_produced() {
@@ -123,7 +121,7 @@ private class SubjectGenericTestsImpl(
         subject.onError(error)
 
         observers.forEach {
-            assertTrue(it.isError(error))
+            it.assertError(error)
         }
     }
 
@@ -133,7 +131,7 @@ private class SubjectGenericTestsImpl(
         observer.reset()
         subject.onNext(0)
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     override fun does_not_emit_values_WHEN_error_produced() {
@@ -142,24 +140,24 @@ private class SubjectGenericTestsImpl(
         observer.reset()
         subject.onNext(0)
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
-    override fun does_not_produce_completion_WHEN_completed() {
+    override fun does_not_complete_WHEN_completed() {
         val observer = subject.test()
         subject.onComplete()
         observer.reset()
         subject.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
-    override fun does_not_produce_completion_WHEN_error_produced() {
+    override fun does_not_complete_WHEN_error_produced() {
         val observer = subject.test()
         subject.onError(Throwable())
         subject.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     override fun does_not_produce_error_WHEN_completed() {
@@ -167,7 +165,7 @@ private class SubjectGenericTestsImpl(
         subject.onComplete()
         subject.onError(Throwable())
 
-        assertFalse(observer.isError)
+        observer.assertNotError()
     }
 
     override fun does_not_produce_error_WHEN_error_produced() {
@@ -176,7 +174,7 @@ private class SubjectGenericTestsImpl(
         observer.reset()
         subject.onError(Throwable())
 
-        assertFalse(observer.isError)
+        observer.assertNotError()
     }
 
     override fun does_not_emit_anything_WHEN_subscribed_after_completion() {
@@ -184,7 +182,7 @@ private class SubjectGenericTestsImpl(
         subject.onComplete()
         val observer = subject.test()
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     override fun does_not_emit_anything_WHEN_subscribed_after_error() {
@@ -192,6 +190,6 @@ private class SubjectGenericTestsImpl(
         subject.onError(Throwable())
         val observer = subject.test()
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 }

@@ -1,9 +1,10 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
-import com.badoo.reaktive.test.completable.isComplete
-import com.badoo.reaktive.test.completable.isError
+import com.badoo.reaktive.test.completable.assertComplete
+import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -41,7 +42,7 @@ class AndThenTest : CompletableToCompletableTests by CompletableToCompletableTes
         upstream.onComplete()
         inner.onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -51,7 +52,7 @@ class AndThenTest : CompletableToCompletableTests by CompletableToCompletableTes
         upstream.onComplete()
         inner.onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test
@@ -62,7 +63,7 @@ class AndThenTest : CompletableToCompletableTests by CompletableToCompletableTes
 
         inner.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -74,5 +75,4 @@ class AndThenTest : CompletableToCompletableTests by CompletableToCompletableTes
         assertTrue(upstream.isDisposed)
         assertTrue(inner.isDisposed)
     }
-
 }

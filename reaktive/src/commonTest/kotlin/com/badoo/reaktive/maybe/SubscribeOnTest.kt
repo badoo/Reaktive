@@ -1,14 +1,13 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.maybe.TestMaybe
-import com.badoo.reaktive.test.maybe.isComplete
-import com.badoo.reaktive.test.maybe.isError
+import com.badoo.reaktive.test.maybe.assertComplete
+import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.test.maybe.value
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -37,7 +36,7 @@ class SubscribeOnTest
         observer.reset()
         upstream.onSuccess(0)
 
-        assertEquals(0, observer.value)
+        observer.assertSuccess(0)
     }
 
     @Test
@@ -46,7 +45,7 @@ class SubscribeOnTest
         observer.reset()
         upstream.onSuccess(null)
 
-        assertEquals(null, observer.value)
+        observer.assertSuccess(null)
     }
 
     @Test
@@ -55,7 +54,7 @@ class SubscribeOnTest
         observer.reset()
         upstream.onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -65,7 +64,7 @@ class SubscribeOnTest
         observer.reset()
         upstream.onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test

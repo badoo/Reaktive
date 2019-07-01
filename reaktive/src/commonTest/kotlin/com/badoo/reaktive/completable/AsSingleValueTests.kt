@@ -1,10 +1,9 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.test.completable.TestCompletable
+import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.test.single.value
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class AsSingleValueTests : CompletableToSingleTests by CompletableToSingleTests({ asSingle(0) }) {
 
@@ -15,6 +14,6 @@ class AsSingleValueTests : CompletableToSingleTests by CompletableToSingleTests(
 
         upstream.onComplete()
 
-        assertEquals(0, observer.value)
+        observer.assertSuccess(0)
     }
 }

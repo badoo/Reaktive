@@ -1,18 +1,19 @@
 package com.badoo.reaktive.single
 
+import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.TestSingleObserver
-import com.badoo.reaktive.test.single.isError
-import com.badoo.reaktive.test.single.value
+import com.badoo.reaktive.test.single.assertSuccess
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class SubscribeTest {
 
     private val upstream = TestSingle<Int?>()
+    private val observer = TestSingleObserver<Int?>()
 
     @Test
     fun returned_disposable_is_not_disposed() {
@@ -28,31 +29,29 @@ class SubscribeTest {
 
     @Test
     fun calls_onSubscribe() {
-        val observer = TestSingleObserver<Unit>()
-
         upstream.subscribe(onSubscribe = observer::onSubscribe)
 
-        assertEquals(1, observer.disposables.size)
+        observer.assertSubscribed()
     }
 
     @Test
     fun calls_onSuccess_WHEN_upstream_succeeded_with_non_null_value() {
-        val observer = TestSingleObserver<Int?>()
+        observer.onSubscribe(disposable())
         upstream.subscribe(onSuccess = observer::onSuccess)
 
         upstream.onSuccess(0)
 
-        assertEquals(0, observer.value)
+        observer.assertSuccess(0)
     }
 
     @Test
     fun calls_onSuccess_WHEN_upstream_succeeded_with_null_value() {
-        val observer = TestSingleObserver<Int?>()
+        observer.onSubscribe(disposable())
         upstream.subscribe(onSuccess = observer::onSuccess)
 
         upstream.onSuccess(null)
 
-        assertNull(observer.value)
+        observer.assertSuccess(null)
     }
 
     @Test
@@ -67,13 +66,13 @@ class SubscribeTest {
 
     @Test
     fun calls_onError_WHEN_upstream_produced_an_error() {
-        val observer = TestSingleObserver<Unit>()
+        observer.onSubscribe(disposable())
         upstream.subscribe(onError = observer::onError)
         val error = Throwable()
 
         upstream.onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test

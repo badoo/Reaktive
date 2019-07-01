@@ -35,4 +35,8 @@ operator fun <T> AtomicList<T>.set(index: Int, element: T): T =
         it.replace(index, element)
     }[index]
 
+val AtomicReference<out Collection<*>>.isEmpty: Boolean get() = value.isEmpty()
+
+val AtomicReference<out Collection<*>>.isNotEmpty: Boolean get() = value.isNotEmpty()
+
 operator fun <T> AtomicReference<out Iterable<T>>.iterator(): Iterator<T> = value.iterator()
