@@ -4,7 +4,7 @@ internal fun <T> List<T>.replace(index: Int, element: T): List<T> =
     ArrayList(this)
         .apply { set(index, element) }
 
-fun <T> List<T>.insert(index: Int, element: T): List<T> =
+internal fun <T> List<T>.insert(index: Int, element: T): List<T> =
     if (index == size) {
         plus(element)
     } else {
