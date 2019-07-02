@@ -7,7 +7,7 @@ import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.Uninitialized
-import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.replace
 
@@ -18,7 +18,7 @@ fun <T, U, R> Observable<T>.withLatestFrom(
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val otherValues = AtomicReference<List<Any?>>(List(others.size) { Uninitialized }, true)
+        val otherValues = atomicList<Any?>(List(others.size) { Uninitialized })
 
         others.forEachIndexed { index, source ->
             source.subscribeSafe(

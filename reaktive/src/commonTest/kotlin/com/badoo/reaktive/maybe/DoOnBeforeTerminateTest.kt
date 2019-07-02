@@ -2,7 +2,8 @@ package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
-import com.badoo.reaktive.test.utils.SafeMutableList
+import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -10,7 +11,7 @@ class DoOnBeforeTerminateTest
     : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ doOnBeforeTerminate {} }) {
 
     private val upstream = TestMaybe<Nothing>()
-    private val callOrder = SafeMutableList<String>()
+    private val callOrder = atomicList<String>()
 
     @Test
     fun calls_action_before_completion() {
@@ -29,12 +30,12 @@ class DoOnBeforeTerminateTest
 
         upstream.onComplete()
 
-        assertEquals(listOf("action", "onComplete"), callOrder.items)
+        assertEquals(listOf("action", "onComplete"), callOrder.value)
     }
 
     @Test
     fun calls_action_before_failing() {
-        val callOrder = SafeMutableList<String>()
+        val callOrder = atomicList<String>()
         val exception = Exception()
 
         upstream
@@ -51,6 +52,6 @@ class DoOnBeforeTerminateTest
 
         upstream.onError(exception)
 
-        assertEquals(listOf("action", "onError"), callOrder.items)
+        assertEquals(listOf("action", "onError"), callOrder.value)
     }
 }

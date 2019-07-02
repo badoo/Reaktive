@@ -2,7 +2,11 @@ package com.badoo.reaktive.single
 
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.scheduler.TestScheduler
-import com.badoo.reaktive.test.single.*
+import com.badoo.reaktive.test.single.TestSingle
+import com.badoo.reaktive.test.single.isError
+import com.badoo.reaktive.test.single.isSuccess
+import com.badoo.reaktive.test.single.test
+import com.badoo.reaktive.test.single.value
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

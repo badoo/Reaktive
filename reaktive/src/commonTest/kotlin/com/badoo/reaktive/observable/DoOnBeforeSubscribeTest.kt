@@ -5,8 +5,9 @@ import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.utils.SafeMutableList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -16,7 +17,7 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun calls_action_before_downstream_onSubscribe_WHEN_action_does_not_throw_exception() {
-        val callOrder = SafeMutableList<String>()
+        val callOrder = atomicList<String>()
 
         observableUnsafe<Nothing> {}
             .doOnBeforeSubscribe {
@@ -30,12 +31,12 @@ class DoOnBeforeSubscribeTest
                 }
             )
 
-        assertEquals(listOf("action", "onSubscribe"), callOrder.items)
+        assertEquals(listOf("action", "onSubscribe"), callOrder.value)
     }
 
     @Test
     fun delegates_error_to_downstream_after_downstream_onSubscribe_WHEN_action_throws_exception() {
-        val callOrder = SafeMutableList<Any>()
+        val callOrder = atomicList<Any>()
         val exception = Exception()
 
         observableUnsafe<Nothing> {}
@@ -54,7 +55,7 @@ class DoOnBeforeSubscribeTest
                 }
             )
 
-        assertEquals(listOf("onSubscribe", exception), callOrder.items)
+        assertEquals(listOf("onSubscribe", exception), callOrder.value)
     }
 
     @Test
