@@ -3,8 +3,9 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.utils.SafeMutableList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -16,7 +17,7 @@ class DoOnBeforeDisposeTest
 
     @Test
     fun calls_action_before_disposing_upstream() {
-        val callOrder = SafeMutableList<String>()
+        val callOrder = atomicList<String>()
 
         observableUnsafe<Nothing> { observer ->
             observer.onSubscribe(
@@ -31,7 +32,7 @@ class DoOnBeforeDisposeTest
             .test()
             .dispose()
 
-        assertEquals(listOf("action", "dispose"), callOrder.items)
+        assertEquals(listOf("action", "dispose"), callOrder.value)
     }
 
     @Test

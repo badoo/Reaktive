@@ -20,7 +20,4 @@ internal fun handleSourceError(error: Throwable, onError: ((Throwable) -> Unit)?
     }
 }
 
-internal fun <T> List<T>.replace(index: Int, element: T): List<T> =
-    mapIndexed { i, item -> if (i == index) element else item }
-
 internal object Uninitialized

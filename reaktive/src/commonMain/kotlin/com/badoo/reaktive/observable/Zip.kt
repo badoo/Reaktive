@@ -3,18 +3,18 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.replace
-import com.badoo.reaktive.utils.serializer.serializer
+import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.atomic.updateAndGet
+import com.badoo.reaktive.utils.replace
+import com.badoo.reaktive.utils.serializer.serializer
 
 fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val values = AtomicReference(List(size) { emptyList<T>() }, true)
-        val completed = AtomicReference(List(size) { false }, true)
+        val values = atomicList(List<List<T>>(size) { emptyList() })
+        val completed = atomicList(List(size) { false })
 
         val serializer =
             serializer<ZipEvent<T>> { event ->

@@ -3,8 +3,9 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.utils.SafeMutableList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -16,7 +17,7 @@ class DoOnBeforeNextTest
 
     @Test
     fun calls_action_before_emitting() {
-        val callOrder = SafeMutableList<String>()
+        val callOrder = atomicList<String>()
 
         upstream
             .doOnBeforeNext { value ->
@@ -33,7 +34,7 @@ class DoOnBeforeNextTest
         upstream.onNext(0)
         upstream.onNext(1)
 
-        assertEquals(listOf("action 0", "onNext 0", "action 1", "onNext 1"), callOrder.items)
+        assertEquals(listOf("action 0", "onNext 0", "action 1", "onNext 1"), callOrder.value)
     }
 
     @Test

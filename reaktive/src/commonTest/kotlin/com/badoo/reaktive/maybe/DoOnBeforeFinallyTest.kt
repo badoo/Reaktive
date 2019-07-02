@@ -4,8 +4,9 @@ import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.test.utils.SafeMutableList
 import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,7 +17,7 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_before_completion() {
-        val callOrder = SafeMutableList<String>()
+        val callOrder = atomicList<String>()
 
         upstream
             .doOnBeforeFinally {
@@ -32,12 +33,12 @@ class DoOnBeforeFinallyTest
 
         upstream.onComplete()
 
-        assertEquals(listOf("action", "onComplete"), callOrder.items)
+        assertEquals(listOf("action", "onComplete"), callOrder.value)
     }
 
     @Test
     fun calls_action_before_failing() {
-        val callOrder = SafeMutableList<String>()
+        val callOrder = atomicList<String>()
         val exception = Exception()
 
         upstream
@@ -54,12 +55,12 @@ class DoOnBeforeFinallyTest
 
         upstream.onError(exception)
 
-        assertEquals(listOf("action", "onError"), callOrder.items)
+        assertEquals(listOf("action", "onError"), callOrder.value)
     }
 
     @Test
     fun calls_action_before_disposing_upstream() {
-        val callOrder = SafeMutableList<String>()
+        val callOrder = atomicList<String>()
 
         maybeUnsafe<Unit> { observer ->
             observer.onSubscribe(
@@ -74,7 +75,7 @@ class DoOnBeforeFinallyTest
             .test()
             .dispose()
 
-        assertEquals(listOf("action", "dispose"), callOrder.items)
+        assertEquals(listOf("action", "dispose"), callOrder.value)
     }
 
     @Test
