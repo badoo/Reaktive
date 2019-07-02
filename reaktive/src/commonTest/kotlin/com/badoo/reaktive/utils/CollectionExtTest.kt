@@ -2,6 +2,7 @@ package com.badoo.reaktive.utils
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class CollectionExtTest {
 
@@ -54,5 +55,23 @@ class CollectionExtTest {
         val newList = list.insert(5, -1)
 
         assertEquals(listOf(0, 1, 2, 3, 4, -1), newList)
+    }
+
+    @Test
+    fun insert_throws_IOOBE_IF_index_is_less_than_0() {
+        try {
+            list.insert(-1, -1)
+            fail("IndexOutOfBoundsException was not thrown")
+        } catch (ignored: IndexOutOfBoundsException) {
+        }
+    }
+
+    @Test
+    fun insert_throws_IOOBE_IF_index_is_greater_than_size() {
+        try {
+            list.insert(list.size + 1, -1)
+            fail("IndexOutOfBoundsException was not thrown")
+        } catch (ignored: IndexOutOfBoundsException) {
+        }
     }
 }
