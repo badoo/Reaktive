@@ -1,8 +1,8 @@
 package com.badoo.reaktive.test.completable
 
 import com.badoo.reaktive.completable.Completable
-import com.badoo.reaktive.test.utils.assertFalse
-import com.badoo.reaktive.test.utils.assertTrue
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 fun TestCompletableObserver.assertComplete() {
     assertTrue(isComplete, "Completable did not complete")

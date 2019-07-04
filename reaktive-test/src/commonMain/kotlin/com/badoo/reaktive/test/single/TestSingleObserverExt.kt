@@ -1,9 +1,9 @@
 package com.badoo.reaktive.test.single
 
 import com.badoo.reaktive.single.Single
-import com.badoo.reaktive.test.utils.assertEquals
-import com.badoo.reaktive.test.utils.assertFalse
-import com.badoo.reaktive.test.utils.assertTrue
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 fun <T> TestSingleObserver<T>.assertSuccess() {
     assertTrue(isSuccess, "Single was not success")

@@ -1,9 +1,9 @@
 package com.badoo.reaktive.test.observable
 
 import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.test.utils.assertEquals
-import com.badoo.reaktive.test.utils.assertFalse
-import com.badoo.reaktive.test.utils.assertTrue
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 fun <T> TestObservableObserver<T>.assertValues(expectedValues: List<T>) {
     assertEquals(expectedValues, values, "Observable values do not match")

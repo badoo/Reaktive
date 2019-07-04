@@ -64,8 +64,8 @@ void setupAllTargetsWithDefaultSourceSets(Project project) {
                 jvmMain.dependsOn commonMain
                 jvmTest.dependsOn commonTest
 
-                androidMain.dependsOn commonMain
-                androidTest.dependsOn commonTest
+                androidMain.dependsOn jvmMain
+                androidTest.dependsOn jvmTest
 
                 jsMain.dependsOn commonMain
                 jsTest.dependsOn commonTest
