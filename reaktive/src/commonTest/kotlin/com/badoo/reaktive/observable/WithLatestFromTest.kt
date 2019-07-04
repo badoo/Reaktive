@@ -1,10 +1,11 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.getOnNextValue
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertValue
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class WithLatestFromTest {
 
@@ -25,7 +26,7 @@ class WithLatestFromTest {
         other2.onNext(3)
         other3.onNext(4)
 
-        assertEquals(0, observer.events.size)
+        observer.assertNoValues()
     }
 
     @Test
@@ -34,7 +35,7 @@ class WithLatestFromTest {
         other3.onNext(2)
         source.onNext(3)
 
-        assertEquals(0, observer.events.size)
+        observer.assertNoValues()
     }
 
     @Test
@@ -44,7 +45,7 @@ class WithLatestFromTest {
         source.onNext(3)
         other2.onNext(4)
 
-        assertEquals(0, observer.events.size)
+        observer.assertNoValues()
     }
 
     @Test
@@ -54,8 +55,7 @@ class WithLatestFromTest {
         other3.onNext(3)
         source.onNext(4)
 
-        assertEquals(1, observer.events.size)
-        assertEquals(listOf(4, 1, 2, 3), observer.getOnNextValue(0))
+        observer.assertValue(listOf(4, 1, 2, 3))
     }
 
     @Test
@@ -66,8 +66,7 @@ class WithLatestFromTest {
         other3.onNext(4)
         source.onNext(5)
 
-        assertEquals(1, observer.events.size)
-        assertEquals(listOf(5, 2, 3, 4), observer.getOnNextValue(0))
+        observer.assertValue(listOf(5, 2, 3, 4))
     }
 
     @Test
@@ -88,10 +87,7 @@ class WithLatestFromTest {
         other2.onNext(14)
         other3.onNext(15)
 
-        assertEquals(3, observer.events.size)
-        assertEquals(listOf(7, 5, 2, 6), observer.getOnNextValue(0))
-        assertEquals(listOf(9, 8, 2, 6), observer.getOnNextValue(1))
-        assertEquals(listOf(12, 8, 11, 10), observer.getOnNextValue(2))
+        observer.assertValues(listOf(7, 5, 2, 6), listOf(9, 8, 2, 6), listOf(12, 8, 11, 10))
     }
 }
 

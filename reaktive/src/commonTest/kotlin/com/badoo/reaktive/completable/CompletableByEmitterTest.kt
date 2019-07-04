@@ -1,11 +1,14 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.disposable.disposable
-import com.badoo.reaktive.test.completable.isComplete
-import com.badoo.reaktive.test.completable.isError
+import com.badoo.reaktive.test.base.assertDisposed
+import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.assertNotError
+import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.completable.assertComplete
+import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -16,14 +19,14 @@ class CompletableByEmitterTest {
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
-        assertEquals(1, observer.disposables.size)
+        observer.assertSubscribed()
     }
 
     @Test
     fun completed_WHEN_onComplete_signalled() {
         emitter.onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -32,7 +35,7 @@ class CompletableByEmitterTest {
 
         emitter.onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test
@@ -41,7 +44,7 @@ class CompletableByEmitterTest {
         observer.reset()
         emitter.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -50,7 +53,7 @@ class CompletableByEmitterTest {
         observer.reset()
         emitter.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -59,7 +62,7 @@ class CompletableByEmitterTest {
         observer.reset()
         emitter.onError(Throwable())
 
-        assertFalse(observer.isError)
+        observer.assertNotError()
     }
 
     @Test
@@ -68,7 +71,7 @@ class CompletableByEmitterTest {
         observer.reset()
         emitter.onError(Throwable())
 
-        assertFalse(observer.isError)
+        observer.assertNotError()
     }
 
     @Test
@@ -77,30 +80,30 @@ class CompletableByEmitterTest {
 
         emitter.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
     fun disposable_disposed_AFTER_onComplete_is_signalled() {
         emitter.onComplete()
 
-        assertTrue(observer.isDisposed)
+        observer.assertDisposed()
     }
 
     @Test
     fun disposable_disposed_AFTER_onError_signalled() {
         emitter.onError(Throwable())
 
-        assertTrue(observer.isDisposed)
+        observer.assertDisposed()
     }
 
     @Test
     fun completed_with_error_WHEN_exception_during_subscribe() {
         val error = RuntimeException()
 
-        completable { throw error }.subscribe(observer)
+        val observer = completable { throw error }.test()
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test

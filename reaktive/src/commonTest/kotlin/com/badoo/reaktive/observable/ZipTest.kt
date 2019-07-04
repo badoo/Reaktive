@@ -1,14 +1,13 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertNotComplete
+import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ZipTest {
@@ -25,7 +24,7 @@ class ZipTest {
         sources[0].onNext(0)
         sources[2].onNext(2)
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     @Test
@@ -34,7 +33,7 @@ class ZipTest {
         sources[0].onNext(0)
         sources[1].onNext(1)
 
-        assertEquals(listOf("0,1,2"), observer.values)
+        observer.assertValue("0,1,2")
     }
 
     @Test
@@ -46,7 +45,7 @@ class ZipTest {
         sources[0].onNext(10)
         sources[2].onNext(12)
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     @Test
@@ -59,7 +58,7 @@ class ZipTest {
         sources[0].onNext(10)
         sources[2].onNext(12)
 
-        assertEquals(listOf("10,11,12"), observer.values)
+        observer.assertValue("10,11,12")
     }
 
     @Test
@@ -68,7 +67,7 @@ class ZipTest {
         sources[0].onNext(0)
         sources[1].onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
 
@@ -78,7 +77,7 @@ class ZipTest {
         sources[1].onNext(1)
         sources[1].onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -89,7 +88,7 @@ class ZipTest {
         observer.reset()
         sources[1].onNext(1)
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -101,7 +100,7 @@ class ZipTest {
         observer.reset()
         sources[2].onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test

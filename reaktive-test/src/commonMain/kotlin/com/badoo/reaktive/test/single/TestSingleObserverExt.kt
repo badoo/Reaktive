@@ -1,27 +1,21 @@
 package com.badoo.reaktive.test.single
 
 import com.badoo.reaktive.single.Single
-import com.badoo.reaktive.test.single.TestSingleObserver.Event
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-val <T> TestSingleObserver<T>.value: T
-    get() =
-        if (isSuccess) {
-            events
-                .filterIsInstance<Event.OnSuccess<T>>()
-                .first()
-                .value
-        } else {
-            throw IllegalStateException("The Single did not succeed: $this")
-        }
+fun <T> TestSingleObserver<T>.assertSuccess() {
+    assertTrue(isSuccess, "Single was not success")
+}
 
-val TestSingleObserver<*>.isSuccess: Boolean
-    get() = (events.count { it is Event.OnSuccess } == 1) && events.none { it is Event.OnError }
+fun <T> TestSingleObserver<T>.assertSuccess(expectedValue: T) {
+    assertEquals(expectedValue, value, "Single success values do not match")
+}
 
-val TestSingleObserver<*>.isError: Boolean
-    get() = (events.count { it is Event.OnError } == 1) && events.none { it is Event.OnSuccess }
-
-fun TestSingleObserver<*>.isError(error: Throwable): Boolean =
-    isError && events.any { (it as? Event.OnError)?.error == error }
+fun <T> TestSingleObserver<T>.assertNotSuccess() {
+    assertFalse(isSuccess, "Single is succeeded")
+}
 
 fun <T> Single<T>.test(): TestSingleObserver<T> =
     TestSingleObserver<T>()

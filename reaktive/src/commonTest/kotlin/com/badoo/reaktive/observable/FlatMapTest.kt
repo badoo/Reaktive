@@ -1,16 +1,15 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.TestObservableObserver
-import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertNotComplete
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FlatMapTest
@@ -59,7 +58,7 @@ class FlatMapTest
         inners[2].onNext("2c")
         inners[2].onComplete()
 
-        assertEquals(listOf("0a", "0b", "1a", "0c", null, null, "1b", "2b", "2c"), observer.values)
+        observer.assertValues("0a", "0b", "1a", "0c", null, null, "1b", "2b", "2c")
     }
 
     @Test
@@ -68,7 +67,7 @@ class FlatMapTest
 
         source.onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -78,7 +77,7 @@ class FlatMapTest
         source.onNext(0)
         source.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -94,7 +93,7 @@ class FlatMapTest
         source.onComplete()
         inners[2].onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -109,7 +108,7 @@ class FlatMapTest
         source.onComplete()
         inners[2].onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -121,7 +120,7 @@ class FlatMapTest
         source.onNext(1)
         inners[1].onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test
@@ -135,7 +134,7 @@ class FlatMapTest
         observer.dispose()
         inner.onNext("b")
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     @Test

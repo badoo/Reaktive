@@ -1,15 +1,15 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.TestObservableObserver
-import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertNotComplete
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -92,7 +92,7 @@ class ConcatMapTest
         inners[2].onNext(null)
         inners[2].onComplete()
 
-        assertEquals(listOf("0a", "0b", "0c", "1a", null, "1b", null, "2a", null), observer.values)
+        observer.assertValues("0a", "0b", "0c", "1a", null, "1b", null, "2a", null)
     }
 
     @Test
@@ -101,7 +101,7 @@ class ConcatMapTest
 
         upstream.onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -111,7 +111,7 @@ class ConcatMapTest
         upstream.onNext(0)
         upstream.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -127,7 +127,7 @@ class ConcatMapTest
         upstream.onComplete()
         inners[2].onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -142,18 +142,19 @@ class ConcatMapTest
         upstream.onComplete()
         inners[1].onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
     fun produces_error_WHEN_inner_source_produced_error() {
         val inner = TestObservable<String>()
         val observer = concatMapUpstreamAndSubscribe { inner }
+        val error = Throwable()
 
         upstream.onNext(0)
-        inner.onError(Throwable())
+        inner.onError(error)
 
-        assertTrue(observer.isError)
+        observer.assertError(error)
     }
 
     @Test
@@ -167,7 +168,7 @@ class ConcatMapTest
         observer.dispose()
         inner.onNext("b")
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     @Test

@@ -1,12 +1,10 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.completable.TestCompletable
-import com.badoo.reaktive.test.single.isError
+import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.test.single.value
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class AsSingleSupplierTests : CompletableToSingleTests by CompletableToSingleTests({ asSingle { 0 } }) {
 
@@ -17,7 +15,7 @@ class AsSingleSupplierTests : CompletableToSingleTests by CompletableToSingleTes
         val observer = upstream.asSingle { 0 }.test()
         upstream.onComplete()
 
-        assertEquals(0, observer.value)
+        observer.assertSuccess(0)
     }
 
     @Test
@@ -32,6 +30,6 @@ class AsSingleSupplierTests : CompletableToSingleTests by CompletableToSingleTes
 
         upstream.onComplete()
 
-        assertTrue(observer.isError(exception))
+        observer.assertError(exception)
     }
 }

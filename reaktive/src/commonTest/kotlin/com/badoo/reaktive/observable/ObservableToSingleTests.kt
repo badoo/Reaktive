@@ -1,11 +1,11 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.single.isError
 import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 interface ObservableToSingleTests {
@@ -26,13 +26,15 @@ interface ObservableToSingleTests {
                 private val observer = upstream.transform().test()
 
                 override fun calls_onSubscribe_only_once_WHEN_subscribed() {
-                    assertEquals(1, observer.disposables.size)
+                    observer.assertSubscribed()
                 }
 
                 override fun produces_error_WHEN_upstream_produced_error() {
-                    upstream.onError(Throwable())
+                    val error = Throwable()
 
-                    assertTrue(observer.isError)
+                    upstream.onError(error)
+
+                    observer.assertError(error)
                 }
 
                 override fun disposes_upstream_WHEN_disposed() {

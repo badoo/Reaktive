@@ -2,20 +2,39 @@ package com.badoo.reaktive.test.single
 
 import com.badoo.reaktive.single.SingleObserver
 import com.badoo.reaktive.test.base.TestObserver
-import com.badoo.reaktive.test.single.TestSingleObserver.Event
+import com.badoo.reaktive.utils.atomic.AtomicReference
 
-class TestSingleObserver<T> : TestObserver<Event<T>>(), SingleObserver<T> {
+class TestSingleObserver<T> : TestObserver(), SingleObserver<T> {
+
+    private val _value = AtomicReference<Value<T>?>(null, true)
+
+    val value: T
+        get() {
+            assertSuccess()
+            return _value.value!!.value
+        }
+
+    val isSuccess: Boolean get() = _value.value != null
 
     override fun onSuccess(value: T) {
-        onEvent(Event.OnSuccess(value))
+        checkActive()
+
+        _value.value = Value(value)
     }
 
-    override fun onError(error: Throwable) {
-        onEvent(Event.OnError(error))
+    override fun reset() {
+        super.reset()
+
+        _value.value = null
     }
 
-    sealed class Event<out T> {
-        data class OnSuccess<out T>(val value: T) : Event<T>()
-        data class OnError(val error: Throwable) : Event<Nothing>()
+    override fun checkActive() {
+        super.checkActive()
+
+        if (isSuccess) {
+            throw IllegalStateException("Already succeeded")
+        }
     }
+
+    private class Value<T>(val value: T)
 }

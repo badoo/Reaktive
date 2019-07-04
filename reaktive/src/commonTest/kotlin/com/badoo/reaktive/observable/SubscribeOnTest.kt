@@ -1,14 +1,13 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -39,7 +38,7 @@ class SubscribeOnTest
         upstream.onNext(1)
         upstream.onNext(2)
 
-        assertEquals(listOf(null, 1, 2), observer.values)
+        observer.assertValues(null, 1, 2)
     }
 
     @Test
@@ -48,7 +47,7 @@ class SubscribeOnTest
         observer.reset()
         upstream.onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -58,7 +57,7 @@ class SubscribeOnTest
         observer.reset()
         upstream.onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test

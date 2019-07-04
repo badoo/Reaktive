@@ -1,13 +1,13 @@
 package com.badoo.reaktive.single
 
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNotComplete
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import com.badoo.reaktive.test.single.TestSingle
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FlattenTest {
@@ -19,38 +19,39 @@ class FlattenTest {
     fun emits_values_WHEN_upstream_succeeded() {
         upstream.onSuccess(listOf(1, 2, 3, 4, 5))
 
-        assertEquals(listOf(1, 2, 3, 4, 5), observer.values)
+        observer.assertValues(1, 2, 3, 4, 5)
     }
 
     @Test
     fun does_not_complete_WHEN_upstream_not_succeeded() {
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
     fun completes_WHEN_upstream_succeeded_with_values() {
         upstream.onSuccess(listOf(1))
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
     fun completes_WHEN_upstream_succeeded_without_values() {
         upstream.onSuccess(emptyList())
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
     fun calls_onSubscribe_only_once_WHEN_subscribed() {
-        assertEquals(1, observer.disposables.size)
+        observer.assertSubscribed()
     }
 
     @Test
     fun produces_error_WHEN_upstream_produced_error() {
-        upstream.onError(Throwable())
+        val error = Throwable()
+        upstream.onError(error)
 
-        assertTrue(observer.isError)
+        observer.assertError(error)
     }
 
     @Test

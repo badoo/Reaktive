@@ -4,7 +4,20 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation kotlin('test-common')
                 implementation project(':reaktive')
+            }
+        }
+
+        jvmMain {
+            dependencies {
+                implementation kotlin('test-junit')
+            }
+        }
+        
+        jsMain {
+            dependencies {
+                implementation kotlin('test-js')
             }
         }
     }

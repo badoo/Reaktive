@@ -1,39 +1,33 @@
 package com.badoo.reaktive.test.observable
 
 import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.test.observable.TestObservableObserver.Event
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-fun <T> TestObservableObserver<T>.getOnNextEvent(index: Int): Event.OnNext<T> =
-    events[index] as Event.OnNext<T>
+fun <T> TestObservableObserver<T>.assertValues(expectedValues: List<T>) {
+    assertEquals(expectedValues, values, "Observable values do not match")
+}
 
-fun <T> TestObservableObserver<T>.getOnNextValue(index: Int): T =
-    getOnNextEvent(index).value
+fun <T> TestObservableObserver<T>.assertValues(vararg expectedValues: T) {
+    assertValues(listOf(*expectedValues))
+}
 
-fun <T> TestObservableObserver<T>.isOnCompleteEvent(index: Int): Boolean =
-    events.getOrNull(index) is Event.OnComplete
+fun <T> TestObservableObserver<T>.assertValue(expectedValue: T) {
+    assertValues(listOf(expectedValue))
+}
 
-fun TestObservableObserver<*>.getOnErrorEvent(index: Int): Event.OnError =
-    events[index] as Event.OnError
+fun TestObservableObserver<*>.assertNoValues() {
+    assertValues(emptyList())
+}
 
-fun TestObservableObserver<*>.getOnErrorValue(index: Int): Throwable =
-    getOnErrorEvent(index).error
+fun TestObservableObserver<*>.assertComplete() {
+    assertTrue(isComplete, "Observable was not complete")
+}
 
-val TestObservableObserver<*>.isComplete: Boolean
-    get() = (events.count { it is Event.OnComplete } == 1) && events.none { it is Event.OnError }
-
-val TestObservableObserver<*>.isError: Boolean
-    get() = (events.count { it is Event.OnError } == 1) && events.none { it is Event.OnComplete }
-
-val TestObservableObserver<*>.hasOnNext: Boolean get() = events.any { it is Event.OnNext }
-
-val <T> TestObservableObserver<T>.values: List<T>
-    get() =
-        events
-            .takeWhile { it is Event.OnNext }
-            .map { (it as Event.OnNext).value }
-
-fun TestObservableObserver<*>.isError(error: Throwable): Boolean =
-    isError && events.any { (it as? Event.OnError)?.error == error }
+fun TestObservableObserver<*>.assertNotComplete() {
+    assertFalse(isComplete, "Observable is complete")
+}
 
 fun <T> Observable<T>.test(): TestObservableObserver<T> =
     TestObservableObserver<T>()

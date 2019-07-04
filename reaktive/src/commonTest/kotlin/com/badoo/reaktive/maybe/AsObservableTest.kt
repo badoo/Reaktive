@@ -1,12 +1,10 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.test.maybe.TestMaybe
-import com.badoo.reaktive.test.observable.isComplete
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class AsObservableTest : MaybeToObservableTests by MaybeToObservableTests<Nothing>({ asObservable() }) {
 
@@ -17,34 +15,34 @@ class AsObservableTest : MaybeToObservableTests by MaybeToObservableTests<Nothin
     fun completes_WHEN_upstream_completed() {
         upstream.onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
     fun emits_value_WHEN_upstream_succeeded_with_non_null_value() {
         upstream.onSuccess(0)
 
-        assertEquals(listOf(0), observer.values)
+        observer.assertValue(0)
     }
 
     @Test
     fun emits_value_WHEN_upstream_succeeded_with_null_value() {
         upstream.onSuccess(null)
 
-        assertEquals(listOf(null), observer.values)
+        observer.assertValue(null)
     }
 
     @Test
     fun completes_WHEN_upstream_succeeded_with_non_null_value() {
         upstream.onSuccess(0)
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
     fun completes_WHEN_upstream_succeeded_with_null_value() {
         upstream.onSuccess(null)
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 }

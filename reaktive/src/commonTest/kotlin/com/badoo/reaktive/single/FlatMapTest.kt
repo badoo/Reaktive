@@ -1,15 +1,13 @@
 package com.badoo.reaktive.single
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.TestSingleObserver
-import com.badoo.reaktive.test.single.isError
-import com.badoo.reaktive.test.single.isSuccess
+import com.badoo.reaktive.test.single.assertNotSuccess
+import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.test.single.value
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FlatMapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ flatMap { TestSingle<Int>() } }) {
@@ -35,7 +33,7 @@ class FlatMapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ flatMap {
         upstream.onSuccess(0)
         inner.onSuccess("1")
 
-        assertEquals("1", observer.value)
+        observer.assertSuccess("1")
     }
 
     @Test
@@ -45,7 +43,7 @@ class FlatMapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ flatMap {
         upstream.onSuccess(null)
         inner.onSuccess("1")
 
-        assertEquals("1", observer.value)
+        observer.assertSuccess("1")
     }
 
     @Test
@@ -55,7 +53,7 @@ class FlatMapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ flatMap {
         upstream.onSuccess(0)
         inner.onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test
@@ -66,7 +64,7 @@ class FlatMapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ flatMap {
 
         inner.onSuccess("1")
 
-        assertFalse(observer.isSuccess)
+        observer.assertNotSuccess()
     }
 
     @Test

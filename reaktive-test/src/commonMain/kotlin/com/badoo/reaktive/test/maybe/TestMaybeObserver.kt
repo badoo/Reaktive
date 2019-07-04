@@ -2,25 +2,53 @@ package com.badoo.reaktive.test.maybe
 
 import com.badoo.reaktive.maybe.MaybeObserver
 import com.badoo.reaktive.test.base.TestObserver
-import com.badoo.reaktive.test.maybe.TestMaybeObserver.Event
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.AtomicReference
 
-class TestMaybeObserver<T> : TestObserver<Event<T>>(), MaybeObserver<T> {
+class TestMaybeObserver<T> : TestObserver(), MaybeObserver<T> {
+
+    private val _value = AtomicReference<Value<T>?>(null, true)
+
+    val value: T
+        get() {
+            assertSuccess()
+            return _value.value!!.value
+        }
+
+    val isSuccess: Boolean get() = _value.value != null
+    private val _isComplete = AtomicBoolean()
+    val isComplete: Boolean get() = _isComplete.value
 
     override fun onSuccess(value: T) {
-        onEvent(Event.OnSuccess(value))
+        checkActive()
+
+        _value.value = Value(value)
     }
 
     override fun onComplete() {
-        onEvent(Event.OnComplete)
+        checkActive()
+
+        _isComplete.value = true
     }
 
-    override fun onError(error: Throwable) {
-        onEvent(Event.OnError(error))
+    override fun reset() {
+        super.reset()
+
+        _value.value = null
+        _isComplete.value = false
     }
 
-    sealed class Event<out T> {
-        data class OnSuccess<out T>(val value: T) : Event<T>()
-        object OnComplete : Event<Nothing>()
-        data class OnError(val error: Throwable) : Event<Nothing>()
+    override fun checkActive() {
+        super.checkActive()
+
+        if (isSuccess) {
+            throw IllegalStateException("Already succeeded")
+        }
+
+        if (isComplete) {
+            throw IllegalStateException("Already complete")
+        }
     }
+
+    private class Value<T>(val value: T)
 }

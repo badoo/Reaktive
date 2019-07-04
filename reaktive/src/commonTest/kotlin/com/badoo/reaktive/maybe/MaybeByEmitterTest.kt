@@ -1,13 +1,16 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.disposable.disposable
-import com.badoo.reaktive.test.maybe.isComplete
-import com.badoo.reaktive.test.maybe.isError
-import com.badoo.reaktive.test.maybe.isSuccess
+import com.badoo.reaktive.test.base.assertDisposed
+import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.assertNotError
+import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.maybe.assertComplete
+import com.badoo.reaktive.test.maybe.assertNotComplete
+import com.badoo.reaktive.test.maybe.assertNotSuccess
+import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.test.maybe.value
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -18,28 +21,28 @@ class MaybeByEmitterTest {
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
-        assertEquals(1, observer.disposables.size)
+        observer.assertSubscribed()
     }
 
     @Test
     fun succeeds_with_non_null_value() {
         emitter.onSuccess(0)
 
-        assertEquals(0, observer.value)
+        observer.assertSuccess(0)
     }
 
     @Test
     fun succeeds_with_null_value() {
         emitter.onSuccess(null)
 
-        assertEquals(null, observer.value)
+        observer.assertSuccess(null)
     }
 
     @Test
     fun completed_WHEN_onComplete_signalled() {
         emitter.onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -48,7 +51,7 @@ class MaybeByEmitterTest {
 
         emitter.onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test
@@ -57,7 +60,7 @@ class MaybeByEmitterTest {
         observer.reset()
         emitter.onSuccess(1)
 
-        assertFalse(observer.isSuccess)
+        observer.assertNotSuccess()
     }
 
     @Test
@@ -66,7 +69,7 @@ class MaybeByEmitterTest {
         observer.reset()
         emitter.onSuccess(1)
 
-        assertFalse(observer.isSuccess)
+        observer.assertNotSuccess()
     }
 
     @Test
@@ -75,7 +78,7 @@ class MaybeByEmitterTest {
         observer.reset()
         emitter.onSuccess(1)
 
-        assertFalse(observer.isSuccess)
+        observer.assertNotSuccess()
     }
 
     @Test
@@ -84,7 +87,7 @@ class MaybeByEmitterTest {
         observer.reset()
         emitter.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -93,7 +96,7 @@ class MaybeByEmitterTest {
         observer.reset()
         emitter.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -102,7 +105,7 @@ class MaybeByEmitterTest {
         observer.reset()
         emitter.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -111,7 +114,7 @@ class MaybeByEmitterTest {
         observer.reset()
         emitter.onError(Throwable())
 
-        assertFalse(observer.isError)
+        observer.assertNotError()
     }
 
     @Test
@@ -120,7 +123,7 @@ class MaybeByEmitterTest {
         observer.reset()
         emitter.onError(Throwable())
 
-        assertFalse(observer.isError)
+        observer.assertNotError()
     }
 
     @Test
@@ -129,7 +132,7 @@ class MaybeByEmitterTest {
         observer.reset()
         emitter.onError(Throwable())
 
-        assertFalse(observer.isError)
+        observer.assertNotError()
     }
 
     @Test
@@ -138,7 +141,7 @@ class MaybeByEmitterTest {
 
         emitter.onSuccess(0)
 
-        assertFalse(observer.isSuccess)
+        observer.assertNotSuccess()
     }
 
     @Test
@@ -147,37 +150,37 @@ class MaybeByEmitterTest {
 
         emitter.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
     fun disposable_disposed_AFTER_onSuccess_is_signalled() {
         emitter.onSuccess(0)
 
-        assertTrue(observer.isDisposed)
+        observer.assertDisposed()
     }
 
     @Test
     fun disposable_disposed_AFTER_onComplete_is_signalled() {
         emitter.onComplete()
 
-        assertTrue(observer.isDisposed)
+        observer.assertDisposed()
     }
 
     @Test
     fun disposable_disposed_AFTER_onError_signalled() {
         emitter.onError(Throwable())
 
-        assertTrue(observer.isDisposed)
+        observer.assertDisposed()
     }
 
     @Test
     fun completed_with_error_WHEN_exception_during_subscribe() {
         val error = RuntimeException()
 
-        maybe<Int> { throw error }.subscribe(observer)
+        val observer = maybe<Int> { throw error }.test()
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test

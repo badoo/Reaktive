@@ -2,19 +2,30 @@ package com.badoo.reaktive.test.completable
 
 import com.badoo.reaktive.completable.CompletableObserver
 import com.badoo.reaktive.test.base.TestObserver
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
-class TestCompletableObserver : TestObserver<TestCompletableObserver.Event>(), CompletableObserver {
+class TestCompletableObserver : TestObserver(), CompletableObserver {
+
+    private val _isComplete = AtomicBoolean()
+    val isComplete: Boolean get() = _isComplete.value
 
     override fun onComplete() {
-        onEvent(Event.OnComplete)
+        checkActive()
+
+        _isComplete.value = true
     }
 
-    override fun onError(error: Throwable) {
-        onEvent(Event.OnError(error))
+    override fun reset() {
+        super.reset()
+
+        _isComplete.value = false
     }
 
-    sealed class Event {
-        object OnComplete : Event()
-        data class OnError(val error: Throwable) : Event()
+    override fun checkActive() {
+        super.checkActive()
+
+        if (isComplete) {
+            throw IllegalStateException("Already complete")
+        }
     }
 }

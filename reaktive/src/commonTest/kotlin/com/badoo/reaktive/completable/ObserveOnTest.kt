@@ -1,13 +1,14 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
-import com.badoo.reaktive.test.completable.isComplete
-import com.badoo.reaktive.test.completable.isError
+import com.badoo.reaktive.test.completable.assertComplete
+import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ObserveOnTest
@@ -26,7 +27,7 @@ class ObserveOnTest
     fun does_no_complete_synchronously() {
         upstream.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -34,14 +35,14 @@ class ObserveOnTest
         upstream.onComplete()
         scheduler.process()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
     fun does_not_error_synchronously() {
         upstream.onError(Throwable())
 
-        assertFalse(observer.isError)
+        observer.assertNotError()
     }
 
     @Test
@@ -50,7 +51,7 @@ class ObserveOnTest
         upstream.onError(error)
         scheduler.process()
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test

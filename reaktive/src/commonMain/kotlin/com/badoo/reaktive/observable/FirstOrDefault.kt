@@ -6,8 +6,8 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.single.Single
-import com.badoo.reaktive.single.SingleObserver
-import com.badoo.reaktive.single.singleUnsafe
+import com.badoo.reaktive.single.SingleEmitter
+import com.badoo.reaktive.single.single
 
 fun <T> Observable<T>.firstOrDefault(defaultValue: T): Single<T> =
     firstOrAction { emitter ->
@@ -19,24 +19,24 @@ fun <T> Observable<T>.firstOrDefault(defaultValueSupplier: () -> T): Single<T> =
         emitter.tryCatch(defaultValueSupplier, emitter::onSuccess)
     }
 
-internal inline fun <T> Observable<T>.firstOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
-    singleUnsafe { observer ->
+internal inline fun <T> Observable<T>.firstOrAction(crossinline onComplete: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
+    single { emitter ->
         val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
+        emitter.setDisposable(disposableWrapper)
 
         subscribeSafe(
-            object : ObservableObserver<T>, ErrorCallback by observer {
+            object : ObservableObserver<T>, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
                 }
 
                 override fun onNext(value: T) {
+                    emitter.onSuccess(value)
                     disposableWrapper.dispose()
-                    observer.onSuccess(value)
                 }
 
                 override fun onComplete() {
-                    onComplete(observer)
+                    onComplete(emitter)
                 }
             }
         )

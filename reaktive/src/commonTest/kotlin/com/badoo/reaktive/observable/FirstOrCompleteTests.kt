@@ -1,11 +1,10 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.test.maybe.isComplete
+import com.badoo.reaktive.test.maybe.assertComplete
+import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.test.maybe.value
 import com.badoo.reaktive.test.observable.TestObservable
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -18,14 +17,14 @@ class FirstOrCompleteTests : ObservableToMaybeTests by ObservableToMaybeTests<No
     fun succeeds_WHEN_upstream_emitted_value() {
         upstream.onNext(0)
 
-        assertEquals(0, observer.value)
+        observer.assertSuccess(0)
     }
 
     @Test
     fun completes_WHEN_upstream_completed() {
         upstream.onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test

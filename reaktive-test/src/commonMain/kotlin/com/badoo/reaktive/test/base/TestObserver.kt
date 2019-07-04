@@ -1,33 +1,51 @@
 package com.badoo.reaktive.test.base
 
+import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.update
 
-open class TestObserver<Event> : Observer, Disposable {
+open class TestObserver : Observer, Disposable, ErrorCallback {
 
-    private val _disposables: AtomicReference<List<Disposable>> = AtomicReference(emptyList(), true)
-    val disposables get() = _disposables.value
-
-    private val _events: AtomicReference<List<Event>> = AtomicReference(emptyList(), true)
-    val events: List<Event> get() = _events.value
-
-    override val isDisposed: Boolean get() = disposables.all(Disposable::isDisposed)
+    private val _disposable = AtomicReference<Disposable?>(null, true)
+    val disposable: Disposable? get() = _disposable.value
+    private val _error = AtomicReference<Throwable?>(null, true)
+    val error: Throwable? get() = _error.value
+    override val isDisposed: Boolean get() = _disposable.value?.isDisposed == true
 
     override fun onSubscribe(disposable: Disposable) {
-        _disposables.update { it + disposable }
+        if (this.disposable != null) {
+            throw IllegalStateException("Already subscribed")
+        }
+
+        _disposable.value = disposable
     }
 
     override fun dispose() {
-        disposables.forEach(Disposable::dispose)
+        disposable?.dispose()
     }
 
-    fun reset() {
-        _events.update { emptyList() }
+    override fun onError(error: Throwable) {
+        checkActive()
+
+        _error.value = error
     }
 
-    protected fun onEvent(event: Event) {
-        _events.update { it + event }
+    open fun reset() {
+        _error.value = null
+    }
+
+    protected open fun checkActive() {
+        if (disposable == null) {
+            throw IllegalStateException("Not subscribed")
+        }
+
+        if (error != null) {
+            throw IllegalStateException("Already has error")
+        }
+
+        if (isDisposed) {
+            throw IllegalStateException("Already disposed")
+        }
     }
 }

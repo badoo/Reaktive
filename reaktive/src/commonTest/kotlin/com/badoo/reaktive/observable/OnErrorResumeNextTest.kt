@@ -1,15 +1,16 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.TestObservableObserver
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertNotComplete
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -74,7 +75,7 @@ class OnErrorResumeNextTest :
 
         upstream.onError(Throwable())
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -84,7 +85,7 @@ class OnErrorResumeNextTest :
         upstream.onError(Throwable())
         errorResumeNext.onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -93,7 +94,7 @@ class OnErrorResumeNextTest :
 
         upstream.onError(Throwable())
 
-        assertTrue(observer.values.isEmpty())
+        observer.assertNoValues()
     }
 
     @Test
@@ -103,7 +104,7 @@ class OnErrorResumeNextTest :
         upstream.onError(Throwable())
         errorResumeNext.onNext(0, 1, null)
 
-        assertEquals(listOf(0, 1, null), observer.values)
+        observer.assertValues(0, 1, null)
     }
 
     @Test
@@ -114,7 +115,7 @@ class OnErrorResumeNextTest :
         val throwable = Throwable()
         errorResumeNext.onError(throwable)
 
-        assertTrue(observer.isError(throwable))
+        observer.assertError(throwable)
     }
 
     @Test
@@ -123,7 +124,7 @@ class OnErrorResumeNextTest :
         val observer = upstream.onErrorResumeNext { throw throwable }.test()
         upstream.onError(Throwable())
 
-        assertTrue(observer.isError(throwable))
+        observer.assertError(throwable)
     }
 
     private fun createTestWithObservable(): Pair<TestObservable<Int?>, TestObservableObserver<Int?>> {

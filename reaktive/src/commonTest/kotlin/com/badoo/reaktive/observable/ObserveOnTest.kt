@@ -1,16 +1,16 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertNotComplete
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ObserveOnTest
@@ -31,7 +31,7 @@ class ObserveOnTest
         upstream.onNext(1)
         upstream.onNext(2)
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     @Test
@@ -43,14 +43,14 @@ class ObserveOnTest
         scheduler.process()
         scheduler.process()
 
-        assertEquals(listOf(null, 1, 2), observer.values)
+        observer.assertValues(null, 1, 2)
     }
 
     @Test
     fun does_no_complete_synchronously() {
         upstream.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -58,23 +58,26 @@ class ObserveOnTest
         upstream.onComplete()
         scheduler.process()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
     fun does_not_error_synchronously() {
-        upstream.onError(Throwable())
+        val error = Throwable()
 
-        assertFalse(observer.isError)
+        upstream.onError(error)
+
+        observer.assertNotError()
     }
 
     @Test
     fun errors_through_scheduler() {
         val error = Throwable()
+
         upstream.onError(error)
         scheduler.process()
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test

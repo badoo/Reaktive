@@ -1,18 +1,17 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.disposable
-import com.badoo.reaktive.test.observable.getOnErrorValue
-import com.badoo.reaktive.test.observable.getOnNextEvent
-import com.badoo.reaktive.test.observable.getOnNextValue
-import com.badoo.reaktive.test.observable.hasOnNext
-import com.badoo.reaktive.test.observable.isComplete
-import com.badoo.reaktive.test.observable.isError
-import com.badoo.reaktive.test.observable.isOnCompleteEvent
+import com.badoo.reaktive.test.base.assertDisposed
+import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.assertNotError
+import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertNotComplete
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ObservableByEmitterTest {
@@ -22,7 +21,7 @@ class ObservableByEmitterTest {
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
-        assertEquals(1, observer.disposables.size)
+        observer.assertSubscribed()
     }
 
     @Test
@@ -32,11 +31,8 @@ class ObservableByEmitterTest {
         emitter.onNext(2)
         emitter.onComplete()
 
-        assertEquals(4, observer.events.size)
-        assertEquals(null, observer.getOnNextEvent(0).value)
-        assertEquals(1, observer.getOnNextEvent(1).value)
-        assertEquals(2, observer.getOnNextEvent(2).value)
-        assertTrue(observer.isOnCompleteEvent(3))
+        observer.assertValues(null, 1, 2)
+        observer.assertComplete()
     }
 
     @Test
@@ -48,11 +44,8 @@ class ObservableByEmitterTest {
         emitter.onNext(2)
         emitter.onError(error)
 
-        assertEquals(4, observer.events.size)
-        assertEquals(null, observer.getOnNextValue(0))
-        assertEquals(1, observer.getOnNextValue(1))
-        assertEquals(2, observer.getOnNextValue(2))
-        assertSame(error, observer.getOnErrorValue(3))
+        observer.assertValues(null, 1, 2)
+        observer.assertError(error)
     }
 
     @Test
@@ -62,16 +55,14 @@ class ObservableByEmitterTest {
         emitter.onNext(2)
         observer.dispose()
 
-        assertEquals(null, observer.getOnNextValue(0))
-        assertEquals(1, observer.getOnNextValue(1))
-        assertEquals(2, observer.getOnNextValue(2))
+        observer.assertValues(null, 1, 2)
     }
 
     @Test
     fun completed_WHEN_onComplete_signalled() {
         emitter.onComplete()
 
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -80,7 +71,7 @@ class ObservableByEmitterTest {
 
         emitter.onError(error)
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
     @Test
@@ -89,7 +80,7 @@ class ObservableByEmitterTest {
         observer.reset()
         emitter.onNext(2)
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     @Test
@@ -98,7 +89,7 @@ class ObservableByEmitterTest {
         observer.reset()
         emitter.onNext(2)
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     @Test
@@ -107,7 +98,7 @@ class ObservableByEmitterTest {
         observer.reset()
         emitter.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -116,7 +107,7 @@ class ObservableByEmitterTest {
         observer.reset()
         emitter.onError(Throwable())
 
-        assertFalse(observer.isError)
+        observer.assertNotError()
     }
 
     @Test
@@ -125,7 +116,7 @@ class ObservableByEmitterTest {
         observer.reset()
         emitter.onComplete()
 
-        assertFalse(observer.isComplete)
+        observer.assertNotComplete()
     }
 
     @Test
@@ -134,7 +125,7 @@ class ObservableByEmitterTest {
         observer.reset()
         emitter.onError(Throwable())
 
-        assertFalse(observer.isError)
+        observer.assertNotError()
     }
 
     @Test
@@ -143,30 +134,30 @@ class ObservableByEmitterTest {
 
         emitter.onNext(1)
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     @Test
     fun disposable_disposed_AFTER_onComplete_signalled() {
         emitter.onComplete()
 
-        assertTrue(observer.isDisposed)
+        observer.assertDisposed()
     }
 
     @Test
     fun disposable_disposed_AFTER_onError_signalled() {
         emitter.onError(Throwable())
 
-        assertTrue(observer.isDisposed)
+        observer.assertDisposed()
     }
 
     @Test
     fun completed_with_error_WHEN_exception_during_subscribe() {
         val error = RuntimeException()
 
-        observable<Int> { throw error }.subscribe(observer)
+        val observer = observable<Int> { throw error }.test()
 
-        assertTrue(observer.isError(error))
+        observer.assertError(error)
     }
 
 

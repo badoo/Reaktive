@@ -1,9 +1,10 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
-import com.badoo.reaktive.test.completable.isComplete
-import com.badoo.reaktive.test.completable.isError
+import com.badoo.reaktive.test.completable.assertComplete
+import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -45,14 +46,14 @@ class ConcatTests : CompletableToCompletableTests by CompletableToCompletableTes
         upstream1.onComplete()
         upstream2.onError(throwable)
 
-        assertTrue(inner.isError(throwable))
+        inner.assertError(throwable)
     }
 
     @Test
     fun does_not_complete_WHEN_first_upstream_is_completed() {
         upstream1.onComplete()
 
-        assertFalse(inner.isComplete)
+        inner.assertNotComplete()
     }
 
     @Test
@@ -60,7 +61,7 @@ class ConcatTests : CompletableToCompletableTests by CompletableToCompletableTes
         upstream1.onComplete()
         upstream2.onComplete()
 
-        assertTrue(inner.isComplete)
+        inner.assertComplete()
     }
 
     @Test

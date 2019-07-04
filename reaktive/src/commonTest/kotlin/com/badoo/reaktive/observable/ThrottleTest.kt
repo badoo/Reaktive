@@ -1,13 +1,12 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.hasOnNext
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertValue
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.values
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 
 class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<Unit>({ throttle(0L) }) {
 
@@ -19,7 +18,7 @@ class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<
     fun emits_first_value_WHEN_current_time_is_0L() {
         emit(0)
 
-        assertValues(0)
+        observer.assertValue(0)
     }
 
     @Test
@@ -27,7 +26,7 @@ class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<
         setTime(99L)
         emit(0)
 
-        assertValues(0)
+        observer.assertValue(0)
     }
 
     @Test
@@ -35,7 +34,7 @@ class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<
         setTime(100L)
         emit(0)
 
-        assertValues(0)
+        observer.assertValue(0)
     }
 
     @Test
@@ -43,7 +42,7 @@ class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<
         setTime(101L)
         emit(0)
 
-        assertValues(0)
+        observer.assertValue(0)
     }
 
     @Test
@@ -60,7 +59,7 @@ class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<
         emit(5)
         emit(6)
 
-        assertFalse(observer.hasOnNext)
+        observer.assertNoValues()
     }
 
     @Test
@@ -73,7 +72,7 @@ class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<
 
         emit(2)
 
-        assertValues(2)
+        observer.assertValue(2)
     }
 
     @Test
@@ -93,7 +92,7 @@ class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<
         setTime(320L)
         emit(7)
 
-        assertValues(0, 4, 5, 7)
+        observer.assertValues(0, 4, 5, 7)
     }
 
     private fun emit(value: Int) {
@@ -102,9 +101,5 @@ class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<
 
     private fun setTime(millis: Long) {
         timeMillis.value = millis
-    }
-
-    private fun assertValues(vararg values: Int) {
-        assertEquals(values.toList(), observer.values)
     }
 }
