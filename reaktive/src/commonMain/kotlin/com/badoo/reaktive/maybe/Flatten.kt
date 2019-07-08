@@ -1,23 +1,10 @@
 package com.badoo.reaktive.maybe
 
-import com.badoo.reaktive.completable.CompletableCallbacks
-import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.observable.observable
-import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.observable.asObservable
+import kotlin.jvm.JvmName
 
-fun <T> Maybe<Iterable<T>>.flatten(): Observable<T> =
-    observable { emitter ->
-        subscribeSafe(
-            object : MaybeObserver<Iterable<T>>, CompletableCallbacks by emitter {
-                override fun onSubscribe(disposable: Disposable) {
-                    emitter.setDisposable(disposable)
-                }
+fun <T> Maybe<Iterable<T>>.flatten(): Observable<T> = flatMapObservable(Iterable<T>::asObservable)
 
-                override fun onSuccess(value: Iterable<T>) {
-                    value.forEach(emitter::onNext)
-                    emitter.onComplete()
-                }
-            }
-        )
-    }
+@JvmName("flattenObservable")
+fun <T> Maybe<Observable<T>>.flatten(): Observable<T> = flatMapObservable { it }
