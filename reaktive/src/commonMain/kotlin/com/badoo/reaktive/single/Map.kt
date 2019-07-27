@@ -10,7 +10,7 @@ fun <T, R> Single<T>.map(mapper: (T) -> R): Single<R> =
         subscribeSafe(
             object : SingleObserver<T>, Observer by observer, ErrorCallback by observer {
                 override fun onSuccess(value: T) {
-                    observer.tryCatch({ mapper(value) }, observer::onSuccess)
+                    observer.tryCatch(block = { mapper(value) }, onSuccess = observer::onSuccess)
                 }
             }
         )

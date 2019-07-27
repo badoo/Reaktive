@@ -1,5 +1,6 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
@@ -64,5 +65,19 @@ class DoOnBeforeSuccessTest
         upstream.onError(Throwable())
 
         assertFalse(isCalled.value)
+    }
+
+    @Test
+    fun produces_error_WHEN_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeSuccess { throw error }
+                .test()
+
+        upstream.onSuccess(0)
+
+        observer.assertError(error)
     }
 }

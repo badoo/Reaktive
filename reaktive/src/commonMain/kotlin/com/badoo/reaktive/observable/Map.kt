@@ -14,7 +14,7 @@ fun <T, R> Observable<T>.map(mapper: (T) -> R): Observable<R> =
                 }
 
                 override fun onNext(value: T) {
-                    emitter.tryCatch({ mapper(value) }, emitter::onNext)
+                    emitter.tryCatch(block = { mapper(value) }, onSuccess = emitter::onNext)
                 }
             }
         )

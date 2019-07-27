@@ -1,16 +1,21 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.base.exceptions.CompositeException
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
+import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class DoOnBeforeTerminateTest
     : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ doOnBeforeTerminate {} }) {
 
-    private val upstream = TestMaybe<Nothing>()
+    private val upstream = TestMaybe<Int>()
     private val callOrder = atomicList<String>()
 
     @Test
@@ -21,7 +26,7 @@ class DoOnBeforeTerminateTest
                 callOrder += "action"
             }
             .subscribe(
-                object : DefaultMaybeObserver<Nothing> {
+                object : DefaultMaybeObserver<Int> {
                     override fun onComplete() {
                         callOrder += "onComplete"
                     }
@@ -34,6 +39,27 @@ class DoOnBeforeTerminateTest
     }
 
     @Test
+    fun calls_action_before_success() {
+        val callOrder = atomicList<String>()
+
+        upstream
+            .doOnBeforeTerminate {
+                callOrder += "action"
+            }
+            .subscribe(
+                object : DefaultMaybeObserver<Int> {
+                    override fun onSuccess(value: Int) {
+                        callOrder += "onSuccess"
+                    }
+                }
+            )
+
+        upstream.onSuccess(0)
+
+        assertEquals(listOf("action", "onSuccess"), callOrder.value)
+    }
+
+    @Test
     fun calls_action_before_failing() {
         val callOrder = atomicList<String>()
         val exception = Exception()
@@ -43,7 +69,7 @@ class DoOnBeforeTerminateTest
                 callOrder += "action"
             }
             .subscribe(
-                object : DefaultMaybeObserver<Nothing> {
+                object : DefaultMaybeObserver<Int> {
                     override fun onError(error: Throwable) {
                         callOrder += "onError"
                     }
@@ -53,5 +79,51 @@ class DoOnBeforeTerminateTest
         upstream.onError(exception)
 
         assertEquals(listOf("action", "onError"), callOrder.value)
+    }
+
+    @Test
+    fun produces_error_WHEN_upstream_completed_and_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeTerminate { throw error }
+                .test()
+
+        upstream.onComplete()
+
+        observer.assertError(error)
+    }
+
+    @Test
+    fun produces_error_WHEN_upstream_succeeded_and_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeTerminate { throw error }
+                .test()
+
+        upstream.onSuccess(0)
+
+        observer.assertError(error)
+    }
+
+    @Test
+    fun produces_CompositeException_WHEN_upstream_produced_error_and_exception_in_lambda() {
+        val error1 = Exception()
+        val error2 = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeTerminate { throw error2 }
+                .test()
+
+        upstream.onError(error1)
+
+        val error: Throwable? = observer.error
+        assertTrue(error is CompositeException)
+        assertSame(error1, error.cause1)
+        assertSame(error2, error.cause2)
     }
 }

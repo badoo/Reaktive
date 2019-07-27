@@ -1,5 +1,6 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
@@ -49,5 +50,19 @@ class DoOnBeforeCompleteTest
         upstream.onError(Throwable())
 
         assertFalse(isCalled.value)
+    }
+
+    @Test
+    fun produces_error_WHEN_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeComplete { throw error }
+                .test()
+
+        upstream.onComplete()
+
+        observer.assertError(error)
     }
 }

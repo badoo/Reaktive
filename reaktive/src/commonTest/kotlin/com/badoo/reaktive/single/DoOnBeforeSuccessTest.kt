@@ -1,5 +1,6 @@
 package com.badoo.reaktive.single
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.single.DefaultSingleObserver
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
@@ -49,5 +50,19 @@ class DoOnBeforeSuccessTest
         upstream.onError(Throwable())
 
         assertFalse(isCalled.value)
+    }
+
+    @Test
+    fun produces_error_WHEN_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeSuccess { throw error }
+                .test()
+
+        upstream.onSuccess(0)
+
+        observer.assertError(error)
     }
 }

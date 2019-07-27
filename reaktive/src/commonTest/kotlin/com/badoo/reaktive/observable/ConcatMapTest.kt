@@ -73,7 +73,7 @@ class ConcatMapTest
     @Test
     fun produces_values_in_correct_order() {
         val inners = createInnerSources(3)
-        val observer = concatMapUpstreamAndSubscribe() { inners[it ?: 0] }
+        val observer = concatMapUpstreamAndSubscribe { inners[it ?: 0] }
 
         upstream.onNext(null)
         inners[0].onNext("0a")

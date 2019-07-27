@@ -16,7 +16,7 @@ fun <T> Observable<T>.firstOrDefault(defaultValue: T): Single<T> =
 
 fun <T> Observable<T>.firstOrDefault(defaultValueSupplier: () -> T): Single<T> =
     firstOrAction { emitter ->
-        emitter.tryCatch(defaultValueSupplier, emitter::onSuccess)
+        emitter.tryCatch(block = defaultValueSupplier, onSuccess = emitter::onSuccess)
     }
 
 internal inline fun <T> Observable<T>.firstOrAction(crossinline onComplete: (emitter: SingleEmitter<T>) -> Unit): Single<T> =

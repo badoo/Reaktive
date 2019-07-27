@@ -10,7 +10,7 @@ fun <T, R> Maybe<T>.map(mapper: (T) -> R): Maybe<R> =
         subscribeSafe(
             object : MaybeObserver<T>, Observer by observer, CompletableCallbacks by observer {
                 override fun onSuccess(value: T) {
-                    observer.tryCatch({ mapper(value) }, observer::onSuccess)
+                    observer.tryCatch(block = { mapper(value) }, onSuccess = observer::onSuccess)
                 }
             }
         )

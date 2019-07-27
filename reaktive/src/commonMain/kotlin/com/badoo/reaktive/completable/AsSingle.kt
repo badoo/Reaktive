@@ -16,7 +16,7 @@ fun <T> Completable.asSingle(defaultValue: T): Single<T> =
 
 fun <T> Completable.asSingle(defaultValueSupplier: () -> T): Single<T> =
     asSingleOrAction { observer ->
-        observer.tryCatch(defaultValueSupplier, observer::onSuccess)
+        observer.tryCatch(block = defaultValueSupplier, onSuccess = observer::onSuccess)
     }
 
 private inline fun <T> Completable.asSingleOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =

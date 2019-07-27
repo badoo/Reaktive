@@ -16,7 +16,7 @@ fun <T> Maybe<T>.asSingle(defaultValue: T): Single<T> =
 
 fun <T> Maybe<T>.asSingle(defaultValueSupplier: () -> T): Single<T> =
     asSingleOrAction { observer ->
-        observer.tryCatch(defaultValueSupplier, observer::onSuccess)
+        observer.tryCatch(block = defaultValueSupplier, onSuccess = observer::onSuccess)
     }
 
 internal inline fun <T> Maybe<T>.asSingleOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
