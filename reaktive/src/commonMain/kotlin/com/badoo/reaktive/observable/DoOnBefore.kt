@@ -36,19 +36,21 @@ fun <T> Observable<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Observa
     }
 
 fun <T> Observable<T>.doOnBeforeNext(consumer: (T) -> Unit): Observable<T> =
-    observableUnsafe { observer ->
+    observable { emitter ->
         val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
+        emitter.setDisposable(disposableWrapper)
 
         subscribeSafe(
-            object : ObservableObserver<T>, CompletableCallbacks by observer {
+            object : ObservableObserver<T>, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
                 }
 
                 override fun onNext(value: T) {
-                    observer.tryCatch({ consumer(value) }) {
-                        observer.onNext(value)
+                    if (!disposableWrapper.isDisposed) {
+                        emitter.tryCatch({ consumer(value) }) {
+                            emitter.onNext(value)
+                        }
                     }
                 }
             }
