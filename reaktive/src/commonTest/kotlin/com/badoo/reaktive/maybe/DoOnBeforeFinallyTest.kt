@@ -1,6 +1,9 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.test.base.assertDisposed
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
@@ -9,11 +12,13 @@ import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class DoOnBeforeFinallyTest
     : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ doOnBeforeFinally {} }) {
 
-    private val upstream = TestMaybe<Nothing>()
+    private val upstream = TestMaybe<Int>()
 
     @Test
     fun calls_action_before_completion() {
@@ -24,7 +29,7 @@ class DoOnBeforeFinallyTest
                 callOrder += "action"
             }
             .subscribe(
-                object : DefaultMaybeObserver<Nothing> {
+                object : DefaultMaybeObserver<Int> {
                     override fun onComplete() {
                         callOrder += "onComplete"
                     }
@@ -37,6 +42,27 @@ class DoOnBeforeFinallyTest
     }
 
     @Test
+    fun calls_action_before_success() {
+        val callOrder = atomicList<String>()
+
+        upstream
+            .doOnBeforeFinally {
+                callOrder += "action"
+            }
+            .subscribe(
+                object : DefaultMaybeObserver<Int> {
+                    override fun onSuccess(value: Int) {
+                        callOrder += "onSuccess"
+                    }
+                }
+            )
+
+        upstream.onSuccess(0)
+
+        assertEquals(listOf("action", "onSuccess"), callOrder.value)
+    }
+
+    @Test
     fun calls_action_before_failing() {
         val callOrder = atomicList<String>()
         val exception = Exception()
@@ -46,7 +72,7 @@ class DoOnBeforeFinallyTest
                 callOrder += "action"
             }
             .subscribe(
-                object : DefaultMaybeObserver<Nothing> {
+                object : DefaultMaybeObserver<Int?> {
                     override fun onError(error: Throwable) {
                         callOrder += "onError"
                     }
@@ -142,5 +168,79 @@ class DoOnBeforeFinallyTest
         observer.dispose()
 
         assertEquals(1, count.value)
+    }
+
+    @Test
+    fun produces_error_WHEN_upstream_completed_and_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeFinally { throw error }
+                .test()
+
+        upstream.onComplete()
+
+        observer.assertError(error)
+    }
+
+    @Test
+    fun produces_error_WHEN_upstream_succeeded_and_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeFinally { throw error }
+                .test()
+
+        upstream.onSuccess(0)
+
+        observer.assertError(error)
+    }
+
+    @Test
+    fun produces_error_WHEN_downstream_disposed_and_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeFinally { throw error }
+                .test()
+
+        observer.dispose()
+
+        observer.assertError(error)
+    }
+
+    @Test
+    fun disposes_upstream_WHEN_downstream_disposed_and_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeFinally { throw error }
+                .test()
+
+        observer.dispose()
+
+        observer.assertDisposed()
+    }
+
+    @Test
+    fun produces_CompositeException_WHEN_upstream_produced_error_and_exception_in_lambda() {
+        val error1 = Exception()
+        val error2 = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeFinally { throw error2 }
+                .test()
+
+        upstream.onError(error1)
+
+        val error: Throwable? = observer.error
+        assertTrue(error is CompositeException)
+        assertSame(error1, error.cause1)
+        assertSame(error2, error.cause2)
     }
 }

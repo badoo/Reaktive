@@ -1,10 +1,10 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.maybeUnsafe
-import com.badoo.reaktive.base.subscribeSafe
 
 fun <T> Completable.asMaybe(): Maybe<T> =
     maybeUnsafe { observer ->
