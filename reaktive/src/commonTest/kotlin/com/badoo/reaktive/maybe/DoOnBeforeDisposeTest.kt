@@ -1,6 +1,8 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.test.base.assertDisposed
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
@@ -78,5 +80,33 @@ class DoOnBeforeDisposeTest
         upstream.onError(Throwable())
 
         assertFalse(isCalled.value)
+    }
+
+    @Test
+    fun produces_error_WHEN_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeDispose { throw error }
+                .test()
+
+        observer.dispose()
+
+        observer.assertError(error)
+    }
+
+    @Test
+    fun disposes_upstream_WHEN_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeDispose { throw error }
+                .test()
+
+        observer.dispose()
+
+        observer.assertDisposed()
     }
 }

@@ -3,11 +3,12 @@ package com.badoo.reaktive.maybe
 import com.badoo.reaktive.base.CompleteCallback
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.SuccessCallback
+import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.disposable.wrap
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 fun <T> Maybe<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Maybe<T> =
@@ -46,8 +47,9 @@ fun <T> Maybe<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Maybe<T> =
                 }
 
                 override fun onSuccess(value: T) {
-                    consumer(value)
-                    observer.onSuccess(value)
+                    observer.tryCatch({ consumer(value) }) {
+                        observer.onSuccess(value)
+                    }
                 }
             }
         )
@@ -65,8 +67,9 @@ fun <T> Maybe<T>.doOnBeforeComplete(action: () -> Unit): Maybe<T> =
                 }
 
                 override fun onComplete() {
-                    action()
-                    observer.onComplete()
+                    observer.tryCatch(action) {
+                        observer.onComplete()
+                    }
                 }
             }
         )
@@ -84,8 +87,9 @@ fun <T> Maybe<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Maybe<T> =
                 }
 
                 override fun onError(error: Throwable) {
-                    consumer(error)
-                    observer.onError(error)
+                    observer.tryCatch({ consumer(error) }, { CompositeException(error, it) }) {
+                        observer.onError(error)
+                    }
                 }
             }
         )
@@ -103,18 +107,21 @@ fun <T> Maybe<T>.doOnBeforeTerminate(action: () -> Unit): Maybe<T> =
                 }
 
                 override fun onSuccess(value: T) {
-                    action()
-                    observer.onSuccess(value)
+                    observer.tryCatch(action) {
+                        observer.onSuccess(value)
+                    }
                 }
 
                 override fun onComplete() {
-                    action()
-                    observer.onComplete()
+                    observer.tryCatch(action) {
+                        observer.onComplete()
+                    }
                 }
 
                 override fun onError(error: Throwable) {
-                    action()
-                    observer.onError(error)
+                    observer.tryCatch(action, { CompositeException(error, it) }) {
+                        observer.onError(error)
+                    }
                 }
             }
         )
@@ -123,7 +130,14 @@ fun <T> Maybe<T>.doOnBeforeTerminate(action: () -> Unit): Maybe<T> =
 fun <T> Maybe<T>.doOnBeforeDispose(action: () -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper.wrap(onBeforeDispose = action))
+        observer.onSubscribe(
+            object : Disposable by disposableWrapper {
+                override fun dispose() {
+                    observer.tryCatch(action)
+                    disposableWrapper.dispose()
+                }
+            }
+        )
 
         subscribeSafe(
             object : MaybeObserver<T>, MaybeCallbacks<T> by observer {
@@ -138,15 +152,23 @@ fun <T> Maybe<T>.doOnBeforeFinally(action: () -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
         val isFinished = AtomicBoolean()
 
-        fun onFinally() {
-            @Suppress("BooleanLiteralArgument") // Not allowed for expected classes
-            if (isFinished.compareAndSet(false, true)) {
-                action()
+        val onFinally =
+            {
+                @Suppress("BooleanLiteralArgument") // Not allowed for expected classes
+                if (isFinished.compareAndSet(false, true)) {
+                    action()
+                }
             }
-        }
 
         val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper.wrap(onBeforeDispose = ::onFinally))
+        observer.onSubscribe(
+            object : Disposable by disposableWrapper {
+                override fun dispose() {
+                    observer.tryCatch(onFinally)
+                    disposableWrapper.dispose()
+                }
+            }
+        )
 
         subscribeSafe(
             object : MaybeObserver<T> {
@@ -155,18 +177,21 @@ fun <T> Maybe<T>.doOnBeforeFinally(action: () -> Unit): Maybe<T> =
                 }
 
                 override fun onSuccess(value: T) {
-                    onFinally()
-                    observer.onSuccess(value)
+                    observer.tryCatch(onFinally) {
+                        observer.onSuccess(value)
+                    }
                 }
 
                 override fun onComplete() {
-                    onFinally()
-                    observer.onComplete()
+                    observer.tryCatch(onFinally) {
+                        observer.onComplete()
+                    }
                 }
 
                 override fun onError(error: Throwable) {
-                    onFinally()
-                    observer.onError(error)
+                    observer.tryCatch(onFinally, { CompositeException(error, it) }) {
+                        observer.onError(error)
+                    }
                 }
             }
         )

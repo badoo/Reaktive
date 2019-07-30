@@ -1,6 +1,9 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.test.base.assertDisposed
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
@@ -11,6 +14,8 @@ import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class DoOnBeforeFinallyTest
     : ObservableToObservableTests by ObservableToObservableTests<Unit>({ doOnBeforeFinally {} }) {
@@ -159,5 +164,65 @@ class DoOnBeforeFinallyTest
         upstream.onNext(0)
 
         assertFalse(isCalled.value)
+    }
+
+    @Test
+    fun produces_error_WHEN_upstream_completed_and_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeFinally { throw error }
+                .test()
+
+        upstream.onComplete()
+
+        observer.assertError(error)
+    }
+
+    @Test
+    fun produces_error_WHEN_downstream_disposed_and_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeFinally { throw error }
+                .test()
+
+        observer.dispose()
+
+        observer.assertError(error)
+    }
+
+    @Test
+    fun disposes_upstream_WHEN_downstream_disposed_and_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeFinally { throw error }
+                .test()
+
+        observer.dispose()
+
+        observer.assertDisposed()
+    }
+
+    @Test
+    fun produces_CompositeException_WHEN_upstream_produced_error_and_exception_in_lambda() {
+        val error1 = Exception()
+        val error2 = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeFinally { throw error2 }
+                .test()
+
+        upstream.onError(error1)
+
+        val error: Throwable? = observer.error
+        assertTrue(error is CompositeException)
+        assertSame(error1, error.cause1)
+        assertSame(error2, error.cause2)
     }
 }

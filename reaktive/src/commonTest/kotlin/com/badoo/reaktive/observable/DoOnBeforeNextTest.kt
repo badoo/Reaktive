@@ -1,9 +1,11 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
@@ -65,5 +67,37 @@ class DoOnBeforeNextTest
         upstream.onError(Throwable())
 
         assertFalse(isCalled.value)
+    }
+
+    @Test
+    fun produces_error_WHEN_exception_in_lambda() {
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeNext { throw error }
+                .test()
+
+        upstream.onNext(0)
+
+        observer.assertError(error)
+    }
+
+    @Test
+    fun does_no_call_action_WHEN_previous_lambda_thrown_exception() {
+        val count = AtomicInt()
+
+        lateinit var upstream: ObservableObserver<Int>
+        observableUnsafe<Int> { upstream = it }
+            .doOnBeforeNext {
+                count.addAndGet(1)
+                throw Exception()
+            }
+            .test()
+
+        upstream.onNext(0)
+        upstream.onNext(1)
+
+        assertEquals(1, count.value)
     }
 }

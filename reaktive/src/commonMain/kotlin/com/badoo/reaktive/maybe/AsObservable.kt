@@ -1,11 +1,11 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observableUnsafe
-import com.badoo.reaktive.base.subscribeSafe
 
 fun <T> Maybe<T>.asObservable(): Observable<T> =
     observableUnsafe { observer ->

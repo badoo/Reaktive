@@ -57,7 +57,7 @@ fun <T, U, R> Observable<T>.withLatestFrom(
                             }
                             ?: return
 
-                    emitter.tryCatch({ mapper(value, valueList) }, emitter::onNext)
+                    emitter.tryCatch(block = { mapper(value, valueList) }, onSuccess = emitter::onNext)
                 }
             }
         )
