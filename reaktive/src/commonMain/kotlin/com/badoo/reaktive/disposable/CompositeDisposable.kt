@@ -9,11 +9,11 @@ import com.badoo.reaktive.utils.atomic.getAndUpdate
  */
 class CompositeDisposable : Disposable {
 
-    private val set = AtomicReference<List<Disposable>?>(emptyList(), true)
-    override val isDisposed: Boolean get() = set.value == null
+    private val list = AtomicReference<List<Disposable>?>(emptyList(), true)
+    override val isDisposed: Boolean get() = list.value == null
 
     override fun dispose() {
-        set
+        list
             .getAndSet(null)
             ?.forEach(Disposable::dispose)
     }
@@ -23,7 +23,7 @@ class CompositeDisposable : Disposable {
      * Also removes already disposed Disposables.
      */
     fun add(disposable: Disposable) {
-        set
+        list
             .getAndUpdate {
                 it
                     ?.toCollection(ArrayList(it.size + 1))
@@ -48,7 +48,7 @@ class CompositeDisposable : Disposable {
      * @param dispose if true then removed [Disposable]s will be disposed, default value is true
      */
     fun clear(dispose: Boolean = true) {
-        set
+        list
             .getAndUpdate { it?.let { emptyList() } }
             ?.takeIf { dispose }
             ?.forEach(Disposable::dispose)
