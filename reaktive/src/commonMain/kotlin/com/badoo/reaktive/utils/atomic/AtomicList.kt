@@ -24,6 +24,22 @@ fun <T> AtomicList<T>.removeAt(index: Int): T =
         it.filterIndexed { i, _ -> i != index }
     }[index]
 
+fun <T> AtomicList<T>.remove(element: T): Boolean {
+    var removed = false
+
+    update {
+        val newList = it - element
+        removed = newList.size < it.size
+        newList
+    }
+
+    return removed
+}
+
+operator fun <T> AtomicList<T>.minusAssign(element: T) {
+    remove(element)
+}
+
 fun <T> AtomicList<T>.clear() {
     update { emptyList() }
 }

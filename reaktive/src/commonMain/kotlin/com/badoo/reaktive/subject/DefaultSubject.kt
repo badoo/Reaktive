@@ -3,13 +3,15 @@ package com.badoo.reaktive.subject
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.observable.ObservableObserver
+import com.badoo.reaktive.utils.atomic.AtomicList
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.update
+import com.badoo.reaktive.utils.atomic.minusAssign
+import com.badoo.reaktive.utils.atomic.plusAssign
 import com.badoo.reaktive.utils.serializer.serializer
 
 internal open class DefaultSubject<T> : Subject<T> {
 
-    private var observers = AtomicReference(emptySet<ObservableObserver<T>>(), true)
+    private var observers = AtomicList<ObservableObserver<T>>(emptyList(), true)
     private val serializer = serializer(onValue = ::onSerializedValue)
     private val _status = AtomicReference<Subject.Status>(Subject.Status.Active, true)
     override val status: Subject.Status get() = _status.value
@@ -87,16 +89,9 @@ internal open class DefaultSubject<T> : Subject<T> {
             }
         }
 
-        val disposable =
-            disposable {
-                observers.update {
-                    it - observer
-                }
-            }
+        val disposable = disposable { observers -= observer }
 
-        observers.update {
-            it + observer
-        }
+        observers += observer
 
         disposableWrapper.set(disposable)
         onAfterSubscribe(observer)
