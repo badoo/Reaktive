@@ -2,12 +2,10 @@ package com.badoo.reaktive.utils
 
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.CValue
 import kotlinx.cinterop.alloc
-import kotlinx.cinterop.cValue
 import kotlinx.cinterop.convert
+import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
-import kotlinx.cinterop.useContents
 import platform.posix.PTHREAD_MUTEX_RECURSIVE
 import platform.posix.pthread_cond_broadcast
 import platform.posix.pthread_cond_destroy
@@ -68,9 +66,10 @@ internal actual class Lock {
 
         override fun await(timeoutNanos: Long) {
             if (timeoutNanos >= 0L) {
-                val t = cValue<timespec>()
-                (getTimeNanos() + timeoutNanos).toTimespec(t)
-                pthread_cond_timedwait(cond.ptr, lockPtr, t)
+                memScoped {
+                    val t: timespec = alloc { setNanos(getTimeNanos() + timeoutNanos) }
+                    pthread_cond_timedwait(cond.ptr, lockPtr, t.ptr)
+                }
             } else {
                 pthread_cond_wait(cond.ptr, lockPtr)
             }
@@ -88,12 +87,10 @@ internal actual class Lock {
         private companion object {
             private const val SECOND_IN_NANOS = 1000000000L
 
-            private fun Long.toTimespec(time: CValue<timespec>) {
-                val secs = this / SECOND_IN_NANOS
-                time.useContents {
-                    tv_sec = secs.convert()
-                    tv_nsec = (this@toTimespec - (secs * SECOND_IN_NANOS)).convert()
-                }
+            private fun timespec.setNanos(nanos: Long) {
+                val secs = nanos / SECOND_IN_NANOS
+                tv_sec = secs.convert()
+                tv_nsec = (nanos - (secs * SECOND_IN_NANOS)).convert()
             }
         }
     }
