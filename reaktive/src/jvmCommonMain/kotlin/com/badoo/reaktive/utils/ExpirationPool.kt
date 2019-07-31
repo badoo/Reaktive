@@ -11,7 +11,7 @@ internal class ExpirationPool<T : Any>(onItemExpired: (T) -> Unit) {
         daemon.start()
     }
 
-    fun acquire(): T? = queue.poll()
+    fun acquire(): T? = queue.removeFirst()
 
     fun release(item: T, timeoutMillis: Long) {
         queue.offer(item, timeoutMillis, TimeUnit.MILLISECONDS)
