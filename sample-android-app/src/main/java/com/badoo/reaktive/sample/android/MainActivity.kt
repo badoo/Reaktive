@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.badoo.reaktive.observable.observable
 import com.badoo.reaktive.observable.observeOn
+import com.badoo.reaktive.observable.startWith
 import com.badoo.reaktive.observable.subscribe
 import com.badoo.reaktive.observable.subscribeOn
 import com.badoo.reaktive.scheduler.ioScheduler
@@ -24,11 +25,11 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.button).setOnClickListener {
             observable<String> { emitter ->
-                emitter.onNext("Loading...")
                 Thread.sleep(1000L)
                 emitter.onNext(SimpleDateFormat.getDateTimeInstance().format(Date()))
                 emitter.onComplete()
             }
+                .startWith("Loading...")
                 .subscribeOn(ioScheduler)
                 .observeOn(mainScheduler)
                 .subscribe(onNext = textView::setText)
