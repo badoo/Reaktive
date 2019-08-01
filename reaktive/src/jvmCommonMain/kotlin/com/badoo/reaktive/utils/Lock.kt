@@ -1,7 +1,5 @@
 package com.badoo.reaktive.utils
 
-import java.util.concurrent.TimeUnit
-
 internal actual class Lock {
 
     private val delegate = java.util.concurrent.locks.ReentrantLock()
@@ -24,10 +22,19 @@ internal actual class Lock {
         private val delegate: java.util.concurrent.locks.Condition
     ) : Condition {
         override fun await(timeoutNanos: Long) {
-            if (timeoutNanos >= 0L) {
-                delegate.awaitNanos(timeoutNanos)
-            } else {
-                delegate.await()
+            var isInterrupted = Thread.interrupted() // "Thread.interrupted()" clears "interrupted" status of the current thread
+            try {
+                if (timeoutNanos >= 0L) {
+                    delegate.awaitNanos(timeoutNanos)
+                } else {
+                    delegate.await()
+                }
+            } catch (e: InterruptedException) {
+                isInterrupted = true
+            } finally {
+                if (isInterrupted) {
+                    Thread.currentThread().interrupt() // Set "interrupted" status of the current thread
+                }
             }
         }
 
