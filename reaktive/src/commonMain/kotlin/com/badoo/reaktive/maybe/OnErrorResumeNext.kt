@@ -2,6 +2,7 @@ package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.CompleteCallback
 import com.badoo.reaktive.base.SuccessCallback
+import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
@@ -20,7 +21,7 @@ fun <T> Maybe<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Maybe<T>): Maybe
                 }
 
                 override fun onError(error: Throwable) {
-                    observer.tryCatch({ nextSupplier(error) }) {
+                    observer.tryCatch({ nextSupplier(error) }, { CompositeException(error, it) }) {
                         it.subscribeSafe(
                             object : MaybeObserver<T>, MaybeCallbacks<T> by observer {
                                 override fun onSubscribe(disposable: Disposable) {

@@ -1,5 +1,6 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
@@ -120,11 +121,16 @@ class OnErrorResumeNextTest :
 
     @Test
     fun produces_error_WHEN_upstream_produced_error_and_resume_next_supplier_produced_error() {
-        val throwable = Throwable()
-        val observer = upstream.onErrorResumeNext { throw throwable }.test()
-        upstream.onError(Throwable())
+        val upstreamThrowable = Throwable()
+        val supplierThrowable = Throwable()
+        val observer = upstream.onErrorResumeNext { throw supplierThrowable }.test()
+        upstream.onError(upstreamThrowable)
 
-        observer.assertError(throwable)
+        observer.assertError { throwable ->
+            throwable is CompositeException &&
+                    throwable.cause1 == upstreamThrowable &&
+                    throwable.cause2 == supplierThrowable
+        }
     }
 
     private fun createTestWithObservable(): Pair<TestObservable<Int?>, TestObservableObserver<Int?>> {

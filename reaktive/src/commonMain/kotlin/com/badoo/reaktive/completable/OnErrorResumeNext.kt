@@ -1,6 +1,7 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.CompleteCallback
+import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
@@ -19,7 +20,7 @@ fun Completable.onErrorResumeNext(nextSupplier: (Throwable) -> Completable): Com
                 }
 
                 override fun onError(error: Throwable) {
-                    observer.tryCatch({ nextSupplier(error) }) {
+                    observer.tryCatch({ nextSupplier(error) }, { CompositeException(error, it) }) {
                         it.subscribeSafe(
                             object : CompletableObserver, CompletableCallbacks by observer {
                                 override fun onSubscribe(disposable: Disposable) {

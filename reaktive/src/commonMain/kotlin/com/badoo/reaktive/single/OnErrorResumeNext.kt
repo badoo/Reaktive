@@ -1,6 +1,7 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.SuccessCallback
+import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
@@ -19,7 +20,7 @@ fun <T> Single<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Single<T>): Sin
                 }
 
                 override fun onError(error: Throwable) {
-                    observer.tryCatch({ nextSupplier(error) }) {
+                    observer.tryCatch({ nextSupplier(error) }, { CompositeException(error, it) }) {
                         it.subscribeSafe(
                             object : SingleObserver<T>, SingleCallbacks<T> by observer {
                                 override fun onSubscribe(disposable: Disposable) {

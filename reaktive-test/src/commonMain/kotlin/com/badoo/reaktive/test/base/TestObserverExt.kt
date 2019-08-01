@@ -2,6 +2,7 @@ package com.badoo.reaktive.test.base
 
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 val TestObserver.isError: Boolean get() = error != null
@@ -12,6 +13,12 @@ fun TestObserver.assertError() {
 
 fun TestObserver.assertError(expectedError: Throwable) {
     assertEquals(expectedError, error)
+}
+
+fun TestObserver.assertError(predicate: (Throwable) -> Boolean) {
+    val error = this.error
+    assertNotNull(error)
+    assertTrue(predicate(error))
 }
 
 fun TestObserver.assertNotError() {
