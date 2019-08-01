@@ -1,0 +1,7 @@
+package com.badoo.reaktive.observable
+
+fun <T> Observable<T>.onErrorReturn(valueSupplier: (Throwable) -> T) =
+    onErrorResumeNext { throwable -> valueSupplier(throwable).toObservable() }
+
+fun <T> Observable<T>.onErrorReturnValue(value: T) =
+    onErrorResumeNext { value.toObservable() }
