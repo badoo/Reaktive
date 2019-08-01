@@ -3,7 +3,7 @@ package com.badoo.reaktive.utils
 import com.badoo.reaktive.utils.atomic.AtomicList
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 import com.badoo.reaktive.utils.atomic.update
-import kotlin.system.getTimeMillis
+import kotlin.system.getTimeNanos
 
 internal class DelayQueue<T : Any> {
 
@@ -38,9 +38,9 @@ internal class DelayQueue<T : Any> {
             while (true) {
                 val item: Holder<T>? = queue.value.firstOrNull()
                 if (item == null) {
-                    condition.await(Long.MAX_VALUE)
+                    condition.await()
                 } else {
-                    val timeout = item.endTimeMillis.minus(getTimeMillis())
+                    val timeout = item.endTimeNanos.minus(getTimeNanos())
 
                     if (timeout <= 0L) {
                         queue.update { it.drop(1) }
@@ -57,19 +57,23 @@ internal class DelayQueue<T : Any> {
     }
 
     fun offer(value: T, timeoutMillis: Long) {
-        val holder = Holder(value, getTimeMillis() + timeoutMillis)
+        val holder = Holder(value, getTimeNanos() + timeoutMillis * NANOS_IN_MILLIS)
         lock.synchronized {
             queue.update { it.plusSorted(holder, HolderComparator) }
             condition.signal()
         }
     }
 
+    private companion object {
+        private const val NANOS_IN_MILLIS = 1_000_000L
+    }
+
     private class Holder<out T>(
         val value: T,
-        val endTimeMillis: Long
+        val endTimeNanos: Long
     )
 
     private object HolderComparator : Comparator<Holder<*>> {
-        override fun compare(a: Holder<*>, b: Holder<*>): Int = a.endTimeMillis.compareTo(b.endTimeMillis)
+        override fun compare(a: Holder<*>, b: Holder<*>): Int = a.endTimeNanos.compareTo(b.endTimeNanos)
     }
 }
