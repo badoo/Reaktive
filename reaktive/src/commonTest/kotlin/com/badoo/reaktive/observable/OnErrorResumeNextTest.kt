@@ -128,8 +128,8 @@ class OnErrorResumeNextTest :
 
         observer.assertError { throwable ->
             throwable is CompositeException &&
-                    throwable.cause1 == upstreamThrowable &&
-                    throwable.cause2 == supplierThrowable
+                throwable.cause1 == upstreamThrowable &&
+                throwable.cause2 == supplierThrowable
         }
     }
 
