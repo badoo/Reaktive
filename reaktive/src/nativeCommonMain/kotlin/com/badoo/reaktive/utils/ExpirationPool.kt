@@ -6,6 +6,7 @@ import kotlin.native.concurrent.freeze
 
 // Not cancellable nor destroyable, implement when needed. Currently used only as singleton.
 // DelayQueue should be destroyed, but all readers and writers must be cancelled first.
+// See LooperThread for sample implementation.
 internal class ExpirationPool<T : Any>(
     private val onItemExpired: (T) -> Unit
 ) {
@@ -25,9 +26,8 @@ internal class ExpirationPool<T : Any>(
 
     private fun drainQueue() {
         while (true) {
-            queue
-                .take()
-                .also(onItemExpired)
+            onItemExpired(queue.take() ?: break)
         }
+        queue.destroy()
     }
 }

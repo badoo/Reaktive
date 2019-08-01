@@ -1,39 +1,43 @@
 package com.badoo.reaktive.looperthread
 
-import kotlin.native.concurrent.AtomicInt
+import com.badoo.reaktive.utils.DelayQueue
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
 import kotlin.native.concurrent.freeze
 
 internal class LooperThread {
 
-    private val queue = MessageQueue().freeze()
+    private val queue = DelayQueue<Message>()
     private val worker = Worker.start(true)
-    private val isDestroyed = AtomicInt(0)
 
     init {
-        worker.execute(TransferMode.SAFE, { ::loop.freeze() }) {
-            it()
-        }
+        freeze()
+        worker.execute(TransferMode.SAFE, { this }) { it.loop() }
     }
 
-    fun schedule(token: Any, startTimeNanos: Long, task: () -> Unit) {
-        queue.offer(token, startTimeNanos, task)
+    fun schedule(token: Any, startTimeMillis: Long, task: () -> Unit) {
+        queue.offerAt(Message(token, task), startTimeMillis)
     }
 
     fun cancel(token: Any) {
-        queue.clear(token)
+        queue.removeIf { it.token == token }
     }
 
     fun destroy() {
-        isDestroyed.value = 1
-        queue.destroy()
         worker.requestTermination(processScheduledJobs = false)
+        queue.terminate()
     }
 
     private fun loop() {
-        while (isDestroyed.value == 0) {
-            queue.take().invoke()
+        while (true) {
+            val message = queue.take() ?: break
+            message.task()
         }
+        queue.destroy()
     }
+
+    private class Message(
+        val token: Any,
+        val task: () -> Unit
+    )
 }
