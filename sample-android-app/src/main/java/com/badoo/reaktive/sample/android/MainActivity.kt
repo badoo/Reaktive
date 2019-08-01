@@ -6,7 +6,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.badoo.reaktive.observable.observableFromFunction
 import com.badoo.reaktive.observable.observeOn
-import com.badoo.reaktive.observable.startWith
+import com.badoo.reaktive.observable.startWithValue
 import com.badoo.reaktive.observable.subscribe
 import com.badoo.reaktive.observable.subscribeOn
 import com.badoo.reaktive.scheduler.ioScheduler
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             }
                 .subscribeOn(ioScheduler)
                 .observeOn(mainScheduler)
-                .startWith("Loading...")
+                .startWithValue("Loading...")
                 .subscribe(onNext = textView::setText)
         }
     }
