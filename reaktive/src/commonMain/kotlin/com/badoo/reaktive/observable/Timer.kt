@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.scheduler.Scheduler
 
 fun observableTimer(delayMillis: Long, scheduler: Scheduler): Observable<Long> =
@@ -9,8 +8,6 @@ fun observableTimer(delayMillis: Long, scheduler: Scheduler): Observable<Long> =
         emitter.setDisposable(executor)
         executor.submit(delayMillis) {
             emitter.onNext(0L)
-            emitter.setDisposable(disposable())
             emitter.onComplete()
-            executor.dispose()
         }
     }
