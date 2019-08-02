@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import android.widget.TextView
-import com.badoo.reaktive.observable.observableFromFunction
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.observableTimer
 import com.badoo.reaktive.observable.observeOn
 import com.badoo.reaktive.observable.startWithValue
 import com.badoo.reaktive.observable.subscribe
-import com.badoo.reaktive.observable.subscribeOn
-import com.badoo.reaktive.scheduler.ioScheduler
+import com.badoo.reaktive.scheduler.computationScheduler
 import com.badoo.reaktive.scheduler.mainScheduler
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -24,11 +24,8 @@ class MainActivity : AppCompatActivity() {
         val textView = findViewById<TextView>(R.id.text)
 
         findViewById<Button>(R.id.button).setOnClickListener {
-            observableFromFunction<String> {
-                Thread.sleep(1000L)
-                SimpleDateFormat.getDateTimeInstance().format(Date())
-            }
-                .subscribeOn(ioScheduler)
+            observableTimer(1000L, computationScheduler)
+                .map { SimpleDateFormat.getDateTimeInstance().format(Date()) }
                 .observeOn(mainScheduler)
                 .startWithValue("Loading...")
                 .subscribe(onNext = textView::setText)
