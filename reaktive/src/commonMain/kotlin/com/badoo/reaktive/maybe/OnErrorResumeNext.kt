@@ -1,20 +1,20 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.CompleteCallback
-import com.badoo.reaktive.base.ValueCallback
+import com.badoo.reaktive.base.SuccessCallback
 import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
-fun <T> Observable<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Observable<T>): Observable<T> =
-    observableUnsafe { observer ->
+fun <T> Maybe<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Maybe<T>): Maybe<T> =
+    maybeUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 
         subscribeSafe(
-            object : ObservableObserver<T>, ValueCallback<T> by observer, CompleteCallback by observer {
+            object : MaybeObserver<T>, SuccessCallback<T> by observer, CompleteCallback by observer {
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
@@ -23,7 +23,7 @@ fun <T> Observable<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Observable<
                 override fun onError(error: Throwable) {
                     observer.tryCatch({ nextSupplier(error) }, { CompositeException(error, it) }) {
                         it.subscribeSafe(
-                            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
+                            object : MaybeObserver<T>, MaybeCallbacks<T> by observer {
                                 override fun onSubscribe(disposable: Disposable) {
                                     disposableWrapper.set(disposable)
                                 }
@@ -35,5 +35,5 @@ fun <T> Observable<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Observable<
         )
     }
 
-fun <T> Observable<T>.onErrorResumeNext(next: Observable<T>): Observable<T> =
+fun <T> Maybe<T>.onErrorResumeNext(next: Maybe<T>): Maybe<T> =
     onErrorResumeNext { next }

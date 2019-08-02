@@ -1,24 +1,21 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.TestObservableObserver
-import com.badoo.reaktive.test.observable.assertComplete
-import com.badoo.reaktive.test.observable.assertNoValues
-import com.badoo.reaktive.test.observable.assertNotComplete
-import com.badoo.reaktive.test.observable.assertValues
-import com.badoo.reaktive.test.observable.onNext
-import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.test.completable.TestCompletable
+import com.badoo.reaktive.test.completable.TestCompletableObserver
+import com.badoo.reaktive.test.completable.assertComplete
+import com.badoo.reaktive.test.completable.assertNotComplete
+import com.badoo.reaktive.test.completable.test
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class OnErrorResumeNextTest :
-    ObservableToObservableTests by ObservableToObservableTests<Unit>({ onErrorResumeNext { Unit.toObservable() } }) {
+    CompletableToCompletableTests by CompletableToCompletableTests({ onErrorResumeNext { completableOfEmpty() } }) {
 
-    private val upstream = TestObservable<Int?>()
+    private val upstream = TestCompletable()
 
     override fun produces_error_WHEN_upstream_produced_error() {
         // not applicable
@@ -26,7 +23,7 @@ class OnErrorResumeNextTest :
 
     @Test
     fun subscribes_to_resume_next_WHEN_upstream_produced_error() {
-        val (errorResumeNext, _) = createTestWithObservable()
+        val (errorResumeNext, _) = createTestWithCompletable()
 
         upstream.onError(Throwable())
 
@@ -34,17 +31,8 @@ class OnErrorResumeNextTest :
     }
 
     @Test
-    fun does_not_subscribe_to_resume_next_WHEN_upstream_produced_values() {
-        val (errorResumeNext, _) = createTestWithObservable()
-
-        upstream.onNext(0, 1, null)
-
-        assertFalse(errorResumeNext.hasSubscribers)
-    }
-
-    @Test
     fun does_not_subscribe_to_resume_next_WHEN_upstream_completed() {
-        val (errorResumeNext, _) = createTestWithObservable()
+        val (errorResumeNext, _) = createTestWithCompletable()
 
         upstream.onComplete()
 
@@ -53,7 +41,7 @@ class OnErrorResumeNextTest :
 
     @Test
     fun disposes_upstream_WHEN_upstream_produced_error() {
-        createTestWithObservable()
+        createTestWithCompletable()
 
         upstream.onError(Throwable())
 
@@ -62,7 +50,7 @@ class OnErrorResumeNextTest :
 
     @Test
     fun disposes_resume_next_WHEN_disposed() {
-        val (errorResumeNext, observer) = createTestWithObservable()
+        val (errorResumeNext, observer) = createTestWithCompletable()
 
         upstream.onError(Throwable())
         observer.dispose()
@@ -72,7 +60,7 @@ class OnErrorResumeNextTest :
 
     @Test
     fun does_not_complete_WHEN_upstream_produced_error_and_resume_next_did_not_complete() {
-        val (_, observer) = createTestWithObservable()
+        val (_, observer) = createTestWithCompletable()
 
         upstream.onError(Throwable())
 
@@ -81,7 +69,7 @@ class OnErrorResumeNextTest :
 
     @Test
     fun completes_WHEN_upstream_produced_error_and_resume_next_completed() {
-        val (errorResumeNext, observer) = createTestWithObservable()
+        val (errorResumeNext, observer) = createTestWithCompletable()
 
         upstream.onError(Throwable())
         errorResumeNext.onComplete()
@@ -90,27 +78,8 @@ class OnErrorResumeNextTest :
     }
 
     @Test
-    fun does_not_produce_values_WHEN_upstream_produced_error_and_resume_next_did_not_produce_values() {
-        val (_, observer) = createTestWithObservable()
-
-        upstream.onError(Throwable())
-
-        observer.assertNoValues()
-    }
-
-    @Test
-    fun produces_values_WHEN_upstream_produced_error_and_resume_next_produced_values() {
-        val (errorResumeNext, observer) = createTestWithObservable()
-
-        upstream.onError(Throwable())
-        errorResumeNext.onNext(0, 1, null)
-
-        observer.assertValues(0, 1, null)
-    }
-
-    @Test
     fun produces_error_WHEN_upstream_produced_error_and_resume_next_produced_error() {
-        val (errorResumeNext, observer) = createTestWithObservable()
+        val (errorResumeNext, observer) = createTestWithCompletable()
 
         upstream.onError(Throwable())
         val throwable = Throwable()
@@ -133,9 +102,10 @@ class OnErrorResumeNextTest :
         }
     }
 
-    private fun createTestWithObservable(): Pair<TestObservable<Int?>, TestObservableObserver<Int?>> {
-        val errorResumeNext = TestObservable<Int?>()
+    private fun createTestWithCompletable(): Pair<TestCompletable, TestCompletableObserver> {
+        val errorResumeNext = TestCompletable()
         val observer = upstream.onErrorResumeNext { errorResumeNext }.test()
         return errorResumeNext to observer
     }
+
 }
