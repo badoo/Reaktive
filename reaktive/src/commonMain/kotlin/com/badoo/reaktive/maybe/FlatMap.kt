@@ -31,3 +31,10 @@ fun <T, R> Maybe<T>.flatMap(mapper: (T) -> Maybe<R>): Maybe<R> =
             }
         )
     }
+
+fun <T, U, R> Maybe<T>.flatMap(
+    mapper: (T) -> Maybe<U>,
+    resultSelector: (T, U) -> R
+): Maybe<R> = flatMap { t ->
+    mapper(t).map { u -> resultSelector(t, u) }
+}
