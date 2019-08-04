@@ -75,6 +75,7 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
 fun <T, U, R> Observable<T>.switchMap(
     mapper: (T) -> Observable<U>,
     resultSelector: (T, U) -> R
-): Observable<R> = switchMap { t ->
-    mapper(t).map { u -> resultSelector(t, u) }
-}
+): Observable<R> =
+    switchMap { t ->
+        mapper(t).map { u -> resultSelector(t, u) }
+    }
