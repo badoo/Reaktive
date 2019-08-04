@@ -13,7 +13,7 @@ class TestScheduler(
 
     val timer = Timer()
     private val _executors: AtomicReference<List<Executor>> = AtomicReference(emptyList(), true)
-    val executors: List<Executor> = _executors.value
+    val executors: List<Executor> get() = _executors.value
 
     override fun newExecutor(): Scheduler.Executor =
         Executor(timer, isManualProcessing)
