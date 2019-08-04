@@ -9,9 +9,7 @@ fun <T, R> Maybe<T>.flatMapSingle(mapper: (T) -> Single<R>): Maybe<R> =
         mapper(it).asMaybe()
     }
 
-fun <T, U, R> Maybe<T>.flatMapSingle(
-    mapper: (T) -> Single<U>,
-    resultSelector: (T, U) -> R
-): Maybe<R> = flatMapSingle { t ->
-    mapper(t).map { u -> resultSelector(t, u) }
-}
+fun <T, U, R> Maybe<T>.flatMapSingle(mapper: (T) -> Single<U>, resultSelector: (T, U) -> R): Maybe<R> =
+    flatMapSingle { t ->
+        mapper(t).map { u -> resultSelector(t, u) }
+    }

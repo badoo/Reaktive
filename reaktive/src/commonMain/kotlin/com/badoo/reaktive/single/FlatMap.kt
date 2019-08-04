@@ -33,9 +33,7 @@ fun <T, R> Single<T>.flatMap(mapper: (T) -> Single<R>): Single<R> =
         )
     }
 
-fun <T, U, R> Single<T>.flatMap(
-    mapper: (T) -> Single<U>,
-    resultSelector: (T, U) -> R
-): Single<R> = flatMap { t ->
-    mapper(t).map { u -> resultSelector(t, u) }
-}
+fun <T, U, R> Single<T>.flatMap(mapper: (T) -> Single<U>, resultSelector: (T, U) -> R): Single<R> =
+    flatMap { t ->
+        mapper(t).map { u -> resultSelector(t, u) }
+    }

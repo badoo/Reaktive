@@ -49,6 +49,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
 fun <T, U, R> Observable<T>.flatMap(
     mapper: (T) -> Observable<U>,
     resultSelector: (T, U) -> R
-): Observable<R> = flatMap { t ->
-    mapper(t).map { u -> resultSelector(t, u) }
-}
+): Observable<R> =
+    flatMap { t ->
+        mapper(t).map { u -> resultSelector(t, u) }
+    }
