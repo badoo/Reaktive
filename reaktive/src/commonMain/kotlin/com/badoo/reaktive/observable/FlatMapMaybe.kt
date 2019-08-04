@@ -9,10 +9,7 @@ fun <T, R> Observable<T>.flatMapMaybe(mapper: (T) -> Maybe<R>): Observable<R> =
         mapper(it).asObservable()
     }
 
-fun <T, U, R> Observable<T>.flatMapMaybe(
-    mapper: (T) -> Maybe<U>,
-    resultSelector: (T, U) -> R
-): Observable<R> =
+fun <T, U, R> Observable<T>.flatMapMaybe(mapper: (T) -> Maybe<U>, resultSelector: (T, U) -> R): Observable<R> =
     flatMapMaybe { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
