@@ -49,7 +49,7 @@ class TimerTest {
     @Test
     fun succeed_WHEN_timeout_reached() {
         timer.advanceBy(1000L)
-        observer.assertSuccess(0L)
+        observer.assertSuccess(1000L)
     }
 
     @Test

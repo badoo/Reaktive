@@ -57,7 +57,7 @@ class TimerTest {
     @Test
     fun emit_single_value_WHEN_timeout_reached() {
         timer.advanceBy(1000L)
-        observer.assertValue(0L)
+        observer.assertValue(1000L)
     }
 
     @Test

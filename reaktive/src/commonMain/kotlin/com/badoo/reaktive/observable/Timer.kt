@@ -7,7 +7,7 @@ fun observableTimer(delayMillis: Long, scheduler: Scheduler): Observable<Long> =
         val executor = scheduler.newExecutor()
         emitter.setDisposable(executor)
         executor.submit(delayMillis) {
-            emitter.onNext(0L)
+            emitter.onNext(delayMillis)
             emitter.onComplete()
         }
     }

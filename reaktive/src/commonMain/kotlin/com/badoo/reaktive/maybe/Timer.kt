@@ -6,5 +6,5 @@ fun maybeTimer(delayMillis: Long, scheduler: Scheduler): Maybe<Long> =
     maybe { emitter ->
         val executor = scheduler.newExecutor()
         emitter.setDisposable(executor)
-        executor.submit(delayMillis) { emitter.onSuccess(0L) }
+        executor.submit(delayMillis) { emitter.onSuccess(delayMillis) }
     }

@@ -6,5 +6,5 @@ fun singleTimer(delayMillis: Long, scheduler: Scheduler): Single<Long> =
     single { emitter ->
         val executor = scheduler.newExecutor()
         emitter.setDisposable(executor)
-        executor.submit(delayMillis) { emitter.onSuccess(0L) }
+        executor.submit(delayMillis) { emitter.onSuccess(delayMillis) }
     }
