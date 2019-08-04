@@ -9,10 +9,7 @@ fun <T, R> Observable<T>.switchMapMaybe(mapper: (T) -> Maybe<R>): Observable<R> 
         mapper(it).asObservable()
     }
 
-fun <T, U, R> Observable<T>.switchMapMaybe(
-    mapper: (T) -> Maybe<U>,
-    resultSelector: (T, U) -> R
-): Observable<R> =
+fun <T, U, R> Observable<T>.switchMapMaybe(mapper: (T) -> Maybe<U>, resultSelector: (T, U) -> R): Observable<R> =
     switchMapMaybe { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
