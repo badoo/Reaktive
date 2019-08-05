@@ -4,9 +4,11 @@ import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
 import kotlin.native.concurrent.freeze
 
-// Not cancellable nor destroyable, implement when needed. Currently used only as singleton.
-// DelayQueue should be destroyed, but all readers and writers must be cancelled first.
-// See LooperThread for sample implementation.
+/*
+ * Not cancellable nor destroyable, implement when needed. Currently used only as singleton.
+ * DelayQueue should be destroyed, but all readers and writers must be cancelled first.
+ * See LooperThread for sample implementation.
+ */
 internal class ExpirationPool<T : Any>(
     private val onItemExpired: (T) -> Unit
 ) {
