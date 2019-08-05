@@ -18,7 +18,7 @@ import com.badoo.reaktive.scheduler.computationScheduler
 import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.publish.publishSubject
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,20 +43,20 @@ class MainActivity : AppCompatActivity() {
                 }
                     .map(SimpleDateFormat.getDateTimeInstance()::format)
                     .subscribeOn(computationScheduler)
-                    .onErrorReturn { throwable -> throwable.toString() }
+                    .onErrorReturn(Throwable::toString)
                     .startWithValue("Loading...")
             }
             .observeOn(mainScheduler)
             .subscribe(
                 onNext = textView::setText,
-                onError = { throwable -> textView.text = throwable.toString() },
-                onComplete = { textView.text = "Completed" }
+                onError = { throwable -> throw IllegalStateException("Unexpected terminal onError event", throwable) },
+                onComplete = { throw IllegalStateException("Unexpected terminal onComplete event") }
             )
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        disposables.clear()
+        disposables.dispose()
     }
 
 }
