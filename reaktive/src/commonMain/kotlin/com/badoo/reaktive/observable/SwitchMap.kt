@@ -7,70 +7,83 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.update
+import com.badoo.reaktive.utils.atomic.updateAndGet
 
 fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
+
+        val innerDisposableWrapper = DisposableWrapper()
+        disposables += innerDisposableWrapper
+
+        val state = AtomicReference(SwitchMapState(), true)
         val serializedEmitter = emitter.serialize()
 
-        subscribeSafe(object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
-            private val activeSourceCount = AtomicInt(initialValue = 1)
-            private val activeObserver = DisposableWrapper()
+        subscribeSafe(
+            object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposables += disposable
+                }
 
-            override fun onSubscribe(disposable: Disposable) {
-                disposables += disposable
-                disposables += activeObserver
-            }
+                override fun onNext(value: T) {
+                    serializedEmitter.tryCatch(block = { mapper(value) }, onSuccess = ::onInnerObservable)
+                }
 
-            override fun onNext(value: T) {
-                activeSourceCount.addAndGet(delta = 1)
+                private fun onInnerObservable(observable: Observable<R>) {
+                    val localDisposableWrapper = DisposableWrapper()
 
-                serializedEmitter.tryCatch({ mapper(value) }) { innerObservable ->
-                    val innerObserver = object : ObservableObserver<R>, Disposable,
-                        ValueCallback<R> by serializedEmitter,
-                        ErrorCallback by this {
+                    /*
+                     * Dispose any existing inner Observable.
+                     * If a previous Observable did not provide its disposable yet it will be disposed automatically later since
+                     * its localDisposableWrapper is disposed.
+                     */
+                    innerDisposableWrapper.set(localDisposableWrapper)
 
-                        private val disposableWrapper = DisposableWrapper()
-                        private val isCompleted = AtomicBoolean(initialValue = false)
+                    val innerObserver =
+                        object : ObservableObserver<R>, ValueCallback<R> by serializedEmitter,
+                            ErrorCallback by serializedEmitter {
+                            override fun onSubscribe(disposable: Disposable) {
+                                localDisposableWrapper.set(disposable)
+                            }
 
-                        override fun onSubscribe(disposable: Disposable) {
-                            disposableWrapper.set(disposable)
-                        }
-
-                        override fun onComplete() {
-                            if (isCompleted.compareAndSet(expectedValue = false, newValue = true)) {
-                                if (activeSourceCount.addAndGet(delta = -1) <= 0) {
-                                    serializedEmitter.onComplete()
+                            override fun onComplete() {
+                                val actualState = state.updateAndGet { previousState ->
+                                    when {
+                                        previousState.innerObserver == this -> previousState.copy(innerObserver = null)
+                                        else -> previousState
+                                    }
                                 }
+                                checkStateFinished(actualState)
                             }
                         }
 
-                        override val isDisposed: Boolean get() = disposableWrapper.isDisposed
+                    state.update { previousState -> previousState.copy(innerObserver = innerObserver) }
+                    observable.subscribeSafe(innerObserver)
+                }
 
-                        override fun dispose() {
-                            disposableWrapper.dispose()
-                            if (!isCompleted.value) {
-                                activeSourceCount.addAndGet(delta = -1)
-                            }
-                        }
+                override fun onComplete() {
+                    val actualState = state.updateAndGet { previousState -> previousState.copy(isUpstreamCompleted = true) }
+                    checkStateFinished(actualState)
+                }
 
+                private fun checkStateFinished(state: SwitchMapState) {
+                    if (state.isFinished) {
+                        serializedEmitter.onComplete()
                     }
-                    activeObserver.set(innerObserver)
-                    innerObservable.subscribeSafe(innerObserver)
                 }
             }
-
-            override fun onComplete() {
-                if (activeSourceCount.addAndGet(delta = -1) <= 0) {
-                    serializedEmitter.onComplete()
-                }
-            }
-
-        })
+        )
     }
+
+private data class SwitchMapState(
+    val isUpstreamCompleted: Boolean = false,
+    val innerObserver: Any? = null
+) {
+    val isFinished: Boolean get() = isUpstreamCompleted && (innerObserver == null)
+}
 
 fun <T, U, R> Observable<T>.switchMap(mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
     switchMap { t ->
