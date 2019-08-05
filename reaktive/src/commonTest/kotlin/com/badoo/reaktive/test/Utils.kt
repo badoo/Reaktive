@@ -4,27 +4,27 @@ import com.badoo.reaktive.utils.Condition
 import com.badoo.reaktive.utils.uptimeMillis
 import kotlin.test.fail
 
-internal inline fun Condition.waitFor(timeoutMillis: Long, predicate: () -> Boolean): Boolean {
-    require(timeoutMillis > 0L) { "Timeout must be a positive value" }
+internal fun Condition.waitFor(timeoutNanos: Long, predicate: () -> Boolean): Boolean {
+    require(timeoutNanos > 0L) { "Timeout must be a positive value" }
 
-    val endMillis = uptimeMillis + timeoutMillis
-    var remainingMillis = timeoutMillis
+    val endNanos = uptimeMillis * 1_000_000L + timeoutNanos
+    var remainingNanos = timeoutNanos
 
     while (true) {
         if (predicate()) {
             return true
         }
-        if (remainingMillis <= 0L) {
+        if (remainingNanos <= 0L) {
             return false
         }
 
-        await(remainingMillis)
-        remainingMillis = endMillis - uptimeMillis
+        await(remainingNanos)
+        remainingNanos = endNanos - uptimeMillis * 1_000_000L
     }
 }
 
-internal inline fun Condition.waitForOrFail(timeoutMillis: Long, predicate: () -> Boolean) {
-    if (!waitFor(timeoutMillis, predicate)) {
+internal fun Condition.waitForOrFail(timeoutNanos: Long, predicate: () -> Boolean) {
+    if (!waitFor(timeoutNanos, predicate)) {
         fail("Timeout waiting for condition")
     }
 }

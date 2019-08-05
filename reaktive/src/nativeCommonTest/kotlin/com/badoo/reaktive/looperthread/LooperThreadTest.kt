@@ -29,25 +29,10 @@ class LooperThreadTest {
         }
 
         lock.synchronized {
-            condition.waitForOrFail(5000L, isExecuted::value)
+            condition.waitForOrFail(5_000_000_000L, isExecuted::value) // Wait for 5 secs
         }
 
         assertTrue(getTimeNanos() >= startTime)
-    }
-
-    @Test
-    fun cancels_task_by_token() {
-        val isExecuted = AtomicBoolean()
-        val thread = LooperThread()
-
-        thread.schedule(Unit, getTimeMillis() + 100L) {
-            isExecuted.value = true
-        }
-
-        thread.cancel(Unit)
-        usleep(200_000)
-
-        assertFalse(isExecuted.value)
     }
 
     @Test
@@ -65,7 +50,7 @@ class LooperThreadTest {
         }
 
         lock.synchronized {
-            condition.waitForOrFail(5000L, isExecuted::value)
+            condition.waitForOrFail(5_000_000_000L, isExecuted::value) // Wait for 5 secs
         }
 
         thread.destroy()
