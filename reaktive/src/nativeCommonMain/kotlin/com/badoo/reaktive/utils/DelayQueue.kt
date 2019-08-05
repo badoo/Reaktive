@@ -26,16 +26,14 @@ internal class DelayQueue<T : Any> {
     }
 
     fun removeFirst(): T? =
-        lock.synchronized {
-            doIfNotTerminated { queue ->
-                queue
-                    .firstOrNull()
-                    ?.value
-                    ?.also {
-                        queueRef.value = queue.drop(1)
-                        condition.signal()
-                    }
-            }
+        doSynchronizedIfNotTerminated { queue ->
+            queue
+                .firstOrNull()
+                ?.value
+                ?.also {
+                    queueRef.value = queue.drop(1)
+                    condition.signal()
+                }
         }
 
     /**
@@ -74,37 +72,34 @@ internal class DelayQueue<T : Any> {
 
     fun offerAt(value: T, timeMillis: Long) {
         val holder = Holder(value, timeMillis)
-        lock.synchronized {
-            doIfNotTerminated { queue ->
-                queueRef.value = queue.plusSorted(holder, HolderComparator)
+        doSynchronizedIfNotTerminated { queue ->
+            queueRef.value = queue.plusSorted(holder, HolderComparator)
+            condition.signal()
+        }
+    }
+
+    fun clear() {
+        doSynchronizedIfNotTerminated { queue ->
+            if (queue.isNotEmpty()) {
+                queueRef.value = emptyList()
                 condition.signal()
             }
         }
     }
 
-    fun clear() {
-        lock.synchronized {
-            doIfNotTerminated { queue ->
-                if (queue.isNotEmpty()) {
-                    queueRef.value = emptyList()
-                    condition.signal()
-                }
-            }
-        }
-    }
-
     fun removeIf(predicate: (T) -> Boolean) {
-        lock.synchronized {
-            doIfNotTerminated { queue ->
-                if (queue.isNotEmpty()) {
-                    queueRef.value = queue.filterNot { predicate(it.value) }
-                    condition.signal()
-                }
+        doSynchronizedIfNotTerminated { queue ->
+            if (queue.isNotEmpty()) {
+                queueRef.value = queue.filterNot { predicate(it.value) }
+                condition.signal()
             }
         }
     }
 
-    private inline fun <R> doIfNotTerminated(block: (queue: List<Holder<T>>) -> R): R? = queueRef.value?.let(block)
+    private inline fun <R> doSynchronizedIfNotTerminated(block: (queue: List<Holder<T>>) -> R): R? =
+        lock.synchronized {
+            queueRef.value?.let(block)
+        }
 
     private companion object {
         private const val NANOS_IN_MILLIS = 1_000_000L
