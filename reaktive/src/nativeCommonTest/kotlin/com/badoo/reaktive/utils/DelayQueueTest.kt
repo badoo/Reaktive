@@ -92,7 +92,7 @@ class DelayQueueTest {
     }
 
     @Test
-    fun poll_returns_null_when_terminated() {
+    fun take_returns_null_when_terminated() {
         queue.offer(0, 0L)
         queue.terminate()
         val value = queue.take()
