@@ -125,7 +125,7 @@ internal class DelayQueue<T : Any> {
                 if (diff == 0L) {
                     diff = a.sequenceNumber - b.sequenceNumber
                 }
-                diff.toInt().coerceIn(-1, 1)
+                diff.coerceIn(-1, 1).toInt()
             }
     }
 }
