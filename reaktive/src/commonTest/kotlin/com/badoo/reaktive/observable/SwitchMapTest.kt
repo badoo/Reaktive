@@ -1,5 +1,6 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
@@ -194,6 +195,42 @@ class SwitchMapTest :
 
         assertTrue(source.isDisposed)
         assertTrue(inners[1].isDisposed)
+    }
+
+    @Test
+    fun disposes_previous_inner_source_disposable_IF_it_is_provided_after_new_source_disposable() {
+        lateinit var innerObserver1: ObservableObserver<String?>
+        val inner1 = observableUnsafe<String?> { observer -> innerObserver1 = observer }
+        val innerDisposable1 = disposable()
+
+        lateinit var innerObserver2: ObservableObserver<String?>
+        val inner2 = observableUnsafe<String?> { observer -> innerObserver2 = observer }
+        switchMapUpstreamAndSubscribe(listOf(inner1, inner2))
+
+        source.onNext(0)
+        source.onNext(1)
+        innerObserver2.onSubscribe(disposable())
+        innerObserver1.onSubscribe(innerDisposable1)
+
+        assertTrue(innerDisposable1.isDisposed)
+    }
+
+    @Test
+    fun does_not_dispose_new_inner_source_disposable_WHEN_previous_inner_source_disposable_is_provided_after_new_one() {
+        lateinit var innerObserver1: ObservableObserver<String?>
+        val inner1 = observableUnsafe<String?> { observer -> innerObserver1 = observer }
+
+        lateinit var innerObserver2: ObservableObserver<String?>
+        val inner2 = observableUnsafe<String?> { observer -> innerObserver2 = observer }
+        val innerDisposable2 = disposable()
+        switchMapUpstreamAndSubscribe(listOf(inner1, inner2))
+
+        source.onNext(0)
+        source.onNext(1)
+        innerObserver2.onSubscribe(innerDisposable2)
+        innerObserver1.onSubscribe(disposable())
+
+        assertFalse(innerDisposable2.isDisposed)
     }
 
     private fun switchMapUpstreamAndSubscribe(innerSources: List<Observable<String?>>): TestObservableObserver<String?> =
