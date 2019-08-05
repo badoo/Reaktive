@@ -1,5 +1,6 @@
 package com.badoo.reaktive.looperthread
 
+import com.badoo.reaktive.test.waitForOrFail
 import com.badoo.reaktive.utils.Lock
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.synchronized
@@ -28,9 +29,7 @@ class LooperThreadTest {
         }
 
         lock.synchronized {
-            while (!isExecuted.value) {
-                condition.await()
-            }
+            condition.waitForOrFail(5000L, isExecuted::value)
         }
 
         assertTrue(getTimeNanos() >= startTime)
@@ -66,9 +65,7 @@ class LooperThreadTest {
         }
 
         lock.synchronized {
-            while (!isExecuted.value) {
-                condition.await()
-            }
+            condition.waitForOrFail(5000L, isExecuted::value)
         }
 
         thread.destroy()
