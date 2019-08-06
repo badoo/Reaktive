@@ -51,10 +51,7 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
 
                             override fun onComplete() {
                                 val actualState = state.updateAndGet { previousState ->
-                                    when {
-                                        previousState.innerObserver == this -> previousState.copy(innerObserver = null)
-                                        else -> previousState
-                                    }
+                                    if (previousState.innerObserver == this) previousState.copy(innerObserver = null) else previousState
                                 }
                                 checkStateFinished(actualState)
                             }

@@ -11,6 +11,7 @@ import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -199,36 +200,36 @@ class SwitchMapTest :
 
     @Test
     fun disposes_previous_inner_source_disposable_IF_it_is_provided_after_new_source_disposable() {
-        lateinit var innerObserver1: ObservableObserver<String?>
-        val inner1 = observableUnsafe<String?> { observer -> innerObserver1 = observer }
+        val innerObserver1 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val inner1 = observableUnsafe<String?> { observer -> innerObserver1.value = observer }
         val innerDisposable1 = disposable()
 
-        lateinit var innerObserver2: ObservableObserver<String?>
-        val inner2 = observableUnsafe<String?> { observer -> innerObserver2 = observer }
+        val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val inner2 = observableUnsafe<String?> { observer -> innerObserver2.value = observer }
         switchMapUpstreamAndSubscribe(listOf(inner1, inner2))
 
         source.onNext(0)
         source.onNext(1)
-        innerObserver2.onSubscribe(disposable())
-        innerObserver1.onSubscribe(innerDisposable1)
+        innerObserver2.value!!.onSubscribe(disposable())
+        innerObserver1.value!!.onSubscribe(innerDisposable1)
 
         assertTrue(innerDisposable1.isDisposed)
     }
 
     @Test
     fun does_not_dispose_new_inner_source_disposable_WHEN_previous_inner_source_disposable_is_provided_after_new_one() {
-        lateinit var innerObserver1: ObservableObserver<String?>
-        val inner1 = observableUnsafe<String?> { observer -> innerObserver1 = observer }
+        val innerObserver1 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val inner1 = observableUnsafe<String?> { observer -> innerObserver1.value = observer }
 
-        lateinit var innerObserver2: ObservableObserver<String?>
-        val inner2 = observableUnsafe<String?> { observer -> innerObserver2 = observer }
+        val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val inner2 = observableUnsafe<String?> { observer -> innerObserver2.value = observer }
         val innerDisposable2 = disposable()
         switchMapUpstreamAndSubscribe(listOf(inner1, inner2))
 
         source.onNext(0)
         source.onNext(1)
-        innerObserver2.onSubscribe(innerDisposable2)
-        innerObserver1.onSubscribe(disposable())
+        innerObserver2.value!!.onSubscribe(innerDisposable2)
+        innerObserver1.value!!.onSubscribe(disposable())
 
         assertFalse(innerDisposable2.isDisposed)
     }

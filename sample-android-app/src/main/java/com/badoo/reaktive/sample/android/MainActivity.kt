@@ -14,7 +14,7 @@ import com.badoo.reaktive.observable.startWithValue
 import com.badoo.reaktive.observable.subscribe
 import com.badoo.reaktive.observable.subscribeOn
 import com.badoo.reaktive.observable.switchMap
-import com.badoo.reaktive.scheduler.computationScheduler
+import com.badoo.reaktive.scheduler.ioScheduler
 import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.publish.publishSubject
 import java.text.SimpleDateFormat
@@ -42,16 +42,12 @@ class MainActivity : AppCompatActivity() {
                     return@observableFromFunction Date()
                 }
                     .map(SimpleDateFormat.getDateTimeInstance()::format)
-                    .subscribeOn(computationScheduler)
+                    .subscribeOn(ioScheduler)
                     .onErrorReturn(Throwable::toString)
                     .startWithValue("Loading...")
             }
             .observeOn(mainScheduler)
-            .subscribe(
-                onNext = textView::setText,
-                onError = { throwable -> throw IllegalStateException("Unexpected terminal onError event", throwable) },
-                onComplete = { throw IllegalStateException("Unexpected terminal onComplete event") }
-            )
+            .subscribe(onNext = textView::setText)
     }
 
     override fun onDestroy() {
