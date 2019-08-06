@@ -1,20 +1,19 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.CompleteCallback
-import com.badoo.reaktive.base.ValueCallback
 import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
-fun <T> Observable<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Observable<T>): Observable<T> =
-    observableUnsafe { observer ->
+fun Completable.onErrorResumeNext(nextSupplier: (Throwable) -> Completable): Completable =
+    completableUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 
         subscribeSafe(
-            object : ObservableObserver<T>, ValueCallback<T> by observer, CompleteCallback by observer {
+            object : CompletableObserver, CompleteCallback by observer {
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
@@ -23,7 +22,7 @@ fun <T> Observable<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Observable<
                 override fun onError(error: Throwable) {
                     observer.tryCatch({ nextSupplier(error) }, { CompositeException(error, it) }) {
                         it.subscribeSafe(
-                            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
+                            object : CompletableObserver, CompletableCallbacks by observer {
                                 override fun onSubscribe(disposable: Disposable) {
                                     disposableWrapper.set(disposable)
                                 }
@@ -35,5 +34,5 @@ fun <T> Observable<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Observable<
         )
     }
 
-fun <T> Observable<T>.onErrorResumeNext(next: Observable<T>): Observable<T> =
+fun Completable.onErrorResumeNext(next: Completable): Completable =
     onErrorResumeNext { next }

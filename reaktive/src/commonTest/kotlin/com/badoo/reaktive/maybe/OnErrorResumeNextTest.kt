@@ -1,24 +1,23 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.TestObservableObserver
-import com.badoo.reaktive.test.observable.assertComplete
-import com.badoo.reaktive.test.observable.assertNoValues
-import com.badoo.reaktive.test.observable.assertNotComplete
-import com.badoo.reaktive.test.observable.assertValues
-import com.badoo.reaktive.test.observable.onNext
-import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.test.maybe.TestMaybe
+import com.badoo.reaktive.test.maybe.TestMaybeObserver
+import com.badoo.reaktive.test.maybe.assertComplete
+import com.badoo.reaktive.test.maybe.assertNotComplete
+import com.badoo.reaktive.test.maybe.assertNotSuccess
+import com.badoo.reaktive.test.maybe.assertSuccess
+import com.badoo.reaktive.test.maybe.test
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class OnErrorResumeNextTest :
-    ObservableToObservableTests by ObservableToObservableTests<Unit>({ onErrorResumeNext { Unit.toObservable() } }) {
+    MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ onErrorResumeNext { Unit.toMaybe() } }) {
 
-    private val upstream = TestObservable<Int?>()
+    private val upstream = TestMaybe<Int?>()
 
     override fun produces_error_WHEN_upstream_produced_error() {
         // not applicable
@@ -26,7 +25,7 @@ class OnErrorResumeNextTest :
 
     @Test
     fun subscribes_to_resume_next_WHEN_upstream_produced_error() {
-        val (errorResumeNext, _) = createTestWithObservable()
+        val (errorResumeNext, _) = createTestWithMaybe()
 
         upstream.onError(Throwable())
 
@@ -34,17 +33,17 @@ class OnErrorResumeNextTest :
     }
 
     @Test
-    fun does_not_subscribe_to_resume_next_WHEN_upstream_produced_values() {
-        val (errorResumeNext, _) = createTestWithObservable()
+    fun does_not_subscribe_to_resume_next_WHEN_upstream_produced_success() {
+        val (errorResumeNext, _) = createTestWithMaybe()
 
-        upstream.onNext(0, 1, null)
+        upstream.onSuccess(0)
 
         assertFalse(errorResumeNext.hasSubscribers)
     }
 
     @Test
     fun does_not_subscribe_to_resume_next_WHEN_upstream_completed() {
-        val (errorResumeNext, _) = createTestWithObservable()
+        val (errorResumeNext, _) = createTestWithMaybe()
 
         upstream.onComplete()
 
@@ -53,7 +52,7 @@ class OnErrorResumeNextTest :
 
     @Test
     fun disposes_upstream_WHEN_upstream_produced_error() {
-        createTestWithObservable()
+        createTestWithMaybe()
 
         upstream.onError(Throwable())
 
@@ -62,7 +61,7 @@ class OnErrorResumeNextTest :
 
     @Test
     fun disposes_resume_next_WHEN_disposed() {
-        val (errorResumeNext, observer) = createTestWithObservable()
+        val (errorResumeNext, observer) = createTestWithMaybe()
 
         upstream.onError(Throwable())
         observer.dispose()
@@ -72,7 +71,7 @@ class OnErrorResumeNextTest :
 
     @Test
     fun does_not_complete_WHEN_upstream_produced_error_and_resume_next_did_not_complete() {
-        val (_, observer) = createTestWithObservable()
+        val (_, observer) = createTestWithMaybe()
 
         upstream.onError(Throwable())
 
@@ -81,7 +80,7 @@ class OnErrorResumeNextTest :
 
     @Test
     fun completes_WHEN_upstream_produced_error_and_resume_next_completed() {
-        val (errorResumeNext, observer) = createTestWithObservable()
+        val (errorResumeNext, observer) = createTestWithMaybe()
 
         upstream.onError(Throwable())
         errorResumeNext.onComplete()
@@ -90,27 +89,27 @@ class OnErrorResumeNextTest :
     }
 
     @Test
-    fun does_not_produce_values_WHEN_upstream_produced_error_and_resume_next_did_not_produce_values() {
-        val (_, observer) = createTestWithObservable()
+    fun does_not_produce_success_WHEN_upstream_produced_error_and_resume_next_did_not_produce_success() {
+        val (_, observer) = createTestWithMaybe()
 
         upstream.onError(Throwable())
 
-        observer.assertNoValues()
+        observer.assertNotSuccess()
     }
 
     @Test
-    fun produces_values_WHEN_upstream_produced_error_and_resume_next_produced_values() {
-        val (errorResumeNext, observer) = createTestWithObservable()
+    fun produces_success_WHEN_upstream_produced_error_and_resume_next_produced_success() {
+        val (errorResumeNext, observer) = createTestWithMaybe()
 
         upstream.onError(Throwable())
-        errorResumeNext.onNext(0, 1, null)
+        errorResumeNext.onSuccess(0)
 
-        observer.assertValues(0, 1, null)
+        observer.assertSuccess(0)
     }
 
     @Test
     fun produces_error_WHEN_upstream_produced_error_and_resume_next_produced_error() {
-        val (errorResumeNext, observer) = createTestWithObservable()
+        val (errorResumeNext, observer) = createTestWithMaybe()
 
         upstream.onError(Throwable())
         val throwable = Throwable()
@@ -133,9 +132,10 @@ class OnErrorResumeNextTest :
         }
     }
 
-    private fun createTestWithObservable(): Pair<TestObservable<Int?>, TestObservableObserver<Int?>> {
-        val errorResumeNext = TestObservable<Int?>()
+    private fun createTestWithMaybe(): Pair<TestMaybe<Int?>, TestMaybeObserver<Int?>> {
+        val errorResumeNext = TestMaybe<Int?>()
         val observer = upstream.onErrorResumeNext { errorResumeNext }.test()
         return errorResumeNext to observer
     }
+
 }
