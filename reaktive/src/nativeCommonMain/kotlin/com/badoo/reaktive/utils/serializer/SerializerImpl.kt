@@ -3,6 +3,7 @@ package com.badoo.reaktive.utils.serializer
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 import com.badoo.reaktive.utils.atomic.update
+import com.badoo.reaktive.utils.plusSorted
 
 internal abstract class SerializerImpl<in T>(
     private val comparator: Comparator<in T>? = null
@@ -53,16 +54,8 @@ internal abstract class SerializerImpl<in T>(
     protected abstract fun onValue(value: T): Boolean
 
     private companion object {
-        private fun <T> List<T>.addAndSort(item: T, comparator: Comparator<in T>?): List<T> {
-            val list = ArrayList<T>(size + 1)
-            list.addAll(this)
-            list.add(item)
-            if (comparator != null) {
-                list.sortWith(comparator) // TODO: Optimise later
-            }
-
-            return list
-        }
+        private fun <T> List<T>.addAndSort(item: T, comparator: Comparator<in T>?): List<T> =
+            if (comparator == null) plus(item) else plusSorted(item, comparator)
     }
 
     private data class State<out T>(

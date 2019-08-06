@@ -15,7 +15,7 @@ internal class EnhancedDelayQueue<T : Any> {
     private val queue = DelayQueue<Entry<T>>()
     private val set: MutableSet<Entry<T>> = Collections.newSetFromMap(ConcurrentHashMap<Entry<T>, Boolean>())
 
-    fun poll(): T? =
+    fun removeFirst(): T? =
         queue
             .peek()
             ?.takeIf(set::remove)
