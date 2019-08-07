@@ -74,30 +74,30 @@ abstract class PublishPlugin : Plugin<Project> {
     }
 
     private fun setupBintrayTaskForKotlinMultiPlatform(target: Project) {
-        target.tasks.named("bintrayUpload", BintrayUploadTask::class) {
-            dependsOn(target.tasks.named(MavenPublishPlugin.PUBLISH_LOCAL_LIFECYCLE_TASK_NAME))
+        target.tasks.named(BintrayUploadTask.getTASK_NAME(), BintrayUploadTask::class) {
+            dependsOn(project.tasks.named(MavenPublishPlugin.PUBLISH_LOCAL_LIFECYCLE_TASK_NAME))
             doFirst {
-                setPublications(
-                    project.extensions.getByType(PublishingExtension::class).publications.map {
-                        if (it is MavenPublication) {
-                            logger.warn("Uploading artifact '${it.groupId}:${it.artifactId}:${it.version}' from publication '${it.name}'")
-                        } else {
-                            logger.warn("Not maven publication?")
-                        }
-                        it.name
-                    }
-                )
+                val publishing = project.extensions.getByType(PublishingExtension::class)
                 // https://github.com/bintray/gradle-bintray-plugin/issues/229
-                this@named.publications
+                publishing.publications
                     .filterIsInstance<MavenPublication>()
                     .forEach { publication ->
-                        val moduleFile = target.buildDir.resolve("publications/${publication.name}/module.json")
+                        val moduleFile = project.buildDir.resolve("publications/${publication.name}/module.json")
                         if (moduleFile.exists()) {
                             publication.artifact(object : FileBasedMavenArtifact(moduleFile) {
                                 override fun getDefaultExtension() = "module"
                             })
                         }
                     }
+                // https://github.com/bintray/gradle-bintray-plugin/issues/256
+                val publications = publishing.publications
+                    .filterIsInstance<MavenPublication>()
+                    .map {
+                        logger.warn("Uploading artifact '${it.groupId}:${it.artifactId}:${it.version}' from publication '${it.name}'")
+                        it.name
+                    }
+                    .toTypedArray()
+                setPublications(*publications)
             }
         }
     }

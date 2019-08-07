@@ -79,10 +79,10 @@ implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
 * Subjects: PublishSubject, BehaviorSubject
 * Interoperability with RxJava2: conversion of sources between Reaktive and RxJava2, ability to reuse RxJava2's schedulers
 * Supported operators:
-  * Observable: asCompletable, collect, combineLatest, concatMap, debounce, defaultIfEmpty, distinctUntilChanged, doOnBeforeXxx, filter, firstOrComplete, firstOrDefault, firstOrError, flatMap, flatMapCompletable, flatMapMaybe, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, sample, scan, skip, subscribeOn, switchIfEmpty, throttle, toCompletable, toList, withLatestFrom, zip
-  * Maybe: asCompletable, asObservable, asSingle, concat, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapObservable, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, subscribeOn, zip
-  * Single: asCompletable, asMaybe, asObservable, blockingGet, concat, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapMaybe, flatMapObservable, flatten, map, merge, notNull, observeOn, subscribeOn, zip
-  * Completable: andThen, asMaybe, asObservable, asSingle, concat, doOnBeforeXxx, merge, observeOn, subscribeOn
+  * Observable: asCompletable, collect, combineLatest, concatMap, concatWith, concatWithValue, debounce, delay, defaultIfEmpty, distinctUntilChanged, doOnBeforeXxx, filter, firstOrComplete, firstOrDefault, firstOrError, flatMap, flatMapCompletable, flatMapMaybe, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, sample, scan, skip, startWith, startWithValue, subscribeOn, switchIfEmpty, switchMap, throttle, toCompletable, toList, withLatestFrom, zip
+  * Maybe: asCompletable, asObservable, asSingle, concat, delay, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapObservable, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, subscribeOn, zip
+  * Single: asCompletable, asMaybe, asObservable, blockingGet, concat, delay, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapMaybe, flatMapObservable, flatten, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, subscribeOn, zip
+  * Completable: andThen, asMaybe, asObservable, asSingle, concat, delay, doOnBeforeXxx, merge, observeOn, onErrorComplete, onErrorResumeNext, subscribeOn
   * Plus multiple factory and conversion functions
 
 ### Samples:
