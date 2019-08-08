@@ -10,7 +10,6 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
-import com.badoo.reaktive.utils.atomic.update
 
 fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable<T> =
     observable { emitter ->
@@ -57,10 +56,9 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
                             }
 
                             override fun onComplete() {
-                                if (pendingValue.value === newPendingValue) {
-                                    pendingValue.update { null }
-                                    serializedEmitter.onNext(value)
-                                }
+                                pendingValue.getAndUpdate { if (it === newPendingValue) null else it }
+                                    ?.takeIf { it === newPendingValue }
+                                    ?.let { serializedEmitter.onNext(it.value) }
                             }
                         }
 
@@ -68,15 +66,11 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
                 }
 
                 override fun onComplete() {
-                    val previousPendingValue = pendingValue.getAndUpdate { null }
-                    previousPendingValue?.let { serializedEmitter.onNext(it.value) }
+                    pendingValue.getAndUpdate { null }
+                        ?.let { serializedEmitter.onNext(it.value) }
                     serializedEmitter.onComplete()
                 }
 
             }
         )
     }
-
-private class DebouncePendingValue<T>(
-    val value: T
-)
