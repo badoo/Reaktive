@@ -68,8 +68,6 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
                 }
 
                 override fun onComplete() {
-                    innerDisposableWrapper.dispose()
-
                     val previousPendingValue = pendingValue.getAndUpdate { null }
                     previousPendingValue?.let { serializedEmitter.onNext(it.value) }
                     serializedEmitter.onComplete()
