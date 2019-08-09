@@ -1,11 +1,6 @@
 buildscript {
-    ext.reaktive_version = '1.0.0-beta1'
+    ext.reaktive_version = '1.0.0-rc1'
     ext.reaktive_group_id = 'com.badoo.reaktive'
-
-    repositories {
-        google()
-        jcenter()
-    }
 }
 
 apply from: 'gradle/versions.gradle.kts'

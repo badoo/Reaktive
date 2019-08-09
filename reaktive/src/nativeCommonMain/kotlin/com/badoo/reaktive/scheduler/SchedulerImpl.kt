@@ -3,7 +3,7 @@ package com.badoo.reaktive.scheduler
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.looperthread.LooperThreadStrategy
 import kotlin.native.concurrent.AtomicInt
-import kotlin.system.getTimeNanos
+import kotlin.system.getTimeMillis
 
 internal class SchedulerImpl(
     private val looperThreadStrategy: LooperThreadStrategy
@@ -36,7 +36,7 @@ internal class SchedulerImpl(
 
         override fun submit(delayMillis: Long, task: () -> Unit) {
             if (!isDisposed) {
-                looperThread.schedule(this, getStartTimeNanos(delayMillis), task)
+                looperThread.schedule(this, getStartTimeMillis(delayMillis), task)
             }
         }
 
@@ -44,15 +44,15 @@ internal class SchedulerImpl(
             lateinit var t: () -> Unit
             t = {
                 if (!isDisposed) {
-                    val nextStartTimeNanos = getStartTimeNanos(periodMillis)
+                    val nextStartTimeMillis = getStartTimeMillis(periodMillis)
                     task()
                     if (!isDisposed) {
-                        looperThread.schedule(this, nextStartTimeNanos, t)
+                        looperThread.schedule(this, nextStartTimeMillis, t)
                     }
                 }
             }
             if (!isDisposed) {
-                looperThread.schedule(this, getStartTimeNanos(startDelayMillis), t)
+                looperThread.schedule(this, getStartTimeMillis(startDelayMillis), t)
             }
         }
 
@@ -61,9 +61,7 @@ internal class SchedulerImpl(
         }
 
         private companion object {
-            private fun getStartTimeNanos(delayMillis: Long): Long = getTimeNanos() + delayMillis.toNanos()
-
-            private fun Long.toNanos(): Long = this * 1000000L
+            private fun getStartTimeMillis(delayMillis: Long): Long = getTimeMillis() + delayMillis
         }
     }
 }

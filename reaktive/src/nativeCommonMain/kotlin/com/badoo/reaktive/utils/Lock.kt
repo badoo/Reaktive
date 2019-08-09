@@ -7,6 +7,7 @@ import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import platform.posix.PTHREAD_MUTEX_RECURSIVE
+import platform.posix.gettimeofday
 import platform.posix.pthread_cond_broadcast
 import platform.posix.pthread_cond_destroy
 import platform.posix.pthread_cond_init
@@ -23,7 +24,7 @@ import platform.posix.pthread_mutexattr_init
 import platform.posix.pthread_mutexattr_settype
 import platform.posix.pthread_mutexattr_t
 import platform.posix.timespec
-import kotlin.system.getTimeNanos
+import platform.posix.timeval
 
 internal actual class Lock {
 
@@ -67,8 +68,13 @@ internal actual class Lock {
         override fun await(timeoutNanos: Long) {
             if (timeoutNanos >= 0L) {
                 memScoped {
-                    val t: timespec = alloc { setNanos(getTimeNanos() + timeoutNanos) }
-                    pthread_cond_timedwait(cond.ptr, lockPtr, t.ptr)
+                    // iOS does not support pthread_condattr_setclock() nor clock_gettime(), can't use monotonic time
+                    val tv: timeval = alloc { gettimeofday(ptr, null) }
+                    val ts: timespec = alloc()
+                    ts.tv_sec = tv.tv_sec
+                    ts.tv_nsec = (tv.tv_usec.convert<Int>() * MICROS_IN_NANOS).convert()
+                    ts += timeoutNanos
+                    pthread_cond_timedwait(cond.ptr, lockPtr, ts.ptr)
                 }
             } else {
                 pthread_cond_wait(cond.ptr, lockPtr)
@@ -85,7 +91,12 @@ internal actual class Lock {
         }
 
         private companion object {
-            private const val SECOND_IN_NANOS = 1000000000L
+            private const val SECOND_IN_NANOS = 1_000_000_000L
+            private const val MICROS_IN_NANOS = 1000
+
+            private operator fun timespec.plusAssign(nanos: Long) {
+                setNanos(tv_sec * SECOND_IN_NANOS + tv_nsec + nanos)
+            }
 
             private fun timespec.setNanos(nanos: Long) {
                 val secs = nanos / SECOND_IN_NANOS
