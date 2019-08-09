@@ -9,5 +9,5 @@ fun <T, K, V> Observable<T>.toMap(keySelector: (T) -> K, valueSelector: (T) -> V
     collect(emptyMap()) { map, item ->
         val key = keySelector(item)
         val value = valueSelector(item)
-        return@collect map + mapOf(key to value)
+        map.plus(key to value)
     }
