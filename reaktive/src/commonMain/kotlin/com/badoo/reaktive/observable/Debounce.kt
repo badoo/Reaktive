@@ -5,6 +5,7 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.getAndUpdate
 import com.badoo.reaktive.utils.atomic.update
 
 fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Observable<T> =
@@ -41,11 +42,7 @@ fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Obser
                     executor.cancel()
 
                     executor.submit {
-                        pendingValue
-                            .value
-                            ?.value
-                            ?.also(emitter::onNext)
-
+                        pendingValue.getAndUpdate { null }?.let { emitter.onNext(it.value) }
                         emitter.onComplete()
                     }
                 }
@@ -61,6 +58,6 @@ fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Obser
         )
     }
 
-private class DebouncePendingValue<T>(
+internal class DebouncePendingValue<T>(
     val value: T
 )
