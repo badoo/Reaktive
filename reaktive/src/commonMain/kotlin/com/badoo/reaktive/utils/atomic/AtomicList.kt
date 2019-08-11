@@ -51,6 +51,8 @@ operator fun <T> AtomicList<T>.set(index: Int, element: T): T =
         it.replace(index, element)
     }[index]
 
+fun <T> AtomicList<T>.firstOrNull(): T? = value.firstOrNull()
+
 val AtomicReference<out Collection<*>>.isEmpty: Boolean get() = value.isEmpty()
 
 val AtomicReference<out Collection<*>>.isNotEmpty: Boolean get() = value.isNotEmpty()
