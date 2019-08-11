@@ -1,0 +1,25 @@
+/*
+ * In order to build this module for LinuxX64 you should install libcurl4-openssl-dev package in your system
+ */
+
+setupMultiplatformLibrary(project)
+
+kotlin {
+    linuxX64("linuxX64") {
+        compilations.main.cinterops {
+            libcurl.includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation project(':reaktive')
+                implementation project(':reaktive-annotations')
+            }
+        }
+    }
+}
+
+setupAllTargetsWithDefaultSourceSets(project)
