@@ -16,6 +16,8 @@ fun Throwable.toCompletableOfError(): Completable = completableOfError(this)
 
 fun completableOfEmpty(): Completable = completable(CompletableEmitter::onComplete)
 
+fun completableOfNever(): Completable = completable {}
+
 fun completableFromFunction(func: () -> Unit): Completable =
     completable { emitter ->
         func()
