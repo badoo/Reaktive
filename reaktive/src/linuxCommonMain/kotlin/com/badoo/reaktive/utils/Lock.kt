@@ -3,11 +3,11 @@ package com.badoo.reaktive.utils
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.alloc
-import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
+import platform.posix.CLOCK_REALTIME
 import platform.posix.PTHREAD_MUTEX_RECURSIVE
-import platform.posix.gettimeofday
+import platform.posix.clock_gettime
 import platform.posix.pthread_cond_broadcast
 import platform.posix.pthread_cond_destroy
 import platform.posix.pthread_cond_init
@@ -24,7 +24,6 @@ import platform.posix.pthread_mutexattr_init
 import platform.posix.pthread_mutexattr_settype
 import platform.posix.pthread_mutexattr_t
 import platform.posix.timespec
-import platform.posix.timeval
 
 internal actual class Lock {
 
@@ -68,11 +67,7 @@ internal actual class Lock {
         override fun await(timeoutNanos: Long) {
             if (timeoutNanos >= 0L) {
                 memScoped {
-                    // iOS does not support pthread_condattr_setclock() nor clock_gettime(), can't use monotonic time
-                    val tv: timeval = alloc { gettimeofday(ptr, null) }
-                    val ts: timespec = alloc()
-                    ts.tv_sec = tv.tv_sec
-                    ts.tv_nsec = (tv.tv_usec.convert<Int>() * MICROS_IN_NANOS).convert()
+                    val ts: timespec = alloc { clock_gettime(CLOCK_REALTIME, ptr) }
                     ts += timeoutNanos
                     pthread_cond_timedwait(cond.ptr, lockPtr, ts.ptr)
                 }
@@ -92,16 +87,14 @@ internal actual class Lock {
 
         private companion object {
             private const val SECOND_IN_NANOS = 1_000_000_000L
-            private const val MICROS_IN_NANOS = 1000
 
             private operator fun timespec.plusAssign(nanos: Long) {
-                setNanos(tv_sec * SECOND_IN_NANOS + tv_nsec + nanos)
-            }
-
-            private fun timespec.setNanos(nanos: Long) {
-                val secs = nanos / SECOND_IN_NANOS
-                tv_sec = secs.convert()
-                tv_nsec = (nanos - (secs * SECOND_IN_NANOS)).convert()
+                tv_sec += nanos / SECOND_IN_NANOS
+                tv_nsec += nanos % SECOND_IN_NANOS
+                if (tv_nsec >= SECOND_IN_NANOS) {
+                    tv_sec += 1
+                    tv_nsec -= SECOND_IN_NANOS
+                }
             }
         }
     }
