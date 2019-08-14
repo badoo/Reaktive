@@ -8,5 +8,6 @@ internal object KittenViewEventToIntentMapper {
     operator fun invoke(event: Event): Intent =
         when (event) {
             is Event.Reload -> Intent.Reload
+            is Event.ErrorShown -> Intent.DismissError
         }
 }
