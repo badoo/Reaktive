@@ -21,8 +21,7 @@ class KittenBinder(
 
     fun onStart() {
         disposables +=
-            view
-                .value!!
+            requireNotNull(view.value)
                 .events
                 .map(KittenViewEventToIntentMapper::invoke)
                 .subscribe(onNext = store::accept)
@@ -31,7 +30,7 @@ class KittenBinder(
             store
                 .states
                 .map(KittenStateToViewModelMapper::invoke)
-                .subscribe(onNext = { view.value!!.show(it) })
+                .subscribe(onNext = { requireNotNull(view.value).show(it) })
     }
 
     fun onStop() {
