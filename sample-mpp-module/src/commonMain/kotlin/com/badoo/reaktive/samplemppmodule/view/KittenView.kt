@@ -1,7 +1,6 @@
 package com.badoo.reaktive.samplemppmodule.view
 
 import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.samplemppmodule.SingleLifeEvent
 
 interface KittenView {
 
@@ -11,7 +10,7 @@ interface KittenView {
 
     data class ViewModel(
         val isLoading: Boolean,
-        val error: SingleLifeEvent<Unit>?,
+        val isError: Boolean,
         val kittenUrl: String?
     )
 

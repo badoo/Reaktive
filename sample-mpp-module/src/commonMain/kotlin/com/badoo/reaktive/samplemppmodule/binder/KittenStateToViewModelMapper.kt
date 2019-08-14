@@ -8,7 +8,7 @@ internal object KittenStateToViewModelMapper {
     operator fun invoke(state: State): ViewModel =
         ViewModel(
             isLoading = state.isLoading,
-            error = state.error,
+            isError = state.isError,
             kittenUrl = state.kittenUrl
         )
 }

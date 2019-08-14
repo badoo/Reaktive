@@ -3,7 +3,6 @@ package com.badoo.reaktive.samplemppmodule.store
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.samplemppmodule.SingleLifeEvent
 import com.badoo.reaktive.samplemppmodule.store.KittenStore.Intent
 import com.badoo.reaktive.samplemppmodule.store.KittenStore.State
 import com.badoo.reaktive.scheduler.computationScheduler
@@ -36,6 +35,11 @@ internal class KittenStoreImpl(
     private fun execute(intent: Intent): Disposable? =
         when (intent) {
             is Intent.Reload -> reload()
+
+            is Intent.DismissError -> {
+                onResult(Effect.DismissErrorRequested)
+                null
+            }
         }
 
     private fun reload(): Disposable? =
@@ -71,14 +75,16 @@ internal class KittenStoreImpl(
         object LoadingStarted : Effect()
         class Loaded(val kittenUrl: String?) : Effect()
         object LoadingFailed : Effect()
+        object DismissErrorRequested : Effect()
     }
 
     private object Reducer {
         operator fun invoke(effect: Effect, state: State): State =
             when (effect) {
-                is Effect.LoadingStarted -> state.copy(isLoading = true, error = null, kittenUrl = null)
-                is Effect.Loaded -> state.copy(isLoading = false, error = null, kittenUrl = effect.kittenUrl)
-                is Effect.LoadingFailed -> state.copy(isLoading = false, error = SingleLifeEvent(Unit))
+                is Effect.LoadingStarted -> state.copy(isLoading = true, isError = false, kittenUrl = null)
+                is Effect.Loaded -> state.copy(isLoading = false, isError = false, kittenUrl = effect.kittenUrl)
+                is Effect.LoadingFailed -> state.copy(isLoading = false, isError = true)
+                is Effect.DismissErrorRequested -> state.copy(isError = false)
             }
     }
 }
