@@ -42,23 +42,23 @@ internal class KittenStoreImpl(
         if (state.isLoading) {
             null
         } else {
-            onResult(Result.LoadingStarted)
+            onResult(Effect.LoadingStarted)
 
             loader
                 .load()
                 .observeOn(computationScheduler)
                 .map {
                     when (it) {
-                        is KittenLoader.Result.Success -> Result.Loaded(parseUrl(it.json))
-                        is KittenLoader.Result.Error -> Result.LoadingFailed
+                        is KittenLoader.Result.Success -> Effect.Loaded(parseUrl(it.json))
+                        is KittenLoader.Result.Error -> Effect.LoadingFailed
                     }
                 }
                 .observeOn(mainScheduler)
                 .subscribe(onSuccess = ::onResult)
         }
 
-    private fun onResult(result: Result) {
-        _states.onNext(Reducer(result, _states.value))
+    private fun onResult(effect: Effect) {
+        _states.onNext(Reducer(effect, _states.value))
     }
 
     private companion object {
@@ -67,18 +67,18 @@ internal class KittenStoreImpl(
         private fun parseUrl(json: String): String = parseRegex.find(json)!!.groupValues[1]
     }
 
-    private sealed class Result {
-        object LoadingStarted : Result()
-        class Loaded(val kittenUrl: String?) : Result()
-        object LoadingFailed : Result()
+    private sealed class Effect {
+        object LoadingStarted : Effect()
+        class Loaded(val kittenUrl: String?) : Effect()
+        object LoadingFailed : Effect()
     }
 
     private object Reducer {
-        operator fun invoke(result: Result, state: State): State =
-            when (result) {
-                is Result.LoadingStarted -> state.copy(isLoading = true, error = null, kittenUrl = null)
-                is Result.Loaded -> state.copy(isLoading = false, error = null, kittenUrl = result.kittenUrl)
-                is Result.LoadingFailed -> state.copy(isLoading = false, error = SingleLifeEvent(Unit))
+        operator fun invoke(effect: Effect, state: State): State =
+            when (effect) {
+                is Effect.LoadingStarted -> state.copy(isLoading = true, error = null, kittenUrl = null)
+                is Effect.Loaded -> state.copy(isLoading = false, error = null, kittenUrl = effect.kittenUrl)
+                is Effect.LoadingFailed -> state.copy(isLoading = false, error = SingleLifeEvent(Unit))
             }
     }
 }
