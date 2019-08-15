@@ -6,6 +6,7 @@ println("Current environment: $target")
 include ':reaktive'
 include ':reaktive-test'
 include ':reaktive-annotations'
+include ':sample-mpp-module'
 if (target.isCommon()) {
     include ':sample-android-app'
     include ':sample-js-browser-app'
