@@ -1,5 +1,7 @@
 setupMultiplatformLibrary(project)
 
+apply plugin: PublishPlugin
+
 kotlin {
     sourceSets {
         commonMain {
