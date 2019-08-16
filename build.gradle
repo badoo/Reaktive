@@ -44,8 +44,6 @@ void setupMultiplatformLibrary(Project project) {
             }
         }
     }
-
-    project.apply plugin: PublishPlugin
 }
 
 void setupAllTargetsWithDefaultSourceSets(Project project) {
