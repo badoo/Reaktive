@@ -5,10 +5,10 @@ import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicList
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.add
 import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.clear
 import com.badoo.reaktive.utils.atomic.getAndUpdate
-import com.badoo.reaktive.utils.atomic.plusAssign
 import com.badoo.reaktive.utils.atomic.update
 
 class TestScheduler(
@@ -21,7 +21,7 @@ class TestScheduler(
 
     override fun newExecutor(): Scheduler.Executor =
         Executor(timer, isManualProcessing)
-            .also { executor -> _executors += executor }
+            .also(_executors::add)
 
     override fun destroy() {
         _executors

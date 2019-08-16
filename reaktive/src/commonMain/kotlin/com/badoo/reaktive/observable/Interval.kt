@@ -8,10 +8,9 @@ fun observableInterval(startDelayMillis: Long, periodMillis: Long, scheduler: Sc
         val executor = scheduler.newExecutor()
         emitter.setDisposable(executor)
 
-        val count = AtomicLong()
+        val count = AtomicLong(-1L)
         executor.submitRepeating(startDelayMillis, periodMillis) {
-            emitter.onNext(count.value)
-            count.addAndGet(1)
+            emitter.onNext(count.addAndGet(1L))
         }
     }
 
