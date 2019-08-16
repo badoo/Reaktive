@@ -34,6 +34,8 @@ fun <T> Throwable.toObservableOfError(): Observable<T> = observableOfError(this)
 
 fun <T> observableOfEmpty(): Observable<T> = observable(ObservableEmitter<*>::onComplete)
 
+fun <T> observableOfNever(): Observable<T> = observable {}
+
 fun <T> observableFromFunction(func: () -> T): Observable<T> =
     observable { emitter ->
         emitter.onNext(func())

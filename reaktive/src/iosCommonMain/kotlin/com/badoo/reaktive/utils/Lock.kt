@@ -7,6 +7,7 @@ import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import platform.posix.PTHREAD_MUTEX_RECURSIVE
+import platform.posix.__darwin_time_t
 import platform.posix.gettimeofday
 import platform.posix.pthread_cond_broadcast
 import platform.posix.pthread_cond_destroy
@@ -34,7 +35,7 @@ internal actual class Lock {
 
     init {
         pthread_mutexattr_init(attr.ptr)
-        pthread_mutexattr_settype(attr.ptr, PTHREAD_MUTEX_RECURSIVE.toInt())
+        pthread_mutexattr_settype(attr.ptr, PTHREAD_MUTEX_RECURSIVE)
         pthread_mutex_init(mutex.ptr, attr.ptr)
     }
 
@@ -68,11 +69,12 @@ internal actual class Lock {
         override fun await(timeoutNanos: Long) {
             if (timeoutNanos >= 0L) {
                 memScoped {
-                    // iOS does not support pthread_condattr_setclock() nor clock_gettime(), can't use monotonic time
+                    // can't use monotonic time, pthread_condattr_setclock() nor clock_gettime(), iOS does not support it
+                    // can't use NSRecursiveLock and NSCondition, it can't wait less then 1 second and lock can't create condition
                     val tv: timeval = alloc { gettimeofday(ptr, null) }
                     val ts: timespec = alloc()
                     ts.tv_sec = tv.tv_sec
-                    ts.tv_nsec = (tv.tv_usec.convert<Int>() * MICROS_IN_NANOS).convert()
+                    ts.tv_nsec = (tv.tv_usec * MICROS_IN_NANOS).convert()
                     ts += timeoutNanos
                     pthread_cond_timedwait(cond.ptr, lockPtr, ts.ptr)
                 }
@@ -92,16 +94,15 @@ internal actual class Lock {
 
         private companion object {
             private const val SECOND_IN_NANOS = 1_000_000_000L
-            private const val MICROS_IN_NANOS = 1000
+            private const val MICROS_IN_NANOS = 1_000L
 
             private operator fun timespec.plusAssign(nanos: Long) {
-                setNanos(tv_sec * SECOND_IN_NANOS + tv_nsec + nanos)
-            }
-
-            private fun timespec.setNanos(nanos: Long) {
-                val secs = nanos / SECOND_IN_NANOS
-                tv_sec = secs.convert()
-                tv_nsec = (nanos - (secs * SECOND_IN_NANOS)).convert()
+                tv_sec += (nanos / SECOND_IN_NANOS).convert<__darwin_time_t>()
+                tv_nsec += (nanos % SECOND_IN_NANOS).convert<__darwin_time_t>()
+                if (tv_nsec >= SECOND_IN_NANOS) {
+                    tv_sec += 1
+                    tv_nsec -= SECOND_IN_NANOS.convert<__darwin_time_t>()
+                }
             }
         }
     }

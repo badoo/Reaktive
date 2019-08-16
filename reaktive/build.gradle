@@ -1,5 +1,7 @@
 setupMultiplatformLibrary(project)
 
+apply plugin: PublishPlugin
+
 kotlin {
     sourceSets {
         commonMain {
@@ -26,6 +28,7 @@ if (target.isCommon() || target.isMeta()) {
 //            fromPreset(presets.jvm, 'jvmCommon')
 //            fromPreset(presets.jvm, 'jvmJsCommon')
 //            fromPreset(presets.linuxX64, 'nativeCommon')
+//            fromPreset(presets.linuxX64, 'linuxCommon')
         }
 
         sourceSets {
