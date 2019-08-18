@@ -10,9 +10,8 @@
     <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
 
     <style>
-        #kittens > img {
-            width: 150px;
-            height: 100px;
+        #kitten {
+            width: 320px;
             object-fit: cover;
             margin: 10px;
             background: #ccc;
@@ -28,11 +27,11 @@
 <div class="container">
     <h1>Reaktive Web Sample App</h1>
 
-    <button id="load-button">Load more</button>
+    <button id="load-button">Load random kitten</button>
 
-    <div id="kittens">
+    <br>
 
-    </div>
+    <img id="kitten" hidden/>
 
     <img id="loader"
          src="https://cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif"
