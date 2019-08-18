@@ -27,7 +27,7 @@ apply plugin: 'org.jetbrains.kotlin.frontend'
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-    compile project(':reaktive')
+    compile project(':sample-mpp-module')
 }
 
 compileKotlin2Js {
