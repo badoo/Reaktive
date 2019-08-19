@@ -1,28 +1,28 @@
 package com.badoo.reaktive.sample.linux
 
-import com.badoo.reaktive.observable.observable
-import com.badoo.reaktive.observable.observeOn
-import com.badoo.reaktive.observable.subscribe
-import com.badoo.reaktive.observable.subscribeOn
-import com.badoo.reaktive.scheduler.ioScheduler
-import com.badoo.reaktive.scheduler.mainScheduler
-import platform.posix.sleep
+import com.badoo.reaktive.scheduler.overrideSchedulers
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.reinterpret
+import libgtk3.G_APPLICATION_FLAGS_NONE
+import libgtk3.GtkApplication
+import libgtk3.g_application_run
+import libgtk3.g_object_unref
+import libgtk3.gtk_application_new
 
 /**
- * How to run: execute ":sample-linuxx64-app:runDebugExecutableLinux" Gradle task
+ * How to run:
+ * * Install libcurl4-openssl-dev and libgtk-3-dev in your system
+ * * Execute ":sample-linuxx64-app:runDebugExecutableLinux" Gradle task
  */
 fun main() {
+    overrideSchedulers(main = ::MainScheduler)
 
-    observable<Int> { emitter ->
-        repeat(5) {
-            emitter.onNext(it)
-            sleep(1)
-        }
-        emitter.onComplete()
+    val app: CPointer<GtkApplication> = gtk_application_new("com.badoo.reaktive.sample.linux", G_APPLICATION_FLAGS_NONE).requireNotNull()
+
+    app.signalConnect("activate") {
+        MainWindow(app).show()
     }
-        .subscribeOn(ioScheduler)
-        .observeOn(mainScheduler)
-        .subscribe(onNext = ::println, onComplete = { println("complete") })
 
-    sleep(6)
+    g_application_run(app.reinterpret(), 0, null)
+    g_object_unref(app)
 }
