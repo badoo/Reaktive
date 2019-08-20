@@ -59,7 +59,6 @@ class TestScheduler(
         private val isManualProcessing: Boolean
     ) : Scheduler.Executor {
 
-        private val nowMillis: AtomicLong = AtomicLong()
         private val tasks: AtomicList<Task> = atomicList()
         private val _isDisposed = AtomicBoolean()
         override val isDisposed: Boolean get() = _isDisposed.value
@@ -89,27 +88,21 @@ class TestScheduler(
 
         fun process() {
             val timeMillis = timer.millis
+            val tasksToStart = ArrayList<() -> Unit>()
+            val queue = tasks.value.toMutableList()
 
-            while (true) {
-                val now = nowMillis.value
-                val task = tasks.value.firstOrNull()
-                if (task == null || task.startMillis > timeMillis) {
-                    break
-                }
-
-                // if scheduled time is 0 (immediate) use current virtual time
-                nowMillis.value = if (task.startMillis == 0L) now else task.startMillis
-                task.task()
-
-                tasks.update { value ->
-                    value
-                        .minus(task) // Remove expired task
-                        .plus(listOfNotNull(task.next())) // Schedule next periodic task
-                        .sorted()
+            while (queue.isNotEmpty() && (queue.first().startMillis <= timeMillis)) {
+                val task = queue.removeAt(0)
+                tasksToStart += task.task
+                if (task.periodMillis != null) {
+                    queue += task.copy(startMillis = task.startMillis + task.periodMillis)
+                    queue.sort()
                 }
             }
 
-            nowMillis.value = timeMillis
+            tasks.value = queue
+
+            tasksToStart.forEach { it() }
         }
 
         private fun processIfNeeded() {
@@ -149,11 +142,6 @@ class TestScheduler(
                     .takeUnless { it == 0 }
                     ?: sequenceNumber.compareTo(other.sequenceNumber)
             }
-
-        fun next(): Task? = when {
-            periodMillis != null -> copy(startMillis = startMillis + periodMillis)
-            else -> null
-        }
 
         private companion object {
             private val sequencer = AtomicLong()
