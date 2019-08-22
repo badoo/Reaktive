@@ -2,8 +2,12 @@ package com.badoo.reaktive.test.scheduler
 
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.AtomicList
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.add
+import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.atomic.clear
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 import com.badoo.reaktive.utils.atomic.update
 
@@ -12,14 +16,12 @@ class TestScheduler(
 ) : Scheduler {
 
     val timer = Timer()
-    private val _executors: AtomicReference<List<Executor>> = AtomicReference(emptyList(), true)
+    private val _executors: AtomicList<Executor> = atomicList()
     val executors: List<Executor> get() = _executors.value
 
     override fun newExecutor(): Scheduler.Executor =
         Executor(timer, isManualProcessing)
-            .also { executor ->
-                _executors.update { it + executor }
-            }
+            .also(_executors::add)
 
     override fun destroy() {
         _executors
@@ -57,7 +59,7 @@ class TestScheduler(
         private val isManualProcessing: Boolean
     ) : Scheduler.Executor {
 
-        private val tasks: AtomicReference<List<Task>> = AtomicReference(emptyList(), true)
+        private val tasks: AtomicList<Task> = atomicList()
         private val _isDisposed = AtomicBoolean()
         override val isDisposed: Boolean get() = _isDisposed.value
         private val timerListener = ::processIfNeeded
@@ -75,7 +77,7 @@ class TestScheduler(
         }
 
         override fun cancel() {
-            tasks.value = emptyList()
+            tasks.clear()
         }
 
         override fun dispose() {
@@ -86,12 +88,21 @@ class TestScheduler(
 
         fun process() {
             val timeMillis = timer.millis
+            val tasksToStart = ArrayList<() -> Unit>()
+            val queue = tasks.value.toMutableList()
 
-            tasks
-                .getAndUpdate { it.removeExpiredTasks(timeMillis) }
-                .asSequence()
-                .filter { it.startMillis <= timeMillis }
-                .forEach { it.task() }
+            while (queue.isNotEmpty() && (queue.first().startMillis <= timeMillis)) {
+                val task = queue.removeAt(0)
+                tasksToStart += task.task
+                if (task.periodMillis != null) {
+                    queue += task.copy(startMillis = task.startMillis + task.periodMillis)
+                    queue.sort()
+                }
+            }
+
+            tasks.value = queue
+
+            tasksToStart.forEach { it() }
         }
 
         private fun processIfNeeded() {
@@ -102,29 +113,16 @@ class TestScheduler(
 
         private fun addTask(startDelayMillis: Long, periodMillis: Long?, task: () -> Unit) {
             tasks.update {
-                it
-                    .plus(
-                        Task(
-                            startMillis = timer.millis + startDelayMillis,
-                            periodMillis = periodMillis,
-                            task = task
-                        )
+                it.plus(
+                    Task(
+                        startMillis = timer.millis + startDelayMillis,
+                        periodMillis = periodMillis,
+                        task = task
                     )
-                    .sorted()
+                ).sorted()
             }
 
             processIfNeeded()
-        }
-
-        private companion object {
-            private fun List<Task>.removeExpiredTasks(timeMillis: Long): List<Task> =
-                mapNotNull {
-                    when {
-                        it.startMillis > timeMillis -> it
-                        it.periodMillis != null -> it.copy(startMillis = timeMillis + it.periodMillis)
-                        else -> null
-                    }
-                }
         }
     }
 
