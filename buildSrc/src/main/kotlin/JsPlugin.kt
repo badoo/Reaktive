@@ -11,6 +11,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.SourceSet
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -82,10 +83,18 @@ abstract class JsPlugin : Plugin<Project> {
 
         val runMochaTask = target.tasks.register("runMocha", RunMochaTask::class.java) {
             dependsOn(dependenciesTask, compileTestJsTask, nodeModulesTask)
+            group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJsFiles.from(compileTestJsTask.get().outputFile)
         }
 
         target.tasks.named(TASK_NAME_JS_TEST) {
+            // We don't support new JS test runners because of module naming issues
+            // NodeJsRootExtension creates reaktive-test folder as output for test sources of reaktive
+            // and reaktive-test folder as output for main sources of reaktive-test
+            onlyIf { false }
+        }
+
+        target.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
             dependsOn(runMochaTask)
         }
     }
