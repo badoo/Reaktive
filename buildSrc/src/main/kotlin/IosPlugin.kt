@@ -21,12 +21,12 @@ abstract class IosPlugin : Plugin<Project> {
     private fun configureIosCompilation(target: Project) {
         val buildBinariesTasks = mutableListOf<String>()
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
-            /*iosArm32(TARGET_NAME_X32) {
+            iosArm32(TARGET_NAME_X32) {
                 binaries {
                     framework()
                 }
                 buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
-            }*/
+            }
             iosArm64(TARGET_NAME_X64) {
                 binaries {
                     framework()
@@ -39,6 +39,16 @@ abstract class IosPlugin : Plugin<Project> {
                     setupTest(this@iosX64, this, target)
                 }
                 buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
+            }
+            // TODO Remove after virtualization fix https://github.com/JetBrains/kotlin-native/issues/3275
+            targets.configureEach {
+                if (this is KotlinNativeTarget) {
+                    compilations.configureEach {
+                        kotlinOptions {
+                            freeCompilerArgs = freeCompilerArgs + "-Xdisable-phases=Devirtualization,DCEPhase"
+                        }
+                    }
+                }
             }
         }
         setupBuildAll(target, buildBinariesTasks)
