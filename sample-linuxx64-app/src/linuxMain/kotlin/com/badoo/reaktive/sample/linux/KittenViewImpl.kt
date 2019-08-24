@@ -121,7 +121,7 @@ class KittenViewImpl(container: CPointer<GtkContainer>) : AbstractKittenView() {
         singleFromFunction { url?.let(::curl) }
             .subscribeOn(ioScheduler)
             .observeOn(mainScheduler)
-            .subscribe(onSuccess = ::setImage)
+            .subscribe(isThreadLocal = true, onSuccess = ::setImage)
     }
 
     private fun setImage(data: ByteArray?) {
