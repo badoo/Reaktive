@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,9 @@
 		8D2796052270D8770013B409 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D2796032270D8770013B409 /* LaunchScreen.storyboard */; };
 		8DF61B35227E0B5100C8960A /* ReactiveSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DF61B34227E0B5100C8960A /* ReactiveSample.framework */; };
 		8DF61B36227E0B5100C8960A /* ReactiveSample.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8DF61B34227E0B5100C8960A /* ReactiveSample.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		AE01810E17BDF1D967497B30 /* Pods_sample_ios_app.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A00317A8B27D755E6F8BE403 /* Pods_sample_ios_app.framework */; };
+		CE1F839B2311865A009F370D /* KittenStoreImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F839A2311865A009F370D /* KittenStoreImpl.swift */; };
+		CE1F839D2311869A009F370D /* KittenStoreBuilderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F839C2311869A009F370D /* KittenStoreBuilderImpl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -39,6 +42,11 @@
 		8D2796042270D8770013B409 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D2796062270D8770013B409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DF61B34227E0B5100C8960A /* ReactiveSample.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSample.framework; path = ../build/bin/iosSim/ReactiveSampleReleaseFramework/ReactiveSample.framework; sourceTree = "<group>"; };
+		A00317A8B27D755E6F8BE403 /* Pods_sample_ios_app.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_sample_ios_app.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6519FCE0A946AA8D1E5448F /* Pods-sample-ios-app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sample-ios-app.debug.xcconfig"; path = "Target Support Files/Pods-sample-ios-app/Pods-sample-ios-app.debug.xcconfig"; sourceTree = "<group>"; };
+		CE1F839A2311865A009F370D /* KittenStoreImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KittenStoreImpl.swift; sourceTree = "<group>"; };
+		CE1F839C2311869A009F370D /* KittenStoreBuilderImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KittenStoreBuilderImpl.swift; sourceTree = "<group>"; };
+		F37A6CD16C65746D40268978 /* Pods-sample-ios-app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sample-ios-app.release.xcconfig"; path = "Target Support Files/Pods-sample-ios-app/Pods-sample-ios-app.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +55,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DF61B35227E0B5100C8960A /* ReactiveSample.framework in Frameworks */,
+				AE01810E17BDF1D967497B30 /* Pods_sample_ios_app.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +68,8 @@
 				8DF61B34227E0B5100C8960A /* ReactiveSample.framework */,
 				8D2795F92270D8760013B409 /* sample-ios-app */,
 				8D2795F82270D8760013B409 /* Products */,
+				B42E28630B17507E4C5AE370 /* Pods */,
+				DDBD70754175F47D390185B9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -79,8 +90,27 @@
 				8D2796012270D8770013B409 /* Assets.xcassets */,
 				8D2796032270D8770013B409 /* LaunchScreen.storyboard */,
 				8D2796062270D8770013B409 /* Info.plist */,
+				CE1F839A2311865A009F370D /* KittenStoreImpl.swift */,
+				CE1F839C2311869A009F370D /* KittenStoreBuilderImpl.swift */,
 			);
 			path = "sample-ios-app";
+			sourceTree = "<group>";
+		};
+		B42E28630B17507E4C5AE370 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A6519FCE0A946AA8D1E5448F /* Pods-sample-ios-app.debug.xcconfig */,
+				F37A6CD16C65746D40268978 /* Pods-sample-ios-app.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		DDBD70754175F47D390185B9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A00317A8B27D755E6F8BE403 /* Pods_sample_ios_app.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -90,10 +120,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8D2796092270D8770013B409 /* Build configuration list for PBXNativeTarget "sample-ios-app" */;
 			buildPhases = (
+				C2E15EE91E254AED94147CAE /* [CP] Check Pods Manifest.lock */,
 				8D2795F32270D8760013B409 /* Sources */,
 				8D2795F42270D8760013B409 /* Frameworks */,
 				8D2795F52270D8760013B409 /* Resources */,
 				8DF61B32227E088300C8960A /* Embed Frameworks */,
+				71F52537EAA39B5C6BBD7D29 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -150,13 +182,57 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		71F52537EAA39B5C6BBD7D29 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-sample-ios-app/Pods-sample-ios-app-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-sample-ios-app/Pods-sample-ios-app-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-sample-ios-app/Pods-sample-ios-app-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C2E15EE91E254AED94147CAE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-sample-ios-app-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8D2795F32270D8760013B409 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE1F839D2311869A009F370D /* KittenStoreBuilderImpl.swift in Sources */,
 				8D2795FD2270D8760013B409 /* ViewController.swift in Sources */,
 				8D2795FB2270D8760013B409 /* AppDelegate.swift in Sources */,
+				CE1F839B2311865A009F370D /* KittenStoreImpl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,7 +296,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../build/bin/iosSim/ReactiveSampleReleaseFramework/**";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -283,7 +359,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../build/bin/iosSim/ReactiveSampleReleaseFramework/**";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -304,10 +380,14 @@
 		};
 		8D27960A2270D8770013B409 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A6519FCE0A946AA8D1E5448F /* Pods-sample-ios-app.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../build/bin/iosSim/ReactiveSampleReleaseFramework/**";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../build/bin/iosSim/ReactiveSampleReleaseFramework/**",
+				);
 				INFOPLIST_FILE = "sample-ios-app/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -322,10 +402,14 @@
 		};
 		8D27960B2270D8770013B409 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F37A6CD16C65746D40268978 /* Pods-sample-ios-app.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../build/bin/iosSim/ReactiveSampleReleaseFramework/**";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../build/bin/iosSim/ReactiveSampleReleaseFramework/**",
+				);
 				INFOPLIST_FILE = "sample-ios-app/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

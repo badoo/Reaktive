@@ -7,13 +7,13 @@ kotlin {
         // fromPreset(presets.iosArm64, 'iosCommon')
         fromPreset(presets.iosArm64, 'ios64') {
             binaries.framework('ReactiveSample') {
-                export project(':reaktive')
+                export project(':sample-mpp-module')
                 transitiveExport = true
             }
         }
         fromPreset(presets.iosX64, 'iosSim') {
             binaries.framework('ReactiveSample') {
-                export project(':reaktive')
+                export project(':sample-mpp-module')
                 transitiveExport = true
             }
         }
@@ -22,7 +22,7 @@ kotlin {
         iosCommonMain {
             dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                api project(':reaktive')
+                api project(':sample-mpp-module')
             }
         }
         ios64Main.dependsOn iosCommonMain

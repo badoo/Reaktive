@@ -3,7 +3,7 @@ package com.badoo.reaktive.samplemppmodule.store
 import com.badoo.reaktive.annotations.EventsOnAnyScheduler
 import com.badoo.reaktive.single.Single
 
-internal interface KittenLoader {
+interface KittenLoader {
 
     @EventsOnAnyScheduler
     fun load(): Single<Result>

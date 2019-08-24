@@ -12,7 +12,7 @@ import com.badoo.reaktive.single.observeOn
 import com.badoo.reaktive.single.subscribe
 import com.badoo.reaktive.subject.behavior.behaviorSubject
 
-internal class KittenStoreImpl(
+class KittenStoreImpl(
     private val loader: KittenLoader
 ) : KittenStore {
 

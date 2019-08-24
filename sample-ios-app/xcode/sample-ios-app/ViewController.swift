@@ -1,48 +1,84 @@
 import UIKit
 import ReactiveSample
+import Alamofire
+import AlamofireImage
 
 class ViewController: UIViewController {
     
-    @IBOutlet weak var label: UILabel!
     @IBOutlet weak var indicator: UIActivityIndicatorView!
+    @IBOutlet weak var button: UIButton!
+    @IBOutlet weak var image: UIImageView!
+    
+    private let kittenBinder = KittenBinder(storeBuilder: KittenStoreBuilderImpl())
+    private var kittenView: KittenView? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        showLoading()
-        ComputationKt.calculate().subscribe(observer: ResultObserver(showResult: showResult(text:)))
+        kittenView = KittenView(viewController: self)
+        kittenBinder.onViewCreated(view: kittenView!)
     }
     
-    private func showLoading() {
-        label.isHidden = true
-        indicator.isHidden = false
+    override func viewWillAppear(_ animated: Bool) {
+        kittenBinder.onStart()
     }
     
-    private func showResult(text: String) {
-        label.isHidden = false
-        label.text = text
-        label.sizeToFit()
-        indicator.isHidden = true
+    override func viewWillDisappear(_ animated: Bool) {
+        kittenBinder.onStop()
     }
     
-    class ResultObserver: SingleObserver {
+    deinit {
+        kittenBinder.onViewDestroyed()
+        kittenBinder.onDestroy()
+    }
+    
+    private class KittenView: AbstractKittenView {
+        private let viewController: ViewController
         
-        let showResult: (String) -> Void
-        
-        init(showResult: @escaping (String) -> Void) {
-            self.showResult = showResult
+        init(viewController: ViewController) {
+            self.viewController = viewController
+            super.init()
+            viewController.button.addTarget(self, action: #selector(onClick), for: .touchUpInside)
         }
         
-        func onSubscribe(disposable: Disposable) {
-            // no-op
+        @objc func onClick() {
+            dispatch(event: KittenViewEvent.Reload.init())
         }
         
-        func onSuccess(value: Any?) {
-            showResult("\(value ?? "no value")")
+        override func show(model: KittenViewViewModel) {
+            viewController.indicator.isHidden = !model.isLoading
+            if (!model.isLoading && model.kittenUrl != nil) {
+                showImage(model: model)
+            } else {
+                hideImage()
+            }
+            if (model.isError) {
+                showError()
+            }
         }
         
-        func onError(error: KotlinThrowable) {
-            // no-op
-            print(error)
+        private func showImage(model: KittenViewViewModel) {
+            viewController.image.isHidden = false
+            viewController.image.image = nil
+            viewController.indicator.isHidden = false
+            viewController.image!.af_setImage(
+                withURL: URL(string: model.kittenUrl!)!,
+                completion: { response in
+                    self.viewController.indicator.isHidden = response.data != nil
+                }
+            )
+        }
+        
+        private func hideImage() {
+            viewController.image.isHidden = true
+            viewController.image.af_cancelImageRequest()
+        }
+        
+        private func showError() {
+            let alertController = UIAlertController(title: "Error", message: "Failed to download kitten", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .default))
+            viewController.present(alertController, animated: true, completion: {
+                self.dispatch(event: KittenViewEvent.ErrorShown.init())
+            })
         }
     }
 }
