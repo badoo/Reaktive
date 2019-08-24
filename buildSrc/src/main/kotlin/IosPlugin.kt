@@ -21,12 +21,12 @@ abstract class IosPlugin : Plugin<Project> {
     private fun configureIosCompilation(target: Project) {
         val buildBinariesTasks = mutableListOf<String>()
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
-            iosArm32(TARGET_NAME_X32) {
+            /*iosArm32(TARGET_NAME_X32) {
                 binaries {
                     framework()
                 }
                 buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
-            }
+            }*/
             iosArm64(TARGET_NAME_X64) {
                 binaries {
                     framework()
