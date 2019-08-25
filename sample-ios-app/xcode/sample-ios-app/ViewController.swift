@@ -9,7 +9,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var button: UIButton!
     @IBOutlet weak var image: UIImageView!
     
-    private let kittenBinder = KittenBinder(storeBuilder: KittenStoreBuilderImpl())
+    private let kittenBinder = KittenBinder(storeBuilder: KittenStoreBuilderImpl(dataSource: KittenDataSourceImpl()))
     private var kittenView: KittenView? = nil
     
     override func viewDidLoad() {

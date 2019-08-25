@@ -15,8 +15,7 @@
 		8DF61B35227E0B5100C8960A /* ReactiveSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DF61B34227E0B5100C8960A /* ReactiveSample.framework */; };
 		8DF61B36227E0B5100C8960A /* ReactiveSample.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8DF61B34227E0B5100C8960A /* ReactiveSample.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AE01810E17BDF1D967497B30 /* Pods_sample_ios_app.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A00317A8B27D755E6F8BE403 /* Pods_sample_ios_app.framework */; };
-		CE1F839B2311865A009F370D /* KittenStoreImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F839A2311865A009F370D /* KittenStoreImpl.swift */; };
-		CE1F839D2311869A009F370D /* KittenStoreBuilderImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F839C2311869A009F370D /* KittenStoreBuilderImpl.swift */; };
+		CE2F84A92312A2AD0054B97F /* KittenDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2F84A82312A2AD0054B97F /* KittenDataSourceImpl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,8 +43,7 @@
 		8DF61B34227E0B5100C8960A /* ReactiveSample.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSample.framework; path = ../build/bin/iosSim/ReactiveSampleReleaseFramework/ReactiveSample.framework; sourceTree = "<group>"; };
 		A00317A8B27D755E6F8BE403 /* Pods_sample_ios_app.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_sample_ios_app.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6519FCE0A946AA8D1E5448F /* Pods-sample-ios-app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sample-ios-app.debug.xcconfig"; path = "Target Support Files/Pods-sample-ios-app/Pods-sample-ios-app.debug.xcconfig"; sourceTree = "<group>"; };
-		CE1F839A2311865A009F370D /* KittenStoreImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KittenStoreImpl.swift; sourceTree = "<group>"; };
-		CE1F839C2311869A009F370D /* KittenStoreBuilderImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KittenStoreBuilderImpl.swift; sourceTree = "<group>"; };
+		CE2F84A82312A2AD0054B97F /* KittenDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KittenDataSourceImpl.swift; sourceTree = "<group>"; };
 		F37A6CD16C65746D40268978 /* Pods-sample-ios-app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sample-ios-app.release.xcconfig"; path = "Target Support Files/Pods-sample-ios-app/Pods-sample-ios-app.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -90,8 +88,7 @@
 				8D2796012270D8770013B409 /* Assets.xcassets */,
 				8D2796032270D8770013B409 /* LaunchScreen.storyboard */,
 				8D2796062270D8770013B409 /* Info.plist */,
-				CE1F839A2311865A009F370D /* KittenStoreImpl.swift */,
-				CE1F839C2311869A009F370D /* KittenStoreBuilderImpl.swift */,
+				CE2F84A82312A2AD0054B97F /* KittenDataSourceImpl.swift */,
 			);
 			path = "sample-ios-app";
 			sourceTree = "<group>";
@@ -229,10 +226,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE1F839D2311869A009F370D /* KittenStoreBuilderImpl.swift in Sources */,
 				8D2795FD2270D8760013B409 /* ViewController.swift in Sources */,
 				8D2795FB2270D8760013B409 /* AppDelegate.swift in Sources */,
-				CE1F839B2311865A009F370D /* KittenStoreImpl.swift in Sources */,
+				CE2F84A92312A2AD0054B97F /* KittenDataSourceImpl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

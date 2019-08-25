@@ -11,6 +11,10 @@ kotlin {
         }
     }
 
+    targets {
+//        fromPreset(presets.iosX64, 'iosCommon')
+    }
+
     sourceSets {
         commonMain {
             dependencies {
