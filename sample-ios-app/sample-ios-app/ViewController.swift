@@ -1,5 +1,5 @@
 import UIKit
-import ReactiveSample
+import sample_mpp_module
 import Alamofire
 import AlamofireImage
 

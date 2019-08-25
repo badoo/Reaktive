@@ -12,20 +12,20 @@
 		8D2796002270D8760013B409 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D2795FE2270D8760013B409 /* Main.storyboard */; };
 		8D2796022270D8770013B409 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D2796012270D8770013B409 /* Assets.xcassets */; };
 		8D2796052270D8770013B409 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D2796032270D8770013B409 /* LaunchScreen.storyboard */; };
-		8DF61B35227E0B5100C8960A /* ReactiveSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DF61B34227E0B5100C8960A /* ReactiveSample.framework */; };
-		8DF61B36227E0B5100C8960A /* ReactiveSample.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8DF61B34227E0B5100C8960A /* ReactiveSample.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AE01810E17BDF1D967497B30 /* Pods_sample_ios_app.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A00317A8B27D755E6F8BE403 /* Pods_sample_ios_app.framework */; };
 		CE2F84A92312A2AD0054B97F /* KittenDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2F84A82312A2AD0054B97F /* KittenDataSourceImpl.swift */; };
+		CE5ECF8723132779009DB046 /* sample_mpp_module.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE5ECF8623132779009DB046 /* sample_mpp_module.framework */; };
+		CE5ECF8823132779009DB046 /* sample_mpp_module.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE5ECF8623132779009DB046 /* sample_mpp_module.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		8DF61B32227E088300C8960A /* Embed Frameworks */ = {
+		CE5ECF8923132779009DB046 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8DF61B36227E0B5100C8960A /* ReactiveSample.framework in Embed Frameworks */,
+				CE5ECF8823132779009DB046 /* sample_mpp_module.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -40,10 +40,10 @@
 		8D2796012270D8770013B409 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8D2796042270D8770013B409 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D2796062270D8770013B409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8DF61B34227E0B5100C8960A /* ReactiveSample.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSample.framework; path = ../build/bin/iosSim/ReactiveSampleReleaseFramework/ReactiveSample.framework; sourceTree = "<group>"; };
 		A00317A8B27D755E6F8BE403 /* Pods_sample_ios_app.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_sample_ios_app.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6519FCE0A946AA8D1E5448F /* Pods-sample-ios-app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sample-ios-app.debug.xcconfig"; path = "Target Support Files/Pods-sample-ios-app/Pods-sample-ios-app.debug.xcconfig"; sourceTree = "<group>"; };
 		CE2F84A82312A2AD0054B97F /* KittenDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KittenDataSourceImpl.swift; sourceTree = "<group>"; };
+		CE5ECF8623132779009DB046 /* sample_mpp_module.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sample_mpp_module.framework; path = "../sample-mpp-module/build/bin/iosSim/releaseFramework/sample_mpp_module.framework"; sourceTree = "<group>"; };
 		F37A6CD16C65746D40268978 /* Pods-sample-ios-app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sample-ios-app.release.xcconfig"; path = "Target Support Files/Pods-sample-ios-app/Pods-sample-ios-app.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -52,7 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8DF61B35227E0B5100C8960A /* ReactiveSample.framework in Frameworks */,
+				CE5ECF8723132779009DB046 /* sample_mpp_module.framework in Frameworks */,
 				AE01810E17BDF1D967497B30 /* Pods_sample_ios_app.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -63,7 +63,7 @@
 		8D2795EE2270D8760013B409 = {
 			isa = PBXGroup;
 			children = (
-				8DF61B34227E0B5100C8960A /* ReactiveSample.framework */,
+				CE5ECF8623132779009DB046 /* sample_mpp_module.framework */,
 				8D2795F92270D8760013B409 /* sample-ios-app */,
 				8D2795F82270D8760013B409 /* Products */,
 				B42E28630B17507E4C5AE370 /* Pods */,
@@ -121,8 +121,8 @@
 				8D2795F32270D8760013B409 /* Sources */,
 				8D2795F42270D8760013B409 /* Frameworks */,
 				8D2795F52270D8760013B409 /* Resources */,
-				8DF61B32227E088300C8960A /* Embed Frameworks */,
 				71F52537EAA39B5C6BBD7D29 /* [CP] Embed Pods Frameworks */,
+				CE5ECF8923132779009DB046 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -382,14 +382,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../build/bin/iosSim/ReactiveSampleReleaseFramework/**",
+					"$(SRCROOT)/../sample-mpp-module/build/bin/iosSim/releaseFramework/**",
 				);
 				INFOPLIST_FILE = "sample-ios-app/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.badoo.reaktive.sample-ios-app";
+				PRODUCT_BUNDLE_IDENTIFIER = com.badoo.reaktive.sample.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -404,14 +404,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../build/bin/iosSim/ReactiveSampleReleaseFramework/**",
+					"$(SRCROOT)/../sample-mpp-module/build/bin/iosSim/releaseFramework/**",
 				);
 				INFOPLIST_FILE = "sample-ios-app/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.badoo.reaktive.sample-ios-app";
+				PRODUCT_BUNDLE_IDENTIFIER = com.badoo.reaktive.sample.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -13,11 +13,10 @@ internal class KittenLoaderImpl(
 
     override fun load(): Single<Result> =
         single<String> { emitter ->
-            dataSource.load(Config.KITTEN_URL) { result, error ->
-                if (result != null) {
-                    emitter.onSuccess(result)
-                } else if (error != null) {
-                    emitter.onError(error)
+            dataSource.load(Config.KITTEN_URL) { result ->
+                when (result) {
+                    is KittenDataSource.Result.Success -> emitter.onSuccess(result.data)
+                    is KittenDataSource.Result.Failure -> emitter.onError(result.throwable)
                 }
             }
         }
