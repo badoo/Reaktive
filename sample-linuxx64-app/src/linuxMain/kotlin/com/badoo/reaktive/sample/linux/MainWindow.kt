@@ -18,7 +18,7 @@ import libgtk3.gtk_window_set_title
 class MainWindow(app: CPointer<GtkApplication>) {
 
     private val window: CPointer<GtkWindow> = gtk_application_window_new(app).requireNotNull().reinterpret()
-    private val view: KittenViewImpl = KittenViewImpl(window.reinterpret())
+    private val view: KittenViewImpl = KittenViewImpl(window)
     private val binder = KittenBinder(KittenStoreBuilderImpl())
 
     private var isMinimized = false
@@ -29,8 +29,8 @@ class MainWindow(app: CPointer<GtkApplication>) {
         gtk_window_set_resizable(window, 0)
         gtk_container_set_border_width(window.reinterpret(), WINDOW_BORDER_WIDTH.toUInt())
 
-        window.signalConnect("window-state-event", ::onWindowStateChanged)
-        window.signalConnect("destroy", ::onDestroy)
+        window.signalConnect1("window-state-event", ::onWindowStateChanged)
+        window.signalConnect0("destroy", ::onDestroy)
     }
 
     fun show() {

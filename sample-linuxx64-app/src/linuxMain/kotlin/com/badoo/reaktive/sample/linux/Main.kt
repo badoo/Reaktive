@@ -19,7 +19,7 @@ fun main() {
 
     val app: CPointer<GtkApplication> = gtk_application_new("com.badoo.reaktive.sample.linux", G_APPLICATION_FLAGS_NONE).requireNotNull()
 
-    app.signalConnect("activate") {
+    app.signalConnect0("activate") {
         MainWindow(app).show()
     }
 
