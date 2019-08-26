@@ -44,7 +44,7 @@ private fun Completable.subscribeThreadLocal(callbacks: Callbacks): Disposable {
 
             override fun dispose() {
                 storage.value?.dispose()
-                storage.clear()
+                storage.dispose()
             }
         }
     )

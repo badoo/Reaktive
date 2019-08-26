@@ -47,7 +47,7 @@ private fun <T> Maybe<T>.subscribeThreadLocal(callbacks: Callbacks<T>): Disposab
 
             override fun dispose() {
                 storage.value?.dispose()
-                storage.clear()
+                storage.dispose()
             }
         }
     )

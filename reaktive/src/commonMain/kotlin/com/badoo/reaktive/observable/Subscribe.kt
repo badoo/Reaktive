@@ -47,7 +47,7 @@ private fun <T> Observable<T>.subscribeThreadLocal(callbacks: Callbacks<T>): Dis
 
             override fun dispose() {
                 storage.value?.dispose()
-                storage.clear()
+                storage.dispose()
             }
         }
     )

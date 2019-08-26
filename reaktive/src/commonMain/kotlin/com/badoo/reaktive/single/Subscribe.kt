@@ -44,7 +44,7 @@ private fun <T> Single<T>.subscribeThreadLocal(callbacks: Callbacks<T>): Disposa
 
             override fun dispose() {
                 storage.value?.dispose()
-                storage.clear()
+                storage.dispose()
             }
         }
     )
