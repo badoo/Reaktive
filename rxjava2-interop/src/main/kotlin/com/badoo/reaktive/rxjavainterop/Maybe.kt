@@ -5,57 +5,57 @@ import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.MaybeObserver
 import com.badoo.reaktive.maybe.maybeUnsafe
 
-fun <T> Maybe<T>.toRxJava2Source(): io.reactivex.MaybeSource<T> =
+fun <T> Maybe<T>.asRxJava2Source(): io.reactivex.MaybeSource<T> =
     io.reactivex.MaybeSource { observer ->
-        subscribe(observer.toReaktive())
+        subscribe(observer.asReaktive())
     }
 
-fun <T> Maybe<T>.toRxJava2(): io.reactivex.Maybe<T> =
+fun <T> Maybe<T>.asRxJava2(): io.reactivex.Maybe<T> =
     object : io.reactivex.Maybe<T>() {
         override fun subscribeActual(observer: io.reactivex.MaybeObserver<in T>) {
-            this@toRxJava2.subscribe(observer.toReaktive())
+            this@asRxJava2.subscribe(observer.asReaktive())
         }
     }
 
-fun <T> io.reactivex.MaybeSource<out T>.toReaktive(): Maybe<T> =
+fun <T> io.reactivex.MaybeSource<out T>.asReaktive(): Maybe<T> =
     maybeUnsafe { observer ->
-        subscribe(observer.toRxJava2())
+        subscribe(observer.asRxJava2())
     }
 
-fun <T> io.reactivex.MaybeObserver<in T>.toReaktive(): MaybeObserver<T> =
+fun <T> io.reactivex.MaybeObserver<in T>.asReaktive(): MaybeObserver<T> =
     object : MaybeObserver<T> {
         override fun onSubscribe(disposable: Disposable) {
-            this@toReaktive.onSubscribe(disposable.toRxJava2())
+            this@asReaktive.onSubscribe(disposable.asRxJava2())
         }
 
         override fun onSuccess(value: T) {
-            this@toReaktive.onSuccess(value)
+            this@asReaktive.onSuccess(value)
         }
 
         override fun onComplete() {
-            this@toReaktive.onComplete()
+            this@asReaktive.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@toReaktive.onError(error)
+            this@asReaktive.onError(error)
         }
     }
 
-fun <T> MaybeObserver<T>.toRxJava2(): io.reactivex.MaybeObserver<T> =
+fun <T> MaybeObserver<T>.asRxJava2(): io.reactivex.MaybeObserver<T> =
     object : io.reactivex.MaybeObserver<T> {
         override fun onSubscribe(disposable: io.reactivex.disposables.Disposable) {
-            this@toRxJava2.onSubscribe(disposable.toReaktive())
+            this@asRxJava2.onSubscribe(disposable.asReaktive())
         }
 
         override fun onSuccess(value: T) {
-            this@toRxJava2.onSuccess(value)
+            this@asRxJava2.onSuccess(value)
         }
 
         override fun onComplete() {
-            this@toRxJava2.onComplete()
+            this@asRxJava2.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@toRxJava2.onError(error)
+            this@asRxJava2.onError(error)
         }
     }

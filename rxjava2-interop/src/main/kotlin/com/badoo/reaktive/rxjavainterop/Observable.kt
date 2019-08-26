@@ -5,57 +5,57 @@ import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.observable.observableUnsafe
 
-fun <T> Observable<T>.toRxJava2Source(): io.reactivex.ObservableSource<T> =
+fun <T> Observable<T>.asRxJava2Source(): io.reactivex.ObservableSource<T> =
     io.reactivex.ObservableSource { observer ->
-        subscribe(observer.toReaktive())
+        subscribe(observer.asReaktive())
     }
 
-fun <T> Observable<T>.toRxJava2(): io.reactivex.Observable<T> =
+fun <T> Observable<T>.asRxJava2(): io.reactivex.Observable<T> =
     object : io.reactivex.Observable<T>() {
         override fun subscribeActual(observer: io.reactivex.Observer<in T>) {
-            this@toRxJava2.subscribe(observer.toReaktive())
+            this@asRxJava2.subscribe(observer.asReaktive())
         }
     }
 
-fun <T> io.reactivex.ObservableSource<out T>.toReaktive(): Observable<T> =
+fun <T> io.reactivex.ObservableSource<out T>.asReaktive(): Observable<T> =
     observableUnsafe { observer ->
-        subscribe(observer.toRxJava2())
+        subscribe(observer.asRxJava2())
     }
 
-fun <T> io.reactivex.Observer<in T>.toReaktive(): ObservableObserver<T> =
+fun <T> io.reactivex.Observer<in T>.asReaktive(): ObservableObserver<T> =
     object : ObservableObserver<T> {
         override fun onSubscribe(disposable: Disposable) {
-            this@toReaktive.onSubscribe(disposable.toRxJava2())
+            this@asReaktive.onSubscribe(disposable.asRxJava2())
         }
 
         override fun onNext(value: T) {
-            this@toReaktive.onNext(value)
+            this@asReaktive.onNext(value)
         }
 
         override fun onComplete() {
-            this@toReaktive.onComplete()
+            this@asReaktive.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@toReaktive.onError(error)
+            this@asReaktive.onError(error)
         }
     }
 
-fun <T> ObservableObserver<T>.toRxJava2(): io.reactivex.Observer<T> =
+fun <T> ObservableObserver<T>.asRxJava2(): io.reactivex.Observer<T> =
     object : io.reactivex.Observer<T> {
         override fun onSubscribe(disposable: io.reactivex.disposables.Disposable) {
-            this@toRxJava2.onSubscribe(disposable.toReaktive())
+            this@asRxJava2.onSubscribe(disposable.asReaktive())
         }
 
         override fun onNext(value: T) {
-            this@toRxJava2.onNext(value)
+            this@asRxJava2.onNext(value)
         }
 
         override fun onComplete() {
-            this@toRxJava2.onComplete()
+            this@asRxJava2.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@toRxJava2.onError(error)
+            this@asRxJava2.onError(error)
         }
     }
