@@ -14,6 +14,8 @@ fun <T> singleOf(value: T): Single<T> =
 
 fun <T> T.toSingle(): Single<T> = singleOf(this)
 
+fun <T> singleOfNever(): Single<T> = single {}
+
 fun <T> singleOfError(error: Throwable): Single<T> =
     single { emitter ->
         emitter.onError(error)

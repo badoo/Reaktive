@@ -3,6 +3,7 @@ package com.badoo.reaktive.test.base
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 val TestObserver.isError: Boolean get() = error != null
@@ -26,7 +27,11 @@ fun TestObserver.assertNotError() {
 }
 
 fun TestObserver.assertSubscribed() {
-    assertTrue(disposable != null)
+    assertNotNull(disposable)
+}
+
+fun TestObserver.assertNotSubscribed() {
+    assertNull(disposable)
 }
 
 fun TestObserver.assertDisposed() {

@@ -24,6 +24,8 @@ fun <T> Throwable.toMaybeOfError(): Maybe<T> = maybeOfError(this)
 fun <T> maybeOfEmpty(): Maybe<T> =
     maybe(MaybeEmitter<*>::onComplete)
 
+fun <T> maybeOfNever(): Maybe<T> = maybe {}
+
 fun <T> maybeFromFunction(func: () -> T): Maybe<T> =
     maybe { emitter ->
         emitter.onSuccess(func())

@@ -1,0 +1,42 @@
+/*
+ * In order to build this module for LinuxX64 you should install libcurl4-openssl-dev package in your system
+ */
+
+setupMultiplatformLibrary(project)
+setupAllTargetsWithDefaultSourceSets(project)
+
+kotlin {
+    targets {
+        if (Target.currentTarget().isCommon()) {
+            linuxX64 {
+                compilations.main.cinterops {
+                    libcurl.includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+                }
+            }
+        }
+        if (Target.currentTarget().isIos()) {
+            [ios32, ios64, iosSim].each {
+                [it.binaries.getFramework('DEBUG'), it.binaries.getFramework('RELEASE')].each {
+                    // Reaktive should be included into framework file, so we don't need to generate 2 framework files
+                    it.export project(':reaktive')
+                    it.transitiveExport = true
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation project(':reaktive')
+                implementation project(':reaktive-annotations')
+            }
+        }
+        iosCommonMain {
+            dependencies {
+                // Reaktive should be included into framework file, so we don't need to generate 2 framework files
+                api project(':reaktive')
+            }
+        }
+    }
+}
