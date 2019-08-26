@@ -40,6 +40,16 @@ abstract class IosPlugin : Plugin<Project> {
                 }
                 buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
             }
+            // TODO Remove after virtualization fix https://github.com/JetBrains/kotlin-native/issues/3275
+            targets.configureEach {
+                if (this is KotlinNativeTarget) {
+                    compilations.configureEach {
+                        kotlinOptions {
+                            freeCompilerArgs = freeCompilerArgs + "-Xdisable-phases=Devirtualization,DCEPhase"
+                        }
+                    }
+                }
+            }
         }
         setupBuildAll(target, buildBinariesTasks)
     }
@@ -54,12 +64,7 @@ abstract class IosPlugin : Plugin<Project> {
         val iosTestProvider = target.tasks.register(TASK_NAME_IOS_TEST, RunIosTestTask::class.java) {
             group = LifecycleBasePlugin.VERIFICATION_GROUP
             dependsOn(target.tasks.named(testBinariesTaskName))
-            testExecutables.from(
-                kotlinNativeBinaryContainer.getExecutable(
-                    SourceSet.TEST_SOURCE_SET_NAME,
-                    NativeBuildType.DEBUG
-                ).outputFile
-            )
+            testExecutables.from(kotlinNativeBinaryContainer.getTest(NativeBuildType.DEBUG).outputFile)
         }
         if (kotlinNativeTarget.publishable) {
             target.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {

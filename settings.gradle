@@ -4,7 +4,7 @@ final target = Target.currentTarget()
 println("Current environment: $target")
 
 include ':reaktive'
-include ':reaktive-test'
+include ':reaktive-testing'
 include ':reaktive-annotations'
 include ':sample-mpp-module'
 if (target.isCommon()) {

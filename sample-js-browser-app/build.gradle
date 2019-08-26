@@ -1,57 +1,10 @@
-buildscript {
-    repositories {
-        jcenter()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap/' }
-    }
-    dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.45'
-    }
+plugins {
+    id 'org.jetbrains.kotlin.js'
 }
 
-// TODO remove once https://github.com/Kotlin/kotlin-frontend-plugin/issues/141 is fixed
-plugins.whenPluginAdded { plugin ->
-    if (plugin.class.name == 'org.jetbrains.kotlin.gradle.frontend.FrontendPlugin') {
-        def fixTask = tasks.register('webpack-config-fix') {
-            it.doLast { file('webpack.config.d').mkdir() }
-        }
-        afterEvaluate {
-            tasks.named('webpack-config').configure {
-                it.dependsOn(fixTask)
-            }
-        }
-    }
-}
-
-apply plugin: 'kotlin2js'
-apply plugin: 'org.jetbrains.kotlin.frontend'
+kotlin.target.browser()
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-    compile project(':sample-mpp-module')
-}
-
-compileKotlin2Js {
-    kotlinOptions.metaInfo = true
-    kotlinOptions.sourceMap = true
-    kotlinOptions.verbose = true
-    kotlinOptions.main = 'call'
-    kotlinOptions.moduleKind = 'umd'
-}
-
-kotlinFrontend {
-    downloadNodeJsVersion = 'latest'
-
-    webpackBundle {
-        bundleName = 'main'
-        sourceMapEnabled = true
-        contentPath = file('src/main/web')
-        publicPath = '/'
-        port = 8088
-        proxyUrl = ''
-        stats = 'errors-only'
-    }
-}
-
-clean.doFirst() {
-    delete "${projectDir}/web"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    implementation project(':sample-mpp-module')
 }

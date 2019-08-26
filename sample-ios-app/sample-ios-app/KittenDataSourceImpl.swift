@@ -3,7 +3,7 @@ import sample_mpp_module
 import Alamofire
 
 class KittenDataSourceImpl: KittenDataSource {
-    func load(url: String, continuation: @escaping (KittenDataSourceResult) -> KotlinUnit) {
+    func load(url: String, continuation: @escaping (KittenDataSourceResult) -> Void) {
         AF.request(url)
             .responseString { (response: DataResponse<String>) in
                 do {
