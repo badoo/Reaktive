@@ -1,0 +1,7 @@
+# platform :ios, '9.0'
+use_frameworks!
+
+target 'sample-ios-app' do
+  pod 'Alamofire', '~> 5.0.0-beta.7'
+  pod 'AlamofireImage', '~> 4.0.0-beta.3'
+end

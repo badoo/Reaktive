@@ -77,14 +77,17 @@ void setupAllTargetsWithDefaultSourceSets(Project project) {
 
         project.kotlin {
             sourceSets {
-                ios32Main.dependsOn commonMain
-                ios32Test.dependsOn commonTest
+                iosCommonMain.dependsOn commonMain
+                iosCommonTest.dependsOn commonTest
 
-                ios64Main.dependsOn commonMain
-                ios64Test.dependsOn commonTest
+                ios32Main.dependsOn iosCommonMain
+                ios32Test.dependsOn iosCommonTest
 
-                iosSimMain.dependsOn commonMain
-                iosSimTest.dependsOn commonTest
+                ios64Main.dependsOn iosCommonMain
+                ios64Test.dependsOn iosCommonTest
+
+                iosSimMain.dependsOn iosCommonMain
+                iosSimTest.dependsOn iosCommonTest
             }
         }
     }

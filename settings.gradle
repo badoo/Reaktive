@@ -13,6 +13,3 @@ if (target.isCommon()) {
     include ':sample-linuxx64-app'
     include ':rxjava2-interop'
 }
-if (target.isIos()) {
-    include ':sample-ios-app'
-}
