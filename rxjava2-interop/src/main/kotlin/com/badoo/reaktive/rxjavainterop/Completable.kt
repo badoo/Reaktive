@@ -5,49 +5,49 @@ import com.badoo.reaktive.completable.CompletableObserver
 import com.badoo.reaktive.completable.completableUnsafe
 import com.badoo.reaktive.disposable.Disposable
 
-fun Completable.toRxJava2Source(): io.reactivex.CompletableSource =
+fun Completable.asRxJava2Source(): io.reactivex.CompletableSource =
     io.reactivex.CompletableSource { observer ->
-        subscribe(observer.toReaktive())
+        subscribe(observer.asReaktive())
     }
 
-fun Completable.toRxJava2(): io.reactivex.Completable =
+fun Completable.asRxJava2(): io.reactivex.Completable =
     object : io.reactivex.Completable() {
         override fun subscribeActual(observer: io.reactivex.CompletableObserver) {
-            this@toRxJava2.subscribe(observer.toReaktive())
+            this@asRxJava2.subscribe(observer.asReaktive())
         }
     }
 
-fun <T> io.reactivex.CompletableSource.toReaktive(): Completable =
+fun <T> io.reactivex.CompletableSource.asReaktive(): Completable =
     completableUnsafe { observer ->
-        subscribe(observer.toRxJava2())
+        subscribe(observer.asRxJava2())
     }
 
-fun io.reactivex.CompletableObserver.toReaktive(): CompletableObserver =
+fun io.reactivex.CompletableObserver.asReaktive(): CompletableObserver =
     object : CompletableObserver {
         override fun onSubscribe(disposable: Disposable) {
-            this@toReaktive.onSubscribe(disposable.toRxJava2())
+            this@asReaktive.onSubscribe(disposable.asRxJava2())
         }
 
         override fun onComplete() {
-            this@toReaktive.onComplete()
+            this@asReaktive.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@toReaktive.onError(error)
+            this@asReaktive.onError(error)
         }
     }
 
-fun CompletableObserver.toRxJava2(): io.reactivex.CompletableObserver =
+fun CompletableObserver.asRxJava2(): io.reactivex.CompletableObserver =
     object : io.reactivex.CompletableObserver {
         override fun onSubscribe(disposable: io.reactivex.disposables.Disposable) {
-            this@toRxJava2.onSubscribe(disposable.toReaktive())
+            this@asRxJava2.onSubscribe(disposable.asReaktive())
         }
 
         override fun onComplete() {
-            this@toRxJava2.onComplete()
+            this@asRxJava2.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@toRxJava2.onError(error)
+            this@asRxJava2.onError(error)
         }
     }
