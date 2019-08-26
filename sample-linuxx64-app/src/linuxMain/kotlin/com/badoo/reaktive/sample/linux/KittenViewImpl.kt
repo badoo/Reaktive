@@ -20,18 +20,24 @@ import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.value
 import libgtk3.GBytes
 import libgtk3.GInputStream
+import libgtk3.GTK_DIALOG_DESTROY_WITH_PARENT
+import libgtk3.GTK_DIALOG_USE_HEADER_BAR
 import libgtk3.GdkPixbuf
 import libgtk3.GtkBox
 import libgtk3.GtkButton
-import libgtk3.GtkContainer
+import libgtk3.GtkButtonsType
 import libgtk3.GtkImage
+import libgtk3.GtkMessageType
 import libgtk3.GtkOrientation.GTK_ORIENTATION_HORIZONTAL
 import libgtk3.GtkOrientation.GTK_ORIENTATION_VERTICAL
 import libgtk3.GtkPackType
 import libgtk3.GtkSpinner
+import libgtk3.GtkWidget
+import libgtk3.GtkWindow
 import libgtk3.g_bytes_new
 import libgtk3.g_memory_input_stream_new_from_bytes
 import libgtk3.gdk_pixbuf_new_from_stream_at_scale
+import libgtk3.gint
 import libgtk3.gtk_box_new
 import libgtk3.gtk_box_set_child_packing
 import libgtk3.gtk_button_new_with_label
@@ -39,14 +45,19 @@ import libgtk3.gtk_container_add
 import libgtk3.gtk_image_clear
 import libgtk3.gtk_image_new
 import libgtk3.gtk_image_set_from_pixbuf
+import libgtk3.gtk_message_dialog_new
 import libgtk3.gtk_spinner_new
 import libgtk3.gtk_spinner_start
 import libgtk3.gtk_spinner_stop
+import libgtk3.gtk_widget_destroy
 import libgtk3.gtk_widget_get_allocated_height
 import libgtk3.gtk_widget_get_allocated_width
 import libgtk3.gtk_widget_set_size_request
+import libgtk3.gtk_widget_show
 
-class KittenViewImpl(container: CPointer<GtkContainer>) : AbstractKittenView() {
+class KittenViewImpl(
+    private val window: CPointer<GtkWindow>
+) : AbstractKittenView() {
 
     private val verticalBox: CPointer<GtkBox> = gtk_box_new(GTK_ORIENTATION_VERTICAL, WIDGET_MARGIN).requireNotNull().reinterpret()
     private val horizontalBox: CPointer<GtkBox> = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, WIDGET_MARGIN).requireNotNull().reinterpret()
@@ -55,7 +66,7 @@ class KittenViewImpl(container: CPointer<GtkContainer>) : AbstractKittenView() {
     private val image: CPointer<GtkImage> = gtk_image_new().requireNotNull().reinterpret()
 
     init {
-        gtk_container_add(container, verticalBox.reinterpret())
+        gtk_container_add(window.reinterpret(), verticalBox.reinterpret())
         gtk_container_add(verticalBox.reinterpret(), horizontalBox.reinterpret())
 
         gtk_box_set_child_packing(
@@ -102,18 +113,18 @@ class KittenViewImpl(container: CPointer<GtkContainer>) : AbstractKittenView() {
             pack_type = GtkPackType.GTK_PACK_START
         )
 
-        button.signalConnect("clicked") {
+        button.signalConnect0("clicked") {
             dispatch(Event.Reload)
         }
     }
 
     override fun show(model: ViewModel) {
         loadImage(model.kittenUrl)
+        showLoading(model.isLoading)
 
-        if (model.isLoading) {
-            gtk_spinner_start(spinner)
-        } else {
-            gtk_spinner_stop(spinner)
+        if (model.isError) {
+            dispatch(Event.ErrorShown)
+            showError()
         }
     }
 
@@ -122,6 +133,33 @@ class KittenViewImpl(container: CPointer<GtkContainer>) : AbstractKittenView() {
             .subscribeOn(ioScheduler)
             .observeOn(mainScheduler)
             .subscribe(onSuccess = ::setImage)
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            gtk_spinner_start(spinner)
+        } else {
+            gtk_spinner_stop(spinner)
+        }
+    }
+
+    private fun showError() {
+        val dialog: CPointer<GtkWidget> =
+            requireNotNull(
+                gtk_message_dialog_new(
+                    parent = window,
+                    flags = GTK_DIALOG_USE_HEADER_BAR or GTK_DIALOG_DESTROY_WITH_PARENT,
+                    type = GtkMessageType.GTK_MESSAGE_ERROR,
+                    buttons = GtkButtonsType.GTK_BUTTONS_CLOSE,
+                    message_format = "Error loading kitten :-("
+                )
+            )
+
+        dialog.signalConnect1("response") { _: gint ->
+            gtk_widget_destroy(dialog.reinterpret())
+        }
+
+        gtk_widget_show(dialog)
     }
 
     private fun setImage(data: ByteArray?) {
