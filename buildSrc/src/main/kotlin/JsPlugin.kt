@@ -26,7 +26,9 @@ abstract class JsPlugin : Plugin<Project> {
 
     private fun configureJsCompilation(target: Project) {
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
-            js(TARGET_NAME_JS)
+            js(TARGET_NAME_JS) {
+                browser()
+            }
             sourceSets.getByName(TARGET_NAME_JS.appendCapitalized(SourceSet.MAIN_SOURCE_SET_NAME)) {
                 dependencies {
                     implementation(kotlin("stdlib-js"))
