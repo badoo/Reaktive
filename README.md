@@ -21,7 +21,7 @@ repositories {
 There are four modules published:
 - `reaktive` - the main Reaktive library (multiplatform)
 - `reaktive-annotations` - collection of annotations (mutiplatform)
-- `reaktive-test` - testing utilities (multiplatform)
+- `reaktive-testing` - testing utilities (multiplatform)
 - `rxjava2-interop` - RxJava2 interoperability helpers (JVM and Android)
 
 Each multiplatform module is compiled against each target and published in

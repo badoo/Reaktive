@@ -8,13 +8,14 @@ import com.badoo.reaktive.single.map
 import com.badoo.reaktive.single.onErrorReturnValue
 import com.badoo.reaktive.single.singleFromFunction
 import com.badoo.reaktive.single.subscribeOn
+import kotlinx.cinterop.toKString
 
 internal class KittenLoaderImpl : KittenLoader {
 
     override fun load(): Single<Result> =
         singleFromFunction { curl(Config.KITTEN_URL) ?: throw IllegalStateException("Unable to download a kitten") }
             .subscribeOn(ioScheduler)
-            .map { it.stringFromUtf8OrThrow() }
+            .map { it.toKString() }
             .map(Result::Success)
             .onErrorReturnValue(Result.Error)
 }
