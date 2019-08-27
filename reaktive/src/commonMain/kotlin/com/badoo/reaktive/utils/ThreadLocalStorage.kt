@@ -1,8 +1,8 @@
-package com.badoo.reaktive.utils.threadlocal
+package com.badoo.reaktive.utils
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.currentThreadId
+import kotlin.native.concurrent.ThreadLocal
 
 class ThreadLocalStorage<T : Any>(initialValue: T? = null) : Disposable {
 
@@ -55,6 +55,24 @@ class ThreadLocalStorage<T : Any>(initialValue: T? = null) : Disposable {
     private fun checkDisposed() {
         if (_isDisposed.value) {
             throw IllegalStateException("ThreadLocalStorage is already disposed")
+        }
+    }
+
+    @ThreadLocal
+    private object ThreadLocalState {
+        private val map: MutableMap<Any, Any> = HashMap()
+        private var currentKey = 0
+
+        fun allocateKey(): Any = currentKey++
+
+        operator fun get(key: Any): Any? = map[key]
+
+        operator fun set(key: Any, value: Any?) {
+            if (value == null) {
+                map -= key
+            } else {
+                map[key] = value
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.utils.handleSourceError
-import com.badoo.reaktive.utils.threadlocal.ThreadLocalStorage
+import com.badoo.reaktive.utils.ThreadLocalStorage
 
 @UseReturnValue
 fun <T> Maybe<T>.subscribe(

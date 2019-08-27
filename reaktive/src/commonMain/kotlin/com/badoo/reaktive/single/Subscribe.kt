@@ -4,8 +4,8 @@ import com.badoo.reaktive.annotations.UseReturnValue
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.utils.ThreadLocalStorage
 import com.badoo.reaktive.utils.handleSourceError
-import com.badoo.reaktive.utils.threadlocal.ThreadLocalStorage
 
 @UseReturnValue
 fun <T> Single<T>.subscribe(
