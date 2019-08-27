@@ -1,6 +1,7 @@
 package com.badoo.reaktive.utils
 
 import com.badoo.reaktive.scheduler.computationScheduler
+import com.badoo.reaktive.test.waitForOrFail
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -49,8 +50,8 @@ class ThreadLocalStorageThreadingTest {
         }
 
         lock.synchronized {
-            while (isFailedRef.value == null) {
-                condition.await()
+            condition.waitForOrFail(5_000_000_000L) {
+                isFailedRef.value != null
             }
         }
 
