@@ -58,7 +58,7 @@ internal class KittenStoreImpl(
                     }
                 }
                 .observeOn(mainScheduler)
-                .subscribe(onSuccess = ::onResult)
+                .subscribe(isThreadLocal = true, onSuccess = ::onResult)
         }
 
     private fun onResult(effect: Effect) {

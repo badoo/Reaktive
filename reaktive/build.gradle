@@ -27,16 +27,23 @@ if (target.isCommon() || target.isMeta()) {
         targets { 
 //            fromPreset(presets.jvm, 'jvmCommon')
 //            fromPreset(presets.jvm, 'jvmJsCommon')
+//            fromPreset(presets.linuxX64, 'jvmNativeCommon')
 //            fromPreset(presets.linuxX64, 'nativeCommon')
+//            fromPreset(presets.linuxArm32Hfp, 'nativeCommon')
 //            fromPreset(presets.linuxX64, 'linuxCommon')
         }
 
         sourceSets {
             jvmJsCommonMain.dependsOn commonMain
             jvmJsCommonTest.dependsOn commonTest
+            
+            jvmNativeCommonMain.dependsOn commonMain
+            jvmNativeCommonTest.dependsOn commonTest
 
             jvmCommonMain.dependsOn jvmJsCommonMain
+            jvmCommonMain.dependsOn jvmNativeCommonMain
             jvmCommonTest.dependsOn jvmJsCommonTest
+            jvmCommonTest.dependsOn jvmNativeCommonTest
 
             jvmMain.dependsOn jvmCommonMain
             jvmTest.dependsOn jvmCommonTest
@@ -47,8 +54,8 @@ if (target.isCommon() || target.isMeta()) {
             jsMain.dependsOn jvmJsCommonMain
             jsTest.dependsOn jvmJsCommonTest
 
-            nativeCommonMain.dependsOn commonMain
-            nativeCommonTest.dependsOn commonTest
+            nativeCommonMain.dependsOn jvmNativeCommonMain
+            nativeCommonTest.dependsOn jvmNativeCommonTest
 
             linuxCommonMain.dependsOn nativeCommonMain
             linuxCommonTest.dependsOn nativeCommonTest

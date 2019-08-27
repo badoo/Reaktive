@@ -132,7 +132,7 @@ class KittenViewImpl(
         singleFromFunction { url?.let(::curl) }
             .subscribeOn(ioScheduler)
             .observeOn(mainScheduler)
-            .subscribe(onSuccess = ::setImage)
+            .subscribe(isThreadLocal = true, onSuccess = ::setImage)
     }
 
     private fun showLoading(isLoading: Boolean) {

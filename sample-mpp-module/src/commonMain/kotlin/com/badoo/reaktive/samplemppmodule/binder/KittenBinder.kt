@@ -5,7 +5,6 @@ import com.badoo.reaktive.observable.map
 import com.badoo.reaktive.observable.subscribe
 import com.badoo.reaktive.samplemppmodule.store.KittenStoreBuilder
 import com.badoo.reaktive.samplemppmodule.view.KittenView
-import com.badoo.reaktive.utils.atomic.AtomicReference
 
 class KittenBinder(
     storeBuilder: KittenStoreBuilder
@@ -13,24 +12,24 @@ class KittenBinder(
 
     private var disposables = CompositeDisposable()
     private val store = storeBuilder.build()
-    private var view = AtomicReference<KittenView?>(null, true)
+    private var view: KittenView? = null
 
     fun onViewCreated(view: KittenView) {
-        this.view.value = view
+        this.view = view
     }
 
     fun onStart() {
         disposables +=
-            requireNotNull(view.value)
+            requireNotNull(view)
                 .events
                 .map(KittenViewEventToIntentMapper::invoke)
-                .subscribe(onNext = store::accept)
+                .subscribe(isThreadLocal = true, onNext = store::accept)
 
         disposables +=
             store
                 .states
                 .map(KittenStateToViewModelMapper::invoke)
-                .subscribe(onNext = { requireNotNull(view.value).show(it) })
+                .subscribe(isThreadLocal = true, onNext = { requireNotNull(view).show(it) })
     }
 
     fun onStop() {
@@ -38,7 +37,7 @@ class KittenBinder(
     }
 
     fun onViewDestroyed() {
-        view.value = null
+        view = null
     }
 
     fun onDestroy() {
