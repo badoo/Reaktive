@@ -1,5 +1,6 @@
 package com.badoo.reaktive.utils
 
+import kotlinx.cinterop.pointed
 import platform.Foundation.NSThread
 import platform.posix.pthread_self
 
