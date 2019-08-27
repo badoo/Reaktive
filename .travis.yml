@@ -2,6 +2,8 @@ matrix:
   include:
     - os: linux
       dist: trusty
+      addons:
+        chrome: stable
       language: android
       android:
         components:

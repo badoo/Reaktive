@@ -4,7 +4,7 @@ final target = Target.currentTarget()
 println("Current environment: $target")
 
 include ':reaktive'
-include ':reaktive-test'
+include ':reaktive-testing'
 include ':reaktive-annotations'
 include ':sample-mpp-module'
 if (target.isCommon()) {
@@ -12,7 +12,4 @@ if (target.isCommon()) {
     include ':sample-js-browser-app'
     include ':sample-linuxx64-app'
     include ':rxjava2-interop'
-}
-if (target.isIos()) {
-    include ':sample-ios-app'
 }

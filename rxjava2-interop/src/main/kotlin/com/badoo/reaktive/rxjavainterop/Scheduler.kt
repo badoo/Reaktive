@@ -4,44 +4,44 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.scheduler.Scheduler
 import java.util.concurrent.TimeUnit
 
-fun io.reactivex.Scheduler.toReaktive(): Scheduler =
+fun io.reactivex.Scheduler.asReaktive(): Scheduler =
     object : Scheduler {
         private val disposables = CompositeDisposable()
 
         override fun newExecutor(): Scheduler.Executor =
-            this@toReaktive
+            this@asReaktive
                 .createWorker()
-                .toExecutor()
+                .asExecutor()
                 .also(disposables::add)
 
         override fun destroy() {
             disposables.dispose()
-            this@toReaktive.shutdown()
+            this@asReaktive.shutdown()
         }
     }
 
-private fun io.reactivex.Scheduler.Worker.toExecutor(): Scheduler.Executor =
+private fun io.reactivex.Scheduler.Worker.asExecutor(): Scheduler.Executor =
     object : Scheduler.Executor {
         private val disposables = CompositeDisposable()
         override val isDisposed: Boolean get() = disposables.isDisposed
 
         override fun dispose() {
             disposables.dispose()
-            this@toExecutor.dispose()
+            this@asExecutor.dispose()
         }
 
         override fun submit(delayMillis: Long, task: () -> Unit) {
             disposables +=
-                this@toExecutor
+                this@asExecutor
                     .schedule(task, delayMillis, TimeUnit.MILLISECONDS)
-                    .toReaktive()
+                    .asReaktive()
         }
 
         override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
             disposables +=
-                this@toExecutor
+                this@asExecutor
                     .schedulePeriodically(task, startDelayMillis, periodMillis, TimeUnit.MILLISECONDS)
-                    .toReaktive()
+                    .asReaktive()
         }
 
         override fun cancel() {

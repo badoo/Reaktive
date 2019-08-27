@@ -2,20 +2,20 @@ package com.badoo.reaktive.rxjavainterop
 
 import com.badoo.reaktive.disposable.Disposable
 
-fun Disposable.toRxJava2(): io.reactivex.disposables.Disposable =
+fun Disposable.asRxJava2(): io.reactivex.disposables.Disposable =
     object : io.reactivex.disposables.Disposable {
-        override fun isDisposed(): Boolean = this@toRxJava2.isDisposed
+        override fun isDisposed(): Boolean = this@asRxJava2.isDisposed
 
         override fun dispose() {
-            this@toRxJava2.dispose()
+            this@asRxJava2.dispose()
         }
     }
 
-fun io.reactivex.disposables.Disposable.toReaktive(): Disposable =
+fun io.reactivex.disposables.Disposable.asReaktive(): Disposable =
     object : Disposable {
-        override val isDisposed: Boolean get() = this@toReaktive.isDisposed
+        override val isDisposed: Boolean get() = this@asReaktive.isDisposed
 
         override fun dispose() {
-            this@toReaktive.dispose()
+            this@asReaktive.dispose()
         }
     }

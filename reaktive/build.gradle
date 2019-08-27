@@ -12,7 +12,7 @@ kotlin {
 
         commonTest {
             dependencies {
-                implementation project(':reaktive-test')
+                implementation project(':reaktive-testing')
             }
         }
     }
