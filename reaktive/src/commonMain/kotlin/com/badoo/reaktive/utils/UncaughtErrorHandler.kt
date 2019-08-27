@@ -14,4 +14,8 @@ var reaktiveUncaughtErrorHandler: (Throwable) -> Unit
         _reaktiveUncaughtErrorHandler.value = value
     }
 
+fun resetReaktiveUncaughtErrorHandler() {
+    reaktiveUncaughtErrorHandler = createDefaultUncaughtErrorHandler()
+}
+
 internal expect fun createDefaultUncaughtErrorHandler(): (Throwable) -> Unit
