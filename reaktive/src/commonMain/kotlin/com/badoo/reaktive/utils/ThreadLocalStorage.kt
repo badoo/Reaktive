@@ -6,7 +6,8 @@ import kotlin.native.concurrent.ThreadLocal
 
 class ThreadLocalStorage<T : Any>(initialValue: T? = null) : Disposable {
 
-    private val initialThreadId = currentThreadId
+    private val originalThreadId = currentThreadId
+    private val originalThreadName = currentThreadName
     private val key = ThreadLocalState.allocateKey()
 
     private val _isDisposed = AtomicBoolean()
@@ -47,15 +48,17 @@ class ThreadLocalStorage<T : Any>(initialValue: T? = null) : Disposable {
     }
 
     private fun checkCurrentThread() {
-        if (currentThreadId != initialThreadId) {
-            throw RuntimeException("Accessing ThreadLocalStorage from another threads is prohibited")
+        val threadId = currentThreadId
+
+        check(threadId == originalThreadId) {
+            "Accessing ThreadLocalStorage from another threads is prohibited. " +
+                "Original thread was ($originalThreadId, $originalThreadName), " +
+                "actual thread is ($threadId, $currentThreadName)."
         }
     }
 
     private fun checkDisposed() {
-        if (_isDisposed.value) {
-            throw IllegalStateException("ThreadLocalStorage is already disposed")
-        }
+        check(!_isDisposed.value) { "ThreadLocalStorage is already disposed" }
     }
 
     @ThreadLocal
