@@ -1,7 +1,5 @@
 setupMultiplatformLibrary(project)
 
-apply plugin: PublishPlugin
-
 kotlin {
     sourceSets {
         commonMain {
@@ -92,3 +90,5 @@ if (target.isIos() || target.isMeta()) {
         }
     }
 }
+
+apply plugin: PublishPlugin

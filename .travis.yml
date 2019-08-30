@@ -37,6 +37,6 @@ cache:
 deploy:
   skip_cleanup: true
   provider: script
-  script: ./gradlew publishToMavenLocal -DMP_TARGET=$MP_TARGET && find ~/.m2/repository -name *.module -exec cat \{\} \;
+  script: ./gradlew bintrayUpload -DMP_TARGET=$MP_TARGET -Pbintray_user=$BINTRAY_USER -Pbintray_key=$BINTRAY_KEY
   on:
     tags: true
