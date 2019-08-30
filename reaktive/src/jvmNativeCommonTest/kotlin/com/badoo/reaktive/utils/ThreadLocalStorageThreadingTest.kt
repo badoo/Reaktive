@@ -1,6 +1,7 @@
 package com.badoo.reaktive.utils
 
 import com.badoo.reaktive.scheduler.computationScheduler
+import com.badoo.reaktive.test.doInBackground
 import com.badoo.reaktive.test.waitForOrFail
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
@@ -34,7 +35,7 @@ class ThreadLocalStorageThreadingTest {
         val lock = Lock()
         val condition = lock.newCondition()
 
-        computationScheduler.newExecutor().submit {
+        doInBackground {
             val isFailed =
                 try {
                     block(storage)

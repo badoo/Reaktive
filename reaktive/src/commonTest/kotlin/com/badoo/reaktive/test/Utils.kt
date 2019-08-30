@@ -1,5 +1,6 @@
 package com.badoo.reaktive.test
 
+import com.badoo.reaktive.scheduler.computationScheduler
 import com.badoo.reaktive.utils.Condition
 import com.badoo.reaktive.utils.uptimeMillis
 import kotlin.test.fail
@@ -27,4 +28,8 @@ internal fun Condition.waitForOrFail(timeoutNanos: Long, predicate: () -> Boolea
     if (!waitFor(timeoutNanos, predicate)) {
         fail("Timeout waiting for condition")
     }
+}
+
+internal fun doInBackground(block: () -> Unit) {
+    computationScheduler.newExecutor().submit(task = block)
 }

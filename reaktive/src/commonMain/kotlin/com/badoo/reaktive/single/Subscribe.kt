@@ -53,7 +53,7 @@ private fun <T> Single<T>.subscribeThreadLocal(disposableWrapper: DisposableWrap
             }
         }
 
-    subscribeActual(disposableWrapper, callbacks)
+    subscribeActual(disposableWrapper, threadLocalCallbacks)
 
     return threadLocalCallbacks
 }

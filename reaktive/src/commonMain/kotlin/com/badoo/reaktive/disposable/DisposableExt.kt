@@ -11,15 +11,3 @@ fun <T : Disposable> T.addTo(compositeDisposable: CompositeDisposable): T {
 
     return this
 }
-
-internal inline fun Disposable.doIfNotDisposed(dispose: Boolean = false, block: () -> Unit) {
-    if (!isDisposed) {
-        try {
-            block()
-        } finally {
-            if (dispose) {
-                dispose()
-            }
-        }
-    }
-}
