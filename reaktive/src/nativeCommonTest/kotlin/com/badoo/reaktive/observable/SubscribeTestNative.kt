@@ -1,20 +1,18 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.test.doInBackground
+import com.badoo.reaktive.test.doInBackgroundBlocking
 import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.waitForOrFail
-import com.badoo.reaktive.utils.Lock
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.reaktiveUncaughtErrorHandler
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
-import com.badoo.reaktive.utils.synchronized
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
 import kotlin.native.concurrent.ensureNeverFrozen
 import kotlin.native.concurrent.freeze
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertNotNull
 
 class SubscribeTestNative {
 
@@ -67,22 +65,13 @@ class SubscribeTestNative {
     private fun testCallsUncaughtExceptionWhenThreadLocalAndEventOccurred(block: (ObservableCallbacks<Unit>) -> Unit) {
         val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
         reaktiveUncaughtErrorHandler = { caughtException.value = it }
-        val lock = Lock()
-        val condition = lock.newCondition()
         val upstream = TestObservable<Unit>()
         upstream.subscribe(isThreadLocal = true)
 
-        doInBackground {
-            lock.synchronized {
-                block(upstream)
-                condition.signal()
-            }
+        doInBackgroundBlocking {
+            block(upstream)
         }
 
-        lock.synchronized {
-            condition.waitForOrFail(5_000_000_000L) {
-                caughtException.value != null
-            }
-        }
+        assertNotNull(caughtException.value)
     }
 }
