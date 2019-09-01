@@ -75,17 +75,19 @@ implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
 * Multiplatform: JVM, Android, iOS, JavaScript, Linux X64, Linux ARM 32 hfp
 * Schedulers support: computation, IO, trampoline, main
 * True multithreading for Kotlin/Native (there are some [limitations](https://kotlinlang.org/docs/reference/native/concurrency.html#object-transfer-and-freezing))
+* Thread local subscriptions without freezing for Kotlin/Native
 * Supported sources: Observable, Maybe, Single, Completable
 * Subjects: PublishSubject, BehaviorSubject
 * Interoperability with RxJava2: conversion of sources between Reaktive and RxJava2, ability to reuse RxJava2's schedulers
 * Supported operators:
-  * Observable: asCompletable, collect, combineLatest, concatMap, concatWith, concatWithValue, debounce, delay, defaultIfEmpty, distinctUntilChanged, doOnBeforeXxx, filter, firstOrComplete, firstOrDefault, firstOrError, flatMap, flatMapCompletable, flatMapMaybe, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, sample, scan, skip, startWith, startWithValue, subscribeOn, switchIfEmpty, switchMap, throttle, toCompletable, toList, withLatestFrom, zip
-  * Maybe: asCompletable, asObservable, asSingle, concat, delay, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapObservable, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, subscribeOn, zip
-  * Single: asCompletable, asMaybe, asObservable, blockingGet, concat, delay, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapMaybe, flatMapObservable, flatten, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, subscribeOn, zip
-  * Completable: andThen, asMaybe, asObservable, asSingle, concat, delay, doOnBeforeXxx, merge, observeOn, onErrorComplete, onErrorResumeNext, subscribeOn
+  * Observable: asCompletable, collect, combineLatest, concatMap, concatWith, concatWithValue, debounce, delay, defaultIfEmpty, distinctUntilChanged, doOnBeforeXxx, filter, firstOrComplete, firstOrDefault, firstOrError, flatMap, flatMapCompletable, flatMapMaybe, flatMapSingle, flatten, interval, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, sample, scan, skip, startWith, startWithValue, subscribeOn, switchIfEmpty, switchMap, throttle, timer, toCompletable, toList, toMap, withLatestFrom, zip
+  * Maybe: asCompletable, asObservable, asSingle, concat, delay, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapObservable, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, subscribeOn, switchIfEmpty, timer, zip
+  * Single: asCompletable, asMaybe, asObservable, blockingGet, concat, delay, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapMaybe, flatMapObservable, flatten, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, subscribeOn, timer, zip
+  * Completable: andThen, asMaybe, asObservable, asSingle, concat, delay, doOnBeforeXxx, merge, observeOn, onErrorComplete, onErrorResumeNext, subscribeOn, timer
   * Plus multiple factory and conversion functions
 
 ### Samples:
+* [MPP module](https://github.com/badoo/Reaktive/tree/master/sample-mpp-module)
 * [Android app](https://github.com/badoo/Reaktive/tree/master/sample-android-app)
 * [iOS app](https://github.com/badoo/Reaktive/tree/master/sample-ios-app)
 * [JavaScript browser app](https://github.com/badoo/Reaktive/tree/master/sample-js-browser-app)
