@@ -7,12 +7,16 @@ inline fun <T> maybeUnsafe(crossinline onSubscribe: (observer: MaybeObserver<T>)
         }
     }
 
-fun <T> maybeOf(value: T): Maybe<T> =
+fun <T : Any> maybeOf(value: T?): Maybe<T> =
     maybe { emitter ->
-        emitter.onSuccess(value)
+        if (value == null) {
+            emitter.onComplete()
+        } else {
+            emitter.onSuccess(value)
+        }
     }
 
-fun <T> T.toMaybe(): Maybe<T> = maybeOf(this)
+fun <T : Any> T?.toMaybe(): Maybe<T> = maybeOf(this)
 
 fun <T> maybeOfError(error: Throwable): Maybe<T> =
     maybe { emitter ->
