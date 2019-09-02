@@ -1,5 +1,5 @@
 setupMultiplatformLibrary(project)
 
-apply plugin: PublishPlugin
-
 setupAllTargetsWithDefaultSourceSets(project)
+
+apply plugin: PublishPlugin
