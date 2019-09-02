@@ -1,14 +1,14 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.base.hasSubscribers
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.TestObservableObserver
-import com.badoo.reaktive.test.observable.assertComplete
-import com.badoo.reaktive.test.observable.assertValues
+import com.badoo.reaktive.test.maybe.TestMaybe
+import com.badoo.reaktive.test.maybe.TestMaybeObserver
+import com.badoo.reaktive.test.maybe.assertComplete
+import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.isPrintErrorEnabled
@@ -23,8 +23,8 @@ import kotlin.test.assertTrue
 
 class SubscribeTest {
 
-    private val upstream = TestObservable<Int?>()
-    private val observer = TestObservableObserver<Int?>()
+    private val upstream = TestMaybe<Int?>()
+    private val observer = TestMaybeObserver<Int?>()
 
     @BeforeTest
     fun before() {
@@ -57,15 +57,23 @@ class SubscribeTest {
     }
 
     @Test
-    fun calls_onNext_in_the_same_order_WHEN_upstream_emitted_values() {
+    fun calls_onSuccess_WHEN_upstream_succeeded_with_non_null_value() {
         observer.onSubscribe(disposable())
-        upstream.subscribe(onNext = observer::onNext)
+        upstream.subscribe(onSuccess = observer::onSuccess)
 
-        upstream.onNext(null)
-        upstream.onNext(1)
-        upstream.onNext(2)
+        upstream.onSuccess(0)
 
-        observer.assertValues(null, 1, 2)
+        observer.assertSuccess(0)
+    }
+
+    @Test
+    fun calls_onSuccess_WHEN_upstream_succeeded_with_null_value() {
+        observer.onSubscribe(disposable())
+        upstream.subscribe(onSuccess = observer::onSuccess)
+
+        upstream.onSuccess(null)
+
+        observer.assertSuccess(null)
     }
 
     @Test
@@ -79,14 +87,13 @@ class SubscribeTest {
     }
 
     @Test
-    fun disposes_disposable_WHEN_upstream_is_completed() {
+    fun disposes_disposable_WHEN_upstream_is_succeeded() {
         val disposable = upstream.subscribe()
 
-        upstream.onComplete()
+        upstream.onSuccess(0)
 
         assertTrue(disposable.isDisposed)
     }
-
 
     @Test
     fun calls_onError_WHEN_upstream_produced_an_error() {
@@ -145,29 +152,30 @@ class SubscribeTest {
     }
 
     @Test
-    fun calls_onError_WHEN_onNext_thrown_exception() {
+    fun calls_uncaught_exception_handler_WHEN_onSuccess_thrown_exception() {
         val exception = Exception()
         val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
+        reaktiveUncaughtErrorHandler = { caughtException.value = it }
 
-        upstream.subscribe(
-            onError = { caughtException.value = it },
-            onNext = { throw exception }
-        )
-        upstream.onNext(0)
+        upstream.subscribe(onSuccess = { throw exception })
+        upstream.onSuccess(0)
 
         assertSame(exception, caughtException.value)
     }
 
     @Test
-    fun calls_uncaught_exception_handler_WHEN_onComplete_thrown_exception() {
+    fun does_not_call_onError_WHEN_onSuccess_thrown_exception() {
         val exception = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
-        reaktiveUncaughtErrorHandler = { caughtException.value = it }
+        reaktiveUncaughtErrorHandler = {}
+        val isOnErrorCalled = AtomicBoolean()
 
-        upstream.subscribe(onComplete = { throw exception })
-        upstream.onComplete()
+        upstream.subscribe(
+            onError = { isOnErrorCalled.value = true },
+            onSuccess = { throw exception }
+        )
+        upstream.onSuccess(0)
 
-        assertSame(exception, caughtException.value)
+        assertFalse(isOnErrorCalled.value)
     }
 
     @Test

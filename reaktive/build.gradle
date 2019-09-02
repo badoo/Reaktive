@@ -76,6 +76,12 @@ if (target.isIos() || target.isMeta()) {
         }
 
         sourceSets {
+            jvmNativeCommonMain.dependsOn commonMain
+            jvmNativeCommonTest.dependsOn commonTest
+
+            nativeCommonMain.dependsOn jvmNativeCommonMain
+            nativeCommonTest.dependsOn jvmNativeCommonTest
+
             iosCommonMain.dependsOn nativeCommonMain
             iosCommonTest.dependsOn nativeCommonTest
 
