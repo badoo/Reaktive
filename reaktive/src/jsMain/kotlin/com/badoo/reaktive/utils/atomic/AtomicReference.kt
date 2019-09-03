@@ -1,9 +1,6 @@
 package com.badoo.reaktive.utils.atomic
 
-actual class AtomicReference<T> actual constructor(
-    initialValue: T,
-    autoFreeze: Boolean
-) {
+actual class AtomicReference<T> actual constructor(initialValue: T) {
 
     actual var value: T = initialValue
 
