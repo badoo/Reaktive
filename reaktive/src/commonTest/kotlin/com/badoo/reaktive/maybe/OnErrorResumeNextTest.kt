@@ -10,6 +10,7 @@ import com.badoo.reaktive.test.maybe.assertNotComplete
 import com.badoo.reaktive.test.maybe.assertNotSuccess
 import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -19,6 +20,8 @@ class OnErrorResumeNextTest :
 
     private val upstream = TestMaybe<Int?>()
 
+    @Test
+    @Ignore
     override fun produces_error_WHEN_upstream_produced_error() {
         // not applicable
     }

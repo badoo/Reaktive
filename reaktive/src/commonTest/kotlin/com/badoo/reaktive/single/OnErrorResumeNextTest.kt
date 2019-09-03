@@ -9,6 +9,7 @@ import com.badoo.reaktive.test.single.TestSingleObserver
 import com.badoo.reaktive.test.single.assertNotSuccess
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -18,6 +19,8 @@ class OnErrorResumeNextTest :
 
     private val upstream = TestSingle<Int?>()
 
+    @Test
+    @Ignore
     override fun produces_error_WHEN_upstream_produced_error() {
         // not applicable
     }

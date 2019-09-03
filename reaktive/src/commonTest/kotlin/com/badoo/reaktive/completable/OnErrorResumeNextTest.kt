@@ -8,6 +8,7 @@ import com.badoo.reaktive.test.completable.TestCompletableObserver
 import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -17,6 +18,8 @@ class OnErrorResumeNextTest :
 
     private val upstream = TestCompletable()
 
+    @Test
+    @Ignore
     override fun produces_error_WHEN_upstream_produced_error() {
         // not applicable
     }
