@@ -1,0 +1,46 @@
+setupMultiplatformLibrary(project)
+
+apply plugin: PublishPlugin
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-common'
+                implementation project(':reaktive')
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation project(':reaktive-testing')
+            }
+        }
+
+        jvmMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+            }
+        }
+
+        androidMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android'
+            }
+        }
+
+        nativeCommonMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-native'
+            }
+        }
+
+        jsMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-js'
+            }
+        }
+    }
+}
+
+setupAllTargetsWithDefaultSourceSets(project)
