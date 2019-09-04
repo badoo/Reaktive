@@ -21,7 +21,7 @@ class CurrentThreadTest {
 
     @Test
     fun currentThreadId_returns_same_value_for_worker_thread() {
-        val ids = AtomicReference<Array<Long>?>(null, true)
+        val ids = AtomicReference<Array<Long>?>(null)
 
         doInBackgroundBlocking {
             ids.value = Array(3) { currentThreadId }

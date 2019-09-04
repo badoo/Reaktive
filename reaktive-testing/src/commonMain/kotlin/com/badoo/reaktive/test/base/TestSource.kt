@@ -10,7 +10,7 @@ import com.badoo.reaktive.utils.atomic.update
 
 open class TestSource<O> : Source<O>, Disposable, ErrorCallback where O : Observer, O : ErrorCallback {
 
-    private val _observers: AtomicReference<List<O>> = AtomicReference(emptyList(), true)
+    private val _observers: AtomicReference<List<O>> = AtomicReference(emptyList())
     val observers get() = _observers.value
 
     private val _isDisposed = AtomicBoolean()

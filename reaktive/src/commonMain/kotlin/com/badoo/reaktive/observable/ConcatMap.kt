@@ -16,7 +16,7 @@ fun <T, R> Observable<T>.concatMap(mapper: (T) -> Observable<R>): Observable<R> 
         emitter.setDisposable(disposables)
         val serializedEmitter = emitter.serialize()
 
-        val state = AtomicReference(ConcatMapState<T>(), true)
+        val state = AtomicReference(ConcatMapState<T>())
 
         subscribeSafe(
             object : ObservableObserver<T>, ErrorCallback by serializedEmitter {

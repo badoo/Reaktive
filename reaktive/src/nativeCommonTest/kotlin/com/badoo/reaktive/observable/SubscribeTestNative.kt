@@ -63,7 +63,7 @@ class SubscribeTestNative {
     }
 
     private fun testCallsUncaughtExceptionWhenThreadLocalAndEventOccurred(block: (ObservableCallbacks<Unit>) -> Unit) {
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
+        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
         reaktiveUncaughtErrorHandler = { caughtException.value = it }
         val upstream = TestObservable<Unit>()
         upstream.subscribe(isThreadLocal = true)

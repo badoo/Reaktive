@@ -23,7 +23,7 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
 
         subscribeSafe(
             object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
-                private val pendingValue = AtomicReference<DebouncePendingValue<T>?>(null, true)
+                private val pendingValue = AtomicReference<DebouncePendingValue<T>?>(null)
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable

@@ -9,7 +9,7 @@ internal abstract class SerializerImpl<in T>(
     private val comparator: Comparator<in T>? = null
 ) : Serializer<T> {
 
-    private val state = AtomicReference<State<T>?>(State(), true)
+    private val state = AtomicReference<State<T>?>(State())
 
     override fun accept(value: T) {
         state

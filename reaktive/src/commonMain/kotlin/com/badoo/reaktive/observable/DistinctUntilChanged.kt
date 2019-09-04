@@ -16,7 +16,7 @@ fun <T, R> Observable<T>.distinctUntilChanged(
     observable { emitter ->
         subscribeSafe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
-                val cache = AtomicReference<Any?>(Uninitialized, true)
+                val cache = AtomicReference<Any?>(Uninitialized)
 
                 override fun onNext(value: T) {
                     val previous = cache.value
