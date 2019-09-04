@@ -1,10 +1,14 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.annotations.UseReturnValue
-import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.base.SubscribeCallback
+import com.badoo.reaktive.base.SubscribeCompleteCallback
+import com.badoo.reaktive.base.SubscribeErrorCallback
+import com.badoo.reaktive.base.onComplete
+import com.badoo.reaktive.base.onError
+import com.badoo.reaktive.base.subscribeInternal
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.utils.handleSourceError
 import com.badoo.reaktive.utils.ThreadLocalStorage
 
 @UseReturnValue
@@ -14,83 +18,68 @@ fun Completable.subscribe(
     onError: ((Throwable) -> Unit)? = null,
     onComplete: (() -> Unit)? = null
 ): Disposable {
-    val callbacks =
-        object : Callbacks {
-            override val onSubscribe: ((Disposable) -> Unit)? = onSubscribe
-            override val onError: ((Throwable) -> Unit)? = onError
-            override val onComplete: (() -> Unit)? = onComplete
+    val disposableWrapper = DisposableWrapper()
 
-            override fun dispose() {
-                // no-op
-            }
+    val callbacks =
+        object : Callbacks, Disposable by disposableWrapper {
+            override val onSubscribeCallback: ((Disposable) -> Unit)? = onSubscribe
+            override val onErrorCallback: ((Throwable) -> Unit)? = onError
+            override val onCompleteCallback: (() -> Unit)? = onComplete
         }
 
-    return if (isThreadLocal) {
-        subscribeThreadLocal(callbacks)
-    } else {
-        subscribeActual(callbacks)
+    if (isThreadLocal) {
+        return subscribeThreadLocal(disposableWrapper, callbacks)
     }
+
+    subscribeActual(disposableWrapper, callbacks)
+
+    return callbacks
 }
 
 @UseReturnValue
-private fun Completable.subscribeThreadLocal(callbacks: Callbacks): Disposable {
+private fun Completable.subscribeThreadLocal(disposableWrapper: DisposableWrapper, callbacks: Callbacks): Disposable {
     val storage = ThreadLocalStorage(callbacks)
 
-    return subscribeActual(
+    val threadLocalCallbacks =
         object : Callbacks {
-            override val onSubscribe: ((Disposable) -> Unit)? get() = storage.value?.onSubscribe
-            override val onError: ((Throwable) -> Unit)? get() = storage.value?.onError
-            override val onComplete: (() -> Unit)? get() = storage.value?.onComplete
+            override val onSubscribeCallback: ((Disposable) -> Unit)? get() = storage.value?.onSubscribeCallback
+            override val onErrorCallback: ((Throwable) -> Unit)? get() = storage.value?.onErrorCallback
+            override val onCompleteCallback: (() -> Unit)? get() = storage.value?.onCompleteCallback
+            override val isDisposed: Boolean get() = storage.value?.isDisposed ?: true
 
             override fun dispose() {
                 storage.value?.dispose()
                 storage.dispose()
             }
         }
-    )
+
+    subscribeActual(disposableWrapper, threadLocalCallbacks)
+
+    return threadLocalCallbacks
 }
 
 @UseReturnValue
-private fun Completable.subscribeActual(callbacks: Callbacks): Disposable {
-    val disposableWrapper = DisposableWrapper()
-    callbacks.onSubscribe?.invoke(disposableWrapper)
-
-    subscribeSafe(
+private fun Completable.subscribeActual(disposableWrapper: DisposableWrapper, callbacks: Callbacks) {
+    val observer =
         object : CompletableObserver {
             override fun onSubscribe(disposable: Disposable) {
                 disposableWrapper.set(disposable)
             }
 
             override fun onComplete() {
-                try {
-                    callbacks.onComplete?.invoke()
-                } finally {
-                    disposableWrapper.dispose()
-                }
+                callbacks.onComplete()
             }
 
             override fun onError(error: Throwable) {
-                try {
-                    handleSourceError(error, callbacks.onError)
-                } finally {
-                    disposableWrapper.dispose()
-                }
+                callbacks.onError(error)
             }
         }
-    )
 
-    return object : Disposable by disposableWrapper {
-        override fun dispose() {
-            disposableWrapper.dispose()
-            callbacks.dispose()
-        }
-    }
+    subscribeInternal(callbacks, observer)
 }
 
-private interface Callbacks {
-    val onSubscribe: ((Disposable) -> Unit)?
-    val onError: ((Throwable) -> Unit)?
-    val onComplete: (() -> Unit)?
-
-    fun dispose()
-}
+private interface Callbacks :
+    SubscribeCallback,
+    SubscribeErrorCallback,
+    SubscribeCompleteCallback,
+    Disposable

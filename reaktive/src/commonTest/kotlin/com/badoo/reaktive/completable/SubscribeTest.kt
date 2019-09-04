@@ -1,14 +1,13 @@
-package com.badoo.reaktive.observable
+package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.base.hasSubscribers
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.test.observable.TestObservableObserver
-import com.badoo.reaktive.test.observable.assertComplete
-import com.badoo.reaktive.test.observable.assertValues
+import com.badoo.reaktive.test.completable.TestCompletable
+import com.badoo.reaktive.test.completable.TestCompletableObserver
+import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.isPrintErrorEnabled
@@ -23,8 +22,8 @@ import kotlin.test.assertTrue
 
 class SubscribeTest {
 
-    private val upstream = TestObservable<Int?>()
-    private val observer = TestObservableObserver<Int?>()
+    private val upstream = TestCompletable()
+    private val observer = TestCompletableObserver()
 
     @BeforeTest
     fun before() {
@@ -57,18 +56,6 @@ class SubscribeTest {
     }
 
     @Test
-    fun calls_onNext_in_the_same_order_WHEN_upstream_emitted_values() {
-        observer.onSubscribe(disposable())
-        upstream.subscribe(onNext = observer::onNext)
-
-        upstream.onNext(null)
-        upstream.onNext(1)
-        upstream.onNext(2)
-
-        observer.assertValues(null, 1, 2)
-    }
-
-    @Test
     fun calls_onComplete_WHEN_upstream_is_completed() {
         observer.onSubscribe(disposable())
         upstream.subscribe(onComplete = observer::onComplete)
@@ -77,16 +64,6 @@ class SubscribeTest {
 
         observer.assertComplete()
     }
-
-    @Test
-    fun disposes_disposable_WHEN_upstream_is_completed() {
-        val disposable = upstream.subscribe()
-
-        upstream.onComplete()
-
-        assertTrue(disposable.isDisposed)
-    }
-
 
     @Test
     fun calls_onError_WHEN_upstream_produced_an_error() {
@@ -142,32 +119,6 @@ class SubscribeTest {
         )
 
         assertFalse(upstream.hasSubscribers)
-    }
-
-    @Test
-    fun calls_onError_WHEN_onNext_thrown_exception() {
-        val exception = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
-
-        upstream.subscribe(
-            onError = { caughtException.value = it },
-            onNext = { throw exception }
-        )
-        upstream.onNext(0)
-
-        assertSame(exception, caughtException.value)
-    }
-
-    @Test
-    fun calls_uncaught_exception_handler_WHEN_onComplete_thrown_exception() {
-        val exception = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
-        reaktiveUncaughtErrorHandler = { caughtException.value = it }
-
-        upstream.subscribe(onComplete = { throw exception })
-        upstream.onComplete()
-
-        assertSame(exception, caughtException.value)
     }
 
     @Test
