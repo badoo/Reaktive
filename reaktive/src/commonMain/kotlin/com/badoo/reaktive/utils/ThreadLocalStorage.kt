@@ -18,18 +18,17 @@ class ThreadLocalStorage<T : Any>(initialValue: T? = null) : Disposable {
             return _isDisposed.value
         }
 
-    val value: T?
-        get() {
-            checkCurrentThread()
-
-            @Suppress("UNCHECKED_CAST")
-            return ThreadLocalState[key] as T?
-        }
-
     init {
         if (initialValue != null) {
             set(initialValue)
         }
+    }
+
+    fun get(): T? {
+        checkCurrentThread()
+
+        @Suppress("UNCHECKED_CAST")
+        return ThreadLocalState[key] as T?
     }
 
     fun set(value: T) {

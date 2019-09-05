@@ -1,8 +1,8 @@
-package com.badoo.reaktive.single
+package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.doInBackgroundBlocking
-import com.badoo.reaktive.test.single.TestSingle
+import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.reaktiveUncaughtErrorHandler
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
@@ -21,7 +21,7 @@ class ThreadLocalTestNative {
 
     @Test
     fun does_not_freeze_downstream_WHEN_subscribed_to_a_freezing_upstream() {
-        val upstream = singleUnsafe<Unit> { it.freeze() }
+        val upstream = observableUnsafe<Unit> { it.freeze() }
         val downstreamObserver = dummyObserver()
         downstreamObserver.ensureNeverFrozen()
 
@@ -31,8 +31,13 @@ class ThreadLocalTestNative {
     }
 
     @Test
-    fun calls_uncaught_exception_WHEN_upstream_succeeded_on_another_thread() {
-        testCallsUncaughtExceptionWhenEventOccurredOnBackground { it.onSuccess(Unit) }
+    fun calls_uncaught_exception_WHEN_upstream_produced_value_on_another_thread() {
+        testCallsUncaughtExceptionWhenEventOccurredOnBackground { it.onNext(Unit) }
+    }
+
+    @Test
+    fun calls_uncaught_exception_WHEN_upstream_completed_on_another_thread() {
+        testCallsUncaughtExceptionWhenEventOccurredOnBackground(ObservableCallbacks<*>::onComplete)
     }
 
     @Test
@@ -40,10 +45,10 @@ class ThreadLocalTestNative {
         testCallsUncaughtExceptionWhenEventOccurredOnBackground { it.onError(Exception()) }
     }
 
-    private fun testCallsUncaughtExceptionWhenEventOccurredOnBackground(block: (SingleCallbacks<Unit>) -> Unit) {
+    private fun testCallsUncaughtExceptionWhenEventOccurredOnBackground(block: (ObservableCallbacks<Unit>) -> Unit) {
         val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
         reaktiveUncaughtErrorHandler = { caughtException.value = it }
-        val upstream = TestSingle<Unit>()
+        val upstream = TestObservable<Unit>()
 
         upstream
             .threadLocal()
@@ -56,12 +61,15 @@ class ThreadLocalTestNative {
         assertNotNull(caughtException.value)
     }
 
-    private fun dummyObserver(): SingleObserver<Unit> =
-        object : SingleObserver<Unit> {
+    private fun dummyObserver(): ObservableObserver<Unit> =
+        object : ObservableObserver<Unit> {
             override fun onSubscribe(disposable: Disposable) {
             }
 
-            override fun onSuccess(value: Unit) {
+            override fun onNext(value: Unit) {
+            }
+
+            override fun onComplete() {
             }
 
             override fun onError(error: Throwable) {
