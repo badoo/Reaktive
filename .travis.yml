@@ -34,6 +34,7 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - $HOME/.konan/
 deploy:
   skip_cleanup: true
   provider: script
