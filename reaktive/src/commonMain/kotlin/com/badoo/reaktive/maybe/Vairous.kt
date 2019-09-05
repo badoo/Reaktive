@@ -14,6 +14,17 @@ fun <T> maybeOf(value: T): Maybe<T> =
 
 fun <T> T.toMaybe(): Maybe<T> = maybeOf(this)
 
+fun <T : Any> maybeOfNotNull(value: T?): Maybe<T> =
+    maybe { emitter ->
+        if (value == null) {
+            emitter.onComplete()
+        } else {
+            emitter.onSuccess(value)
+        }
+    }
+
+fun <T : Any> T?.toMaybeNotNull(): Maybe<T> = maybeOfNotNull(this)
+
 fun <T> maybeOfError(error: Throwable): Maybe<T> =
     maybe { emitter ->
         emitter.onError(error)
