@@ -9,7 +9,7 @@ class ThreadLocalStorageThreadingTest {
 
     @Test
     fun throws_RuntimeException_WHEN_get_value_from_another_thread() {
-        testThrowsRuntimeExceptionFromAnotherThread { it.value }
+        testThrowsRuntimeExceptionFromAnotherThread { it.get() }
     }
 
     @Test

@@ -11,7 +11,7 @@ fun <T, C> Observable<T>.collect(initialCollection: C, accumulator: (C, T) -> C)
     single { emitter ->
         subscribeSafe(
             object : ObservableObserver<T>, ErrorCallback by emitter {
-                private val collection = AtomicReference(initialCollection, true)
+                private val collection = AtomicReference(initialCollection)
 
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

@@ -271,11 +271,11 @@ class DebounceWithSelectorTest :
     fun disposes_previous_inner_source_disposable_IF_it_is_provided_after_new_source_disposable() {
         val source = TestObservable<Int>()
 
-        val innerObserver1 = AtomicReference<CompletableObserver?>(null, true)
+        val innerObserver1 = AtomicReference<CompletableObserver?>(null)
         val inner1 = completableUnsafe { observer -> innerObserver1.value = observer }
         val innerDisposable1 = disposable()
 
-        val innerObserver2 = AtomicReference<CompletableObserver?>(null, true)
+        val innerObserver2 = AtomicReference<CompletableObserver?>(null)
         val inner2 = completableUnsafe { observer -> innerObserver2.value = observer }
 
         val inners = listOf(inner1, inner2)
@@ -293,10 +293,10 @@ class DebounceWithSelectorTest :
     fun does_not_dispose_new_inner_source_disposable_WHEN_previous_inner_source_disposable_is_provided_after_new_one() {
         val source = TestObservable<Int>()
 
-        val innerObserver1 = AtomicReference<CompletableObserver?>(null, true)
+        val innerObserver1 = AtomicReference<CompletableObserver?>(null)
         val inner1 = completableUnsafe { observer -> innerObserver1.value = observer }
 
-        val innerObserver2 = AtomicReference<CompletableObserver?>(null, true)
+        val innerObserver2 = AtomicReference<CompletableObserver?>(null)
         val inner2 = completableUnsafe { observer -> innerObserver2.value = observer }
         val innerDisposable2 = disposable()
 

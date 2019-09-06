@@ -1,2 +1,3 @@
 jdk: openjdk8
-install: ./gradlew reaktive:publishToMavenLocal rxjava2-interop:publishToMavenLocal
+before_install: true
+install: true

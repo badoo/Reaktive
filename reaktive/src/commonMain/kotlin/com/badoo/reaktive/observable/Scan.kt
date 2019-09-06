@@ -10,7 +10,7 @@ fun <T> Observable<T>.scan(accumulate: (acc: T, value: T) -> T): Observable<T> =
     observable { emitter ->
         subscribeSafe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
-                var cache = AtomicReference<Any?>(Uninitialized, true)
+                var cache = AtomicReference<Any?>(Uninitialized)
 
                 override fun onNext(value: T) {
                     val previous = cache.value
@@ -48,7 +48,7 @@ fun <T, R> Observable<T>.scan(getSeed: () -> R, accumulate: (acc: R, value: T) -
         val cache: AtomicReference<R> =
             getSeed()
                 .also(emitter::onNext)
-                .let { AtomicReference(it, true) }
+                .let(::AtomicReference)
 
         subscribeSafe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {

@@ -200,11 +200,11 @@ class SwitchMapTest :
 
     @Test
     fun disposes_previous_inner_source_disposable_IF_it_is_provided_after_new_source_disposable() {
-        val innerObserver1 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val innerObserver1 = AtomicReference<ObservableObserver<String?>?>(null)
         val inner1 = observableUnsafe<String?> { observer -> innerObserver1.value = observer }
         val innerDisposable1 = disposable()
 
-        val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null)
         val inner2 = observableUnsafe<String?> { observer -> innerObserver2.value = observer }
         switchMapUpstreamAndSubscribe(listOf(inner1, inner2))
 
@@ -218,10 +218,10 @@ class SwitchMapTest :
 
     @Test
     fun does_not_dispose_new_inner_source_disposable_WHEN_previous_inner_source_disposable_is_provided_after_new_one() {
-        val innerObserver1 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val innerObserver1 = AtomicReference<ObservableObserver<String?>?>(null)
         val inner1 = observableUnsafe<String?> { observer -> innerObserver1.value = observer }
 
-        val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null)
         val inner2 = observableUnsafe<String?> { observer -> innerObserver2.value = observer }
         val innerDisposable2 = disposable()
         switchMapUpstreamAndSubscribe(listOf(inner1, inner2))

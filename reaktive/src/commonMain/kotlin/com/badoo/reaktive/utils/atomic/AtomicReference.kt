@@ -1,9 +1,6 @@
 package com.badoo.reaktive.utils.atomic
 
-expect class AtomicReference<T>(
-    initialValue: T,
-    autoFreeze: Boolean = false
-) {
+expect class AtomicReference<T>(initialValue: T) {
 
     var value: T
 
