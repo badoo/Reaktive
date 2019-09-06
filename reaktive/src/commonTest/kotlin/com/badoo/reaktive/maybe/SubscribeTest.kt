@@ -118,7 +118,7 @@ class SubscribeTest {
     @Test
     fun calls_onError_WHEN_onSubscribe_thrown_exception() {
         val exception = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
+        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
 
         upstream.subscribe(
             onSubscribe = { throw exception },
@@ -154,7 +154,7 @@ class SubscribeTest {
     @Test
     fun calls_uncaught_exception_handler_WHEN_onSuccess_thrown_exception() {
         val exception = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
+        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
         reaktiveUncaughtErrorHandler = { caughtException.value = it }
 
         upstream.subscribe(onSuccess = { throw exception })
@@ -197,7 +197,7 @@ class SubscribeTest {
     fun calls_uncaught_exception_handler_with_CompositeException_WHEN_onError_thrown_exception() {
         val exception1 = Exception()
         val exception2 = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
+        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
         reaktiveUncaughtErrorHandler = { caughtException.value = it }
 
         upstream.subscribe(onError = { throw exception2 })

@@ -8,7 +8,7 @@ import com.badoo.reaktive.utils.atomic.getAndUpdate
  */
 class DisposableWrapper : Disposable {
 
-    private val ref = AtomicReference<Holder?>(Holder(null), true)
+    private val ref = AtomicReference<Holder?>(Holder(null))
     override val isDisposed: Boolean get() = ref.value == null
 
     override fun dispose() {

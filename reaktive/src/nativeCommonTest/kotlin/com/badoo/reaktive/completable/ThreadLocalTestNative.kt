@@ -41,7 +41,7 @@ class ThreadLocalTestNative {
     }
 
     private fun testCallsUncaughtExceptionWhenEventOccurredOnBackground(block: (CompletableCallbacks) -> Unit) {
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
+        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
         reaktiveUncaughtErrorHandler = { caughtException.value = it }
         val upstream = TestCompletable()
 

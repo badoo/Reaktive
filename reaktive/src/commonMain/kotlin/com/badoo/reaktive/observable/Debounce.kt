@@ -17,7 +17,7 @@ fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Obser
 
         subscribeSafe(
             object : ObservableObserver<T> {
-                private val pendingValue = AtomicReference<DebouncePendingValue<T>?>(null, true)
+                private val pendingValue = AtomicReference<DebouncePendingValue<T>?>(null)
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable

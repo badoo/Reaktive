@@ -46,7 +46,7 @@ class ThreadLocalTestNative {
     }
 
     private fun testCallsUncaughtExceptionWhenEventOccurredOnBackground(block: (MaybeCallbacks<Unit>) -> Unit) {
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null, true)
+        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
         reaktiveUncaughtErrorHandler = { caughtException.value = it }
         val upstream = TestMaybe<Unit>()
 

@@ -7,9 +7,9 @@ import com.badoo.reaktive.utils.atomic.AtomicReference
 
 open class TestObserver : Observer, Disposable, ErrorCallback {
 
-    private val _disposable = AtomicReference<Disposable?>(null, true)
+    private val _disposable = AtomicReference<Disposable?>(null)
     val disposable: Disposable? get() = _disposable.value
-    private val _error = AtomicReference<Throwable?>(null, true)
+    private val _error = AtomicReference<Throwable?>(null)
     val error: Throwable? get() = _error.value
     override val isDisposed: Boolean get() = _disposable.value?.isDisposed == true
 

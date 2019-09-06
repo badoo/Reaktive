@@ -19,7 +19,7 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
         val innerDisposableWrapper = DisposableWrapper()
         disposables += innerDisposableWrapper
 
-        val state = AtomicReference(SwitchMapState(), true)
+        val state = AtomicReference(SwitchMapState())
         val serializedEmitter = emitter.serialize()
 
         subscribeSafe(

@@ -24,16 +24,16 @@ val ioScheduler: Scheduler get() = ioSchedulerFactory.value.value
 val trampolineScheduler: Scheduler get() = trampolineSchedulerFactory.value.value
 
 @SharedImmutable
-private val mainSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createMainScheduler), true)
+private val mainSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createMainScheduler))
 
 @SharedImmutable
-private val computationSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createComputationScheduler), true)
+private val computationSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createComputationScheduler))
 
 @SharedImmutable
-private val ioSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createIoScheduler), true)
+private val ioSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createIoScheduler))
 
 @SharedImmutable
-private val trampolineSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createTrampolineScheduler), true)
+private val trampolineSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createTrampolineScheduler))
 
 /**
  * Creates a new instance of Main [Scheduler]

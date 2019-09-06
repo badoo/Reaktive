@@ -6,7 +6,7 @@ import com.badoo.reaktive.utils.atomic.AtomicReference
 
 class TestSingleObserver<T> : TestObserver(), SingleObserver<T> {
 
-    private val _value = AtomicReference<Value<T>?>(null, true)
+    private val _value = AtomicReference<Value<T>?>(null)
 
     val value: T
         get() {

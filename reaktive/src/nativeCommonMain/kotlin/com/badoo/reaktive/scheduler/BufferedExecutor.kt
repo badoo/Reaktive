@@ -8,7 +8,7 @@ internal actual class BufferedExecutor<in T> actual constructor(
     private val onNext: (T) -> Unit
 ) {
 
-    private val state = AtomicReference(State<T>(), true)
+    private val state = AtomicReference(State<T>())
     private val drainFunction = ::drain
 
     actual fun submit(value: T) {

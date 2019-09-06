@@ -8,7 +8,7 @@ internal class DelayQueue<T : Any> {
 
     private val lock = Lock()
     private val condition = lock.newCondition()
-    private val queueRef: AtomicReference<List<Holder<T>>?> = AtomicReference(emptyList(), true)
+    private val queueRef: AtomicReference<List<Holder<T>>?> = AtomicReference(emptyList())
 
     /**
      * Terminates the queue. Any currently waiting [take] methods will immediately return null. All methods will do nothing.

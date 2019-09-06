@@ -7,7 +7,7 @@ import com.badoo.reaktive.utils.atomic.AtomicReference
 fun <T> behaviorSubject(initialValue: T): BehaviorSubject<T> =
     object : DefaultSubject<T>(), BehaviorSubject<T> {
         @Suppress("ObjectPropertyName")
-        private val _value = AtomicReference(initialValue, true)
+        private val _value = AtomicReference(initialValue)
         override val value: T get() = _value.value
 
         override fun onAfterSubscribe(observer: ObservableObserver<T>) {

@@ -15,7 +15,7 @@ fun <T> Observable<T>.sample(windowMillis: Long, scheduler: Scheduler): Observab
 
         subscribeSafe(
             object : ObservableObserver<T> {
-                private val lastValue = AtomicReference<SampleLastValue<T>?>(null, true)
+                private val lastValue = AtomicReference<SampleLastValue<T>?>(null)
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper += disposable
