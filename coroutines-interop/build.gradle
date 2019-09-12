@@ -1,6 +1,5 @@
 setupMultiplatformLibrary(project)
-
-apply plugin: PublishPlugin
+setupAllTargetsWithDefaultSourceSets(project)
 
 kotlin {
     sourceSets {
@@ -43,4 +42,4 @@ kotlin {
     }
 }
 
-setupAllTargetsWithDefaultSourceSets(project)
+apply plugin: PublishPlugin
