@@ -2,25 +2,27 @@ package com.badoo.reaktive.coroutinesinterop
 
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.single
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-fun <T> singleFromCoroutine(block: suspend () -> T): Single<T> =
+fun <T> singleFromCoroutine(context: CoroutineContext = Dispatchers.Unconfined, block: suspend () -> T): Single<T> =
     single { emitter ->
-        val scope = CoroutineScope(Dispatchers.Unconfined)
-        emitter.setDisposable(scope.asDisposable())
-
-        scope.launch {
-            emitter.onSuccess(
-                try {
-                    block()
-                } catch (e: Throwable) {
-                    emitter.onError(e)
-                    return@launch
-                }
-            )
-        }
+        GlobalScope
+            .launch {
+                emitter.onSuccess(
+                    try {
+                        block()
+                    } catch (e: Throwable) {
+                        emitter.onError(e)
+                        return@launch
+                    }
+                )
+            }
+            .asDisposable()
+            .also(emitter::setDisposable)
     }
 
-fun <T> (suspend () -> T).asSingle(): Single<T> = singleFromCoroutine(this)
+fun <T> (suspend () -> T).asSingle(context: CoroutineContext = Dispatchers.Unconfined): Single<T> =
+    singleFromCoroutine(context, this)
