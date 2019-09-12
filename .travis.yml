@@ -17,7 +17,7 @@ matrix:
       language: java
       env: MP_TARGET=IOS
       install: true
-      script: ./gradlew reaktive:check reaktive-test:check -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive:check reaktive-test:check coroutines-interop:check -DMP_TARGET=$MP_TARGET
     - os: linux
       language: android
       android:
