@@ -4,6 +4,7 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
+import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 
@@ -15,13 +16,7 @@ class TakeUntilPredicateTest : ObservableToObservableTests by ObservableToObserv
     fun emits_values_in_correct_order_UNTIL_predicate_returns_true() {
         val observer = upstream.takeUntil { it == 2 }.test()
 
-        upstream.onNext(0)
-        upstream.onNext(null)
-        upstream.onNext(1)
-        upstream.onNext(2)
-        upstream.onNext(null)
-        upstream.onNext(3)
-        upstream.onNext(null)
+        upstream.onNext(0, null, 1, 2, null, 3, null)
 
         observer.assertValues(0, null, 1, 2)
     }
