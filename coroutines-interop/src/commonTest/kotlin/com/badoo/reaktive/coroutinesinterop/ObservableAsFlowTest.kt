@@ -28,9 +28,7 @@ class ObservableAsFlowTest {
             }
         }
 
-
         upstream.onNext(*values.toTypedArray())
-
 
         assertEquals(values, list)
     }
