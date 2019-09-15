@@ -3,10 +3,11 @@ package com.badoo.reaktive.single
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.single.TestSingle
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 interface SingleToMaybeTests {
 
@@ -17,7 +18,7 @@ interface SingleToMaybeTests {
     fun produces_error_WHEN_upstream_produced_error()
 
     @Test
-    fun disposes_upstream_WHEN_disposed()
+    fun unsubscribes_from_upstream_WHEN_disposed()
 
     companion object {
         operator fun <T> invoke(transform: Single<T>.() -> Maybe<*>): SingleToMaybeTests =
@@ -37,10 +38,10 @@ interface SingleToMaybeTests {
                     observer.assertError(error)
                 }
 
-                override fun disposes_upstream_WHEN_disposed() {
+                override fun unsubscribes_from_upstream_WHEN_disposed() {
                     observer.dispose()
 
-                    assertTrue(upstream.isDisposed)
+                    assertFalse(upstream.hasSubscribers)
                 }
             }
     }

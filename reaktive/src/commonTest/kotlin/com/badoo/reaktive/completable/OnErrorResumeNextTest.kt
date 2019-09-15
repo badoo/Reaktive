@@ -40,22 +40,22 @@ class OnErrorResumeNextTest :
     }
 
     @Test
-    fun disposes_upstream_WHEN_upstream_produced_error() {
+    fun unsubscribes_from_upstream_WHEN_upstream_produced_error() {
         createTestWithCompletable()
 
         upstream.onError(Throwable())
 
-        assertTrue(upstream.isDisposed)
+        assertFalse(upstream.hasSubscribers)
     }
 
     @Test
-    fun disposes_resume_next_WHEN_disposed() {
+    fun unsubscribes_from_resume_next_WHEN_disposed() {
         val (errorResumeNext, observer) = createTestWithCompletable()
 
         upstream.onError(Throwable())
         observer.dispose()
 
-        assertTrue(errorResumeNext.isDisposed)
+        assertFalse(errorResumeNext.hasSubscribers)
     }
 
     @Test

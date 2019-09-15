@@ -10,6 +10,7 @@ import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FlatMapTest
@@ -138,7 +139,7 @@ class FlatMapTest
     }
 
     @Test
-    fun disposes_streams_WHEN_disposed() {
+    fun unsubscribes_from_streams_WHEN_disposed() {
         val inners = createInnerSources(2)
         val observer = flatMapUpstreamAndSubscribe(inners)
         source.onNext(0)
@@ -146,13 +147,13 @@ class FlatMapTest
 
         observer.dispose()
 
-        assertTrue(source.isDisposed)
-        assertTrue(inners[0].isDisposed)
-        assertTrue(inners[1].isDisposed)
+        assertFalse(source.hasSubscribers)
+        assertFalse(inners[0].hasSubscribers)
+        assertFalse(inners[1].hasSubscribers)
     }
 
     @Test
-    fun disposes_streams_WHEN_upstream_produced_error() {
+    fun unsubscribes_from_streams_WHEN_upstream_produced_error() {
         val inners = createInnerSources(2)
         flatMapUpstreamAndSubscribe(inners)
         source.onNext(0)
@@ -160,13 +161,13 @@ class FlatMapTest
 
         source.onError(Throwable())
 
-        assertTrue(source.isDisposed)
-        assertTrue(inners[0].isDisposed)
-        assertTrue(inners[1].isDisposed)
+        assertFalse(source.hasSubscribers)
+        assertFalse(inners[0].hasSubscribers)
+        assertFalse(inners[1].hasSubscribers)
     }
 
     @Test
-    fun disposes_streams_WHEN_inner_source_produced_error() {
+    fun unsubscribes_from_streams_WHEN_inner_source_produced_error() {
         val inners = createInnerSources(2)
         flatMapUpstreamAndSubscribe(inners)
         source.onNext(0)
@@ -174,9 +175,9 @@ class FlatMapTest
 
         inners[1].onError(Throwable())
 
-        assertTrue(source.isDisposed)
-        assertTrue(inners[0].isDisposed)
-        assertTrue(inners[1].isDisposed)
+        assertFalse(source.hasSubscribers)
+        assertFalse(inners[0].hasSubscribers)
+        assertFalse(inners[1].hasSubscribers)
     }
 
     private fun flatMapUpstreamAndSubscribe(innerSources: List<Observable<String?>>): TestObservableObserver<String?> =

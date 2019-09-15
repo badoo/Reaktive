@@ -8,6 +8,7 @@ import com.badoo.reaktive.test.single.assertNotSuccess
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FlatMapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ flatMap { TestSingle<Int>() } }) {
@@ -68,13 +69,12 @@ class FlatMapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ flatMap {
     }
 
     @Test
-    fun disposes_inner_source_WHEN_disposed() {
+    fun unsubscribes_from_inner_source_WHEN_disposed() {
         upstream.onSuccess(0)
 
         observer.dispose()
 
-        assertTrue(upstream.isDisposed)
-        assertTrue(inner.isDisposed)
+        assertFalse(inner.hasSubscribers)
     }
 
     private fun flatMapUpstreamAndSubscribe(innerSources: List<Single<String?>>): TestSingleObserver<String?> =

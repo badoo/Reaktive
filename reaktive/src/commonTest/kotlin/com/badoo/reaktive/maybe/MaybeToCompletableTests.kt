@@ -3,11 +3,12 @@ package com.badoo.reaktive.maybe
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.maybe.TestMaybe
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 interface MaybeToCompletableTests {
 
@@ -21,7 +22,7 @@ interface MaybeToCompletableTests {
     fun produces_error_WHEN_upstream_produced_error()
 
     @Test
-    fun disposes_upstream_WHEN_disposed()
+    fun unsubscribes_from_upstream_WHEN_disposed()
 
     companion object {
         operator fun invoke(transform: Maybe<*>.() -> Completable): MaybeToCompletableTests =
@@ -47,10 +48,10 @@ interface MaybeToCompletableTests {
                     observer.assertError(error)
                 }
 
-                override fun disposes_upstream_WHEN_disposed() {
+                override fun unsubscribes_from_upstream_WHEN_disposed() {
                     observer.dispose()
 
-                    assertTrue(upstream.isDisposed)
+                    assertFalse(upstream.hasSubscribers)
                 }
             }
     }
