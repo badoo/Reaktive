@@ -36,16 +36,8 @@ open class TestObserver : Observer, Disposable, ErrorCallback {
     }
 
     protected open fun checkActive() {
-        if (disposable == null) {
-            throw IllegalStateException("Not subscribed")
-        }
-
-        if (error != null) {
-            throw IllegalStateException("Already has error")
-        }
-
-        if (isDisposed) {
-            throw IllegalStateException("Already disposed")
-        }
+        checkNotNull(disposable) { "Not subscribed" }
+        check(error == null) { "Already has error" }
+        check(!isDisposed) { "Already disposed" }
     }
 }
