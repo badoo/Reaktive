@@ -1,5 +1,7 @@
 package com.badoo.reaktive.utils
 
+import com.badoo.reaktive.base.exceptions.CompositeException
+
 internal fun handleSourceError(error: Throwable, onError: ((Throwable) -> Unit)? = null) {
     try {
         if (onError == null) {
@@ -7,16 +9,17 @@ internal fun handleSourceError(error: Throwable, onError: ((Throwable) -> Unit)?
         } else {
             try {
                 onError(error)
-            } catch (e: Throwable) {
-                printError("onError callback failed ($error): $e")
+            } catch (errorHandlerException: Throwable) {
+                printError("onError callback failed ($error): $errorHandlerException")
                 error.printStack()
-                reaktiveUncaughtErrorHandler(e)
+                errorHandlerException.printStack()
+                reaktiveUncaughtErrorHandler(CompositeException(error, errorHandlerException))
             }
         }
-    } catch (e: Throwable) {
-        printError("Error delivering uncaught error ($error): $e")
+    } catch (errorDeliveryException: Throwable) {
+        printError("Error delivering uncaught error ($error): $errorDeliveryException")
         error.printStack()
-        e.printStack()
+        errorDeliveryException.printStack()
     }
 }
 

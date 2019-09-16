@@ -7,9 +7,9 @@ import com.badoo.reaktive.utils.atomic.AtomicReference
 
 open class TestObserver : Observer, Disposable, ErrorCallback {
 
-    private val _disposable = AtomicReference<Disposable?>(null, true)
+    private val _disposable = AtomicReference<Disposable?>(null)
     val disposable: Disposable? get() = _disposable.value
-    private val _error = AtomicReference<Throwable?>(null, true)
+    private val _error = AtomicReference<Throwable?>(null)
     val error: Throwable? get() = _error.value
     override val isDisposed: Boolean get() = _disposable.value?.isDisposed == true
 
@@ -36,16 +36,8 @@ open class TestObserver : Observer, Disposable, ErrorCallback {
     }
 
     protected open fun checkActive() {
-        if (disposable == null) {
-            throw IllegalStateException("Not subscribed")
-        }
-
-        if (error != null) {
-            throw IllegalStateException("Already has error")
-        }
-
-        if (isDisposed) {
-            throw IllegalStateException("Already disposed")
-        }
+        checkNotNull(disposable) { "Not subscribed" }
+        check(error == null) { "Already has error" }
+        check(!isDisposed) { "Already disposed" }
     }
 }

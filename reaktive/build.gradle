@@ -1,7 +1,5 @@
 setupMultiplatformLibrary(project)
 
-apply plugin: PublishPlugin
-
 kotlin {
     sourceSets {
         commonMain {
@@ -78,6 +76,12 @@ if (target.isIos() || target.isMeta()) {
         }
 
         sourceSets {
+            jvmNativeCommonMain.dependsOn commonMain
+            jvmNativeCommonTest.dependsOn commonTest
+
+            nativeCommonMain.dependsOn jvmNativeCommonMain
+            nativeCommonTest.dependsOn jvmNativeCommonTest
+
             iosCommonMain.dependsOn nativeCommonMain
             iosCommonTest.dependsOn nativeCommonTest
 
@@ -92,3 +96,5 @@ if (target.isIos() || target.isMeta()) {
         }
     }
 }
+
+apply plugin: PublishPlugin

@@ -14,14 +14,14 @@ class ThreadLocalStorageTest {
     fun value_is_null_WHEN_created_without_initial_value() {
         val storage = ThreadLocalStorage<Unit>()
 
-        assertNull(storage.value)
+        assertNull(storage.get())
     }
 
     @Test
     fun value_is_same_as_initial_WHEN_created_with_initial_value() {
         val storage = ThreadLocalStorage(Unit)
 
-        assertSame(Unit, storage.value)
+        assertSame(Unit, storage.get())
     }
 
     @Test
@@ -29,7 +29,7 @@ class ThreadLocalStorageTest {
         val storage = ThreadLocalStorage(0)
         storage.set(1)
 
-        assertEquals(1, storage.value)
+        assertEquals(1, storage.get())
     }
 
     @Test
@@ -37,7 +37,7 @@ class ThreadLocalStorageTest {
         val storage = ThreadLocalStorage(Unit)
         storage.dispose()
 
-        assertNull(storage.value)
+        assertNull(storage.get())
     }
 
     @Test

@@ -9,7 +9,7 @@ import com.badoo.reaktive.utils.atomic.getAndUpdate
  */
 class CompositeDisposable : Disposable {
 
-    private val list = AtomicReference<List<Disposable>?>(emptyList(), true)
+    private val list = AtomicReference<List<Disposable>?>(emptyList())
     override val isDisposed: Boolean get() = list.value == null
 
     override fun dispose() {

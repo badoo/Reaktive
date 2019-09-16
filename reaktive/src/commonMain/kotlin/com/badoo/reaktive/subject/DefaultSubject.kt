@@ -11,9 +11,9 @@ import com.badoo.reaktive.utils.serializer.serializer
 
 internal open class DefaultSubject<T> : Subject<T> {
 
-    private var observers = AtomicList<ObservableObserver<T>>(emptyList(), true)
+    private var observers = AtomicList<ObservableObserver<T>>(emptyList())
     private val serializer = serializer(onValue = ::onSerializedValue)
-    private val _status = AtomicReference<Subject.Status>(Subject.Status.Active, true)
+    private val _status = AtomicReference<Subject.Status>(Subject.Status.Active)
     override val status: Subject.Status get() = _status.value
 
     override fun subscribe(observer: ObservableObserver<T>) {

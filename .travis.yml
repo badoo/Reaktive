@@ -11,13 +11,13 @@ matrix:
           - android-28
       env: MP_TARGET=COMMON
       install: true
-      script: ./gradlew reaktive:check reaktive-test:check rxjava2-interop:check -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive:check reaktive-test:check rxjava2-interop:check coroutines-interop:check -DMP_TARGET=$MP_TARGET
     - os: osx
       osx_image: xcode10.2
       language: java
       env: MP_TARGET=IOS
       install: true
-      script: ./gradlew reaktive:check reaktive-test:check -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive:check reaktive-test:check coroutines-interop:check -DMP_TARGET=$MP_TARGET
     - os: linux
       language: android
       android:
@@ -34,9 +34,10 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - $HOME/.konan/
 deploy:
   skip_cleanup: true
   provider: script
-  script: ./gradlew publishToMavenLocal -DMP_TARGET=$MP_TARGET && find ~/.m2/repository -name *.module -exec cat \{\} \;
+  script: ./gradlew bintrayUpload -DMP_TARGET=$MP_TARGET -Pbintray_user=$BINTRAY_USER -Pbintray_key=$BINTRAY_KEY
   on:
     tags: true

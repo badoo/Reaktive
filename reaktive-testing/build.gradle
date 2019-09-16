@@ -1,6 +1,5 @@
 setupMultiplatformLibrary(project)
-
-apply plugin: PublishPlugin
+setupAllTargetsWithDefaultSourceSets(project)
 
 kotlin {
     sourceSets {
@@ -16,7 +15,7 @@ kotlin {
                 implementation kotlin('test-junit')
             }
         }
-        
+
         jsMain {
             dependencies {
                 implementation kotlin('test-js')
@@ -25,4 +24,4 @@ kotlin {
     }
 }
 
-setupAllTargetsWithDefaultSourceSets(project)
+apply plugin: PublishPlugin

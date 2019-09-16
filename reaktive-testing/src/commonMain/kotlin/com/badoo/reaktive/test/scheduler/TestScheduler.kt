@@ -37,7 +37,7 @@ class TestScheduler(
 
     class Timer {
         private val timeMillis = AtomicLong()
-        private val listeners: AtomicReference<Set<() -> Unit>> = AtomicReference(emptySet(), true)
+        private val listeners: AtomicReference<Set<() -> Unit>> = AtomicReference(emptySet())
         val millis: Long get() = timeMillis.value
 
         fun addOnChangeListener(listener: () -> Unit) {

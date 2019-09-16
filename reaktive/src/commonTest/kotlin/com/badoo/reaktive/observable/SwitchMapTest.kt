@@ -143,68 +143,68 @@ class SwitchMapTest :
     }
 
     @Test
-    fun disposes_previous_stream_WHEN_source_emits_next_value() {
+    fun unsubscribes_from_previous_stream_WHEN_source_emits_next_value() {
         val inners = createInnerSources(2)
         switchMapUpstreamAndSubscribe(inners)
 
         source.onNext(0)
-        assertFalse(inners[0].isDisposed)
+        assertTrue(inners[0].hasSubscribers)
 
         source.onNext(1)
-        assertFalse(source.isDisposed)
-        assertTrue(inners[0].isDisposed)
-        assertFalse(inners[1].isDisposed)
+        assertTrue(source.hasSubscribers)
+        assertFalse(inners[0].hasSubscribers)
+        assertTrue(inners[1].hasSubscribers)
     }
 
     @Test
-    fun disposes_latest_stream_WHEN_disposed() {
+    fun unsubscribes_from_latest_stream_WHEN_disposed() {
         val inners = createInnerSources(2)
         val observer = switchMapUpstreamAndSubscribe(inners)
         source.onNext(0)
         source.onNext(1)
-        assertTrue(inners[0].isDisposed)
+        assertFalse(inners[0].hasSubscribers)
 
         observer.dispose()
 
-        assertTrue(source.isDisposed)
-        assertTrue(inners[1].isDisposed)
+        assertFalse(source.hasSubscribers)
+        assertFalse(inners[1].hasSubscribers)
     }
 
     @Test
-    fun disposes_streams_WHEN_upstream_produced_error() {
+    fun unsubscribes_from_streams_WHEN_upstream_produced_error() {
         val inners = createInnerSources(2)
         switchMapUpstreamAndSubscribe(inners)
         source.onNext(0)
         source.onNext(1)
-        assertTrue(inners[0].isDisposed)
+        assertFalse(inners[0].hasSubscribers)
 
         source.onError(Throwable())
 
-        assertTrue(source.isDisposed)
-        assertTrue(inners[1].isDisposed)
+        assertFalse(source.hasSubscribers)
+        assertFalse(inners[1].hasSubscribers)
     }
 
     @Test
-    fun disposes_stream_WHEN_inner_source_produced_error() {
+    fun unsubscribes_from_stream_WHEN_inner_source_produced_error() {
         val inners = createInnerSources(2)
         switchMapUpstreamAndSubscribe(inners)
         source.onNext(0)
         source.onNext(1)
-        assertTrue(inners[0].isDisposed)
+        assertFalse(inners[0].hasSubscribers)
 
         inners[1].onError(Throwable())
 
-        assertTrue(source.isDisposed)
-        assertTrue(inners[1].isDisposed)
+        assertFalse(source.hasSubscribers)
+        assertFalse(inners[1].hasSubscribers)
     }
 
     @Test
     fun disposes_previous_inner_source_disposable_IF_it_is_provided_after_new_source_disposable() {
-        val innerObserver1 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val innerObserver1 = AtomicReference<ObservableObserver<String?>?>(null)
         val inner1 = observableUnsafe<String?> { observer -> innerObserver1.value = observer }
         val innerDisposable1 = disposable()
 
-        val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null)
         val inner2 = observableUnsafe<String?> { observer -> innerObserver2.value = observer }
         switchMapUpstreamAndSubscribe(listOf(inner1, inner2))
 
@@ -218,10 +218,10 @@ class SwitchMapTest :
 
     @Test
     fun does_not_dispose_new_inner_source_disposable_WHEN_previous_inner_source_disposable_is_provided_after_new_one() {
-        val innerObserver1 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val innerObserver1 = AtomicReference<ObservableObserver<String?>?>(null)
         val inner1 = observableUnsafe<String?> { observer -> innerObserver1.value = observer }
 
-        val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null, true)
+        val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null)
         val inner2 = observableUnsafe<String?> { observer -> innerObserver2.value = observer }
         val innerDisposable2 = disposable()
         switchMapUpstreamAndSubscribe(listOf(inner1, inner2))

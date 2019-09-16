@@ -9,8 +9,8 @@ import com.badoo.reaktive.utils.useLock
 fun <T> Single<T>.blockingGet(): T =
     useLock { lock ->
         lock.useCondition { condition ->
-            val result = AtomicReference<BlockingGetResult<T>?>(null, true)
-            val upstreamDisposable = AtomicReference<Disposable?>(null, true)
+            val result = AtomicReference<BlockingGetResult<T>?>(null)
+            val upstreamDisposable = AtomicReference<Disposable?>(null)
 
             subscribe(
                 object : SingleObserver<T> {

@@ -8,7 +8,7 @@ version = reaktive_version
 
 publishing {
     publications {
-        maven(MavenPublication) {
+        jvm(MavenPublication) {
             from components.java
         }
     }

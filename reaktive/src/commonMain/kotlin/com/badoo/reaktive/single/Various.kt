@@ -27,3 +27,5 @@ fun <T> singleFromFunction(func: () -> T): Single<T> =
     single { emitter ->
         emitter.onSuccess(func())
     }
+
+fun <T> (() -> T).asSingle(): Single<T> = singleFromFunction(this)

@@ -36,8 +36,6 @@ class TestObservableObserver<T> : TestObserver(), ObservableObserver<T> {
     override fun checkActive() {
         super.checkActive()
 
-        if (isComplete) {
-            throw IllegalStateException("Already complete")
-        }
+        check(!isComplete) { "Already complete" }
     }
 }

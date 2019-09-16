@@ -1,11 +1,8 @@
 package com.badoo.reaktive.utils
 
-import kotlinx.cinterop.pointed
 import platform.Foundation.NSThread
-import platform.posix.pthread_self
 
-internal actual val currentThreadId: Long
-    get() = pthread_self()?.pointed?.__sig?.toLong() ?: NSThread.currentThread.name?.hashCode()?.toLong() ?: 0L
+// pthread_t.__sig returns same value for all threads, pthread_mach_thread_np() is not available in Kotlin/Native
+internal actual val currentThreadId: Long get() = NSThread.currentThread.hashCode().toLong()
 
-internal actual val currentThreadName: String
-    get() = NSThread.currentThread.name ?: pthread_self()?.pointed?.__sig?.toString() ?: "unnamed"
+internal actual val currentThreadName: String get() = NSThread.currentThread.name ?: "thread_$currentThreadId"

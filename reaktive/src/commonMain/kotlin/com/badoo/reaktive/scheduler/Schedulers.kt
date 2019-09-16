@@ -6,34 +6,34 @@ import kotlin.native.concurrent.SharedImmutable
 /**
  * Provides the global instance of Main [Scheduler]
  */
-val mainScheduler: Scheduler get() = mainSchedulerFactory.value()
+val mainScheduler: Scheduler get() = mainSchedulerFactory.value.value
 
 /**
  * Provides the global instance of Computation [Scheduler]
  */
-val computationScheduler: Scheduler get() = computationSchedulerFactory.value()
+val computationScheduler: Scheduler get() = computationSchedulerFactory.value.value
 
 /**
  * Provides the global instance of IO [Scheduler]
  */
-val ioScheduler: Scheduler get() = ioSchedulerFactory.value()
+val ioScheduler: Scheduler get() = ioSchedulerFactory.value.value
 
 /**
  * Provides the global instance of Trampoline [Scheduler]
  */
-val trampolineScheduler: Scheduler get() = trampolineSchedulerFactory.value()
+val trampolineScheduler: Scheduler get() = trampolineSchedulerFactory.value.value
 
 @SharedImmutable
-private val mainSchedulerFactory: AtomicReference<() -> Scheduler> = AtomicReference(::createMainScheduler, true)
+private val mainSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createMainScheduler))
 
 @SharedImmutable
-private val computationSchedulerFactory: AtomicReference<() -> Scheduler> = AtomicReference(::createComputationScheduler, true)
+private val computationSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createComputationScheduler))
 
 @SharedImmutable
-private val ioSchedulerFactory: AtomicReference<() -> Scheduler> = AtomicReference(::createIoScheduler, true)
+private val ioSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createIoScheduler))
 
 @SharedImmutable
-private val trampolineSchedulerFactory: AtomicReference<() -> Scheduler> = AtomicReference(::createTrampolineScheduler, true)
+private val trampolineSchedulerFactory: AtomicReference<Lazy<Scheduler>> = AtomicReference(lazy(::createTrampolineScheduler))
 
 /**
  * Creates a new instance of Main [Scheduler]
@@ -69,8 +69,8 @@ fun overrideSchedulers(
     io: () -> Scheduler = ::createIoScheduler,
     trampoline: () -> Scheduler = ::createTrampolineScheduler
 ) {
-    mainSchedulerFactory.value = main
-    computationSchedulerFactory.value = computation
-    ioSchedulerFactory.value = io
-    trampolineSchedulerFactory.value = trampoline
+    mainSchedulerFactory.value = lazy(main)
+    computationSchedulerFactory.value = lazy(computation)
+    ioSchedulerFactory.value = lazy(io)
+    trampolineSchedulerFactory.value = lazy(trampoline)
 }

@@ -1,16 +1,15 @@
 package com.badoo.reaktive.utils
 
-import com.badoo.reaktive.scheduler.computationScheduler
-import com.badoo.reaktive.test.waitForOrFail
+import com.badoo.reaktive.test.doInBackgroundBlocking
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
 class ThreadLocalStorageThreadingTest {
 
     @Test
     fun throws_RuntimeException_WHEN_get_value_from_another_thread() {
-        testThrowsRuntimeExceptionFromAnotherThread { it.value }
+        testThrowsRuntimeExceptionFromAnotherThread { it.get() }
     }
 
     @Test
@@ -30,31 +29,18 @@ class ThreadLocalStorageThreadingTest {
 
     private fun testThrowsRuntimeExceptionFromAnotherThread(block: (ThreadLocalStorage<Unit>) -> Unit) {
         val storage = ThreadLocalStorage(Unit)
-        val isFailedRef = AtomicReference<Boolean?>(null)
-        val lock = Lock()
-        val condition = lock.newCondition()
+        val isFailed = AtomicReference<Boolean?>(null)
 
-        computationScheduler.newExecutor().submit {
-            val isFailed =
+        doInBackgroundBlocking {
+            isFailed.value =
                 try {
                     block(storage)
                     false
                 } catch (e: RuntimeException) {
                     true
                 }
-
-            lock.synchronized {
-                isFailedRef.value = isFailed
-                condition.signal()
-            }
         }
 
-        lock.synchronized {
-            condition.waitForOrFail(5_000_000_000L) {
-                isFailedRef.value != null
-            }
-        }
-
-        assertTrue(isFailedRef.value!!)
+        assertEquals(true, isFailed.value)
     }
 }

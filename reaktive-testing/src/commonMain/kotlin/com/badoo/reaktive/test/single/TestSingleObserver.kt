@@ -6,7 +6,7 @@ import com.badoo.reaktive.utils.atomic.AtomicReference
 
 class TestSingleObserver<T> : TestObserver(), SingleObserver<T> {
 
-    private val _value = AtomicReference<Value<T>?>(null, true)
+    private val _value = AtomicReference<Value<T>?>(null)
 
     val value: T
         get() {
@@ -31,9 +31,7 @@ class TestSingleObserver<T> : TestObserver(), SingleObserver<T> {
     override fun checkActive() {
         super.checkActive()
 
-        if (isSuccess) {
-            throw IllegalStateException("Already succeeded")
-        }
+        check(!isSuccess) { "Already succeeded" }
     }
 
     private class Value<T>(val value: T)
