@@ -26,11 +26,9 @@ fun Completable.retry(predicate: (Int, Throwable) -> Boolean = { _, _ -> true })
                 override fun onError(error: Throwable) {
                     observer.tryCatch(
                         { predicate(attempt.addAndGet(1), error) },
-                        { CompositeException(error, it) }) { shouldRetry ->
+                        { CompositeException(error, it) }
+                    ) { shouldRetry ->
                         if (shouldRetry) {
-                            // Should dispose previous before,
-                            // otherwise new subscription will be disposed via onSubscribe disposal
-                            disposableWrapper.set(null)
                             this@retry.subscribeSafe(this)
                         } else {
                             observer.onError(error)

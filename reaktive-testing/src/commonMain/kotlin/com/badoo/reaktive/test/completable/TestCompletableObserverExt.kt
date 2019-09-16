@@ -12,6 +12,12 @@ fun TestCompletableObserver.assertNotComplete() {
     assertFalse(isComplete, "Completable is complete")
 }
 
+fun TestCompletableObserver.disposeIfTerminalEvent() {
+    if (isComplete || error != null) {
+        dispose()
+    }
+}
+
 fun Completable.test(): TestCompletableObserver =
     TestCompletableObserver()
         .also(::subscribe)

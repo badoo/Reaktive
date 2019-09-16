@@ -2,6 +2,7 @@ package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
+import com.badoo.reaktive.test.completable.disposeIfTerminalEvent
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicReference
@@ -22,10 +23,35 @@ class RetryTest : CompletableToCompletableTests by CompletableToCompletableTests
     }
 
     @Test
-    fun subscribes_to_upstream_WHEN_upstream_produces_error() {
+    fun resubscribes_WHEN_upstream_produces_error_and_predicate_returns_true() {
         val observer = upstream.retry().test()
         upstream.onError(Throwable())
+        observer.disposeIfTerminalEvent()
         assertTrue(upstream.hasSubscribers)
+    }
+
+    @Test
+    fun does_not_resubscribe_WHEN_upstream_produces_error_and_predicate_returns_false() {
+        val observer = upstream.retry { _, _ -> false }.test()
+        upstream.onError(Throwable())
+        observer.disposeIfTerminalEvent()
+        assertFalse(upstream.hasSubscribers)
+    }
+
+    @Test
+    fun produces_error_WHEN_upstream_produces_error_and_predicate_returns_false() {
+        val observer = upstream.retry { _, _ -> false }.test()
+        val throwable = Throwable()
+        upstream.onError(throwable)
+        assertSame(observer.error, throwable)
+    }
+
+    @Test
+    fun completes_WHEN_upstream_completes_after_retry() {
+        val observer = upstream.retry().test()
+        upstream.onError(Throwable())
+        upstream.onComplete()
+        assertTrue(observer.isComplete)
     }
 
     @Test
@@ -58,21 +84,5 @@ class RetryTest : CompletableToCompletableTests by CompletableToCompletableTests
         assertSame(timeRef.value, 0)
         upstream.onError(Throwable())
         assertSame(timeRef.value, 1)
-    }
-
-    @Test
-    fun does_not_subscribe_WHEN_upstream_produces_error_and_predicate_returns_false() {
-        val observer = upstream.retry { _, _ -> false }.test()
-        upstream.onError(Throwable())
-        upstream.dispose()
-        assertFalse(upstream.hasSubscribers)
-    }
-
-    @Test
-    fun produces_error_WHEN_upstream_produces_error_and_predicate_returns_false() {
-        val observer = upstream.retry { _, _ -> false }.test()
-        val throwable = Throwable()
-        upstream.onError(throwable)
-        assertSame(observer.error, throwable)
     }
 }

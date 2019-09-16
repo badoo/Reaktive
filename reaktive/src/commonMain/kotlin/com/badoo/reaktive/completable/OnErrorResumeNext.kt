@@ -22,7 +22,8 @@ fun Completable.onErrorResumeNext(nextSupplier: (Throwable) -> Completable): Com
                 override fun onError(error: Throwable) {
                     observer.tryCatch(
                         { nextSupplier(error) },
-                        { CompositeException(error, it) }) {
+                        { CompositeException(error, it) }
+                    ) {
                         it.subscribeSafe(
                             object : CompletableObserver, CompletableCallbacks by observer {
                                 override fun onSubscribe(disposable: Disposable) {
