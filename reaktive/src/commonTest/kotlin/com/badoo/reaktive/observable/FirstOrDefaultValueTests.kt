@@ -1,5 +1,6 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
@@ -27,14 +28,14 @@ class FirstOrDefaultValueTests : ObservableToSingleTests by ObservableToSingleTe
     }
 
     @Test
-    fun disposes_upstream_WHEN_upstream_emitted_value() {
+    fun unsubscribes_from_upstream_WHEN_upstream_emitted_value() {
         upstream.onNext(0)
 
-        assertTrue(upstream.isDisposed)
+        assertFalse(upstream.hasSubscribers)
     }
 
     @Test
-    fun does_not_dispose_upstream_WHEN_upstream_did_not_emit_values() {
-        assertFalse(upstream.isDisposed)
+    fun does_not_unsubscribe_from_upstream_WHEN_upstream_did_not_emit_values() {
+        assertTrue(upstream.hasSubscribers)
     }
 }

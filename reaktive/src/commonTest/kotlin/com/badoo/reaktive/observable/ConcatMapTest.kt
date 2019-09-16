@@ -172,36 +172,36 @@ class ConcatMapTest
     }
 
     @Test
-    fun disposes_source_WHEN_disposed() {
+    fun unsubscribes_from_source_WHEN_disposed() {
         val inner = TestObservable<String>()
         val observer = concatMapUpstreamAndSubscribe { inner }
         upstream.onNext(0)
 
         observer.dispose()
 
-        assertTrue(inner.isDisposed)
+        assertFalse(inner.hasSubscribers)
     }
 
     @Test
-    fun disposes_source_WHEN_upstream_produced_error() {
+    fun unsubscribes_from_source_WHEN_upstream_produced_error() {
         val inner = TestObservable<String>()
         concatMapUpstreamAndSubscribe { inner }
         upstream.onNext(0)
 
         upstream.onError(Throwable())
 
-        assertTrue(inner.isDisposed)
+        assertFalse(inner.hasSubscribers)
     }
 
     @Test
-    fun disposes_upstream_WHEN_source_produced_error() {
+    fun unsubscribes_from_upstream_WHEN_source_produced_error() {
         val inner = TestObservable<String>()
         concatMapUpstreamAndSubscribe { inner }
         upstream.onNext(0)
 
         inner.onError(Throwable())
 
-        assertTrue(upstream.isDisposed)
+        assertFalse(upstream.hasSubscribers)
     }
 
     private fun concatMapUpstreamAndSubscribe(innerSources: List<Observable<String?>>): TestObservableObserver<String?> =
