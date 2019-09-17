@@ -205,66 +205,66 @@ class DebounceWithSelectorTest :
     }
 
     @Test
-    fun disposes_previous_stream_WHEN_source_emits_next_value() {
+    fun unsubscribes_from_previous_stream_WHEN_source_emits_next_value() {
         val source = TestObservable<Int>()
         val inners = createInnerSources(2)
         source.debounce { inners[it] }.test()
 
         source.onNext(0)
-        assertFalse(inners[0].isDisposed)
+        assertTrue(inners[0].hasSubscribers)
 
         source.onNext(1)
-        assertFalse(source.isDisposed)
-        assertTrue(inners[0].isDisposed)
-        assertFalse(inners[1].isDisposed)
+        assertTrue(source.hasSubscribers)
+        assertFalse(inners[0].hasSubscribers)
+        assertTrue(inners[1].hasSubscribers)
     }
 
     @Test
-    fun disposes_latest_stream_WHEN_disposed() {
+    fun unsubscribes_from_latest_stream_WHEN_disposed() {
         val source = TestObservable<Int>()
         val inners = createInnerSources(2)
         val observer = source.debounce { inners[it] }.test()
 
         source.onNext(0)
         source.onNext(1)
-        assertTrue(inners[0].isDisposed)
+        assertFalse(inners[0].hasSubscribers)
 
         observer.dispose()
 
-        assertTrue(source.isDisposed)
-        assertTrue(inners[1].isDisposed)
+        assertFalse(source.hasSubscribers)
+        assertFalse(inners[1].hasSubscribers)
     }
 
     @Test
-    fun disposes_streams_WHEN_upstream_produced_error() {
+    fun unsubscribes_from_streams_WHEN_upstream_produced_error() {
         val source = TestObservable<Int>()
         val inners = createInnerSources(2)
         source.debounce { inners[it] }.test()
 
         source.onNext(0)
         source.onNext(1)
-        assertTrue(inners[0].isDisposed)
+        assertFalse(inners[0].hasSubscribers)
 
         source.onError(Throwable())
 
-        assertTrue(source.isDisposed)
-        assertTrue(inners[1].isDisposed)
+        assertFalse(source.hasSubscribers)
+        assertFalse(inners[1].hasSubscribers)
     }
 
     @Test
-    fun disposes_stream_WHEN_inner_source_produced_error() {
+    fun unsubscribes_from_stream_WHEN_inner_source_produced_error() {
         val source = TestObservable<Int>()
         val inners = createInnerSources(2)
         source.debounce { inners[it] }.test()
 
         source.onNext(0)
         source.onNext(1)
-        assertTrue(inners[0].isDisposed)
+        assertFalse(inners[0].hasSubscribers)
 
         inners[1].onError(Throwable())
 
-        assertTrue(source.isDisposed)
-        assertTrue(inners[1].isDisposed)
+        assertFalse(source.hasSubscribers)
+        assertFalse(inners[1].hasSubscribers)
     }
 
     @Test

@@ -3,10 +3,11 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 interface ObservableToSingleTests {
 
@@ -17,7 +18,7 @@ interface ObservableToSingleTests {
     fun produces_error_WHEN_upstream_produced_error()
 
     @Test
-    fun disposes_upstream_WHEN_disposed()
+    fun unsubscribes_from_upstream_WHEN_disposed()
 
     companion object {
         operator fun <T> invoke(transform: Observable<T>.() -> Single<*>): ObservableToSingleTests =
@@ -37,10 +38,10 @@ interface ObservableToSingleTests {
                     observer.assertError(error)
                 }
 
-                override fun disposes_upstream_WHEN_disposed() {
+                override fun unsubscribes_from_upstream_WHEN_disposed() {
                     observer.dispose()
 
-                    assertTrue(upstream.isDisposed)
+                    assertFalse(upstream.hasSubscribers)
                 }
             }
     }

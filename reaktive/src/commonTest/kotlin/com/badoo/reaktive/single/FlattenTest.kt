@@ -2,13 +2,14 @@ package com.badoo.reaktive.single
 
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.single.TestSingle
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 class FlattenTest {
 
@@ -55,9 +56,9 @@ class FlattenTest {
     }
 
     @Test
-    fun disposes_upstream_WHEN_disposed() {
+    fun unsubscribes_from_upstream_WHEN_disposed() {
         observer.dispose()
 
-        assertTrue(upstream.isDisposed)
+        assertFalse(upstream.hasSubscribers)
     }
 }

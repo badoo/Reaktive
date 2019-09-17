@@ -1,54 +1,69 @@
 package com.badoo.reaktive.utils.serializer
 
-import com.badoo.reaktive.utils.Lock
 import com.badoo.reaktive.utils.queue.Queue
-import com.badoo.reaktive.utils.queue.isNotEmpty
-import com.badoo.reaktive.utils.queue.take
-import com.badoo.reaktive.utils.synchronized
+import com.badoo.reaktive.utils.queue.isEmpty
 
 internal abstract class SerializerImpl<in T>(queue: Queue<T>) : Serializer<T> {
 
     private var queue: Queue<T>? = queue
-    private val lock = Lock()
+    private val monitor = Any()
     private var isDraining = false
 
     override fun accept(value: T) {
-        lock
-            .synchronized {
+        val queueToDrain =
+            synchronized(monitor) {
+                val queue = queue ?: return
+
+                if (isDraining) {
+                    queue.offer(value)
+                    return
+                }
+
+                isDraining = true
                 queue
-                    ?.apply { offer(value) }
-                    ?.takeUnless { isDraining }
-                    ?.also { isDraining = true }
             }
-            ?.drain()
+
+        if (!processValue(value)) {
+            return
+        }
+
+        queueToDrain.drain()
     }
 
     override fun clear() {
-        lock.synchronized {
+        synchronized(monitor) {
             queue?.clear()
         }
     }
 
     private fun Queue<T>.drain() {
         while (true) {
-            lock
-                .synchronized {
-                    if (isNotEmpty) {
-                        take()
-                    } else {
+            val value =
+                synchronized(monitor) {
+                    if (isEmpty) {
                         onDrainFinished(false)
                         return
                     }
+
+                    @Suppress("UNCHECKED_CAST")
+                    poll() as T
                 }
-                .let(::onValue)
-                .takeUnless { it }
-                ?.also {
-                    lock.synchronized {
-                        onDrainFinished(true)
-                        return
-                    }
-                }
+
+            if (!processValue(value)) {
+                return
+            }
         }
+    }
+
+    private fun processValue(value: T): Boolean {
+        if (!onValue(value)) {
+            synchronized(monitor) {
+                onDrainFinished(true)
+            }
+            return false
+        }
+
+        return true
     }
 
     private fun onDrainFinished(terminate: Boolean) {

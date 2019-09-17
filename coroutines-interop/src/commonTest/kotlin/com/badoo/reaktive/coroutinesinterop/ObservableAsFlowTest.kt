@@ -1,5 +1,6 @@
 package com.badoo.reaktive.coroutinesinterop
 
+import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.onNext
 import kotlinx.coroutines.CoroutineScope
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
@@ -64,7 +66,7 @@ class ObservableAsFlowTest {
     }
 
     @Test
-    fun disposes_upstream_WHEN_flow_is_cancelled() {
+    fun unsubscribes_from_upstream_WHEN_flow_is_cancelled() {
         val scope = CoroutineScope(Dispatchers.Unconfined)
 
         scope.launch(Dispatchers.Unconfined) {
@@ -73,6 +75,6 @@ class ObservableAsFlowTest {
 
         scope.cancel()
 
-        assertTrue(upstream.isDisposed)
+        assertFalse(upstream.hasSubscribers)
     }
 }
