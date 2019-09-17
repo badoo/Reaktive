@@ -10,24 +10,24 @@ internal abstract class SerializerImpl<in T>(queue: Queue<T>) : Serializer<T> {
     private var isDraining = false
 
     override fun accept(value: T) {
-        val q =
+        val queueToDrain =
             synchronized(monitor) {
-                val q = queue ?: return
+                val queue = queue ?: return
 
                 if (isDraining) {
-                    q.offer(value)
+                    queue.offer(value)
                     return
                 }
 
                 isDraining = true
-                q
+                queue
             }
 
         if (!processValue(value)) {
             return
         }
 
-        q.drain()
+        queueToDrain.drain()
     }
 
     override fun clear() {
