@@ -4,7 +4,6 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.disposable
-import com.badoo.reaktive.observable.connectable.ConnectableObservable
 import com.badoo.reaktive.subject.Subject
 import com.badoo.reaktive.subject.getObserver
 import com.badoo.reaktive.subject.publish.publishSubject

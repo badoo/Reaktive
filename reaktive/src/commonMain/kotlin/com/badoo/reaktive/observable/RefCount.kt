@@ -1,0 +1,43 @@
+package com.badoo.reaktive.observable
+
+import com.badoo.reaktive.disposable.CompositeDisposable
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.getAndUpdate
+
+fun <T> ConnectableObservable<T>.refCount(subscriberCount: Int = 1): Observable<T> {
+    require(subscriberCount > 0)
+
+    val subscribeCount = AtomicInt()
+    val disposable = AtomicReference<Disposable?>(null)
+
+    return observableUnsafe { observer ->
+        val disposables = CompositeDisposable()
+        observer.onSubscribe(disposables)
+
+        disposables +=
+            disposable {
+                if (subscribeCount.addAndGet(-1) == 0) {
+                    disposable
+                        .getAndUpdate { null }
+                        ?.dispose()
+                }
+            }
+
+        this@refCount.subscribe(
+            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposables += disposable
+                }
+            }
+        )
+
+        if (subscribeCount.addAndGet(1) == subscriberCount) {
+            this@refCount.connect {
+                disposable.value = it
+            }
+        }
+    }
+}
