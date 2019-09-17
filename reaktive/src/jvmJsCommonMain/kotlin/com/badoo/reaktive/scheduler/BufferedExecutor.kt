@@ -2,8 +2,7 @@ package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.utils.queue.ArrayQueue
 import com.badoo.reaktive.utils.queue.Queue
-import com.badoo.reaktive.utils.queue.isNotEmpty
-import com.badoo.reaktive.utils.queue.take
+import com.badoo.reaktive.utils.queue.isEmpty
 
 internal actual class BufferedExecutor<in T> actual constructor(
     private val executor: Scheduler.Executor,
@@ -28,12 +27,13 @@ internal actual class BufferedExecutor<in T> actual constructor(
     private fun drain() {
         while (!executor.isDisposed) {
             synchronized(monitor) {
-                if (queue.isNotEmpty) {
-                    queue.take()
-                } else {
+                if (queue.isEmpty) {
                     isDraining = false
                     return
                 }
+
+                @Suppress("UNCHECKED_CAST")
+                queue.poll() as T
             }
                 .also(onNext)
         }

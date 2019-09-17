@@ -73,12 +73,13 @@ class SerializerTest {
     }
 
     @Test
-    fun both_values_are_emitted_WHEN_second_value_sent_from_callback() {
-        lateinit var serializer: Serializer<Int>
+    fun all_values_are_emitted_WHEN_some_are_sent_from_callback() {
+        lateinit var serializer: Serializer<Int?>
         serializer =
             serializer {
                 values += it
                 if (it == 1) {
+                    serializer.accept(null)
                     serializer.accept(2)
                 }
                 true
@@ -86,7 +87,7 @@ class SerializerTest {
 
         serializer.accept(1)
 
-        assertValues(1, 2)
+        assertValues(1, null, 2)
     }
 
     @Test

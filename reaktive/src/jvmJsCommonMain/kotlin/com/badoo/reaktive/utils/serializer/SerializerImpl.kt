@@ -45,7 +45,8 @@ internal abstract class SerializerImpl<in T>(queue: Queue<T>) : Serializer<T> {
                         return
                     }
 
-                    poll()!!
+                    @Suppress("UNCHECKED_CAST")
+                    poll() as T
                 }
 
             if (!processValue(value)) {
