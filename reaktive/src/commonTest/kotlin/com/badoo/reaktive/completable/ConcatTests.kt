@@ -65,11 +65,11 @@ class ConcatTests : CompletableToCompletableTests by CompletableToCompletableTes
     }
 
     @Test
-    fun disposes_second_upstream_WHEN_disposed() {
+    fun unsubscribes_from_second_upstream_WHEN_disposed() {
         upstream1.onComplete()
         inner.dispose()
 
-        assertTrue(upstream2.isDisposed)
+        assertFalse(upstream2.hasSubscribers)
     }
 
 }

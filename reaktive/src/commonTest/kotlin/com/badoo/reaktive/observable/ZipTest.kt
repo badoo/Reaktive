@@ -1,6 +1,7 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertNoValues
@@ -8,7 +9,7 @@ import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 class ZipTest {
 
@@ -104,29 +105,29 @@ class ZipTest {
     }
 
     @Test
-    fun disposes_all_sources_WHEN_completed() {
+    fun unsubscribes_from_all_sources_WHEN_completed() {
         sources[0].onComplete()
 
-        assertTrue(sources[0].isDisposed)
-        assertTrue(sources[1].isDisposed)
-        assertTrue(sources[2].isDisposed)
+        sources.forEach {
+            assertFalse(it.hasSubscribers)
+        }
     }
 
     @Test
-    fun disposes_all_sources_WHEN_error() {
+    fun unsubscribes_from_all_sources_WHEN_error() {
         sources[0].onError(Throwable())
 
-        assertTrue(sources[0].isDisposed)
-        assertTrue(sources[1].isDisposed)
-        assertTrue(sources[2].isDisposed)
+        sources.forEach {
+            assertFalse(it.hasSubscribers)
+        }
     }
 
     @Test
-    fun disposes_all_sources_WHEN_disposed() {
+    fun unsubscribes_from_all_sources_WHEN_disposed() {
         observer.dispose()
 
-        assertTrue(sources[0].isDisposed)
-        assertTrue(sources[1].isDisposed)
-        assertTrue(sources[2].isDisposed)
+        sources.forEach {
+            assertFalse(it.hasSubscribers)
+        }
     }
 }

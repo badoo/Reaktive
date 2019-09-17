@@ -31,9 +31,7 @@ class TestSingleObserver<T> : TestObserver(), SingleObserver<T> {
     override fun checkActive() {
         super.checkActive()
 
-        if (isSuccess) {
-            throw IllegalStateException("Already succeeded")
-        }
+        check(!isSuccess) { "Already succeeded" }
     }
 
     private class Value<T>(val value: T)

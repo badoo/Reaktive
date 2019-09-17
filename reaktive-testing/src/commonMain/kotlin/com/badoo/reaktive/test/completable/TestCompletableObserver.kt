@@ -24,8 +24,6 @@ class TestCompletableObserver : TestObserver(), CompletableObserver {
     override fun checkActive() {
         super.checkActive()
 
-        if (isComplete) {
-            throw IllegalStateException("Already complete")
-        }
+        check(!isComplete) { "Already complete" }
     }
 }

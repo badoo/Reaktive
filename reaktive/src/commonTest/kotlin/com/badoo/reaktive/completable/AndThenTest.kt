@@ -67,12 +67,11 @@ class AndThenTest : CompletableToCompletableTests by CompletableToCompletableTes
     }
 
     @Test
-    fun disposes_inner_source_WHEN_disposed() {
+    fun unsubscribes_from_inner_source_WHEN_disposed() {
         upstream.onComplete()
 
         observer.dispose()
 
-        assertTrue(upstream.isDisposed)
-        assertTrue(inner.isDisposed)
+        assertFalse(inner.hasSubscribers)
     }
 }
