@@ -10,28 +10,28 @@ import com.badoo.reaktive.utils.atomic.AtomicInt
 import kotlin.reflect.KClass
 
 fun Completable.retry(predicate: (Int, Throwable) -> Boolean = { _, _ -> true }): Completable =
-    completableUnsafe { observer ->
+    completable { emitter ->
         val attempt = AtomicInt(-1)
 
         val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
+        emitter.setDisposable(disposableWrapper)
 
         subscribeSafe(
-            object : CompletableObserver, CompleteCallback by observer {
+            object : CompletableObserver, CompleteCallback by emitter {
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
                 }
 
                 override fun onError(error: Throwable) {
-                    observer.tryCatch(
+                    emitter.tryCatch(
                         { predicate(attempt.addAndGet(1), error) },
                         { CompositeException(error, it) }
                     ) { shouldRetry ->
                         if (shouldRetry) {
                             this@retry.subscribeSafe(this)
                         } else {
-                            observer.onError(error)
+                            emitter.onError(error)
                         }
                     }
                 }

@@ -1,8 +1,8 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
-import com.badoo.reaktive.test.completable.disposeIfTerminalEvent
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicReference
@@ -26,7 +26,6 @@ class RetryTest : CompletableToCompletableTests by CompletableToCompletableTests
     fun resubscribes_WHEN_upstream_produces_error_and_predicate_returns_true() {
         val observer = upstream.retry().test()
         upstream.onError(Throwable())
-        observer.disposeIfTerminalEvent()
         assertTrue(upstream.hasSubscribers)
     }
 
@@ -34,7 +33,6 @@ class RetryTest : CompletableToCompletableTests by CompletableToCompletableTests
     fun does_not_resubscribe_WHEN_upstream_produces_error_and_predicate_returns_false() {
         val observer = upstream.retry { _, _ -> false }.test()
         upstream.onError(Throwable())
-        observer.disposeIfTerminalEvent()
         assertFalse(upstream.hasSubscribers)
     }
 
@@ -84,5 +82,24 @@ class RetryTest : CompletableToCompletableTests by CompletableToCompletableTests
         assertSame(timeRef.value, 0)
         upstream.onError(Throwable())
         assertSame(timeRef.value, 1)
+    }
+
+    @Test
+    fun produces_error_WHEN_predicate_throw_exception() {
+        val throwable1 = Throwable()
+        val throwable2 = Throwable()
+        val observer = upstream.retry { _, _ -> throw throwable2 }.test()
+        upstream.onError(throwable1)
+        val compositeThrowable = observer.error
+        assertTrue(compositeThrowable is CompositeException)
+        assertSame(throwable1, compositeThrowable.cause1)
+        assertSame(throwable2, compositeThrowable.cause2)
+    }
+
+    @Test
+    fun unsubscribes_from_upstream_WHEN_predicate_throw_exception() {
+        val observer = upstream.retry { _, _ -> throw Throwable() }.test()
+        upstream.onError(Throwable())
+        assertFalse(upstream.hasSubscribers)
     }
 }
