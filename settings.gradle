@@ -3,7 +3,7 @@ enableFeaturePreview('GRADLE_METADATA')
 final target = Target.currentTarget()
 println("Current environment: $target")
 
-include ':reaktive', ':rxjava3-interop'
+include ':reaktive'
 include ':reaktive-testing'
 include ':reaktive-annotations'
 include ':coroutines-interop'
@@ -13,4 +13,5 @@ if (target.isCommon()) {
     include ':sample-js-browser-app'
     include ':sample-linuxx64-app'
     include ':rxjava2-interop'
+    include ':rxjava3-interop'
 }
