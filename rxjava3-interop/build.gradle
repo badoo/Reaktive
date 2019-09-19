@@ -1,0 +1,23 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'maven-publish'
+}
+
+group = reaktive_group_id
+version = reaktive_version
+
+publishing {
+    publications {
+        jvm(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation project(':reaktive')
+    implementation 'io.reactivex.rxjava3:rxjava'
+}
+
+apply plugin: PublishPlugin
