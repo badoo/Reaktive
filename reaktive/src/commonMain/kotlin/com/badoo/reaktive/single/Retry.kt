@@ -1,4 +1,4 @@
-package com.badoo.reaktive.completable
+package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.operator.Retry
 import com.badoo.reaktive.base.subscribeSafe
@@ -6,15 +6,15 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import kotlin.reflect.KClass
 
-fun Completable.retry(predicate: (Int, Throwable) -> Boolean = { _, _ -> true }): Completable =
-    completable { emitter ->
+fun <T> Single<T>.retry(predicate: (Int, Throwable) -> Boolean = { _, _ -> true }): Single<T> =
+    single { emitter ->
         val retry = Retry(emitter, predicate)
 
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)
 
         subscribeSafe(
-            object : CompletableObserver, CompletableCallbacks by emitter {
+            object : SingleObserver<T>, SingleCallbacks<T> by emitter {
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
@@ -27,8 +27,8 @@ fun Completable.retry(predicate: (Int, Throwable) -> Boolean = { _, _ -> true })
         )
     }
 
-fun Completable.retry(times: Int): Completable =
+fun <T> Single<T>.retry(times: Int): Single<T> =
     retry { attempt, _ -> attempt < times }
 
-fun Completable.retry(throwableType: KClass<out Throwable>): Completable =
+fun <T> Single<T>.retry(throwableType: KClass<out Throwable>): Single<T> =
     retry { _, throwable -> throwableType.isInstance(throwable) }
