@@ -3,6 +3,7 @@ package com.badoo.reaktive.rxjavainterop
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.MaybeObserver
+import com.badoo.reaktive.maybe.maybeUnsafe
 
 fun <T> Maybe<T>.asRxJava3Source(): io.reactivex.rxjava3.core.MaybeSource<T> =
         io.reactivex.rxjava3.core.MaybeSource { observer ->
@@ -17,7 +18,7 @@ fun <T> Maybe<T>.asRxJava3(): io.reactivex.rxjava3.core.Maybe<T> =
         }
 
 fun <T> io.reactivex.rxjava3.core.MaybeSource<out T>.asReaktive(): Maybe<T> =
-        com.badoo.reaktive.maybe.maybeUnsafe { observer ->
+        maybeUnsafe { observer ->
             subscribe(observer.asRxJava3())
         }
 

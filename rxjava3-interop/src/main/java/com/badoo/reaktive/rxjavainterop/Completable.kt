@@ -2,6 +2,7 @@ package com.badoo.reaktive.rxjavainterop
 
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.completable.CompletableObserver
+import com.badoo.reaktive.completable.completableUnsafe
 import com.badoo.reaktive.disposable.Disposable
 
 fun Completable.asRxJava3Source(): io.reactivex.rxjava3.core.CompletableSource =
@@ -17,7 +18,7 @@ fun Completable.asRxJava3(): io.reactivex.rxjava3.core.Completable =
         }
 
 fun <T> io.reactivex.rxjava3.core.CompletableSource.asReaktive(): Completable =
-        com.badoo.reaktive.completable.completableUnsafe { observer ->
+        completableUnsafe { observer ->
             subscribe(observer.asRxJava3())
         }
 
