@@ -1,0 +1,41 @@
+package com.badoo.reaktive.observable
+
+import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.completable.CompletableCallbacks
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.utils.atomic.AtomicInt
+
+/**
+ * Emit only the first [limit] items emitted by source.
+ */
+fun <T> Observable<T>.take(limit: Int): Observable<T?> {
+    require(limit >= 0) { "count >= 0 required but it was $limit" }
+
+    return observable { emitter ->
+        val disposableWrapper = DisposableWrapper()
+        emitter.setDisposable(disposableWrapper)
+
+        val remaining = AtomicInt(limit)
+
+        subscribeSafe(object : ObservableObserver<T>, CompletableCallbacks by emitter {
+            override fun onSubscribe(disposable: Disposable) {
+                disposableWrapper.set(disposable)
+
+                if (remaining.value == 0) {
+                    onComplete()
+                }
+            }
+
+            override fun onNext(value: T) {
+                if (remaining.value > 0) {
+                    val stop = remaining.addAndGet(-1) == 0
+                    emitter.onNext(value)
+                    if (stop) {
+                        onComplete()
+                    }
+                }
+            }
+        })
+    }
+}
