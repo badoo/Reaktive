@@ -7,6 +7,7 @@ import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class MergeTests : CompletableToCompletableTests by CompletableToCompletableTests({ merge(this) }) {
@@ -57,11 +58,11 @@ class MergeTests : CompletableToCompletableTests by CompletableToCompletableTest
     }
 
     @Test
-    fun disposes_both_upstreams_WHEN_disposed() {
+    fun unsubscribes_from_both_upstreams_WHEN_disposed() {
         inner.dispose()
 
-        assertTrue(upstream1.isDisposed)
-        assertTrue(upstream2.isDisposed)
+        assertFalse(upstream1.hasSubscribers)
+        assertFalse(upstream2.hasSubscribers)
     }
 
 }

@@ -42,10 +42,10 @@ class SubscribeTest {
     }
 
     @Test
-    fun disposes_upstream_WHEN_disposed() {
+    fun unsubscribes_from_upstream_WHEN_disposed() {
         upstream.subscribe().dispose()
 
-        assertTrue(upstream.isDisposed)
+        assertFalse(upstream.hasSubscribers)
     }
 
     @Test

@@ -1,13 +1,14 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 class TakeUntilObservableTest :
     ObservableToObservableTests by ObservableToObservableTests<Unit>({ takeUntil(observableOfNever<Nothing>()) }) {
@@ -74,45 +75,45 @@ class TakeUntilObservableTest :
     }
 
     @Test
-    fun disposes_upstream_disposable_WHEN_other_produced_non_null_value() {
+    fun unsubscribes_from_upstream_WHEN_other_produced_non_null_value() {
         other.onNext(Unit)
 
-        assertTrue(upstream.isDisposed)
+        assertFalse(upstream.hasSubscribers)
     }
 
     @Test
-    fun disposes_upstream_disposable_WHEN_other_produced_null_value() {
+    fun unsubscribes_from_upstream_WHEN_other_produced_null_value() {
         other.onNext(null)
 
-        assertTrue(upstream.isDisposed)
+        assertFalse(upstream.hasSubscribers)
     }
 
     @Test
-    fun disposes_other_disposable_WHEN_other_produced_non_null_value() {
+    fun unsubscribes_from_other_WHEN_other_produced_non_null_value() {
         other.onNext(Unit)
 
-        assertTrue(other.isDisposed)
+        assertFalse(other.hasSubscribers)
     }
 
     @Test
-    fun disposes_other_disposable_WHEN_other_produced_null_value() {
+    fun unsubscribes_from_other_WHEN_other_produced_null_value() {
         other.onNext(null)
 
-        assertTrue(other.isDisposed)
+        assertFalse(other.hasSubscribers)
     }
 
     @Test
-    fun disposes_upstream_disposable_WHEN_other_completed() {
+    fun unsubscribes_from_upstream_WHEN_other_completed() {
         other.onComplete()
 
-        assertTrue(upstream.isDisposed)
+        assertFalse(upstream.hasSubscribers)
     }
 
     @Test
-    fun disposes_upstream_disposable_WHEN_other_produced_error() {
+    fun unsubscribes_from_upstream_WHEN_other_produced_error() {
         other.onError(Exception())
 
-        assertTrue(upstream.isDisposed)
+        assertFalse(upstream.hasSubscribers)
     }
 
     @Test
@@ -123,17 +124,17 @@ class TakeUntilObservableTest :
     }
 
     @Test
-    fun disposes_other_disposable_WHEN_upstream_completed() {
+    fun unsubscribes_from_other_WHEN_upstream_completed() {
         upstream.onComplete()
 
-        assertTrue(other.isDisposed)
+        assertFalse(other.hasSubscribers)
     }
 
     @Test
-    fun disposes_other_disposable_WHEN_upstream_produced_error() {
+    fun unsubscribes_from_other_WHEN_upstream_produced_error() {
         upstream.onError(Exception())
 
-        assertTrue(other.isDisposed)
+        assertFalse(other.hasSubscribers)
     }
 
     @Test
