@@ -23,6 +23,7 @@ There are four modules published:
 - `reaktive-annotations` - collection of annotations (mutiplatform)
 - `reaktive-testing` - testing utilities (multiplatform)
 - `rxjava2-interop` - RxJava2 interoperability helpers (JVM and Android)
+- `rxjava3-interop` - RxJava3 interoperability helpers (JVM and Android)
 
 Each multiplatform module is compiled against each target and published in
 [metadata publishing mode](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#experimental-metadata-publishing-mode). 

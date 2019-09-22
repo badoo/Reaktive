@@ -1,9 +1,8 @@
 package com.badoo.reaktive.subject
 
-import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableCallbacks
 
-interface Subject<T> : Observable<T>, ObservableCallbacks<T> {
+interface Subject<T> : Relay<T>, ObservableCallbacks<T> {
 
     val status: Status
 
