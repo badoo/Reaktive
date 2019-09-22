@@ -8,13 +8,12 @@ import kotlin.reflect.KClass
 
 fun Completable.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Completable =
     completable { emitter ->
-        val retry = Retry(emitter, predicate)
-
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)
 
         subscribeSafe(
             object : CompletableObserver, CompletableCallbacks by emitter {
+                private val retry = Retry(emitter, predicate)
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)

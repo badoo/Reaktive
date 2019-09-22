@@ -8,13 +8,12 @@ import kotlin.reflect.KClass
 
 fun <T> Single<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Single<T> =
     single { emitter ->
-        val retry = Retry(emitter, predicate)
-
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)
 
         subscribeSafe(
             object : SingleObserver<T>, SingleCallbacks<T> by emitter {
+                private val retry = Retry(emitter, predicate)
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)

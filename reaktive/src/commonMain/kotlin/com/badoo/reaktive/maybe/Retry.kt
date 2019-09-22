@@ -8,13 +8,12 @@ import kotlin.reflect.KClass
 
 fun <T> Maybe<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Maybe<T> =
     maybe { emitter ->
-        val retry = Retry(emitter, predicate)
-
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)
 
         subscribeSafe(
             object : MaybeObserver<T>, MaybeCallbacks<T> by emitter {
+                private val retry = Retry(emitter, predicate)
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)

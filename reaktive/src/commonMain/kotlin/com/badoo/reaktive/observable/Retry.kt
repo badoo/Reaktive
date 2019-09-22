@@ -8,13 +8,12 @@ import kotlin.reflect.KClass
 
 fun <T> Observable<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Observable<T> =
     observable { emitter ->
-        val retry = Retry(emitter, predicate)
-
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)
 
         subscribeSafe(
             object : ObservableObserver<T>, ObservableCallbacks<T> by emitter {
+                private val retry = Retry(emitter, predicate)
 
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
