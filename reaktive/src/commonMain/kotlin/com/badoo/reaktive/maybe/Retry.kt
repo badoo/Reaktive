@@ -6,7 +6,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import kotlin.reflect.KClass
 
-fun <T> Maybe<T>.retry(predicate: (Int, Throwable) -> Boolean = { _, _ -> true }): Maybe<T> =
+fun <T> Maybe<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Maybe<T> =
     maybe { emitter ->
         val retry = Retry(emitter, predicate)
 

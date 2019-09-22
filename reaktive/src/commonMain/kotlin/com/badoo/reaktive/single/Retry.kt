@@ -6,7 +6,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import kotlin.reflect.KClass
 
-fun <T> Single<T>.retry(predicate: (Int, Throwable) -> Boolean = { _, _ -> true }): Single<T> =
+fun <T> Single<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Single<T> =
     single { emitter ->
         val retry = Retry(emitter, predicate)
 

@@ -7,7 +7,7 @@ import com.badoo.reaktive.utils.atomic.AtomicInt
 
 internal class Retry(
     private val emitter: ErrorCallback,
-    private val predicate: (Int, Throwable) -> Boolean
+    private val predicate: (attempt: Int, Throwable) -> Boolean
 ) {
     private val attempt = AtomicInt(-1)
 
