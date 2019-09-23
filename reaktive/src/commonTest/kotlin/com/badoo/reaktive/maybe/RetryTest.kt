@@ -111,18 +111,4 @@ class RetryTest : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ retry() }) {
         upstream.onError(Throwable())
         assertFalse(upstream.hasSubscribers)
     }
-
-    @Test
-    fun resubscribes_WHEN_upstream_produces_error_and_predicate_uses_same_KClass() {
-        val observer = upstream.retry(RuntimeException::class).test()
-        upstream.onError(IllegalStateException())
-        assertTrue(upstream.hasSubscribers)
-    }
-
-    @Test
-    fun does_not_resubscribe_WHEN_upstream_produces_error_and_predicate_uses_different_KClass() {
-        val observer = upstream.retry(RuntimeException::class).test()
-        upstream.onError(Throwable())
-        assertFalse(upstream.hasSubscribers)
-    }
 }

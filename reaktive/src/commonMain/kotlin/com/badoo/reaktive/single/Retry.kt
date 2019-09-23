@@ -4,7 +4,6 @@ import com.badoo.reaktive.base.operator.Retry
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import kotlin.reflect.KClass
 
 fun <T> Single<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Single<T> =
     single { emitter ->
@@ -28,6 +27,3 @@ fun <T> Single<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _
 
 fun <T> Single<T>.retry(times: Int): Single<T> =
     retry { attempt, _ -> attempt < times }
-
-fun <T> Single<T>.retry(throwableType: KClass<out Throwable>): Single<T> =
-    retry { _, throwable -> throwableType.isInstance(throwable) }

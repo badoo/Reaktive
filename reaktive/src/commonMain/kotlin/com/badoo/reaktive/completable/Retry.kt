@@ -4,7 +4,6 @@ import com.badoo.reaktive.base.operator.Retry
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import kotlin.reflect.KClass
 
 fun Completable.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Completable =
     completable { emitter ->
@@ -28,6 +27,3 @@ fun Completable.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -
 
 fun Completable.retry(times: Int): Completable =
     retry { attempt, _ -> attempt < times }
-
-fun Completable.retry(throwableType: KClass<out Throwable>): Completable =
-    retry { _, throwable -> throwableType.isInstance(throwable) }
