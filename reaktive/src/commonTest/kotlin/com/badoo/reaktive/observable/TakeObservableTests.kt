@@ -1,7 +1,13 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.test.base.assertError
-import com.badoo.reaktive.test.observable.*
+import com.badoo.reaktive.test.observable.TestObservable
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNotComplete
+import com.badoo.reaktive.test.observable.assertValue
+import com.badoo.reaktive.test.observable.assertValues
+import com.badoo.reaktive.test.observable.onNext
+import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -94,7 +100,8 @@ class TakeObservableTests :
         observer.assertValue(42)
     }
 
-    @Test fun throws_error_when_take_is_called_with_a_limit_less_than_0() {
+    @Test
+    fun throws_error_when_take_is_called_with_a_limit_less_than_0() {
         assertFailsWith<IllegalArgumentException> {
             upstream.take(-2)
         }
