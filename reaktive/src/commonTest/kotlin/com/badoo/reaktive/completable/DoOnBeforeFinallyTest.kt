@@ -7,9 +7,8 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
+import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicInt
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -22,7 +21,7 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_before_completion() {
-        val callOrder = atomicList<String>()
+        val callOrder = SharedList<String>()
 
         upstream
             .doOnBeforeFinally {
@@ -38,12 +37,12 @@ class DoOnBeforeFinallyTest
 
         upstream.onComplete()
 
-        assertEquals(listOf("action", "onComplete"), callOrder.value)
+        assertEquals(listOf("action", "onComplete"), callOrder)
     }
 
     @Test
     fun calls_action_before_failing() {
-        val callOrder = atomicList<String>()
+        val callOrder = SharedList<String>()
         val exception = Exception()
 
         upstream
@@ -60,12 +59,12 @@ class DoOnBeforeFinallyTest
 
         upstream.onError(exception)
 
-        assertEquals(listOf("action", "onError"), callOrder.value)
+        assertEquals(listOf("action", "onError"), callOrder)
     }
 
     @Test
     fun calls_action_before_disposing_upstream() {
-        val callOrder = atomicList<String>()
+        val callOrder = SharedList<String>()
 
         completableUnsafe { observer ->
             observer.onSubscribe(
@@ -80,7 +79,7 @@ class DoOnBeforeFinallyTest
             .test()
             .dispose()
 
-        assertEquals(listOf("action", "dispose"), callOrder.value)
+        assertEquals(listOf("action", "dispose"), callOrder)
     }
 
     @Test

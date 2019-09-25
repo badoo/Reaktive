@@ -5,8 +5,7 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.single.DefaultSingleObserver
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
+import com.badoo.reaktive.utils.SharedList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -19,7 +18,7 @@ class DoOnBeforeTerminateTest
 
     @Test
     fun calls_action_before_success() {
-        val callOrder = atomicList<String>()
+        val callOrder = SharedList<String>()
 
         upstream
             .doOnBeforeTerminate {
@@ -35,12 +34,12 @@ class DoOnBeforeTerminateTest
 
         upstream.onSuccess(0)
 
-        assertEquals(listOf("action", "onSuccess"), callOrder.value)
+        assertEquals(listOf("action", "onSuccess"), callOrder)
     }
 
     @Test
     fun calls_action_before_failing() {
-        val callOrder = atomicList<String>()
+        val callOrder = SharedList<String>()
         val exception = Exception()
 
         upstream
@@ -57,7 +56,7 @@ class DoOnBeforeTerminateTest
 
         upstream.onError(exception)
 
-        assertEquals(listOf("action", "onError"), callOrder.value)
+        assertEquals(listOf("action", "onError"), callOrder)
     }
 
     @Test

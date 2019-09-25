@@ -5,8 +5,7 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
+import com.badoo.reaktive.utils.SharedList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -16,7 +15,7 @@ class DoOnBeforeTerminateTest
     : CompletableToCompletableTests by CompletableToCompletableTests({ doOnBeforeTerminate {} }) {
 
     private val upstream = TestCompletable()
-    private val callOrder = atomicList<String>()
+    private val callOrder = SharedList<String>()
 
     @Test
     fun calls_action_before_completion() {
@@ -35,12 +34,12 @@ class DoOnBeforeTerminateTest
 
         upstream.onComplete()
 
-        assertEquals(listOf("action", "onComplete"), callOrder.value)
+        assertEquals(listOf("action", "onComplete"), callOrder)
     }
 
     @Test
     fun calls_action_before_failing() {
-        val callOrder = atomicList<String>()
+        val callOrder = SharedList<String>()
         val exception = Exception()
 
         upstream
@@ -57,7 +56,7 @@ class DoOnBeforeTerminateTest
 
         upstream.onError(exception)
 
-        assertEquals(listOf("action", "onError"), callOrder.value)
+        assertEquals(listOf("action", "onError"), callOrder)
     }
 
     @Test

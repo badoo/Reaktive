@@ -3,13 +3,12 @@ package com.badoo.reaktive.test.observable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.test.base.TestObserver
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.clear
-import com.badoo.reaktive.utils.atomic.plusAssign
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.update
 
 class TestObservableObserver<T> : TestObserver(), ObservableObserver<T> {
 
-    private val _values = atomicList<T>()
+    private val _values = AtomicReference<List<T>>(emptyList())
     val values: List<T> get() = _values.value
     private val _isComplete = AtomicBoolean()
     val isComplete: Boolean get() = _isComplete.value
@@ -17,7 +16,7 @@ class TestObservableObserver<T> : TestObserver(), ObservableObserver<T> {
     override fun onNext(value: T) {
         checkActive()
 
-        _values += value
+        _values.update { it + value }
     }
 
     override fun onComplete() {
@@ -29,7 +28,7 @@ class TestObservableObserver<T> : TestObserver(), ObservableObserver<T> {
     override fun reset() {
         super.reset()
 
-        _values.clear()
+        _values.update { emptyList() }
         _isComplete.value = false
     }
 

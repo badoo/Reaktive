@@ -5,8 +5,7 @@ import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
+import com.badoo.reaktive.utils.SharedList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -18,7 +17,7 @@ class DoOnBeforeCompleteTest
 
     @Test
     fun calls_action_before_completion() {
-        val callOrder = atomicList<String>()
+        val callOrder = SharedList<String>()
 
         upstream
             .doOnBeforeComplete {
@@ -34,7 +33,7 @@ class DoOnBeforeCompleteTest
 
         upstream.onComplete()
 
-        assertEquals(listOf("action", "onComplete"), callOrder.value)
+        assertEquals(listOf("action", "onComplete"), callOrder)
     }
 
     @Test
