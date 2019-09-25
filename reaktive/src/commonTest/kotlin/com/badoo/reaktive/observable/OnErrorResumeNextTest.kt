@@ -11,6 +11,7 @@ import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -20,6 +21,8 @@ class OnErrorResumeNextTest :
 
     private val upstream = TestObservable<Int?>()
 
+    @Test
+    @Ignore
     override fun produces_error_WHEN_upstream_produced_error() {
         // not applicable
     }
