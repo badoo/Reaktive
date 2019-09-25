@@ -7,7 +7,6 @@ import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -16,7 +15,7 @@ import kotlin.test.assertTrue
 class RefCountTest {
 
     @Test
-    fun does_not_connected_WHEN_not_subscribed() {
+    fun does_not_connect_WHEN_not_subscribed() {
         var isConnected = false
         val upstream = testUpstream(connect = { isConnected = true })
 
@@ -61,15 +60,15 @@ class RefCountTest {
 
     @Test
     fun does_not_connect_second_time_WHEN_subscriberCount_is_1_and_subscribed_second_time() {
-        val isConnected = AtomicBoolean()
-        val upstream = testUpstream(connect = { isConnected.value = true })
+        var isConnected: Boolean
+        val upstream = testUpstream(connect = { isConnected = true })
         val refCount = upstream.refCount(subscriberCount = 1)
         refCount.test()
 
-        isConnected.value = false
+        isConnected = false
         refCount.test()
 
-        assertFalse(isConnected.value)
+        assertFalse(isConnected)
     }
 
     @Test
