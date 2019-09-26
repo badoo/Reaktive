@@ -4,9 +4,8 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
+import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -18,7 +17,7 @@ class DoOnBeforeSuccessTest
 
     @Test
     fun calls_action_before_emitting() {
-        val callOrder = atomicList<String>()
+        val callOrder = SharedList<String>()
 
         upstream
             .doOnBeforeSuccess { value ->
@@ -34,7 +33,7 @@ class DoOnBeforeSuccessTest
 
         upstream.onSuccess(0)
 
-        assertEquals(listOf("action 0", "onNext 0"), callOrder.value)
+        assertEquals(listOf("action 0", "onNext 0"), callOrder)
     }
 
     @Test

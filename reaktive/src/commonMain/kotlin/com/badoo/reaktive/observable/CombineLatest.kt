@@ -3,43 +3,36 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.atomic.AtomicInt
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.updateAndGet
-import com.badoo.reaktive.utils.replace
 import com.badoo.reaktive.utils.serializer.serializer
 
 fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val values = atomicList<Any?>(List(size) { Uninitialized })
+        val values = SharedList<Any?>(size) { Uninitialized }
         val activeSourceCount = AtomicInt(size)
 
         val serializer =
             serializer<CombineLatestEvent<T>> { event ->
                 when (event) {
                     is CombineLatestEvent.OnNext -> {
-                        values
-                            .updateAndGet { it.replace(event.index, event.value) }
-                            .takeIf { newValues -> newValues.none { it === Uninitialized } }
-                            ?.let {
-                                @Suppress("UNCHECKED_CAST")
-                                it as List<T>
-                            }
+                        values[event.index] = event.value
 
-                            ?.also {
-                                val mappedValue =
-                                    try {
-                                        mapper(it)
-                                    } catch (e: Throwable) {
-                                        emitter.onError(e)
-                                        return@serializer false
-                                    }
+                        if (values.none { it === Uninitialized }) {
+                            val mappedValue =
+                                try {
+                                    @Suppress("UNCHECKED_CAST")
+                                    mapper(values as List<T>)
+                                } catch (e: Throwable) {
+                                    emitter.onError(e)
+                                    return@serializer false
+                                }
 
-                                emitter.onNext(mappedValue)
-                            }
+                            emitter.onNext(mappedValue)
+                        }
 
                         true
                     }
@@ -48,7 +41,7 @@ fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Obse
                         val remainingActiveSources = activeSourceCount.addAndGet(-1)
 
                         // Complete if all sources are completed or a source is completed without a value
-                        val allCompleted = (remainingActiveSources == 0) || (values.value[event.index] === Uninitialized)
+                        val allCompleted = (remainingActiveSources == 0) || (values[event.index] === Uninitialized)
                         if (allCompleted) {
                             emitter.onComplete()
                         }

@@ -3,28 +3,28 @@ package com.badoo.reaktive.utils.atomic
 import com.badoo.reaktive.utils.insert
 import com.badoo.reaktive.utils.replace
 
-typealias AtomicList<T> = AtomicReference<List<T>>
+internal typealias AtomicList<T> = AtomicReference<List<T>>
 
-fun <T> atomicList(initialList: List<T> = emptyList()): AtomicList<T> = AtomicList(initialList)
+internal fun <T> atomicList(initialList: List<T> = emptyList()): AtomicList<T> = AtomicList(initialList)
 
-fun <T> AtomicList<T>.add(element: T) {
+internal fun <T> AtomicList<T>.add(element: T) {
     update { it + element }
 }
 
-operator fun <T> AtomicList<T>.plusAssign(element: T) {
+internal operator fun <T> AtomicList<T>.plusAssign(element: T) {
     add(element)
 }
 
-fun <T> AtomicList<T>.add(index: Int, element: T) {
+internal fun <T> AtomicList<T>.add(index: Int, element: T) {
     update { it.insert(index, element) }
 }
 
-fun <T> AtomicList<T>.removeAt(index: Int): T =
+internal fun <T> AtomicList<T>.removeAt(index: Int): T =
     getAndUpdate {
         it.filterIndexed { i, _ -> i != index }
     }[index]
 
-fun <T> AtomicList<T>.remove(element: T): Boolean {
+internal fun <T> AtomicList<T>.remove(element: T): Boolean {
     var removed = false
 
     update {
@@ -36,25 +36,27 @@ fun <T> AtomicList<T>.remove(element: T): Boolean {
     return removed
 }
 
-operator fun <T> AtomicList<T>.minusAssign(element: T) {
+internal operator fun <T> AtomicList<T>.minusAssign(element: T) {
     remove(element)
 }
 
-fun <T> AtomicList<T>.clear() {
+internal fun <T> AtomicList<T>.clear() {
     update { emptyList() }
 }
 
-operator fun <T> AtomicList<T>.get(index: Int): T = value[index]
+internal operator fun <T> AtomicList<T>.get(index: Int): T = value[index]
 
-operator fun <T> AtomicList<T>.set(index: Int, element: T): T =
+internal operator fun <T> AtomicList<T>.set(index: Int, element: T): T =
     getAndUpdate {
         it.replace(index, element)
     }[index]
 
-fun <T> AtomicList<T>.firstOrNull(): T? = value.firstOrNull()
+internal fun <T> AtomicList<T>.firstOrNull(): T? = value.firstOrNull()
 
-val AtomicReference<out Collection<*>>.isEmpty: Boolean get() = value.isEmpty()
+internal val AtomicReference<out Collection<*>>.size: Int get() = value.size
 
-val AtomicReference<out Collection<*>>.isNotEmpty: Boolean get() = value.isNotEmpty()
+internal val AtomicReference<out Collection<*>>.isEmpty: Boolean get() = value.isEmpty()
 
-operator fun <T> AtomicReference<out Iterable<T>>.iterator(): Iterator<T> = value.iterator()
+internal val AtomicReference<out Collection<*>>.isNotEmpty: Boolean get() = value.isNotEmpty()
+
+internal operator fun <T> AtomicReference<out Iterable<T>>.iterator(): Iterator<T> = value.iterator()

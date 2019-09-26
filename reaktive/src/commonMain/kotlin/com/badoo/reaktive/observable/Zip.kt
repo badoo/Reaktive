@@ -3,9 +3,9 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.SharedList
+import com.badoo.reaktive.utils.atomic.AtomicList
 import com.badoo.reaktive.utils.atomic.update
-import com.badoo.reaktive.utils.atomic.updateAndGet
 import com.badoo.reaktive.utils.replace
 import com.badoo.reaktive.utils.serializer.serializer
 
@@ -13,8 +13,9 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val values = atomicList(List<List<T>>(size) { emptyList() })
-        val completed = atomicList(List(size) { false })
+
+        val values = SharedList<SharedList<T>>(size) { SharedList() }
+        val completed = AtomicList(List(size) { false })
 
         val serializer =
             serializer<ZipEvent<T>> { event ->
@@ -22,19 +23,11 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
                     is ZipEvent.OnNext -> {
                         var readyValues: List<T>? = null
 
-                        val newValues =
-                            values.updateAndGet { oldValues ->
-                                oldValues
-                                    .replace(event.index, oldValues[event.index] + event.value)
-                                    .let { newValues ->
-                                        if (newValues.all(List<*>::isNotEmpty)) {
-                                            readyValues = newValues.map { it[0] }
-                                            newValues.map { it.drop(1) }
-                                        } else {
-                                            newValues
-                                        }
-                                    }
-                            }
+                        values[event.index].add(event.value)
+                        if (values.all(List<*>::isNotEmpty)) {
+                            readyValues = values.map { it[0] }
+                            values.forEach { it.removeAt(0) }
+                        }
 
                         if (readyValues == null) {
                             return@serializer true
@@ -42,7 +35,7 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
 
                         val result =
                             try {
-                                mapper(readyValues!!)
+                                mapper(readyValues)
                             } catch (e: Throwable) {
                                 emitter.onError(e)
                                 return@serializer false
@@ -51,7 +44,7 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
                         emitter.onNext(result)
 
                         // Complete if for any completed source there are no values left in the queue
-                        newValues.forEachIndexed { index, queue ->
+                        values.forEachIndexed { index, queue ->
                             if (queue.isEmpty() && completed.value[index]) {
                                 emitter.onComplete()
                                 return@serializer false
@@ -67,7 +60,7 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
                         }
 
                         // Complete if a source is completed and no values left in its queue
-                        val isEmpty = values.value[event.index].isEmpty()
+                        val isEmpty = values[event.index].isEmpty()
                         if (isEmpty) {
                             emitter.onComplete()
                         }

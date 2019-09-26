@@ -2,12 +2,8 @@ package com.badoo.reaktive.test.scheduler
 
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicList
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.add
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.clear
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 import com.badoo.reaktive.utils.atomic.update
 
@@ -16,12 +12,15 @@ class TestScheduler(
 ) : Scheduler {
 
     val timer = Timer()
-    private val _executors: AtomicList<Executor> = atomicList()
+    private val _executors = AtomicReference<List<Executor>>(emptyList())
     val executors: List<Executor> get() = _executors.value
 
-    override fun newExecutor(): Scheduler.Executor =
-        Executor(timer, isManualProcessing)
-            .also(_executors::add)
+    override fun newExecutor(): Scheduler.Executor {
+        val executor = Executor(timer, isManualProcessing)
+        _executors.update { it + executor }
+
+        return executor
+    }
 
     override fun destroy() {
         _executors
@@ -59,7 +58,7 @@ class TestScheduler(
         private val isManualProcessing: Boolean
     ) : Scheduler.Executor {
 
-        private val tasks: AtomicList<Task> = atomicList()
+        private val tasks = AtomicReference<List<Task>>(emptyList())
         private val _isDisposed = AtomicBoolean()
         override val isDisposed: Boolean get() = _isDisposed.value
         private val timerListener = ::processIfNeeded
@@ -77,7 +76,7 @@ class TestScheduler(
         }
 
         override fun cancel() {
-            tasks.clear()
+            tasks.update { emptyList() }
         }
 
         override fun dispose() {

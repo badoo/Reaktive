@@ -5,9 +5,8 @@ import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
+import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -17,7 +16,7 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun calls_action_before_downstream_onSubscribe_WHEN_action_does_not_throw_exception() {
-        val callOrder = atomicList<String>()
+        val callOrder = SharedList<String>()
 
         maybeUnsafe<Nothing> {}
             .doOnBeforeSubscribe {
@@ -31,12 +30,12 @@ class DoOnBeforeSubscribeTest
                 }
             )
 
-        assertEquals(listOf("action", "onSubscribe"), callOrder.value)
+        assertEquals(listOf("action", "onSubscribe"), callOrder)
     }
 
     @Test
     fun delegates_error_to_downstream_after_downstream_onSubscribe_WHEN_action_throws_exception() {
-        val callOrder = atomicList<Any>()
+        val callOrder = SharedList<Any>()
         val exception = Exception()
 
         maybeUnsafe<Nothing> {}
@@ -55,7 +54,7 @@ class DoOnBeforeSubscribeTest
                 }
             )
 
-        assertEquals(listOf("onSubscribe", exception), callOrder.value)
+        assertEquals(listOf<Any>("onSubscribe", exception), callOrder)
     }
 
     @Test
