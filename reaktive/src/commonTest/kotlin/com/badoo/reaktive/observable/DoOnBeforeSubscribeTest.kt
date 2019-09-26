@@ -2,6 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
@@ -55,6 +56,16 @@ class DoOnBeforeSubscribeTest
             )
 
         assertEquals(listOf<Any>("onSubscribe", exception), callOrder)
+    }
+
+    @Test
+    fun disposes_downstream_disposable_WHEN_action_throws_exception() {
+        val observer =
+            observableUnsafe<Nothing> {}
+                .doOnBeforeSubscribe { throw Exception() }
+                .test()
+
+        observer.assertDisposed()
     }
 
     @Test

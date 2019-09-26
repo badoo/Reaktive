@@ -2,6 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.doIfNotDisposed
 
 fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observable<T> =
     observableUnsafe { observer ->
@@ -19,22 +20,12 @@ fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observ
                 }
 
                 override fun onComplete() {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onComplete()
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
-                    }
+                    disposableWrapper.doIfNotDisposed(dispose = true, block = observer::onComplete)
                 }
 
                 override fun onError(error: Throwable) {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onError(error)
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
+                    disposableWrapper.doIfNotDisposed(dispose = true) {
+                        observer.onError(error)
                     }
                 }
 

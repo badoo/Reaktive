@@ -4,6 +4,7 @@ import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
@@ -180,17 +181,15 @@ class DoOnBeforeFinallyTest
     }
 
     @Test
-    fun produces_error_WHEN_downstream_disposed_and_exception_in_lambda() {
-        val error = Exception()
-
+    fun does_not_produce_error_WHEN_downstream_disposed_and_exception_in_lambda() {
         val observer =
             upstream
-                .doOnBeforeFinally { throw error }
+                .doOnBeforeFinally { throw Exception() }
                 .test()
 
         observer.dispose()
 
-        observer.assertError(error)
+        observer.assertNotError()
     }
 
     @Test
