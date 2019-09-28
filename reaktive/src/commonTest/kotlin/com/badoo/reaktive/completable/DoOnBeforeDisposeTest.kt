@@ -1,20 +1,28 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.disposable.disposable
-import com.badoo.reaktive.test.base.assertDisposed
-import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.utils.SharedList
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
+import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class DoOnBeforeDisposeTest
     : CompletableToCompletableTests by CompletableToCompletableTests({ doOnBeforeDispose {} }) {
 
     private val upstream = TestCompletable()
+
+    @AfterTest
+    fun after() {
+        resetReaktiveUncaughtErrorHandler()
+    }
 
     @Test
     fun calls_action_before_disposing_upstream() {
@@ -34,6 +42,18 @@ class DoOnBeforeDisposeTest
             .dispose()
 
         assertEquals(listOf("action", "dispose"), callOrder)
+    }
+
+    @Test
+    fun calls_action_WHEN_disposed_before_upstream_onSubscribe() {
+        var isCalled = false
+
+        completableUnsafe {}
+            .doOnBeforeDispose { isCalled = true }
+            .test()
+            .dispose()
+
+        assertTrue(isCalled)
     }
 
     @Test
@@ -66,8 +86,10 @@ class DoOnBeforeDisposeTest
         assertFalse(isCalled.value)
     }
 
+
     @Test
-    fun produces_error_WHEN_exception_in_lambda() {
+    fun calls_uncaught_exception_handler_WHEN_exception_in_lambda() {
+        val caughtException = mockUncaughtExceptionHandler()
         val error = Exception()
 
         val observer =
@@ -77,20 +99,6 @@ class DoOnBeforeDisposeTest
 
         observer.dispose()
 
-        observer.assertError(error)
-    }
-
-    @Test
-    fun disposes_upstream_WHEN_exception_in_lambda() {
-        val error = Exception()
-
-        val observer =
-            upstream
-                .doOnBeforeDispose { throw error }
-                .test()
-
-        observer.dispose()
-
-        observer.assertDisposed()
+        assertSame(error, caughtException.value)
     }
 }

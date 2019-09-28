@@ -2,6 +2,7 @@ package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
@@ -55,6 +56,16 @@ class DoOnBeforeSubscribeTest
             )
 
         assertEquals(listOf<Any>("onSubscribe", exception), callOrder)
+    }
+
+    @Test
+    fun disposes_downstream_disposable_WHEN_action_throws_exception() {
+        val observer =
+            completableUnsafe {}
+                .doOnBeforeSubscribe { throw Exception() }
+                .test()
+
+        observer.assertDisposed()
     }
 
     @Test
