@@ -13,7 +13,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class RetryTest : SingleToSingleTests by SingleToSingleTests<Unit>({ retry() }) {
+class RetryTest : SingleToSingleTests by SingleToSingleTests({ retry() }) {
 
     private val upstream = TestSingle<Int?>()
 
@@ -24,15 +24,21 @@ class RetryTest : SingleToSingleTests by SingleToSingleTests<Unit>({ retry() }) 
     }
 
     @Test
+    @Ignore
+    override fun disposes_downstream_disposable_WHEN_upstream_produced_error() {
+        // not applicable
+    }
+
+    @Test
     fun resubscribes_WHEN_upstream_produces_error_and_predicate_returns_true() {
-        val observer = upstream.retry().test()
+        upstream.retry().test()
         upstream.onError(Throwable())
         assertTrue(upstream.hasSubscribers)
     }
 
     @Test
     fun does_not_resubscribe_WHEN_upstream_produces_error_and_predicate_returns_false() {
-        val observer = upstream.retry { _, _ -> false }.test()
+        upstream.retry { _, _ -> false }.test()
         upstream.onError(Throwable())
         assertFalse(upstream.hasSubscribers)
     }
@@ -99,7 +105,7 @@ class RetryTest : SingleToSingleTests by SingleToSingleTests<Unit>({ retry() }) 
 
     @Test
     fun unsubscribes_from_upstream_WHEN_predicate_throw_exception() {
-        val observer = upstream.retry { _, _ -> throw Throwable() }.test()
+        upstream.retry { _, _ -> throw Throwable() }.test()
         upstream.onError(Throwable())
         assertFalse(upstream.hasSubscribers)
     }

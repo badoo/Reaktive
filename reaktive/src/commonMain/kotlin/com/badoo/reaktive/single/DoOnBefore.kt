@@ -5,9 +5,13 @@ import com.badoo.reaktive.base.SuccessCallback
 import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
+import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.handleSourceError
 
 fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =
     singleUnsafe { observer ->
@@ -18,64 +22,11 @@ fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =
         } catch (e: Throwable) {
             observer.onSubscribe(disposableWrapper)
             observer.onError(e)
+            disposableWrapper.dispose()
 
             return@singleUnsafe
         }
 
-        observer.onSubscribe(disposableWrapper)
-
-        subscribeSafe(
-            object : SingleObserver<T>, SingleCallbacks<T> by observer {
-                override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
-                }
-            }
-        )
-    }
-
-fun <T> Single<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Single<T> =
-    singleUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
-        subscribeSafe(
-            object : SingleObserver<T>, ErrorCallback by observer {
-                override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
-                }
-
-                override fun onSuccess(value: T) {
-                    observer.tryCatch({ consumer(value) }) {
-                        observer.onSuccess(value)
-                    }
-                }
-            }
-        )
-    }
-
-fun <T> Single<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Single<T> =
-    singleUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
-        subscribeSafe(
-            object : SingleObserver<T>, SuccessCallback<T> by observer {
-                override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
-                }
-
-                override fun onError(error: Throwable) {
-                    observer.tryCatch({ consumer(error) }, { CompositeException(error, it) }) {
-                        observer.onError(error)
-                    }
-                }
-            }
-        )
-    }
-
-fun <T> Single<T>.doOnBeforeTerminate(action: () -> Unit): Single<T> =
-    singleUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
 
         subscribeSafe(
@@ -85,14 +36,73 @@ fun <T> Single<T>.doOnBeforeTerminate(action: () -> Unit): Single<T> =
                 }
 
                 override fun onSuccess(value: T) {
-                    observer.tryCatch(action) {
+                    disposableWrapper.doIfNotDisposed(dispose = true) {
                         observer.onSuccess(value)
                     }
                 }
 
                 override fun onError(error: Throwable) {
-                    observer.tryCatch(action, { CompositeException(error, it) }) {
+                    disposableWrapper.doIfNotDisposed(dispose = true) {
                         observer.onError(error)
+                    }
+                }
+            }
+        )
+    }
+
+fun <T> Single<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Single<T> =
+    single { emitter ->
+        subscribeSafe(
+            object : SingleObserver<T>, ErrorCallback by emitter {
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                }
+
+                override fun onSuccess(value: T) {
+                    if (!emitter.isDisposed) {
+                        emitter.tryCatch({ consumer(value) }) {
+                            emitter.onSuccess(value)
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+fun <T> Single<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Single<T> =
+    single { emitter ->
+        subscribeSafe(
+            object : SingleObserver<T>, SuccessCallback<T> by emitter {
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                }
+
+                override fun onError(error: Throwable) {
+                    emitter.tryCatch({ consumer(error) }, { CompositeException(error, it) }) {
+                        emitter.onError(error)
+                    }
+                }
+            }
+        )
+    }
+
+fun <T> Single<T>.doOnBeforeTerminate(action: () -> Unit): Single<T> =
+    single { emitter ->
+        subscribeSafe(
+            object : SingleObserver<T> {
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                }
+
+                override fun onSuccess(value: T) {
+                    emitter.tryCatch(action) {
+                        emitter.onSuccess(value)
+                    }
+                }
+
+                override fun onError(error: Throwable) {
+                    emitter.tryCatch(action, { CompositeException(error, it) }) {
+                        emitter.onError(error)
                     }
                 }
             }
@@ -101,27 +111,46 @@ fun <T> Single<T>.doOnBeforeTerminate(action: () -> Unit): Single<T> =
 
 fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
     singleUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(
-            object : Disposable by disposableWrapper {
-                override fun dispose() {
-                    observer.tryCatch(action)
-                    disposableWrapper.dispose()
+        val disposables = CompositeDisposable()
+        observer.onSubscribe(disposables)
+
+        disposables +=
+            disposable {
+                try {
+                    action()
+                } catch (e: Throwable) {
+                    handleSourceError(e) // Can't send error to downstream, already disposed
                 }
             }
-        )
 
         subscribeSafe(
-            object : SingleObserver<T>, SingleCallbacks<T> by observer {
+            object : SingleObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    disposables += disposable
+                }
+
+                override fun onSuccess(value: T) {
+                    onUpstreamFinished { observer.onSuccess(value) }
+                }
+
+                override fun onError(error: Throwable) {
+                    onUpstreamFinished { observer.onError(error) }
+                }
+
+                private inline fun onUpstreamFinished(block: () -> Unit) {
+                    try {
+                        disposables.clear(dispose = false) // Prevent "action" from being called
+                        block()
+                    } finally {
+                        disposables.dispose()
+                    }
                 }
             }
         )
     }
 
 fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
-    singleUnsafe { observer ->
+    single { emitter ->
         val isFinished = AtomicBoolean()
 
         val onFinally =
@@ -132,31 +161,28 @@ fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
                 }
             }
 
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(
-            object : Disposable by disposableWrapper {
-                override fun dispose() {
-                    observer.tryCatch(onFinally)
-                    disposableWrapper.dispose()
-                }
-            }
-        )
-
         subscribeSafe(
             object : SingleObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(
+                        object : Disposable by disposable {
+                            override fun dispose() {
+                                emitter.tryCatch(onFinally)
+                                disposable.dispose()
+                            }
+                        }
+                    )
                 }
 
                 override fun onSuccess(value: T) {
-                    observer.tryCatch(onFinally) {
-                        observer.onSuccess(value)
+                    emitter.tryCatch(onFinally) {
+                        emitter.onSuccess(value)
                     }
                 }
 
                 override fun onError(error: Throwable) {
-                    observer.tryCatch(onFinally, { CompositeException(error, it) }) {
-                        observer.onError(error)
+                    emitter.tryCatch(onFinally, { CompositeException(error, it) }) {
+                        emitter.onError(error)
                     }
                 }
             }

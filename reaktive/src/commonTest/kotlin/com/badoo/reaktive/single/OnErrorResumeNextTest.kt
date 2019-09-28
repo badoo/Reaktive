@@ -15,7 +15,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class OnErrorResumeNextTest :
-    SingleToSingleTests by SingleToSingleTests<Unit>({ onErrorResumeNext { Unit.toSingle() } }) {
+    SingleToSingleTests by SingleToSingleTests({ onErrorResumeNext { Unit.toSingle() } }) {
 
     private val upstream = TestSingle<Int?>()
 

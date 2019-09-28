@@ -1,31 +1,24 @@
 package com.badoo.reaktive.single
 
+import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.SuccessCallback
 import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun <T> Single<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Single<T>): Single<T> =
-    singleUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
+    single { emitter ->
         subscribeSafe(
-            object : SingleObserver<T>, SuccessCallback<T> by observer {
-
+            object : SingleObserver<T>, SuccessCallback<T> by emitter {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onError(error: Throwable) {
-                    observer.tryCatch({ nextSupplier(error) }, { CompositeException(error, it) }) {
+                    emitter.tryCatch({ nextSupplier(error) }, { CompositeException(error, it) }) {
                         it.subscribeSafe(
-                            object : SingleObserver<T>, SingleCallbacks<T> by observer {
-                                override fun onSubscribe(disposable: Disposable) {
-                                    disposableWrapper.set(disposable)
-                                }
+                            object : SingleObserver<T>, Observer by this, SingleCallbacks<T> by emitter {
                             }
                         )
                     }
