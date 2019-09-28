@@ -1,18 +1,22 @@
 package com.badoo.reaktive.maybe
 
-import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.CompletableCallbacks
+import com.badoo.reaktive.disposable.Disposable
 
 fun <T : Any> Maybe<T?>.notNull(): Maybe<T> =
-    maybeUnsafe { observer ->
+    maybe { emitter ->
         subscribeSafe(
-            object : MaybeObserver<T?>, Observer by observer, CompletableCallbacks by observer {
+            object : MaybeObserver<T?>, CompletableCallbacks by emitter {
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                }
+
                 override fun onSuccess(value: T?) {
                     if (value != null) {
-                        observer.onSuccess(value)
+                        emitter.onSuccess(value)
                     } else {
-                        observer.onComplete()
+                        emitter.onComplete()
                     }
                 }
             }

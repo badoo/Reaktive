@@ -7,7 +7,7 @@ import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
 
-class AsSingleOrErrorSupplierTests : MaybeToSingleTests by MaybeToSingleTests<Unit>({ asSingle(::Throwable) }) {
+class AsSingleOrErrorSupplierTests : MaybeToSingleTests by MaybeToSingleTests({ asSingle(::Throwable) }) {
 
     private val upstream = TestMaybe<Int?>()
     private val error = Exception()

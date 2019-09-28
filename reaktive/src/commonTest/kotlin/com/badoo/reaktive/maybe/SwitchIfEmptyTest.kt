@@ -10,7 +10,7 @@ import com.badoo.reaktive.test.maybe.test
 import kotlin.test.Test
 import kotlin.test.assertFalse
 
-class SwitchIfEmptyTest : MaybeToMaybeTests by MaybeToMaybeTests<Nothing>({ switchIfEmpty(maybeOfEmpty()) }) {
+class SwitchIfEmptyTest : MaybeToMaybeTests by MaybeToMaybeTests({ switchIfEmpty(maybeOfEmpty()) }) {
 
     private val upstream = TestMaybe<Int?>()
     private val other = TestMaybe<Int?>()
