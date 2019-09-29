@@ -10,7 +10,6 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.handleSourceError
 
 fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =
@@ -150,39 +149,47 @@ fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
     }
 
 fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
-    single { emitter ->
-        val isFinished = AtomicBoolean()
+    singleUnsafe { observer ->
+        val disposables = CompositeDisposable()
+        observer.onSubscribe(disposables)
 
-        val onFinally =
-            {
-                @Suppress("BooleanLiteralArgument") // Not allowed for expected classes
-                if (isFinished.compareAndSet(false, true)) {
+        disposables +=
+            disposable {
+                try {
                     action()
+                } catch (e: Throwable) {
+                    handleSourceError(e) // Can't send error to downstream, already disposed
                 }
             }
 
         subscribeSafe(
             object : SingleObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
-                    emitter.setDisposable(
-                        object : Disposable by disposable {
-                            override fun dispose() {
-                                emitter.tryCatch(onFinally)
-                                disposable.dispose()
-                            }
-                        }
-                    )
+                    disposables += disposable
                 }
 
                 override fun onSuccess(value: T) {
-                    emitter.tryCatch(onFinally) {
-                        emitter.onSuccess(value)
+                    onUpstreamFinished {
+                        observer.tryCatch(action) {
+                            observer.onSuccess(value)
+                        }
                     }
                 }
 
                 override fun onError(error: Throwable) {
-                    emitter.tryCatch(onFinally, { CompositeException(error, it) }) {
-                        emitter.onError(error)
+                    onUpstreamFinished {
+                        observer.tryCatch(action, { CompositeException(error, it) }) {
+                            observer.onError(error)
+                        }
+                    }
+                }
+
+                private inline fun onUpstreamFinished(block: () -> Unit) {
+                    try {
+                        disposables.clear(dispose = false) // Prevent "action" from being called while disposing
+                        block()
+                    } finally {
+                        disposables.dispose()
                     }
                 }
             }

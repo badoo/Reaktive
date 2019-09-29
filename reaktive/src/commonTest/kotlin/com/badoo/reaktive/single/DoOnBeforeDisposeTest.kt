@@ -1,6 +1,7 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
@@ -99,5 +100,20 @@ class DoOnBeforeDisposeTest
         observer.dispose()
 
         assertSame(error, caughtException.value)
+    }
+
+    @Test
+    fun disposes_upstream_WHEN_downstream_disposed_and_exception_in_lambda() {
+        mockUncaughtExceptionHandler()
+        val error = Exception()
+
+        val observer =
+            upstream
+                .doOnBeforeDispose { throw error }
+                .test()
+
+        observer.dispose()
+
+        observer.assertDisposed()
     }
 }
