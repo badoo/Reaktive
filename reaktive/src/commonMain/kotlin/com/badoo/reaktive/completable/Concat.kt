@@ -2,27 +2,23 @@ package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
 fun Iterable<Completable>.concat(): Completable =
-    completableUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
+    completable { emitter ->
         val sources = toList()
 
         if (sources.isEmpty()) {
-            observer.onComplete()
-            return@completableUnsafe
+            emitter.onComplete()
+            return@completable
         }
 
         val sourceIndex = AtomicInt()
 
         val upstreamObserver =
-            object : CompletableObserver, CompletableCallbacks by observer {
+            object : CompletableObserver, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onComplete() {
@@ -30,7 +26,7 @@ fun Iterable<Completable>.concat(): Completable =
                         .addAndGet(1)
                         .let(sources::getOrNull)
                         ?.subscribeSafe(this)
-                        ?: observer.onComplete()
+                        ?: emitter.onComplete()
                 }
             }
 

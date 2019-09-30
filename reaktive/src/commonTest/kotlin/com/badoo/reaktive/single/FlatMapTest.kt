@@ -7,15 +7,22 @@ import com.badoo.reaktive.test.single.TestSingleObserver
 import com.badoo.reaktive.test.single.assertNotSuccess
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class FlatMapTest : SingleToSingleTests by SingleToSingleTests<Unit>({ flatMap { TestSingle<Int>() } }) {
+class FlatMapTest : SingleToSingleTests by SingleToSingleTests({ flatMap { TestSingle<Int>() } }) {
 
     private val upstream = TestSingle<Int?>()
     private val inner = TestSingle<String?>()
     private val observer = flatMapUpstreamAndSubscribe(listOf(inner))
+
+    @Ignore
+    @Test
+    override fun disposes_downstream_disposable_WHEN_upstream_succeeded() {
+        // not applicable
+    }
 
     @Test
     fun subscribes_to_upstream() {

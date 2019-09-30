@@ -5,6 +5,7 @@ import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.base.hasSubscribers
+import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertComplete
@@ -12,7 +13,6 @@ import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.isPrintErrorEnabled
-import com.badoo.reaktive.utils.reaktiveUncaughtErrorHandler
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -161,8 +161,7 @@ class SubscribeTest {
     @Test
     fun calls_uncaught_exception_handler_WHEN_onComplete_thrown_exception() {
         val exception = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
-        reaktiveUncaughtErrorHandler = { caughtException.value = it }
+        val caughtException = mockUncaughtExceptionHandler()
 
         upstream.subscribe(onComplete = { throw exception })
         upstream.onComplete()
@@ -173,7 +172,7 @@ class SubscribeTest {
     @Test
     fun does_not_call_onError_WHEN_onComplete_thrown_exception() {
         val exception = Exception()
-        reaktiveUncaughtErrorHandler = {}
+        mockUncaughtExceptionHandler()
         val isOnErrorCalled = AtomicBoolean()
 
         upstream.subscribe(
@@ -189,8 +188,7 @@ class SubscribeTest {
     fun calls_uncaught_exception_handler_with_CompositeException_WHEN_onError_thrown_exception() {
         val exception1 = Exception()
         val exception2 = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
-        reaktiveUncaughtErrorHandler = { caughtException.value = it }
+        val caughtException = mockUncaughtExceptionHandler()
 
         upstream.subscribe(onError = { throw exception2 })
         upstream.onError(exception1)
