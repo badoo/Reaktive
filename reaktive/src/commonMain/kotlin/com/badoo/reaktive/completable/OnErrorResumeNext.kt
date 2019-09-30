@@ -1,34 +1,27 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.CompleteCallback
+import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun Completable.onErrorResumeNext(nextSupplier: (Throwable) -> Completable): Completable =
-    completableUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
+    completable { emitter ->
         subscribeSafe(
-            object : CompletableObserver, CompleteCallback by observer {
-
+            object : CompletableObserver, CompleteCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onError(error: Throwable) {
-                    observer.tryCatch(
+                    emitter.tryCatch(
                         { nextSupplier(error) },
                         { CompositeException(error, it) }
                     ) {
                         it.subscribeSafe(
-                            object : CompletableObserver, CompletableCallbacks by observer {
-                                override fun onSubscribe(disposable: Disposable) {
-                                    disposableWrapper.set(disposable)
-                                }
+                            object : CompletableObserver, Observer by this, CompletableCallbacks by emitter {
                             }
                         )
                     }

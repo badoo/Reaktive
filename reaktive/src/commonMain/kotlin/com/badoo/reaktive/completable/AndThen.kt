@@ -4,7 +4,6 @@ import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.single.Single
@@ -13,22 +12,16 @@ import com.badoo.reaktive.single.flatMapMaybe
 import com.badoo.reaktive.single.flatMapObservable
 
 fun Completable.andThen(completable: Completable): Completable =
-    completableUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
+    completable { emitter ->
         subscribeSafe(
-            object : CompletableObserver, ErrorCallback by observer {
+            object : CompletableObserver, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onComplete() {
                     completable.subscribeSafe(
-                        object : CompletableObserver, Observer by this, CompletableCallbacks by observer {
-                            override fun onSubscribe(disposable: Disposable) {
-                                disposableWrapper.set(disposable)
-                            }
+                        object : CompletableObserver, Observer by this, CompletableCallbacks by emitter {
                         }
                     )
                 }

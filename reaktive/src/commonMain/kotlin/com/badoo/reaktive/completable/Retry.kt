@@ -3,19 +3,15 @@ package com.badoo.reaktive.completable
 import com.badoo.reaktive.base.operator.Retry
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun Completable.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Completable =
     completable { emitter ->
-        val disposableWrapper = DisposableWrapper()
-        emitter.setDisposable(disposableWrapper)
-
         subscribeSafe(
             object : CompletableObserver, CompletableCallbacks by emitter {
                 private val retry = Retry(emitter, predicate)
 
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onError(error: Throwable) {

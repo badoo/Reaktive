@@ -11,7 +11,7 @@ import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class ObserveOnTest : SingleToSingleTests by SingleToSingleTests<Unit>({ observeOn(TestScheduler()) }) {
+class ObserveOnTest : SingleToSingleTests by SingleToSingleTests({ observeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
     private val upstream = TestSingle<Int>()

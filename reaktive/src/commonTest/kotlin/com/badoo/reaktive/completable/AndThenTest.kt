@@ -6,6 +6,7 @@ import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -16,8 +17,16 @@ class AndThenTest : CompletableToCompletableTests by CompletableToCompletableTes
     private val inner = TestCompletable()
     private val observer = upstream.andThen(inner).test()
 
+    @Ignore
+    @Test
     override fun completes_WHEN_upstream_completed() {
-        // Does not apply
+        // not applicable
+    }
+
+    @Ignore
+    @Test
+    override fun disposes_downstream_disposable_WHEN_upstream_completed() {
+        // not applicable
     }
 
     @Test

@@ -12,7 +12,7 @@ import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
 
 class DelayTest :
-    MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ delay(0L, TestScheduler()) }),
+    MaybeToMaybeTests by MaybeToMaybeTests({ delay(0L, TestScheduler()) }),
     DelayErrorTests by DelayErrorTests<TestMaybe<Int>>(
         TestMaybe(),
         { delayMillis, scheduler, delayError -> delay(delayMillis, scheduler, delayError).test() }

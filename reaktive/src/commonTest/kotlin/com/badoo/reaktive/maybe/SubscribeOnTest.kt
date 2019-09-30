@@ -12,7 +12,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SubscribeOnTest
-    : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ subscribeOn(TestScheduler()) }) {
+    : MaybeToMaybeTests by MaybeToMaybeTests({ subscribeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
     private val upstream = TestMaybe<Int?>()

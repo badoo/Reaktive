@@ -2,6 +2,7 @@ package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.single.DefaultSingleObserver
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
@@ -12,7 +13,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class DoOnBeforeSubscribeTest
-    : SingleToSingleTests by SingleToSingleTests<Unit>({ doOnBeforeSubscribe {} }) {
+    : SingleToSingleTests by SingleToSingleTests({ doOnBeforeSubscribe {} }) {
 
     @Test
     fun calls_action_before_downstream_onSubscribe_WHEN_action_does_not_throw_exception() {
@@ -55,6 +56,16 @@ class DoOnBeforeSubscribeTest
             )
 
         assertEquals(listOf<Any>("onSubscribe", exception), callOrder)
+    }
+
+    @Test
+    fun disposes_downstream_disposable_WHEN_action_throws_exception() {
+        val observer =
+            singleUnsafe<Nothing> {}
+                .doOnBeforeSubscribe { throw Exception() }
+                .test()
+
+        observer.assertDisposed()
     }
 
     @Test

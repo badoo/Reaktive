@@ -1,22 +1,15 @@
-package com.badoo.reaktive.maybe
+package com.badoo.reaktive.single
 
-import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.test.single.TestSingle
 import kotlin.test.Test
 
-class AsObservableTest : MaybeToObservableTests by MaybeToObservableTests({ asObservable() }) {
+class AsObservableTest : SingleToObservableTests by SingleToObservableTests({ asObservable() }) {
 
-    private val upstream = TestMaybe<Int?>()
+    private val upstream = TestSingle<Int?>()
     private val observer = upstream.asObservable().test()
-
-    @Test
-    fun completes_WHEN_upstream_completed() {
-        upstream.onComplete()
-
-        observer.assertComplete()
-    }
 
     @Test
     fun emits_value_WHEN_upstream_succeeded_with_non_null_value() {

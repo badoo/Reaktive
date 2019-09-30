@@ -1,29 +1,24 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.ErrorCallback
-import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.maybe.Maybe
-import com.badoo.reaktive.maybe.maybeUnsafe
+import com.badoo.reaktive.maybe.maybe
 
 fun <T : Any> Single<T?>.notNull(): Maybe<T> =
-    maybeUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
+    maybe { emitter ->
         subscribeSafe(
-            object : SingleObserver<T?>, Observer by observer, ErrorCallback by observer {
+            object : SingleObserver<T?>, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onSuccess(value: T?) {
                     if (value != null) {
-                        observer.onSuccess(value)
+                        emitter.onSuccess(value)
                     } else {
-                        observer.onComplete()
+                        emitter.onComplete()
                     }
                 }
             }

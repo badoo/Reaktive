@@ -5,24 +5,20 @@ import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.SuccessCallback
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.asMaybe
 
 fun <T> Maybe<T>.switchIfEmpty(other: Maybe<T>): Maybe<T> =
-    maybeUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
+    maybe { emitter ->
         subscribeSafe(
-            object : MaybeObserver<T>, SuccessCallback<T> by observer, ErrorCallback by observer {
+            object : MaybeObserver<T>, SuccessCallback<T> by emitter, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onComplete() {
                     other.subscribeSafe(
-                        object : MaybeObserver<T>, Observer by this, MaybeCallbacks<T> by observer {
+                        object : MaybeObserver<T>, Observer by this, MaybeCallbacks<T> by emitter {
                         }
                     )
                 }

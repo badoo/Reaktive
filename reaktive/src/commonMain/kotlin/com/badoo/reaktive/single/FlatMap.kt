@@ -5,26 +5,19 @@ import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun <T, R> Single<T>.flatMap(mapper: (T) -> Single<R>): Single<R> =
-    singleUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
+    single { emitter ->
         subscribeSafe(
-            object : SingleObserver<T>, Observer by observer, ErrorCallback by observer {
+            object : SingleObserver<T>, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onSuccess(value: T) {
-                    observer.tryCatch({ mapper(value) }) {
+                    emitter.tryCatch({ mapper(value) }) {
                         it.subscribeSafe(
-                            object : SingleObserver<R> by observer {
-                                override fun onSubscribe(disposable: Disposable) {
-                                    disposableWrapper.set(disposable)
-                                }
+                            object : SingleObserver<R>, Observer by this, SingleCallbacks<R> by emitter {
                             }
                         )
                     }

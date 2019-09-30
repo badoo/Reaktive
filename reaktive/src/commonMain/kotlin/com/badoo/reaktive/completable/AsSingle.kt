@@ -4,10 +4,9 @@ import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.single.Single
-import com.badoo.reaktive.single.SingleObserver
-import com.badoo.reaktive.single.singleUnsafe
+import com.badoo.reaktive.single.SingleEmitter
+import com.badoo.reaktive.single.single
 
 fun <T> Completable.asSingle(defaultValue: T): Single<T> =
     asSingleOrAction { observer ->
@@ -19,19 +18,16 @@ fun <T> Completable.asSingle(defaultValueSupplier: () -> T): Single<T> =
         observer.tryCatch(block = defaultValueSupplier, onSuccess = observer::onSuccess)
     }
 
-private inline fun <T> Completable.asSingleOrAction(crossinline onComplete: (observer: SingleObserver<T>) -> Unit): Single<T> =
-    singleUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
+private inline fun <T> Completable.asSingleOrAction(crossinline onComplete: (observer: SingleEmitter<T>) -> Unit): Single<T> =
+    single { emitter ->
         subscribeSafe(
-            object : CompletableObserver, ErrorCallback by observer {
+            object : CompletableObserver, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onComplete() {
-                    onComplete(observer)
+                    onComplete(emitter)
                 }
             }
         )

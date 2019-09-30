@@ -3,23 +3,19 @@ package com.badoo.reaktive.maybe
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.completable.CompletableCallbacks
-import com.badoo.reaktive.completable.completableUnsafe
+import com.badoo.reaktive.completable.completable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun Maybe<*>.asCompletable(): Completable =
-    completableUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
+    completable { emitter ->
         subscribeSafe(
-            object : MaybeObserver<Any?>, CompletableCallbacks by observer {
+            object : MaybeObserver<Any?>, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onSuccess(value: Any?) {
-                    observer.onComplete()
+                    emitter.onComplete()
                 }
             }
         )
