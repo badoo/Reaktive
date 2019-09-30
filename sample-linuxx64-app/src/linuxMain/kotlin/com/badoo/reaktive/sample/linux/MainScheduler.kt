@@ -4,11 +4,9 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.scheduler.Scheduler.Executor
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicList
-import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
-import com.badoo.reaktive.utils.atomic.plusAssign
-import com.badoo.reaktive.utils.atomic.remove
+import com.badoo.reaktive.utils.atomic.update
 import kotlinx.cinterop.StableRef
 import kotlinx.cinterop.asStableRef
 import kotlinx.cinterop.reinterpret
@@ -34,7 +32,7 @@ class MainScheduler : Scheduler {
 
 private class ExecutorImpl : Executor {
 
-    private val taskRefs: AtomicList<StableRef<TaskHolder>> = atomicList()
+    private val taskRefs: AtomicReference<List<StableRef<TaskHolder>>> = AtomicReference(emptyList())
     private var _isDisposed = AtomicBoolean()
     override val isDisposed: Boolean get() = _isDisposed.value
 
@@ -49,7 +47,7 @@ private class ExecutorImpl : Executor {
 
     override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
         val taskRef = StableRef.create(TaskHolder(this, periodMillis, task))
-        taskRefs += taskRef
+        taskRefs.update { it + taskRef }
         g_timeout_add(startDelayMillis.toUInt(), staticCFunction(::callbackOneShotTask).reinterpret(), taskRef.asCPointer())
     }
 
@@ -63,14 +61,22 @@ private class ExecutorImpl : Executor {
     }
 
     fun removeTaskRef(taskRef: StableRef<TaskHolder>) {
-        if (taskRefs.remove(taskRef)) {
+        var removed = false
+
+        taskRefs.update {
+            val newList = it - taskRef
+            removed = newList.size < it.size
+            newList
+        }
+
+        if (removed) {
             taskRef.dispose()
         }
     }
 
     fun submitRepeatingTask(periodMillis: Long, task: () -> Unit) {
         val taskRef = StableRef.create(TaskHolder(this, periodMillis, task))
-        taskRefs += taskRef
+        taskRefs.update { it + taskRef }
         g_timeout_add(periodMillis.toUInt(), staticCFunction(::callbackRepeating).reinterpret(), taskRef.asCPointer())
     }
 }
