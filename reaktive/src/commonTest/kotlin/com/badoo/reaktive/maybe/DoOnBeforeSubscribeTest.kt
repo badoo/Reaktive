@@ -2,6 +2,7 @@ package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
@@ -12,7 +13,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class DoOnBeforeSubscribeTest
-    : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ doOnBeforeSubscribe {} }) {
+    : MaybeToMaybeTests by MaybeToMaybeTests({ doOnBeforeSubscribe {} }) {
 
     @Test
     fun calls_action_before_downstream_onSubscribe_WHEN_action_does_not_throw_exception() {
@@ -55,6 +56,16 @@ class DoOnBeforeSubscribeTest
             )
 
         assertEquals(listOf<Any>("onSubscribe", exception), callOrder)
+    }
+
+    @Test
+    fun disposes_downstream_disposable_WHEN_action_throws_exception() {
+        val observer =
+            maybeUnsafe<Nothing> {}
+                .doOnBeforeSubscribe { throw Exception() }
+                .test()
+
+        observer.assertDisposed()
     }
 
     @Test

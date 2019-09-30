@@ -2,19 +2,28 @@ package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.base.assertDisposed
-import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
+import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
+import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class DoOnBeforeDisposeTest
-    : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ doOnBeforeDispose {} }) {
+    : MaybeToMaybeTests by MaybeToMaybeTests({ doOnBeforeDispose {} }) {
 
     private val upstream = TestMaybe<Int>()
+
+    @AfterTest
+    fun after() {
+        resetReaktiveUncaughtErrorHandler()
+    }
 
     @Test
     fun calls_action_before_disposing_upstream() {
@@ -34,6 +43,18 @@ class DoOnBeforeDisposeTest
             .dispose()
 
         assertEquals(listOf("action", "dispose"), callOrder)
+    }
+
+    @Test
+    fun calls_action_WHEN_disposed_before_upstream_onSubscribe() {
+        var isCalled = false
+
+        maybeUnsafe<Nothing> {}
+            .doOnBeforeDispose { isCalled = true }
+            .test()
+            .dispose()
+
+        assertTrue(isCalled)
     }
 
     @Test
@@ -82,7 +103,8 @@ class DoOnBeforeDisposeTest
     }
 
     @Test
-    fun produces_error_WHEN_exception_in_lambda() {
+    fun calls_uncaught_exception_handler_WHEN_exception_in_lambda() {
+        val caughtException = mockUncaughtExceptionHandler()
         val error = Exception()
 
         val observer =
@@ -92,11 +114,12 @@ class DoOnBeforeDisposeTest
 
         observer.dispose()
 
-        observer.assertError(error)
+        assertSame(error, caughtException.value)
     }
 
     @Test
-    fun disposes_upstream_WHEN_exception_in_lambda() {
+    fun disposes_upstream_WHEN_downstream_disposed_and_exception_in_lambda() {
+        mockUncaughtExceptionHandler()
         val error = Exception()
 
         val observer =

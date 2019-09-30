@@ -3,19 +3,15 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.completable.CompletableCallbacks
-import com.badoo.reaktive.completable.completableUnsafe
+import com.badoo.reaktive.completable.completable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun Observable<*>.asCompletable(): Completable =
-    completableUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
+    completable { emitter ->
         subscribeSafe(
-            object : ObservableObserver<Any?>, CompletableCallbacks by observer {
+            object : ObservableObserver<Any?>, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    emitter.setDisposable(disposable)
                 }
 
                 override fun onNext(value: Any?) {

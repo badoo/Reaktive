@@ -13,7 +13,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeErrorTest
-    : MaybeToMaybeTests by MaybeToMaybeTests<Unit>({ doOnBeforeError {} }) {
+    : MaybeToMaybeTests by MaybeToMaybeTests({ doOnBeforeError {} }) {
 
     private val upstream = TestMaybe<Int>()
 

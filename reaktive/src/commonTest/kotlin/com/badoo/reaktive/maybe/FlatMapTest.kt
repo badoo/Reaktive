@@ -1,21 +1,23 @@
-package com.badoo.reaktive.single
+package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
-import com.badoo.reaktive.test.single.TestSingle
-import com.badoo.reaktive.test.single.TestSingleObserver
-import com.badoo.reaktive.test.single.assertNotSuccess
-import com.badoo.reaktive.test.single.assertSuccess
-import com.badoo.reaktive.test.single.test
+import com.badoo.reaktive.test.maybe.TestMaybe
+import com.badoo.reaktive.test.maybe.TestMaybeObserver
+import com.badoo.reaktive.test.maybe.assertComplete
+import com.badoo.reaktive.test.maybe.assertNotComplete
+import com.badoo.reaktive.test.maybe.assertNotSuccess
+import com.badoo.reaktive.test.maybe.assertSuccess
+import com.badoo.reaktive.test.maybe.test
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class FlatMapTest : SingleToSingleTests by SingleToSingleTests({ flatMap { TestSingle<Int>() } }) {
+class FlatMapTest : MaybeToMaybeTests by MaybeToMaybeTests({ flatMap { TestMaybe<Int>() } }) {
 
-    private val upstream = TestSingle<Int?>()
-    private val inner = TestSingle<String?>()
+    private val upstream = TestMaybe<Int?>()
+    private val inner = TestMaybe<String?>()
     private val observer = flatMapUpstreamAndSubscribe(listOf(inner))
 
     @Ignore
@@ -34,6 +36,16 @@ class FlatMapTest : SingleToSingleTests by SingleToSingleTests({ flatMap { TestS
         upstream.onSuccess(0)
 
         assertTrue(inner.hasSubscribers)
+    }
+
+    @Test
+    fun completes_WHEN_inner_source_completed() {
+        val observer = flatMapUpstreamAndSubscribe { inner }
+
+        upstream.onComplete()
+        inner.onComplete()
+
+        observer.assertComplete()
     }
 
     @Test
@@ -65,7 +77,18 @@ class FlatMapTest : SingleToSingleTests by SingleToSingleTests({ flatMap { TestS
     }
 
     @Test
-    fun does_not_succeeds_WHEN_inner_succeeded_after_dispose() {
+    fun does_not_complete_WHEN_inner_completed_after_dispose() {
+        upstream.onComplete()
+        observer.reset()
+        observer.dispose()
+
+        inner.onComplete()
+
+        observer.assertNotComplete()
+    }
+
+    @Test
+    fun does_not_succeed_WHEN_inner_succeeded_after_dispose() {
         upstream.onSuccess(0)
         observer.reset()
         observer.dispose()
@@ -84,9 +107,9 @@ class FlatMapTest : SingleToSingleTests by SingleToSingleTests({ flatMap { TestS
         assertFalse(inner.hasSubscribers)
     }
 
-    private fun flatMapUpstreamAndSubscribe(innerSources: List<Single<String?>>): TestSingleObserver<String?> =
+    private fun flatMapUpstreamAndSubscribe(innerSources: List<Maybe<String?>>): TestMaybeObserver<String?> =
         flatMapUpstreamAndSubscribe { innerSources[it!!] }
 
-    private fun flatMapUpstreamAndSubscribe(mapper: (Int?) -> Single<String?>): TestSingleObserver<String?> =
+    private fun flatMapUpstreamAndSubscribe(mapper: (Int?) -> Maybe<String?>): TestMaybeObserver<String?> =
         upstream.flatMap(mapper).test()
 }

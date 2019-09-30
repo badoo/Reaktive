@@ -6,15 +6,15 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.scheduler.Scheduler
 
 fun <T> Single<T>.subscribeOn(scheduler: Scheduler): Single<T> =
-    singleUnsafe { observer ->
+    single { emitter ->
         val disposables = CompositeDisposable()
-        observer.onSubscribe(disposables)
+        emitter.setDisposable(disposables)
         val executor = scheduler.newExecutor()
         disposables += executor
 
         executor.submit {
             subscribeSafe(
-                object : SingleObserver<T> by observer {
+                object : SingleObserver<T>, SingleCallbacks<T> by emitter {
                     override fun onSubscribe(disposable: Disposable) {
                         disposables += disposable
                     }

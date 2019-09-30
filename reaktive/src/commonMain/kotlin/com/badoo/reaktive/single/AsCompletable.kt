@@ -1,17 +1,21 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.ErrorCallback
-import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.Completable
-import com.badoo.reaktive.completable.completableUnsafe
+import com.badoo.reaktive.completable.completable
+import com.badoo.reaktive.disposable.Disposable
 
 fun Single<*>.asCompletable(): Completable =
-    completableUnsafe { observer ->
+    completable { emitter ->
         subscribeSafe(
-            object : SingleObserver<Any?>, Observer by observer, ErrorCallback by observer {
+            object : SingleObserver<Any?>, ErrorCallback by emitter {
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                }
+
                 override fun onSuccess(value: Any?) {
-                    observer.onComplete()
+                    emitter.onComplete()
                 }
             }
         )

@@ -7,8 +7,11 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
+import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
+import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -18,6 +21,11 @@ class DoOnBeforeFinallyTest
     : CompletableToCompletableTests by CompletableToCompletableTests({ doOnBeforeFinally {} }) {
 
     private val upstream = TestCompletable()
+
+    @AfterTest
+    fun after() {
+        resetReaktiveUncaughtErrorHandler()
+    }
 
     @Test
     fun calls_action_before_completion() {
@@ -80,6 +88,18 @@ class DoOnBeforeFinallyTest
             .dispose()
 
         assertEquals(listOf("action", "dispose"), callOrder)
+    }
+
+    @Test
+    fun calls_action_WHEN_disposed_before_upstream_onSubscribe() {
+        var isCalled = false
+
+        completableUnsafe {}
+            .doOnBeforeFinally { isCalled = true }
+            .test()
+            .dispose()
+
+        assertTrue(isCalled)
     }
 
     @Test
@@ -163,7 +183,8 @@ class DoOnBeforeFinallyTest
     }
 
     @Test
-    fun produces_error_WHEN_downstream_disposed_and_exception_in_lambda() {
+    fun calls_uncaught_exception_handler_WHEN_exception_in_lambda() {
+        val caughtException = mockUncaughtExceptionHandler()
         val error = Exception()
 
         val observer =
@@ -173,11 +194,12 @@ class DoOnBeforeFinallyTest
 
         observer.dispose()
 
-        observer.assertError(error)
+        assertSame(error, caughtException.value)
     }
 
     @Test
     fun disposes_upstream_WHEN_downstream_disposed_and_exception_in_lambda() {
+        mockUncaughtExceptionHandler()
         val error = Exception()
 
         val observer =
