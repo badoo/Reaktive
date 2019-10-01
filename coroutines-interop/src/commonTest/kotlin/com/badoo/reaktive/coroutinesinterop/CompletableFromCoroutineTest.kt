@@ -13,7 +13,7 @@ class CompletableFromCoroutineTest {
 
     @Test
     fun completes_WHEN_coroutine_finished() {
-        val observer = completableFromCoroutine {}.test()
+        val observer = completableFromCoroutine {}.test(autoFreeze = false)
 
         observer.assertComplete()
     }
@@ -22,7 +22,7 @@ class CompletableFromCoroutineTest {
     fun produces_error_WHEN_coroutine_thrown_exception() {
         val error = Exception()
 
-        val observer = completableFromCoroutine { throw error }.test()
+        val observer = completableFromCoroutine { throw error }.test(autoFreeze = false)
 
         observer.assertError(error)
     }
@@ -37,7 +37,7 @@ class CompletableFromCoroutineTest {
                     continuation = it
                 }
             }
-                .test()
+                .test(autoFreeze = false)
 
         observer.dispose()
 

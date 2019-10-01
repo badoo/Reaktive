@@ -13,14 +13,14 @@ class SingleFromCoroutineTest {
 
     @Test
     fun succeeds_WHEN_coroutine_returned_non_null_value() {
-        val observer = singleFromCoroutine { 0 }.test()
+        val observer = singleFromCoroutine { 0 }.test(autoFreeze = false)
 
         observer.assertSuccess(0)
     }
 
     @Test
     fun succeeds_WHEN_coroutine_returned_null_value() {
-        val observer = singleFromCoroutine<Unit?> { null }.test()
+        val observer = singleFromCoroutine<Unit?> { null }.test(autoFreeze = false)
 
         observer.assertSuccess(null)
     }
@@ -29,7 +29,7 @@ class SingleFromCoroutineTest {
     fun produces_error_WHEN_coroutine_thrown_exception() {
         val error = Exception()
 
-        val observer = singleFromCoroutine { throw error }.test()
+        val observer = singleFromCoroutine { throw error }.test(autoFreeze = false)
 
         observer.assertError(error)
     }
@@ -44,7 +44,7 @@ class SingleFromCoroutineTest {
                     continuation = it
                 }
             }
-                .test()
+                .test(autoFreeze = false)
 
         observer.dispose()
 

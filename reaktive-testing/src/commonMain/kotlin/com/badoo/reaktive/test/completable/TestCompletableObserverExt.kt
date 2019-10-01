@@ -13,9 +13,11 @@ fun TestCompletableObserver.assertNotComplete() {
     assertFalse(isComplete, "Completable is complete")
 }
 
-fun Completable.test(): TestCompletableObserver {
-    freeze()
+fun Completable.test(autoFreeze: Boolean = true): TestCompletableObserver {
+    if (autoFreeze) {
+        freeze()
+    }
 
-    return TestCompletableObserver()
+    return TestCompletableObserver(autoFreeze = autoFreeze)
         .also(::subscribe)
 }

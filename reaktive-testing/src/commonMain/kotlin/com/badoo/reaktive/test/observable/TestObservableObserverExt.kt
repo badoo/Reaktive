@@ -30,9 +30,11 @@ fun TestObservableObserver<*>.assertNotComplete() {
     assertFalse(isComplete, "Observable is complete")
 }
 
-fun <T> Observable<T>.test(): TestObservableObserver<T> {
-    freeze()
+fun <T> Observable<T>.test(autoFreeze: Boolean = true): TestObservableObserver<T> {
+    if (autoFreeze) {
+        freeze()
+    }
 
-    return TestObservableObserver<T>()
+    return TestObservableObserver<T>(autoFreeze = autoFreeze)
         .also(::subscribe)
 }

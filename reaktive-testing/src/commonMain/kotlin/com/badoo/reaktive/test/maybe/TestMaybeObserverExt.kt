@@ -26,9 +26,11 @@ fun TestMaybeObserver<*>.assertNotComplete() {
     assertFalse(isComplete, "Maybe is complete")
 }
 
-fun <T> Maybe<T>.test(): TestMaybeObserver<T> {
-    freeze()
+fun <T> Maybe<T>.test(autoFreeze: Boolean = true): TestMaybeObserver<T> {
+    if (autoFreeze) {
+        freeze()
+    }
 
-    return TestMaybeObserver<T>()
+    return TestMaybeObserver<T>(autoFreeze = autoFreeze)
         .also(::subscribe)
 }

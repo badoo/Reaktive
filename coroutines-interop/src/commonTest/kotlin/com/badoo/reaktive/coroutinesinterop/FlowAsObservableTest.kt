@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 class FlowAsObservableTest {
 
     private val channel = BroadcastChannel<Int?>(Channel.BUFFERED)
-    private val observer = channel.asFlow().asObservable().test()
+    private val observer = channel.asFlow().asObservable().test(autoFreeze = false)
 
     @Test
     fun produces_values_in_correct_order_WHEN_flow_produced_values() {
@@ -53,7 +53,7 @@ class FlowAsObservableTest {
                 producerScope = this
             }
                 .asObservable()
-                .test()
+                .test(autoFreeze = false)
 
         observer.dispose()
 

@@ -18,9 +18,11 @@ fun <T> TestSingleObserver<T>.assertNotSuccess() {
     assertFalse(isSuccess, "Single is succeeded")
 }
 
-fun <T> Single<T>.test(): TestSingleObserver<T> {
-    freeze()
+fun <T> Single<T>.test(autoFreeze: Boolean = true): TestSingleObserver<T> {
+    if (autoFreeze) {
+        freeze()
+    }
 
-    return TestSingleObserver<T>()
+    return TestSingleObserver<T>(autoFreeze = autoFreeze)
         .also(::subscribe)
 }

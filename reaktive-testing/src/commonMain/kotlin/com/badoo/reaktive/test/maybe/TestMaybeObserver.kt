@@ -6,7 +6,7 @@ import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.freeze
 
-class TestMaybeObserver<T> : TestObserver(), MaybeObserver<T> {
+class TestMaybeObserver<T>(autoFreeze: Boolean = true) : TestObserver(), MaybeObserver<T> {
 
     private val _value = AtomicReference<Value<T>?>(null)
 
@@ -21,7 +21,9 @@ class TestMaybeObserver<T> : TestObserver(), MaybeObserver<T> {
     val isComplete: Boolean get() = _isComplete.value
 
     init {
-        freeze()
+        if (autoFreeze) {
+            freeze()
+        }
     }
 
     override fun onSuccess(value: T) {

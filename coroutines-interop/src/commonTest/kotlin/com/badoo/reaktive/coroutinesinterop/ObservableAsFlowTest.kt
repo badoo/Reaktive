@@ -12,12 +12,11 @@ import kotlinx.coroutines.launch
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ObservableAsFlowTest {
 
-    private val upstream = TestObservable<Int?>()
+    private val upstream = TestObservable<Int?>(autoFreeze = false)
 
     @Test
     fun produces_values_in_correct_order_WHEN_upstream_produced_values() {
