@@ -5,19 +5,25 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertNoValues
 import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ObservableByEmitterTest {
 
-    private lateinit var emitter: ObservableEmitter<Int?>
-    private val observer = observable<Int?> { emitter = it }.test()
+    private val emitterRef = AtomicReference<ObservableEmitter<Int?>?>(null)
+    private val emitter: ObservableEmitter<Int?> get() = requireNotNull(emitterRef.value)
+    private val observer = createObservableAndSubscribe(emitterRef)
+
+    private fun createObservableAndSubscribe(emitterReference: AtomicReference<ObservableEmitter<Int?>?>): TestObservableObserver<Int?> =
+        observable<Int?> { emitterReference.value = it }.test()
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {

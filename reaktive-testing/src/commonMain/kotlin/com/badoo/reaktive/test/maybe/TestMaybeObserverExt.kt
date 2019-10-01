@@ -1,6 +1,7 @@
 package com.badoo.reaktive.test.maybe
 
 import com.badoo.reaktive.maybe.Maybe
+import com.badoo.reaktive.utils.freeze
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -25,6 +26,9 @@ fun TestMaybeObserver<*>.assertNotComplete() {
     assertFalse(isComplete, "Maybe is complete")
 }
 
-fun <T> Maybe<T>.test(): TestMaybeObserver<T> =
-    TestMaybeObserver<T>()
+fun <T> Maybe<T>.test(): TestMaybeObserver<T> {
+    freeze()
+
+    return TestMaybeObserver<T>()
         .also(::subscribe)
+}

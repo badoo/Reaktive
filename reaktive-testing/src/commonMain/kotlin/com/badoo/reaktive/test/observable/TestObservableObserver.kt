@@ -5,6 +5,7 @@ import com.badoo.reaktive.test.base.TestObserver
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.update
+import com.badoo.reaktive.utils.freeze
 
 class TestObservableObserver<T> : TestObserver(), ObservableObserver<T> {
 
@@ -12,6 +13,10 @@ class TestObservableObserver<T> : TestObserver(), ObservableObserver<T> {
     val values: List<T> get() = _values.value
     private val _isComplete = AtomicBoolean()
     val isComplete: Boolean get() = _isComplete.value
+
+    init {
+        freeze()
+    }
 
     override fun onNext(value: T) {
         checkActive()

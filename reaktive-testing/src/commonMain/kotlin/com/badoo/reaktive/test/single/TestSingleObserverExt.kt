@@ -1,6 +1,7 @@
 package com.badoo.reaktive.test.single
 
 import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.utils.freeze
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -17,6 +18,9 @@ fun <T> TestSingleObserver<T>.assertNotSuccess() {
     assertFalse(isSuccess, "Single is succeeded")
 }
 
-fun <T> Single<T>.test(): TestSingleObserver<T> =
-    TestSingleObserver<T>()
+fun <T> Single<T>.test(): TestSingleObserver<T> {
+    freeze()
+
+    return TestSingleObserver<T>()
         .also(::subscribe)
+}

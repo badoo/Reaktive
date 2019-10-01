@@ -9,6 +9,7 @@ import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.utils.SharedList
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
@@ -113,14 +114,14 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_WHEN_disposed_before_upstream_onSubscribe() {
-        var isCalled = false
+        val isCalled = AtomicBoolean()
 
         maybeUnsafe<Nothing> {}
-            .doOnBeforeFinally { isCalled = true }
+            .doOnBeforeFinally { isCalled.value = true }
             .test()
             .dispose()
 
-        assertTrue(isCalled)
+        assertTrue(isCalled.value)
     }
 
     @Test
