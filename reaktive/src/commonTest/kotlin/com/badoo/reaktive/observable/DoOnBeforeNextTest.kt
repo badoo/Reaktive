@@ -1,5 +1,6 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.test.TestObservableRelay
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
@@ -86,8 +87,8 @@ class DoOnBeforeNextTest
     fun does_no_call_action_WHEN_previous_lambda_thrown_exception() {
         val count = AtomicInt()
 
-        lateinit var upstream: ObservableObserver<Int>
-        observableUnsafe<Int> { upstream = it }
+        val upstream = TestObservableRelay<Int>()
+        upstream
             .doOnBeforeNext {
                 count.addAndGet(1)
                 throw Exception()

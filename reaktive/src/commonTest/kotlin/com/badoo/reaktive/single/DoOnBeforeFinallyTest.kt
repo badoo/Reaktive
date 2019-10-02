@@ -9,6 +9,7 @@ import com.badoo.reaktive.test.single.DefaultSingleObserver
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
 import com.badoo.reaktive.utils.SharedList
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
@@ -92,14 +93,14 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_WHEN_disposed_before_upstream_onSubscribe() {
-        var isCalled = false
+        val isCalled = AtomicBoolean()
 
         singleUnsafe<Nothing> {}
-            .doOnBeforeFinally { isCalled = true }
+            .doOnBeforeFinally { isCalled.value = true }
             .test()
             .dispose()
 
-        assertTrue(isCalled)
+        assertTrue(isCalled.value)
     }
 
     @Test

@@ -13,14 +13,14 @@ class MaybeFromCoroutineTest {
 
     @Test
     fun succeeds_WHEN_coroutine_returned_non_null_value() {
-        val observer = maybeFromCoroutine { 0 }.test()
+        val observer = maybeFromCoroutine { 0 }.test(autoFreeze = false)
 
         observer.assertSuccess(0)
     }
 
     @Test
     fun succeeds_WHEN_coroutine_returned_null_value() {
-        val observer = maybeFromCoroutine<Unit?> { null }.test()
+        val observer = maybeFromCoroutine<Unit?> { null }.test(autoFreeze = false)
 
         observer.assertSuccess(null)
     }
@@ -29,7 +29,7 @@ class MaybeFromCoroutineTest {
     fun produces_error_WHEN_coroutine_thrown_exception() {
         val error = Exception()
 
-        val observer = maybeFromCoroutine { throw error }.test()
+        val observer = maybeFromCoroutine { throw error }.test(autoFreeze = false)
 
         observer.assertError(error)
     }
@@ -44,7 +44,7 @@ class MaybeFromCoroutineTest {
                     continuation = it
                 }
             }
-                .test()
+                .test(autoFreeze = false)
 
         observer.dispose()
 

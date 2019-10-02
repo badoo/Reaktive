@@ -5,17 +5,23 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.single.TestSingleObserver
 import com.badoo.reaktive.test.single.assertNotSuccess
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
+import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SingleByEmitterTest {
 
-    private lateinit var emitter: SingleEmitter<Int?>
-    private val observer = single<Int?> { emitter = it }.test()
+    private val emitterRef = AtomicReference<SingleEmitter<Int?>?>(null)
+    private val emitter: SingleEmitter<Int?> get() = requireNotNull(emitterRef.value)
+    private val observer = createSingleAndSubscribe(emitterRef)
+
+    private fun createSingleAndSubscribe(emitterReference: AtomicReference<SingleEmitter<Int?>?>): TestSingleObserver<Int?> =
+        single<Int?> { emitterReference.value = it }.test()
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {

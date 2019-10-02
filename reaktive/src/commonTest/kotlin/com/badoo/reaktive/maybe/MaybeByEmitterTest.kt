@@ -5,19 +5,25 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.maybe.TestMaybeObserver
 import com.badoo.reaktive.test.maybe.assertComplete
 import com.badoo.reaktive.test.maybe.assertNotComplete
 import com.badoo.reaktive.test.maybe.assertNotSuccess
 import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
+import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class MaybeByEmitterTest {
 
-    private lateinit var emitter: MaybeEmitter<Int?>
-    private val observer = maybe<Int?> { emitter = it }.test()
+    private val emitterRef = AtomicReference<MaybeEmitter<Int?>?>(null)
+    private val emitter: MaybeEmitter<Int?> get() = requireNotNull(emitterRef.value)
+    private val observer = createMaybeAndSubscribe(emitterRef)
+
+    private fun createMaybeAndSubscribe(emitterReference: AtomicReference<MaybeEmitter<Int?>?>): TestMaybeObserver<Int?> =
+        maybe<Int?> { emitterReference.value = it }.test()
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {

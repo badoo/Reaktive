@@ -1,3 +1,7 @@
 package com.badoo.reaktive.utils
 
-internal actual fun <T> T.freeze(): T = this
+actual fun <T> T.freeze(): T = this
+
+actual fun Any.ensureNeverFrozen() {
+    // no-op
+}

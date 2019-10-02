@@ -5,17 +5,23 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.base.assertSubscribed
+import com.badoo.reaktive.test.completable.TestCompletableObserver
 import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
+import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class CompletableByEmitterTest {
 
-    private lateinit var emitter: CompletableEmitter
-    private val observer = completable { emitter = it }.test()
+    private val emitterRef = AtomicReference<CompletableEmitter?>(null)
+    private val emitter: CompletableEmitter get() = requireNotNull(emitterRef.value)
+    private val observer = createCompletableAndSubscribe(emitterRef)
+
+    private fun createCompletableAndSubscribe(emitterReference: AtomicReference<CompletableEmitter?>): TestCompletableObserver =
+        completable { emitterReference.value = it }.test()
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {

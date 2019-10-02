@@ -47,14 +47,14 @@ class DoOnBeforeDisposeTest
 
     @Test
     fun calls_action_WHEN_disposed_before_upstream_onSubscribe() {
-        var isCalled = false
+        val isCalled = AtomicBoolean()
 
         maybeUnsafe<Nothing> {}
-            .doOnBeforeDispose { isCalled = true }
+            .doOnBeforeDispose { isCalled.value = true }
             .test()
             .dispose()
 
-        assertTrue(isCalled)
+        assertTrue(isCalled.value)
     }
 
     @Test

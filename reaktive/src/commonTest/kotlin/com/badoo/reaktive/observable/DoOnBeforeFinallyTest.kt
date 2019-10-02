@@ -94,14 +94,14 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_WHEN_disposed_before_upstream_onSubscribe() {
-        var isCalled = false
+        val isCalled = AtomicBoolean()
 
         observableUnsafe<Nothing> {}
-            .doOnBeforeFinally { isCalled = true }
+            .doOnBeforeFinally { isCalled.value = true }
             .test()
             .dispose()
 
-        assertTrue(isCalled)
+        assertTrue(isCalled.value)
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.badoo.reaktive.coroutinesinterop
 
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.ensureNeverFrozen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -23,3 +24,4 @@ internal inline fun <T> launchCoroutine(
                 .also(onSuccess)
         }
         .asDisposable()
+        .also(Disposable::ensureNeverFrozen)

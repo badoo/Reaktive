@@ -1,3 +1,5 @@
 package com.badoo.reaktive.utils
 
-internal expect fun <T> T.freeze(): T
+expect fun <T> T.freeze(): T
+
+expect fun Any.ensureNeverFrozen()

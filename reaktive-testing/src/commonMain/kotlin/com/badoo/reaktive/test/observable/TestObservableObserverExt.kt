@@ -1,6 +1,7 @@
 package com.badoo.reaktive.test.observable
 
 import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.utils.freeze
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -29,6 +30,11 @@ fun TestObservableObserver<*>.assertNotComplete() {
     assertFalse(isComplete, "Observable is complete")
 }
 
-fun <T> Observable<T>.test(): TestObservableObserver<T> =
-    TestObservableObserver<T>()
+fun <T> Observable<T>.test(autoFreeze: Boolean = true): TestObservableObserver<T> {
+    if (autoFreeze) {
+        freeze()
+    }
+
+    return TestObservableObserver<T>(autoFreeze = autoFreeze)
         .also(::subscribe)
+}
