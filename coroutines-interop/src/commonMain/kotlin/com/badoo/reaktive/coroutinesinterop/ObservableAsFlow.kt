@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.channelFlow
 @ExperimentalCoroutinesApi
 fun <T> Observable<T>.asFlow(): Flow<T> =
     channelFlow {
+        channel.ensureNeverFrozen()
+
         val disposableWrapper = DisposableWrapper()
 
         val observer =
@@ -34,12 +36,10 @@ fun <T> Observable<T>.asFlow(): Flow<T> =
                 }
             }
 
-        observer.ensureNeverFrozen()
-
         try {
             subscribe(observer)
         } catch (e: Throwable) {
-            channel.close()
+            channel.close(e)
         }
 
         awaitClose(disposableWrapper::dispose)

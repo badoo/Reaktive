@@ -6,7 +6,7 @@ import com.badoo.reaktive.utils.lock.waitFor
 import com.badoo.reaktive.utils.reaktiveUncaughtErrorHandler
 import kotlin.test.fail
 
-internal fun Condition.waitForOrFail(timeoutNanos: Long, predicate: () -> Boolean) {
+internal fun Condition.waitForOrFail(timeoutNanos: Long = 5_000_000_000L, predicate: () -> Boolean) {
     if (!waitFor(timeoutNanos, predicate)) {
         fail("Timeout waiting for condition")
     }
