@@ -1,6 +1,8 @@
 package com.badoo.reaktive.utils
 
 import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.lock.Lock
+import com.badoo.reaktive.utils.lock.synchronized
 import kotlin.native.concurrent.AtomicLong
 import kotlin.system.getTimeMillis
 

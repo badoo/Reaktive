@@ -1,6 +1,6 @@
-package com.badoo.reaktive.utils
+package com.badoo.reaktive.utils.lock
 
-internal interface Condition {
+interface Condition {
 
     fun await(timeoutNanos: Long = -1L)
 

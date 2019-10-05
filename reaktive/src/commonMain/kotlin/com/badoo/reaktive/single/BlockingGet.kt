@@ -1,14 +1,14 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.lock.Lock
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.synchronized
-import com.badoo.reaktive.utils.useCondition
-import com.badoo.reaktive.utils.useLock
+import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.lock.use
 
 fun <T> Single<T>.blockingGet(): T =
-    useLock { lock ->
-        lock.useCondition { condition ->
+    Lock().use { lock ->
+        lock.newCondition().use { condition ->
             val result = AtomicReference<BlockingGetResult<T>?>(null)
             val upstreamDisposable = AtomicReference<Disposable?>(null)
 

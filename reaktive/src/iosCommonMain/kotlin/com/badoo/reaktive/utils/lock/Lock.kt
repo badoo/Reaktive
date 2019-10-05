@@ -1,4 +1,4 @@
-package com.badoo.reaktive.utils
+package com.badoo.reaktive.utils.lock
 
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.CPointer
@@ -6,21 +6,15 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
-import platform.posix.CLOCK_MONOTONIC
 import platform.posix.PTHREAD_MUTEX_RECURSIVE
-import platform.posix.__syscall_slong_t
-import platform.posix.__time_t
-import platform.posix.clock_gettime
+import platform.posix.__darwin_time_t
+import platform.posix.gettimeofday
 import platform.posix.pthread_cond_broadcast
 import platform.posix.pthread_cond_destroy
 import platform.posix.pthread_cond_init
 import platform.posix.pthread_cond_t
 import platform.posix.pthread_cond_timedwait
 import platform.posix.pthread_cond_wait
-import platform.posix.pthread_condattr_destroy
-import platform.posix.pthread_condattr_init
-import platform.posix.pthread_condattr_setclock
-import platform.posix.pthread_condattr_t
 import platform.posix.pthread_mutex_destroy
 import platform.posix.pthread_mutex_init
 import platform.posix.pthread_mutex_lock
@@ -31,8 +25,9 @@ import platform.posix.pthread_mutexattr_init
 import platform.posix.pthread_mutexattr_settype
 import platform.posix.pthread_mutexattr_t
 import platform.posix.timespec
+import platform.posix.timeval
 
-internal actual class Lock {
+actual class Lock {
 
     private val arena = Arena()
     private val attr = arena.alloc<pthread_mutexattr_t>()
@@ -40,7 +35,7 @@ internal actual class Lock {
 
     init {
         pthread_mutexattr_init(attr.ptr)
-        pthread_mutexattr_settype(attr.ptr, PTHREAD_MUTEX_RECURSIVE.toInt())
+        pthread_mutexattr_settype(attr.ptr, PTHREAD_MUTEX_RECURSIVE)
         pthread_mutex_init(mutex.ptr, attr.ptr)
     }
 
@@ -65,19 +60,21 @@ internal actual class Lock {
     ) : Condition {
 
         private val arena = Arena()
-        private val attr = arena.alloc<pthread_condattr_t>()
         private val cond = arena.alloc<pthread_cond_t>()
 
         init {
-            pthread_condattr_init(attr.ptr)
-            pthread_condattr_setclock(attr.ptr, CLOCK_MONOTONIC)
-            pthread_cond_init(cond.ptr, attr.ptr)
+            pthread_cond_init(cond.ptr, null)
         }
 
         override fun await(timeoutNanos: Long) {
             if (timeoutNanos >= 0L) {
                 memScoped {
-                    val ts: timespec = alloc { clock_gettime(CLOCK_MONOTONIC, ptr) }
+                    // can't use monotonic time, pthread_condattr_setclock() nor clock_gettime(), iOS does not support it
+                    // can't use NSRecursiveLock and NSCondition, it can't wait less then 1 second and lock can't create condition
+                    val tv: timeval = alloc { gettimeofday(ptr, null) }
+                    val ts: timespec = alloc()
+                    ts.tv_sec = tv.tv_sec
+                    ts.tv_nsec = (tv.tv_usec * MICROS_IN_NANOS).convert()
                     ts += timeoutNanos
                     pthread_cond_timedwait(cond.ptr, lockPtr, ts.ptr)
                 }
@@ -92,19 +89,19 @@ internal actual class Lock {
 
         override fun destroy() {
             pthread_cond_destroy(cond.ptr)
-            pthread_condattr_destroy(attr.ptr)
             arena.clear()
         }
 
         private companion object {
             private const val SECOND_IN_NANOS = 1_000_000_000L
+            private const val MICROS_IN_NANOS = 1_000L
 
             private operator fun timespec.plusAssign(nanos: Long) {
-                tv_sec += (nanos / SECOND_IN_NANOS).convert<__time_t>()
-                tv_nsec += (nanos % SECOND_IN_NANOS).convert<__syscall_slong_t>()
+                tv_sec += (nanos / SECOND_IN_NANOS).convert<__darwin_time_t>()
+                tv_nsec += (nanos % SECOND_IN_NANOS).convert<__darwin_time_t>()
                 if (tv_nsec >= SECOND_IN_NANOS) {
                     tv_sec += 1
-                    tv_nsec -= SECOND_IN_NANOS.convert<__syscall_slong_t>()
+                    tv_nsec -= SECOND_IN_NANOS.convert<__darwin_time_t>()
                 }
             }
         }

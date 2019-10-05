@@ -1,6 +1,6 @@
-package com.badoo.reaktive.utils
+package com.badoo.reaktive.utils.lock
 
-internal expect class Lock constructor() {
+expect class Lock constructor() {
 
     fun acquire()
 
