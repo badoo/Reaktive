@@ -73,11 +73,14 @@ void setupAllTargetsWithDefaultSourceSets(Project project) {
                 nativeCommonMain.dependsOn commonMain
                 nativeCommonTest.dependsOn commonTest
 
-                linuxX64Main.dependsOn nativeCommonMain
-                linuxX64Test.dependsOn nativeCommonTest
+                linuxCommonMain.dependsOn nativeCommonMain
+                linuxCommonTest.dependsOn nativeCommonTest
 
-                linuxArm32HfpMain.dependsOn nativeCommonMain
-                linuxArm32HfpTest.dependsOn nativeCommonTest
+                linuxX64Main.dependsOn linuxCommonMain
+                linuxX64Test.dependsOn linuxCommonTest
+
+                linuxArm32HfpMain.dependsOn linuxCommonMain
+                linuxArm32HfpTest.dependsOn linuxCommonTest
             }
         }
     }
