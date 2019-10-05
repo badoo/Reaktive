@@ -7,6 +7,7 @@ kotlin {
             dependencies {
                 implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-common'
                 implementation project(':reaktive')
+                implementation project(':utils')
             }
         }
 
