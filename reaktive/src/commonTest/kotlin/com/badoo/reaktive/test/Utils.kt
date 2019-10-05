@@ -2,14 +2,14 @@ package com.badoo.reaktive.test
 
 import com.badoo.reaktive.utils.Condition
 import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.clock.DefaultClock
 import com.badoo.reaktive.utils.reaktiveUncaughtErrorHandler
-import com.badoo.reaktive.utils.uptimeMillis
 import kotlin.test.fail
 
 internal fun Condition.waitFor(timeoutNanos: Long, predicate: () -> Boolean): Boolean {
     require(timeoutNanos > 0L) { "Timeout must be a positive value" }
 
-    val endNanos = uptimeMillis * 1_000_000L + timeoutNanos
+    val endNanos = DefaultClock.uptimeNanos + timeoutNanos
     var remainingNanos = timeoutNanos
 
     while (true) {
@@ -21,7 +21,7 @@ internal fun Condition.waitFor(timeoutNanos: Long, predicate: () -> Boolean): Bo
         }
 
         await(remainingNanos)
-        remainingNanos = endNanos - uptimeMillis * 1_000_000L
+        remainingNanos = endNanos - DefaultClock.uptimeNanos
     }
 }
 
