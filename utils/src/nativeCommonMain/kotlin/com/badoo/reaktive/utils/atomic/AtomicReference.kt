@@ -1,7 +1,7 @@
 package com.badoo.reaktive.utils.atomic
 
-import com.badoo.reaktive.utils.freeze
 import kotlin.native.concurrent.FreezableAtomicReference
+import kotlin.native.concurrent.freeze
 import kotlin.native.concurrent.isFrozen
 
 actual class AtomicReference<T> actual constructor(initialValue: T) {
