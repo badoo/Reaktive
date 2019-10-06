@@ -5,7 +5,7 @@ import Alamofire
 class KittenDataSourceImpl: KittenDataSource {
     func load(url: String, continuation: @escaping (KittenDataSourceResult) -> Void) {
         AF.request(url)
-            .responseString { (response: DataResponse<String>) in
+            .responseString { (response: AFDataResponse<String>) in
                 do {
                     try continuation(KittenDataSourceResult.Success(data: response.result.get()))
                 } catch {

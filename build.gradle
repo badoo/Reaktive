@@ -185,3 +185,10 @@ void setupCommonTargets(Project project) {
 void setupIosTargets(Project project) {
     project.apply plugin: IosPlugin
 }
+
+import tasks.BuildIosSampleTask
+if (Target.currentTarget().isIos()) {
+    tasks.register('buildIosSample', BuildIosSampleTask) {
+        dependsOn ':sample-mpp-module:linkDebugFrameworkIosSim'
+    }
+}
