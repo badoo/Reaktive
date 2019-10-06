@@ -4,33 +4,31 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ProducerScope
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class FlowAsObservableTest {
-
-    private val channel = BroadcastChannel<Int?>(Channel.BUFFERED)
-    private val observer = channel.asFlow().asObservable().test(autoFreeze = false)
+class FlowAsObservableJvmJsTest {
 
     @Test
     fun produces_values_in_correct_order_WHEN_flow_produced_values() {
-        channel.offer(0)
-        channel.offer(null)
-        channel.offer(1)
-        channel.offer(null)
-        channel.offer(2)
+        val observer =
+            flowOf(0, null, 1, null, 2)
+                .asObservable()
+                .test()
 
         observer.assertValues(0, null, 1, null, 2)
     }
 
     @Test
     fun completes_WHEN_flow_completed() {
-        channel.close()
+        val observer =
+            flowOf<Nothing>()
+                .asObservable()
+                .test()
 
         observer.assertComplete()
     }
@@ -39,7 +37,10 @@ class FlowAsObservableTest {
     fun produces_error_WHEN_flow_produced_error() {
         val error = Exception()
 
-        channel.close(error)
+        val observer =
+            flow<Nothing> { throw error }
+                .asObservable()
+                .test()
 
         observer.assertError(error)
     }
@@ -53,7 +54,7 @@ class FlowAsObservableTest {
                 producerScope = this
             }
                 .asObservable()
-                .test(autoFreeze = false)
+                .test()
 
         observer.dispose()
 

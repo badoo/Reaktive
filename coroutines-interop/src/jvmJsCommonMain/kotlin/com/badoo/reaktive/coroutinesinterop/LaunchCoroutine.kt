@@ -1,27 +1,27 @@
 package com.badoo.reaktive.coroutinesinterop
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.ensureNeverFrozen
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
-internal inline fun <T> launchCoroutine(
-    context: CoroutineContext = Dispatchers.Unconfined,
+internal actual inline fun <T> launchCoroutine(
+    setDisposable: (Disposable) -> Unit,
     crossinline onSuccess: (T) -> Unit,
     crossinline onError: (Throwable) -> Unit,
-    crossinline block: suspend () -> T
-): Disposable =
+    crossinline block: suspend CoroutineScope.() -> T
+) {
     GlobalScope
-        .launch(context) {
+        .launch(Dispatchers.Unconfined) outer@{
             try {
-                block()
+                onSuccess(block())
+            } catch (ignored: CancellationException) {
             } catch (e: Throwable) {
                 onError(e)
-                return@launch
             }
-                .also(onSuccess)
         }
         .asDisposable()
-        .also(Disposable::ensureNeverFrozen)
+        .also(setDisposable)
+}
