@@ -195,6 +195,6 @@ void setupIosTargets(Project project) {
 import tasks.BuildIosSampleTask
 if (Target.currentTarget().isIos()) {
     tasks.register('buildIosSample', BuildIosSampleTask) {
-        dependsOn ':sample-mpp-module:linkDebugFrameworkIosSim'
+        dependsOn ':sample-mpp-module:linkReleaseFrameworkIosSim'
     }
 }
