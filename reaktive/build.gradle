@@ -4,6 +4,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation project(':utils')
                 implementation project(':reaktive-annotations')
             }
         }

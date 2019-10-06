@@ -5,7 +5,9 @@ package com.badoo.reaktive.utils
 import android.util.Log
 
 internal actual fun printError(error: Any?) {
-    if (isPrintErrorEnabled) {
+    try {
         Log.e("Reaktive", error.toString())
+    } catch (ignored: RuntimeException) {
+        // Fails in unit tests
     }
 }

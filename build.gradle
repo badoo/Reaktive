@@ -61,23 +61,29 @@ void setupAllTargetsWithDefaultSourceSets(Project project) {
 
         project.kotlin {
             sourceSets {
-                jvmMain.dependsOn commonMain
-                jvmTest.dependsOn commonTest
+                jvmJsCommonMain.dependsOn commonMain
+                jvmJsCommonTest.dependsOn commonTest
+
+                jvmMain.dependsOn jvmJsCommonMain
+                jvmTest.dependsOn jvmJsCommonTest
 
                 androidMain.dependsOn jvmMain
                 androidTest.dependsOn jvmTest
 
-                jsMain.dependsOn commonMain
-                jsTest.dependsOn commonTest
+                jsMain.dependsOn jvmJsCommonMain
+                jsTest.dependsOn jvmJsCommonTest
 
                 nativeCommonMain.dependsOn commonMain
                 nativeCommonTest.dependsOn commonTest
 
-                linuxX64Main.dependsOn nativeCommonMain
-                linuxX64Test.dependsOn nativeCommonTest
+                linuxCommonMain.dependsOn nativeCommonMain
+                linuxCommonTest.dependsOn nativeCommonTest
 
-                linuxArm32HfpMain.dependsOn nativeCommonMain
-                linuxArm32HfpTest.dependsOn nativeCommonTest
+                linuxX64Main.dependsOn linuxCommonMain
+                linuxX64Test.dependsOn linuxCommonTest
+
+                linuxArm32HfpMain.dependsOn linuxCommonMain
+                linuxArm32HfpTest.dependsOn linuxCommonTest
             }
         }
     }

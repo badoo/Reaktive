@@ -1,6 +1,5 @@
 package com.badoo.reaktive.subject
 
-import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.utils.SharedList
@@ -46,6 +45,11 @@ internal open class DefaultSubject<T> : Subject<T> {
                     true
                 }
 
+                is Event.OnUnsubscribe -> {
+                    onSerializedUnsubscribe(event.observer)
+                    true
+                }
+
                 is Event.OnComplete -> {
                     onSerializedComplete()
                     false
@@ -63,10 +67,11 @@ internal open class DefaultSubject<T> : Subject<T> {
         }
 
     private fun onSerializedSubscribe(observer: ObservableObserver<T>) {
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
+        val disposable = disposable { serializer.accept(Event.OnUnsubscribe(observer)) }
 
-        if (disposableWrapper.isDisposed) {
+        observer.onSubscribe(disposable)
+
+        if (disposable.isDisposed) {
             return
         }
 
@@ -82,17 +87,18 @@ internal open class DefaultSubject<T> : Subject<T> {
                     return
                 }
 
-                else -> {
+                is Subject.Status.Active -> {
                 }
             }
         }
 
-        val disposable = disposable { observers -= observer }
-
         observers += observer
 
-        disposableWrapper.set(disposable)
         onAfterSubscribe(observer)
+    }
+
+    private fun onSerializedUnsubscribe(observer: ObservableObserver<T>) {
+        observers -= observer
     }
 
     private fun onSerializedNext(value: T) {
@@ -115,6 +121,7 @@ internal open class DefaultSubject<T> : Subject<T> {
 
     private sealed class Event<out T> {
         class OnSubscribe<T>(val observer: ObservableObserver<T>) : Event<T>()
+        class OnUnsubscribe<T>(val observer: ObservableObserver<T>) : Event<T>()
         object OnComplete : Event<Nothing>()
         class OnError(val error: Throwable) : Event<Nothing>()
     }

@@ -1,9 +1,9 @@
 package com.badoo.reaktive.looperthread
 
 import com.badoo.reaktive.test.waitForOrFail
-import com.badoo.reaktive.utils.Lock
+import com.badoo.reaktive.utils.lock.Lock
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.synchronized
+import com.badoo.reaktive.utils.lock.synchronized
 import platform.posix.usleep
 import kotlin.system.getTimeMillis
 import kotlin.system.getTimeNanos

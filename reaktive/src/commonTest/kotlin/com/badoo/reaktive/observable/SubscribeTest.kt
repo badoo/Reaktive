@@ -12,10 +12,8 @@ import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.isPrintErrorEnabled
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
@@ -26,14 +24,8 @@ class SubscribeTest {
     private val upstream = TestObservable<Int?>()
     private val observer = TestObservableObserver<Int?>()
 
-    @BeforeTest
-    fun before() {
-        isPrintErrorEnabled = false
-    }
-
     @AfterTest
     fun after() {
-        isPrintErrorEnabled = true
         resetReaktiveUncaughtErrorHandler()
     }
 
