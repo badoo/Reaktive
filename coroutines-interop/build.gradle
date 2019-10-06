@@ -2,6 +2,11 @@ setupMultiplatformLibrary(project)
 setupAllTargetsWithDefaultSourceSets(project)
 
 kotlin {
+    targets {
+//        fromPreset(presets.jvm, 'jvmJsCommon')
+//        fromPreset(presets.linuxX64, 'nativeCommon')
+    }
+
     sourceSets {
         commonMain {
             dependencies {

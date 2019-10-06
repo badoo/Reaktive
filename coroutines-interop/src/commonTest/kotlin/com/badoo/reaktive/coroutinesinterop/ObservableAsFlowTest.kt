@@ -1,5 +1,6 @@
 package com.badoo.reaktive.coroutinesinterop
 
+import com.badoo.reaktive.observable.observableUnsafe
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.onNext
@@ -75,5 +76,24 @@ class ObservableAsFlowTest {
         scope.cancel()
 
         assertFalse(upstream.hasSubscribers)
+    }
+
+    @Test
+    fun throws_exception_WHEN_upstream_subscribe_throws_exception() {
+        var isThrown = false
+
+        GlobalScope.launch(Dispatchers.Unconfined) {
+            observableUnsafe<Nothing> { throw Exception() }
+                .asFlow()
+                .run {
+                    try {
+                        collect()
+                    } catch (e: Exception) {
+                        isThrown = true
+                    }
+                }
+        }
+
+        assertTrue(isThrown)
     }
 }
