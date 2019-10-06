@@ -10,12 +10,12 @@ matrix:
           - build-tools-28.0.3
           - android-28
       env: MP_TARGET=COMMON
-      script: ./gradlew reaktive:check reaktive-test:check rxjava2-interop:check rxjava3-interop:check coroutines-interop:check -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive:check reaktive-annotations:check reaktive-test:check utils:check rxjava2-interop:check rxjava3-interop:check coroutines-interop:check -DMP_TARGET=$MP_TARGET
     - os: osx
       osx_image: xcode10.2
       language: java
       env: MP_TARGET=IOS
-      script: ./gradlew reaktive:check reaktive-test:check coroutines-interop:check -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive:check reaktive-annotations:check reaktive-test:check utils:check coroutines-interop:check -DMP_TARGET=$MP_TARGET
     - os: linux
       language: android
       android:

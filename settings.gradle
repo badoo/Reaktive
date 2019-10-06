@@ -6,6 +6,7 @@ println("Current environment: $target")
 include ':reaktive'
 include ':reaktive-testing'
 include ':reaktive-annotations'
+include ':utils'
 include ':coroutines-interop'
 include ':sample-mpp-module'
 if (target.isCommon()) {
