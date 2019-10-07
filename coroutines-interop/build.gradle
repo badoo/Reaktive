@@ -1,5 +1,5 @@
 setupMultiplatformLibrary(project)
-setupAllTargetsWithDefaultSourceSets(project)
+setupAllTargetsWithDefaultSourceSets(project: project, isLinuxArm32HfpEnabled: false)
 
 kotlin {
     targets {
