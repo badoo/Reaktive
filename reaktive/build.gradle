@@ -1,6 +1,18 @@
 setupMultiplatformLibrary(project)
+setupAllTargetsWithDefaultSourceSets(project)
 
 kotlin {
+    targets {
+//            fromPreset(presets.jvm, 'jvmCommon')
+//            fromPreset(presets.jvm, 'jvmJsCommon')
+//            fromPreset(presets.linuxX64, 'jvmNativeCommon')
+//            fromPreset(presets.linuxX64, 'nativeCommon')
+//            fromPreset(presets.linuxArm32Hfp, 'nativeCommon')
+//            fromPreset(presets.linuxX64, 'linuxCommon')
+
+//            fromPreset(presets.iosX64, 'iosCommon')
+    }
+
     sourceSets {
         commonMain {
             dependencies {
@@ -13,87 +25,6 @@ kotlin {
             dependencies {
                 implementation project(':reaktive-testing')
             }
-        }
-    }
-}
-
-final target = Target.currentTarget()
-
-if (target.isCommon() || target.isMeta()) {
-    setupCommonTargets(project)
-
-    kotlin {
-        targets { 
-//            fromPreset(presets.jvm, 'jvmCommon')
-//            fromPreset(presets.jvm, 'jvmJsCommon')
-//            fromPreset(presets.linuxX64, 'jvmNativeCommon')
-//            fromPreset(presets.linuxX64, 'nativeCommon')
-//            fromPreset(presets.linuxArm32Hfp, 'nativeCommon')
-//            fromPreset(presets.linuxX64, 'linuxCommon')
-        }
-
-        sourceSets {
-            jvmJsCommonMain.dependsOn commonMain
-            jvmJsCommonTest.dependsOn commonTest
-            
-            jvmNativeCommonMain.dependsOn commonMain
-            jvmNativeCommonTest.dependsOn commonTest
-
-            jvmCommonMain.dependsOn jvmJsCommonMain
-            jvmCommonMain.dependsOn jvmNativeCommonMain
-            jvmCommonTest.dependsOn jvmJsCommonTest
-            jvmCommonTest.dependsOn jvmNativeCommonTest
-
-            jvmMain.dependsOn jvmCommonMain
-            jvmTest.dependsOn jvmCommonTest
-
-            androidMain.dependsOn jvmCommonMain
-            androidTest.dependsOn jvmCommonTest
-
-            jsMain.dependsOn jvmJsCommonMain
-            jsTest.dependsOn jvmJsCommonTest
-
-            nativeCommonMain.dependsOn jvmNativeCommonMain
-            nativeCommonTest.dependsOn jvmNativeCommonTest
-
-            linuxCommonMain.dependsOn nativeCommonMain
-            linuxCommonTest.dependsOn nativeCommonTest
-
-            linuxX64Main.dependsOn linuxCommonMain
-            linuxX64Test.dependsOn linuxCommonTest
-
-            linuxArm32HfpMain.dependsOn linuxCommonMain
-            linuxArm32HfpTest.dependsOn linuxCommonTest
-        }
-    }
-}
-
-if (target.isIos() || target.isMeta()) {
-    setupIosTargets(project)
-
-    kotlin {
-        targets { 
-//            fromPreset(presets.iosX64, 'iosCommon')
-        }
-
-        sourceSets {
-            jvmNativeCommonMain.dependsOn commonMain
-            jvmNativeCommonTest.dependsOn commonTest
-
-            nativeCommonMain.dependsOn jvmNativeCommonMain
-            nativeCommonTest.dependsOn jvmNativeCommonTest
-
-            iosCommonMain.dependsOn nativeCommonMain
-            iosCommonTest.dependsOn nativeCommonTest
-
-            ios32Main.dependsOn iosCommonMain
-            ios32Test.dependsOn iosCommonTest
-
-            ios64Main.dependsOn iosCommonMain
-            ios64Test.dependsOn iosCommonTest
-
-            iosSimMain.dependsOn iosCommonMain
-            iosSimTest.dependsOn iosCommonTest
         }
     }
 }

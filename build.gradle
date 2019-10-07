@@ -53,28 +53,49 @@ void setupMultiplatformLibrary(Project project) {
     }
 }
 
-void setupAllTargetsWithDefaultSourceSets(Project project) {
+void setupAllTargetsWithDefaultSourceSets(Map parameters) {
+    setupAllTargetsWithDefaultSourceSets(
+            parameters['project'],
+            parameters.getOrDefault('isLinuxArm32HfpEnabled', true)
+    )
+}
+
+void setupAllTargetsWithDefaultSourceSets(Project project, Boolean isLinuxArm32HfpEnabled = true) {
     final target = Target.currentTarget()
 
     if (target.isCommon() || target.isMeta()) {
-        setupCommonTargets(project)
+        setupAndroidTarget(project)
+        setupJvmTarget(project)
+        setupJsTarget(project)
+        setupLinuxX64Target(project)
+        if (isLinuxArm32HfpEnabled) {
+            setupLinuxArm32HfpTarget(project)
+        }
 
         project.kotlin {
             sourceSets {
                 jvmJsCommonMain.dependsOn commonMain
                 jvmJsCommonTest.dependsOn commonTest
 
-                jvmMain.dependsOn jvmJsCommonMain
-                jvmTest.dependsOn jvmJsCommonTest
+                jvmNativeCommonMain.dependsOn commonMain
+                jvmNativeCommonTest.dependsOn commonTest
 
-                androidMain.dependsOn jvmMain
-                androidTest.dependsOn jvmTest
+                jvmCommonMain.dependsOn jvmJsCommonMain
+                jvmCommonMain.dependsOn jvmNativeCommonMain
+                jvmCommonTest.dependsOn jvmJsCommonTest
+                jvmCommonTest.dependsOn jvmNativeCommonTest
+
+                jvmMain.dependsOn jvmCommonMain
+                jvmTest.dependsOn jvmCommonTest
+
+                androidMain.dependsOn jvmCommonMain
+                androidTest.dependsOn jvmCommonTest
 
                 jsMain.dependsOn jvmJsCommonMain
                 jsTest.dependsOn jvmJsCommonTest
 
-                nativeCommonMain.dependsOn commonMain
-                nativeCommonTest.dependsOn commonTest
+                nativeCommonMain.dependsOn jvmNativeCommonMain
+                nativeCommonTest.dependsOn jvmNativeCommonTest
 
                 linuxCommonMain.dependsOn nativeCommonMain
                 linuxCommonTest.dependsOn nativeCommonTest
@@ -82,8 +103,10 @@ void setupAllTargetsWithDefaultSourceSets(Project project) {
                 linuxX64Main.dependsOn linuxCommonMain
                 linuxX64Test.dependsOn linuxCommonTest
 
-                linuxArm32HfpMain.dependsOn linuxCommonMain
-                linuxArm32HfpTest.dependsOn linuxCommonTest
+                if (isLinuxArm32HfpEnabled) {
+                    linuxArm32HfpMain.dependsOn linuxCommonMain
+                    linuxArm32HfpTest.dependsOn linuxCommonTest
+                }
             }
         }
     }
@@ -93,8 +116,11 @@ void setupAllTargetsWithDefaultSourceSets(Project project) {
 
         project.kotlin {
             sourceSets {
-                nativeCommonMain.dependsOn commonMain
-                nativeCommonTest.dependsOn commonTest
+                jvmNativeCommonMain.dependsOn commonMain
+                jvmNativeCommonTest.dependsOn commonTest
+
+                nativeCommonMain.dependsOn jvmNativeCommonMain
+                nativeCommonTest.dependsOn jvmNativeCommonTest
 
                 iosCommonMain.dependsOn nativeCommonMain
                 iosCommonTest.dependsOn nativeCommonTest
@@ -112,7 +138,7 @@ void setupAllTargetsWithDefaultSourceSets(Project project) {
     }
 }
 
-void setupAndroidTarget(Project project) {
+private void setupAndroidTarget(Project project) {
     project.apply plugin: 'com.android.library'
 
     project.android {
@@ -147,7 +173,7 @@ void setupAndroidTarget(Project project) {
     }
 }
 
-void setupJvmTarget(Project project) {
+private void setupJvmTarget(Project project) {
     project.kotlin {
         targets.fromPreset(presets.jvm, 'jvm')
 
@@ -168,27 +194,27 @@ void setupJvmTarget(Project project) {
 }
 
 
-void setupJsTarget(Project project) {
+private void setupJsTarget(Project project) {
     project.apply plugin: JsPlugin
 }
 
-void setupLinuxTargets(Project project) {
+private void setupLinuxX64Target(Project project) {
     project.kotlin {
         targets {
             fromPreset(presets.linuxX64, 'linuxX64')
+        }
+    }
+}
+
+private void setupLinuxArm32HfpTarget(Project project) {
+    project.kotlin {
+        targets {
             fromPreset(presets.linuxArm32Hfp, 'linuxArm32Hfp')
         }
     }
 }
 
-void setupCommonTargets(Project project) {
-    setupAndroidTarget(project)
-    setupJvmTarget(project)
-    setupJsTarget(project)
-    setupLinuxTargets(project)
-}
-
-void setupIosTargets(Project project) {
+private void setupIosTargets(Project project) {
     project.apply plugin: IosPlugin
 }
 
