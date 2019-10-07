@@ -6,9 +6,10 @@
 
 Kotlin multiplatform implementation of Reactive Extensions.
 
-Library status: under development, beta pre-release is available, public API is subject to change
-
 ### Setup
+Recommended minimum Gradle version is 5.3. Please read first the documentation about
+[metadata publishing mode](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#experimental-metadata-publishing-mode).
+
 Add Bintray repository into your root build.gradle file:
 ```groovy
 repositories {
@@ -18,19 +19,18 @@ repositories {
 }
 ```
 
-There are four modules published:
+There are a number of modules published:
 - `reaktive` - the main Reaktive library (multiplatform)
 - `reaktive-annotations` - collection of annotations (mutiplatform)
 - `reaktive-testing` - testing utilities (multiplatform)
+- `utils` - some utilities like `Clock`, `AtomicReference`, `Lock`, etc. (multiplatform)
+- `coroutines-interop` - Kotlin coroutines interoperability helpers (multiplatform)
 - `rxjava2-interop` - RxJava2 interoperability helpers (JVM and Android)
 - `rxjava3-interop` - RxJava3 interoperability helpers (JVM and Android)
 
-Each multiplatform module is compiled against each target and published in
-[metadata publishing mode](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#experimental-metadata-publishing-mode). 
+#### Multiplatform module publications
 
-#### Multiplatform modules
-
-Kotlin common:
+Kotlin common (root publication):
 ```groovy
 implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
 ```
@@ -72,6 +72,27 @@ implementation 'com.badoo.reaktive:<module-name>-linuxarm32hfp:<latest-version>'
 implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
 ```
 
+#### Typical dependencies configuration for MPP module (metadata mode)
+```
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation 'com.badoo.reaktive:reaktive:<latest-version>'
+                implementation 'com.badoo.reaktive:reaktive-annotations:<latest-version>'
+                implementation 'com.badoo.reaktive:coroutines-interop:<latest-version>'
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation 'com.badoo.reaktive:reaktive-testing:<latest-version>'
+            }
+        }
+    }
+}
+```
+
 ### Features:
 * Multiplatform: JVM, Android, iOS, JavaScript, Linux X64, Linux ARM 32 hfp
 * Schedulers support: computation, IO, trampoline, main
@@ -79,13 +100,63 @@ implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
 * Thread local subscriptions without freezing for Kotlin/Native
 * Supported sources: Observable, Maybe, Single, Completable
 * Subjects: PublishSubject, BehaviorSubject
-* Interoperability with RxJava2: conversion of sources between Reaktive and RxJava2, ability to reuse RxJava2's schedulers
-* Supported operators:
-  * Observable: asCompletable, collect, combineLatest, concatMap, concatWith, concatWithValue, debounce, delay, defaultIfEmpty, distinctUntilChanged, doOnBeforeXxx, filter, firstOrComplete, firstOrDefault, firstOrError, flatMap, flatMapCompletable, flatMapMaybe, flatMapSingle, flatten, interval, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, sample, scan, skip, startWith, startWithValue, subscribeOn, switchIfEmpty, switchMap, throttle, timer, toCompletable, toList, toMap, withLatestFrom, zip
-  * Maybe: asCompletable, asObservable, asSingle, concat, delay, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapObservable, flatMapSingle, flatten, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, subscribeOn, switchIfEmpty, timer, zip
-  * Single: asCompletable, asMaybe, asObservable, blockingGet, concat, delay, doOnBeforeXxx, filter, flatMap, flatMapCompletable, flatMapMaybe, flatMapObservable, flatten, map, merge, notNull, observeOn, ofType, onErrorResumeNext, onErrorReturn, onErrorReturnValue, subscribeOn, timer, zip
-  * Completable: andThen, asMaybe, asObservable, asSingle, concat, delay, doOnBeforeXxx, merge, observeOn, onErrorComplete, onErrorResumeNext, subscribeOn, timer
-  * Plus multiple factory and conversion functions
+* Interoperability with Kotlin Coroutines: conversions between coroutines (including Flow) and Reaktive
+* Interoperability with RxJava2 and RxJava3: conversion of sources between Reaktive and RxJava, ability to reuse RxJava's schedulers
+
+### Kotlin Native pitfalls
+Kotlin Native memory model and concurrency are very special. In general shared mutable state between threads is not allowed.
+Since Reaktive supports multithreading in Kotlin Native, please read the following documents before using it:
+* [Concurrency](https://kotlinlang.org/docs/reference/native/concurrency.html#object-transfer-and-freezing)
+* [Immutability](https://kotlinlang.org/docs/reference/native/immutability.html)
+
+Object detachment is relatively difficult to achieve and is very error-prone when the objects are created from outside and
+are not fully managed by the library. This is why Reaktive prefers frozen state. Here are some hints:
+* Any callback (and any captured objects) submitted to a Scheduler will be frozen
+* `subscribeOn` freezes both its upstream source and downstream observer,
+all the Disposables (upstream's and downstream's) are frozen as well,
+all the values (including errors) are **not** frozen by the operator
+* `observeOn` freezes only its downstream observer and all the values (including errors) passed through it, plus all the Disposables,
+upstream source is **not** frozen by the operator
+* Other operators that use scheduler (like `debounce`, `timer`, `delay`, etc.) behave same as `observeOn` in most of the cases
+
+#### Thread local tricks to avoid freezing
+Sometimes freezing is not acceptable, e.g. we might want to load some data in background and then update the UI.
+Obviously UI can not be frozen. With Reaktive it is possible to achieve such a behaviour in two ways:
+
+Use `threadLocal` operator:
+```
+val values = mutableListOf<Any>()
+var isFinished = false
+
+observable<Any> { emitter ->
+    // Background job
+}
+    .subscribeOn(ioScheduler)
+    .observeOn(mainScheduler)
+    .threadLocal()
+    .doOnBeforeNext { values += it } // Callback is not frozen, we can updated the mutable list
+    .doOnBeforeFinally { isFinished = true } // Callback is not frozen, we can change the flag
+    .subscribe()
+```
+
+Set `isThreadLocal` flag to `true` in `subscribe` operator:
+```
+val values = mutableListOf<Any>()
+var isComplete = false
+
+observable<Any> { emitter ->
+    // Background job
+}
+    .subscribeOn(ioScheduler)
+    .observeOn(mainScheduler)
+    .subscribe(
+        isThreadLocal = true,
+        onNext = { values += it }, // Callback is not frozen, we can updated the mutable list
+        onComplete = { isComplete = true } // Callback is not frozen, we can change the flag
+    )
+```
+
+In both cases subscription (`subscribe` call) **must** be performed on the Main thread.
 
 ### Samples:
 * [MPP module](https://github.com/badoo/Reaktive/tree/master/sample-mpp-module)
