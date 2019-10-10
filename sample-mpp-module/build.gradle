@@ -31,6 +31,7 @@ kotlin {
             dependencies {
                 implementation project(':reaktive')
                 implementation project(':reaktive-annotations')
+                implementation project(':utils')
             }
         }
         iosCommonMain {
