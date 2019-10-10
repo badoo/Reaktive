@@ -23,13 +23,13 @@ class KittenBinder(
             requireNotNull(view)
                 .events
                 .map(KittenViewEventToIntentMapper::invoke)
-                .subscribe(isThreadLocal = true, onNext = store::accept)
+                .subscribe(onNext = store::accept)
 
         disposables +=
             store
                 .states
                 .map(KittenStateToViewModelMapper::invoke)
-                .subscribe(isThreadLocal = true, onNext = { requireNotNull(view).show(it) })
+                .subscribe(onNext = { requireNotNull(view).show(it) })
     }
 
     fun onStop() {
