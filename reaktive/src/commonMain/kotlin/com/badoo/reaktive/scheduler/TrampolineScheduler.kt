@@ -59,6 +59,7 @@ internal class TrampolineScheduler(
             }
         }
 
+        @Suppress("ReturnCount")
         private fun execute(task: Task): Boolean {
             if (isDisposed) {
                 return false

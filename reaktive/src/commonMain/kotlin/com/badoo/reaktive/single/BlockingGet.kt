@@ -6,6 +6,7 @@ import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.lock.synchronized
 import com.badoo.reaktive.utils.lock.use
 
+@Suppress("NestedBlockDepth")
 fun <T> Single<T>.blockingGet(): T =
     Lock().use { lock ->
         lock.newCondition().use { condition ->

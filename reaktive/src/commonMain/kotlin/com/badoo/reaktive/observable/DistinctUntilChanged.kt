@@ -25,7 +25,11 @@ fun <T, R> Observable<T>.distinctUntilChanged(
                     val next =
                         try {
                             @Suppress("UNCHECKED_CAST")
-                            if ((previous === Uninitialized) || !comparator(keySelector(previous as T), keySelector(value))) {
+                            if (previous === Uninitialized || !comparator(
+                                    keySelector(previous as T),
+                                    keySelector(value)
+                                )
+                            ) {
                                 value
                             } else {
                                 return

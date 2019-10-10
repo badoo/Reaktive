@@ -13,7 +13,8 @@ internal class DelayQueue<T : Any> {
     private val queueRef: AtomicReference<List<Holder<T>>?> = AtomicReference(emptyList())
 
     /**
-     * Terminates the queue. Any currently waiting [take] methods will immediately return null. All methods will do nothing.
+     * Terminates the queue. Any currently waiting [take] methods will immediately return null.
+     * All methods will do nothing.
      */
     fun terminate() {
         lock.synchronized {
@@ -42,6 +43,7 @@ internal class DelayQueue<T : Any> {
      * Waits until an item will be available and then returns the item.
      * Immediately returns null when terminated.
      */
+    @Suppress("NestedBlockDepth")
     fun take(): T? {
         lock.acquire()
         try {

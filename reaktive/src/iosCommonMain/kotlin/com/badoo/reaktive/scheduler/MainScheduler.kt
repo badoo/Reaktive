@@ -78,6 +78,7 @@ internal class MainScheduler : Scheduler {
     }
 
     private companion object {
-        private fun Long.toNanos(): Long = this * 1000000L
+        private const val MILLISECOND_IN_NANOS = 1_000_000L
+        private fun Long.toNanos(): Long = this * MILLISECOND_IN_NANOS
     }
 }

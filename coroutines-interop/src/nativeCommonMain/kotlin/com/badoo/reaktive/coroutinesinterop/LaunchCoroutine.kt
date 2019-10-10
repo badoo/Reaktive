@@ -41,8 +41,10 @@ internal actual inline fun <T> launchCoroutine(
 private fun CoroutineScope.launchWatchdog(disposable: Disposable) {
     launch {
         while (!disposable.isDisposed) {
-            delay(100L)
+            delay(COROUTINE_DELAY_CHECK_MS)
         }
         this@launchWatchdog.cancel()
     }
 }
+
+private const val COROUTINE_DELAY_CHECK_MS = 100L

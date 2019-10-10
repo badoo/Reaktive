@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber", "TooManyFunctions")
+
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.subscribeSafe
@@ -127,6 +129,7 @@ fun <T1, T2, T3, T4, R> combineLatest(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4)
         }
 
+@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -141,6 +144,7 @@ fun <T1, T2, T3, T4, T5, R> combineLatest(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4, values[4] as T5)
         }
 
+@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, T6, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -156,6 +160,7 @@ fun <T1, T2, T3, T4, T5, T6, R> combineLatest(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4, values[4] as T5, values[5] as T6)
         }
 
+@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, T6, T7, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -180,6 +185,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, R> combineLatest(
             )
         }
 
+@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -206,6 +212,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combineLatest(
             )
         }
 
+@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -234,6 +241,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combineLatest(
             )
         }
 
+@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
