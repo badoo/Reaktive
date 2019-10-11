@@ -14,12 +14,12 @@ matrix:
           - build-tools-28.0.3
           - android-28
       env: MP_TARGET=COMMON
-      script: ./gradlew reaktive:check reaktive-annotations:check reaktive-test:check utils:check rxjava2-interop:check rxjava3-interop:check coroutines-interop:check :sample-android-app:assembleDebug :sample-js-browser-app:assemble :sample-linuxx64-app:linkDebugExecutableLinux -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build rxjava2-interop:build rxjava3-interop:build coroutines-interop:build :sample-android-app:assembleDebug :sample-js-browser-app:assemble :sample-linuxx64-app:linkDebugExecutableLinux -DMP_TARGET=$MP_TARGET
     - os: osx
       osx_image: xcode10.2
       language: java
       env: MP_TARGET=IOS
-      script: ./gradlew reaktive:check reaktive-annotations:check reaktive-test:check utils:check coroutines-interop:check buildIosSample -DMP_TARGET=$MP_TARGET
+      script: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build buildIosSample -DMP_TARGET=$MP_TARGET
     - os: linux
       language: android
       android:

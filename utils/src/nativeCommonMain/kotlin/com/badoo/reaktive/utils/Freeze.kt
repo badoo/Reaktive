@@ -5,6 +5,8 @@ import kotlin.native.concurrent.freeze
 
 actual fun <T> T.freeze(): T = freeze()
 
-actual fun Any.ensureNeverFrozen() {
+actual fun <T: Any> T.ensureNeverFrozen(): T {
     ensureNeverFrozen()
+
+    return this
 }
