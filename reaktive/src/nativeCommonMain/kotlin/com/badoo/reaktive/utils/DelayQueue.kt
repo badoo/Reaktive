@@ -103,10 +103,6 @@ internal class DelayQueue<T : Any> {
             queueRef.value?.let(block)
         }
 
-    private companion object {
-        private const val NANOS_IN_MILLIS = 1_000_000L
-    }
-
     private data class Holder<out T>(
         val value: T,
         val endTimeMillis: Long

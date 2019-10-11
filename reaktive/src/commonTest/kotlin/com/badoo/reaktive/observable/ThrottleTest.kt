@@ -5,6 +5,7 @@ import com.badoo.reaktive.test.observable.assertNoValues
 import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.utils.NANOS_IN_MILLIS
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.clock.Clock
 import kotlin.test.Test
@@ -105,7 +106,7 @@ class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<
 
         override val uptimeMillis: Long get() = _uptimeMillis.value
 
-        override val uptimeNanos: Long get() = _uptimeMillis.value * 1_000_000L
+        override val uptimeNanos: Long get() = _uptimeMillis.value * NANOS_IN_MILLIS
 
         fun setTime(millis: Long) {
             _uptimeMillis.value = millis
