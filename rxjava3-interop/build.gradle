@@ -17,7 +17,7 @@ publishing {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation project(':reaktive')
-    implementation 'io.reactivex.rxjava3:rxjava'
+    implementation deps.rxjava3
 }
 
 apply plugin: PublishPlugin
