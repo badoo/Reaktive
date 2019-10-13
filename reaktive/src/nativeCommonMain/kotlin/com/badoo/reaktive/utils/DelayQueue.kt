@@ -52,7 +52,7 @@ internal class DelayQueue<T : Any> {
                 if (item == null) {
                     condition.await()
                 } else {
-                    val timeoutNanos = (item.endTimeMillis - getTimeMillis()) * NANOS_IN_MILLIS
+                    val timeoutNanos = (item.endTimeMillis - getTimeMillis()) * NANOS_IN_MILLI
 
                     if (timeoutNanos <= 0L) {
                         queueRef.value = queue.drop(1)

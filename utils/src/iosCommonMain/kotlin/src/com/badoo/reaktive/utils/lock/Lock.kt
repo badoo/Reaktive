@@ -1,6 +1,6 @@
 package com.badoo.reaktive.utils.lock
 
-import com.badoo.reaktive.utils.NANOS_IN_MICROS
+import com.badoo.reaktive.utils.NANOS_IN_MICRO
 import com.badoo.reaktive.utils.NANOS_IN_SECOND
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.CPointer
@@ -76,7 +76,7 @@ actual class Lock {
                     val tv: timeval = alloc { gettimeofday(ptr, null) }
                     val ts: timespec = alloc()
                     ts.tv_sec = tv.tv_sec
-                    ts.tv_nsec = (tv.tv_usec * NANOS_IN_MICROS).convert()
+                    ts.tv_nsec = (tv.tv_usec * NANOS_IN_MICRO).convert()
                     ts += timeoutNanos
                     pthread_cond_timedwait(cond.ptr, lockPtr, ts.ptr)
                 }
