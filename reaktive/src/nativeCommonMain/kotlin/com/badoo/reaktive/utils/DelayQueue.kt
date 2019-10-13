@@ -52,7 +52,7 @@ internal class DelayQueue<T : Any> {
                 if (item == null) {
                     condition.await()
                 } else {
-                    val timeoutNanos = (item.endTimeMillis - getTimeMillis()) * NANOS_IN_MILLIS
+                    val timeoutNanos = (item.endTimeMillis - getTimeMillis()) * NANOS_IN_MILLI
 
                     if (timeoutNanos <= 0L) {
                         queueRef.value = queue.drop(1)
@@ -102,10 +102,6 @@ internal class DelayQueue<T : Any> {
         lock.synchronized {
             queueRef.value?.let(block)
         }
-
-    private companion object {
-        private const val NANOS_IN_MILLIS = 1_000_000L
-    }
 
     private data class Holder<out T>(
         val value: T,
