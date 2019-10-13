@@ -1,5 +1,6 @@
 package com.badoo.reaktive.utils.lock
 
+import com.badoo.reaktive.utils.NANOS_IN_SECOND
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.alloc
@@ -97,14 +98,12 @@ actual class Lock {
         }
 
         private companion object {
-            private const val SECOND_IN_NANOS = 1_000_000_000L
-
             private operator fun timespec.plusAssign(nanos: Long) {
-                tv_sec += (nanos / SECOND_IN_NANOS).convert<__time_t>()
-                tv_nsec += (nanos % SECOND_IN_NANOS).convert<__syscall_slong_t>()
-                if (tv_nsec >= SECOND_IN_NANOS) {
+                tv_sec += (nanos / NANOS_IN_SECOND).convert<__time_t>()
+                tv_nsec += (nanos % NANOS_IN_SECOND).convert<__syscall_slong_t>()
+                if (tv_nsec >= NANOS_IN_SECOND) {
                     tv_sec += 1
-                    tv_nsec -= SECOND_IN_NANOS.convert<__syscall_slong_t>()
+                    tv_nsec -= NANOS_IN_SECOND.convert<__syscall_slong_t>()
                 }
             }
         }

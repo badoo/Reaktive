@@ -2,6 +2,7 @@ package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.NANOS_IN_MILLI
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndSet
 import platform.darwin.DISPATCH_TIME_NOW
@@ -78,7 +79,6 @@ internal class MainScheduler : Scheduler {
     }
 
     private companion object {
-        private const val MILLISECOND_IN_NANOS = 1_000_000L
-        private fun Long.toNanos(): Long = this * MILLISECOND_IN_NANOS
+        private fun Long.toNanos(): Long = this * NANOS_IN_MILLI
     }
 }

@@ -1,20 +1,19 @@
 package com.badoo.reaktive.utils.clock
 
+import com.badoo.reaktive.utils.MILLIS_IN_SECOND
+import com.badoo.reaktive.utils.NANOS_IN_MILLI
+import com.badoo.reaktive.utils.NANOS_IN_SECOND
 import kotlin.browser.window
 
 private external val process: dynamic
 
 actual object DefaultClock : Clock {
 
-    private const val SECOND_IN_NANOS = 1_000_000_000L
-    private const val SECOND_IN_MICROS = 1_000_000L
-    private const val SECOND_IN_MILLIS = 1_000L
-
     override val uptimeMillis: Long
         get() = if (isWindowDefined) window.performance.now().toLong() else hrTimeMillis
 
     override val uptimeNanos: Long
-        get() = if (isWindowDefined) window.performance.now().toLong() * SECOND_IN_MICROS else hrTimeNanos
+        get() = if (isWindowDefined) window.performance.now().toLong() * NANOS_IN_MILLI else hrTimeNanos
 
     private val isWindowDefined: Boolean = jsTypeOf(window) != "undefined"
 
@@ -22,12 +21,12 @@ actual object DefaultClock : Clock {
         get() {
             val t = process.hrtime()
 
-            return (t[0] as Int) * SECOND_IN_MILLIS + (t[1] as Int) / SECOND_IN_MICROS
+            return ((t[0] as Int) * MILLIS_IN_SECOND + (t[1] as Int) / NANOS_IN_MILLI)
         }
     private val hrTimeNanos: Long
         get() {
             val t = process.hrtime()
 
-            return (t[0] as Int) * SECOND_IN_NANOS + t[1] as Int
+            return (t[0] as Int) * NANOS_IN_SECOND + t[1] as Int
         }
 }
