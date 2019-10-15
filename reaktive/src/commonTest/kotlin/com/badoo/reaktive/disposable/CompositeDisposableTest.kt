@@ -7,8 +7,8 @@ import kotlin.test.assertTrue
 class CompositeDisposableTest {
 
     private val composite = CompositeDisposable()
-    private val disposable1 = disposable()
-    private val disposable2 = disposable()
+    private val disposable1 = Disposable()
+    private val disposable2 = Disposable()
 
     @Test
     fun does_not_dispose_new_disposable_WHEN_not_disposed() {
