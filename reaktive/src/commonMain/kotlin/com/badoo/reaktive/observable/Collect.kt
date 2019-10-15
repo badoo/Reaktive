@@ -5,13 +5,13 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.single
-import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.ObjectReference
 
 fun <T, C> Observable<T>.collect(initialCollection: C, accumulator: (C, T) -> C): Single<C> =
     single { emitter ->
         subscribeSafe(
             object : ObservableObserver<T>, ErrorCallback by emitter {
-                private val collection = AtomicReference(initialCollection)
+                private val collection = ObjectReference(initialCollection)
 
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
