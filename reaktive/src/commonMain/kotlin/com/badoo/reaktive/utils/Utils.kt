@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName")
+
 package com.badoo.reaktive.utils
 
 import com.badoo.reaktive.base.exceptions.CompositeException

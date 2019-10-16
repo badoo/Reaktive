@@ -16,6 +16,7 @@ allprojects {
 void setupMultiplatformLibrary(Project project) {
     project.apply plugin: 'org.jetbrains.kotlin.multiplatform'
     project.apply plugin: 'maven-publish'
+    project.apply plugin: DetektPlugin
 
     project.group = reaktive_group_id
     project.version = reaktive_version

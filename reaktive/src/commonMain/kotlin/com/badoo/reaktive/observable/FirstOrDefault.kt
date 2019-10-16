@@ -19,7 +19,9 @@ fun <T> Observable<T>.firstOrDefault(defaultValueSupplier: () -> T): Single<T> =
         emitter.tryCatch(block = defaultValueSupplier, onSuccess = emitter::onSuccess)
     }
 
-internal inline fun <T> Observable<T>.firstOrAction(crossinline onComplete: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
+internal inline fun <T> Observable<T>.firstOrAction(
+    crossinline onComplete: (emitter: SingleEmitter<T>) -> Unit
+): Single<T> =
     single { emitter ->
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)

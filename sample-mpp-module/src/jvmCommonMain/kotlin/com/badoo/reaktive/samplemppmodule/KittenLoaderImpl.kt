@@ -18,7 +18,7 @@ internal class KittenLoaderImpl : KittenLoader {
             val url = URL(Config.KITTEN_URL)
             val connection = url.openConnection() as HttpURLConnection
 
-            if (connection.responseCode != 200) {
+            if (connection.responseCode != HttpURLConnection.HTTP_OK) {
                 throw IOException("Invalid response: ${connection.responseCode}")
             }
 

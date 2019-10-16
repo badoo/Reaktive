@@ -22,7 +22,8 @@ actual class Lock {
         private val delegate: java.util.concurrent.locks.Condition
     ) : Condition {
         override fun await(timeoutNanos: Long) {
-            var isInterrupted = Thread.interrupted() // "Thread.interrupted()" clears "interrupted" status of the current thread
+            // "Thread.interrupted()" clears "interrupted" status of the current thread
+            var isInterrupted = Thread.interrupted()
             try {
                 if (timeoutNanos >= 0L) {
                     delegate.awaitNanos(timeoutNanos)

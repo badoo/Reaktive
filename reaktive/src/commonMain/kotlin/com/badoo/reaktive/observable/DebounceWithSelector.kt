@@ -44,7 +44,8 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
 
                     /*
                      * Dispose any existing inner Completable.
-                     * If a previous Completable did not provide its disposable yet it will be disposed automatically later since
+                     * If a previous Completable did not provide its disposable yet
+                     * it will be disposed automatically later since
                      * its localDisposableWrapper is disposed.
                      */
                     innerDisposableWrapper.set(localDisposableWrapper)
