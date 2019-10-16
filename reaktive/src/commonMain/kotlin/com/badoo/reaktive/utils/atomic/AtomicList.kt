@@ -1,5 +1,3 @@
-@file:Suppress("TooManyFunctions")
-
 package com.badoo.reaktive.utils.atomic
 
 import com.badoo.reaktive.utils.insert

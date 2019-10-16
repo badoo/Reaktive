@@ -11,7 +11,6 @@ import com.badoo.reaktive.utils.atomic.removeAt
 import com.badoo.reaktive.utils.atomic.set
 import com.badoo.reaktive.utils.atomic.size
 
-@Suppress("TooManyFunctions")
 internal actual class SharedList<T> actual constructor(initialCapacity: Int) : MutableList<T> {
 
     private val delegate = AtomicList<T>(emptyList())

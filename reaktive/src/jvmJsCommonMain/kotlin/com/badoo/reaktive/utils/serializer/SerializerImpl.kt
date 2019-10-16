@@ -9,7 +9,6 @@ internal abstract class SerializerImpl<in T>(queue: Queue<T>) : Serializer<T> {
     private val monitor = Any()
     private var isDraining = false
 
-    @Suppress("ReturnCount")
     override fun accept(value: T) {
         val queueToDrain =
             synchronized(monitor) {

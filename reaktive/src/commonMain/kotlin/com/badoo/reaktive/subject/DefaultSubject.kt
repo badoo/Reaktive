@@ -6,7 +6,6 @@ import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.serializer.serializer
 
-@Suppress("TooManyFunctions")
 internal open class DefaultSubject<T> : Subject<T> {
 
     private val observers = SharedList<ObservableObserver<T>>()
@@ -67,7 +66,6 @@ internal open class DefaultSubject<T> : Subject<T> {
             true
         }
 
-    @Suppress("ReturnCount")
     private fun onSerializedSubscribe(observer: ObservableObserver<T>) {
         val disposable = disposable { serializer.accept(Event.OnUnsubscribe(observer)) }
 

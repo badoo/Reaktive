@@ -1,4 +1,4 @@
-@file:Suppress("MagicNumber", "TooManyFunctions")
+@file:Suppress("MagicNumber")
 
 package com.badoo.reaktive.single
 
@@ -49,7 +49,6 @@ fun <T1, T2, T3, T4, R> zip(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4)
         }
 
-@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, R> zip(
     source1: Single<T1>,
     source2: Single<T2>,
@@ -64,7 +63,6 @@ fun <T1, T2, T3, T4, T5, R> zip(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4, values[4] as T5)
         }
 
-@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, T6, R> zip(
     source1: Single<T1>,
     source2: Single<T2>,
@@ -80,7 +78,6 @@ fun <T1, T2, T3, T4, T5, T6, R> zip(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4, values[4] as T5, values[5] as T6)
         }
 
-@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, T6, T7, R> zip(
     source1: Single<T1>,
     source2: Single<T2>,
@@ -105,7 +102,6 @@ fun <T1, T2, T3, T4, T5, T6, T7, R> zip(
             )
         }
 
-@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, T6, T7, T8, R> zip(
     source1: Single<T1>,
     source2: Single<T2>,
@@ -132,7 +128,6 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, R> zip(
             )
         }
 
-@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> zip(
     source1: Single<T1>,
     source2: Single<T2>,
@@ -161,7 +156,6 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> zip(
             )
         }
 
-@Suppress("LongParameterList")
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> zip(
     source1: Single<T1>,
     source2: Single<T2>,
