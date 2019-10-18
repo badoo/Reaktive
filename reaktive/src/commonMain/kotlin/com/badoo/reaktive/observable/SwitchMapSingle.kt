@@ -13,4 +13,3 @@ fun <T, U, R> Observable<T>.switchMapSingle(mapper: (T) -> Single<U>, resultSele
     switchMapSingle { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
-    

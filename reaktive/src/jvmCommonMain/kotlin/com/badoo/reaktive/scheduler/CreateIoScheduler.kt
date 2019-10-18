@@ -9,4 +9,3 @@ actual fun createIoScheduler(): Scheduler =
             threadFactory = ThreadFactoryImpl("IO")
         )
     )
-    

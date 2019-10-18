@@ -16,4 +16,3 @@ fun <T : Any> Observable<T?>.notNull(): Observable<T> =
             }
         )
     }
-    

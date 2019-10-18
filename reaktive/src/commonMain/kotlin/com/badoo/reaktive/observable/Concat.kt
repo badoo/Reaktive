@@ -41,4 +41,3 @@ fun <T> concat(vararg sources: Observable<T>): Observable<T> =
     sources
         .asIterable()
         .concat()
-        

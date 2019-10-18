@@ -22,4 +22,3 @@ fun <T> Single<T>.subscribeOn(scheduler: Scheduler): Single<T> =
             )
         }
     }
-    

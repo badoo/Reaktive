@@ -21,4 +21,3 @@ fun <T> Maybe<T>.asObservable(): Observable<T> =
             }
         )
     }
-    

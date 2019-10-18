@@ -29,4 +29,3 @@ fun <T> Observable<T>.takeUntil(predicate: (T) -> Boolean): Observable<T> =
             }
         )
     }
-    

@@ -8,4 +8,3 @@ fun <T> Observable<T>.switchMapCompletable(mapper: (T) -> Completable): Completa
         mapper(it).asObservable<Nothing>()
     }
         .asCompletable()
-        
