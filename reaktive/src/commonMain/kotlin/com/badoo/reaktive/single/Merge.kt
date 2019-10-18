@@ -11,4 +11,3 @@ fun <T> merge(vararg sources: Single<T>): Observable<T> =
     sources
         .map(Single<T>::asObservable)
         .merge()
-        

@@ -5,4 +5,3 @@ fun <T> Single<T>.onErrorReturn(valueSupplier: (Throwable) -> T): Single<T> =
 
 fun <T> Single<T>.onErrorReturnValue(value: T): Single<T> =
     onErrorResumeNext { value.toSingle() }
-    

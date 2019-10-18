@@ -13,4 +13,3 @@ fun <T, U, R> Observable<T>.flatMapMaybe(mapper: (T) -> Maybe<U>, resultSelector
     flatMapMaybe { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
-    

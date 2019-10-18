@@ -11,4 +11,3 @@ fun <T, U, R> Single<T>.flatMapMaybe(mapper: (T) -> Maybe<U>, resultSelector: (T
     flatMapMaybe { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
-    

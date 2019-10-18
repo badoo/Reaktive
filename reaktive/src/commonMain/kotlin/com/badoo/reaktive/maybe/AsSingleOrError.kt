@@ -16,4 +16,3 @@ fun <T> Maybe<T>.asSingleOrError(errorSupplier: () -> Throwable): Single<T> =
         }
             .also(observer::onError)
     }
-    

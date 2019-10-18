@@ -13,4 +13,3 @@ fun <T, U, R> Maybe<T>.flatMapSingle(mapper: (T) -> Single<U>, resultSelector: (
     flatMapSingle { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
-    

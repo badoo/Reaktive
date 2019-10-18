@@ -38,4 +38,3 @@ fun Completable.threadLocal(): Completable =
             }
         )
     }
-    

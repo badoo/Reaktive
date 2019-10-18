@@ -12,4 +12,3 @@ actual fun createTrampolineScheduler(): Scheduler =
             }
         }
     )
-    

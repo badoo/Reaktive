@@ -7,4 +7,3 @@ actual fun createComputationScheduler(): Scheduler =
             threadFactory = ThreadFactoryImpl("Computation")
         )
     )
-    

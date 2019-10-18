@@ -11,4 +11,3 @@ fun merge(vararg sources: Completable): Completable =
     sources
         .asIterable()
         .merge()
-        

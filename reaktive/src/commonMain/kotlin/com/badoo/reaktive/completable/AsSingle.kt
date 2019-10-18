@@ -34,4 +34,3 @@ private inline fun <T> Completable.asSingleOrAction(
             }
         )
     }
-    

@@ -41,4 +41,3 @@ fun <T> maybeFromFunction(func: () -> T): Maybe<T> =
     maybe { emitter ->
         emitter.onSuccess(func())
     }
-    

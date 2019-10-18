@@ -30,4 +30,3 @@ fun <T, U, R> Single<T>.flatMap(mapper: (T) -> Single<U>, resultSelector: (T, U)
     flatMap { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
-    

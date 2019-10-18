@@ -21,4 +21,3 @@ fun <T> Single<T>.asObservable(): Observable<T> =
             }
         )
     }
-    

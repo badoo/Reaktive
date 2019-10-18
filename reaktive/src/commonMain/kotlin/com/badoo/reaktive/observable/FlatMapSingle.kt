@@ -13,4 +13,3 @@ fun <T, U, R> Observable<T>.flatMapSingle(mapper: (T) -> Single<U>, resultSelect
     flatMapSingle { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
-    

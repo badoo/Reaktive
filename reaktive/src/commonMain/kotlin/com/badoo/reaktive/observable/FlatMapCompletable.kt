@@ -8,4 +8,3 @@ fun <T> Observable<T>.flatMapCompletable(mapper: (T) -> Completable): Completabl
         mapper(it).asObservable<Nothing>()
     }
         .asCompletable()
-        

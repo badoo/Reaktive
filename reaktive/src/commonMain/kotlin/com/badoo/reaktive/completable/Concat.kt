@@ -37,4 +37,3 @@ fun concat(vararg sources: Completable): Completable =
     sources
         .asIterable()
         .concat()
-        

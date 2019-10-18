@@ -23,4 +23,3 @@ fun completableFromFunction(func: () -> Unit): Completable =
         func()
         emitter.onComplete()
     }
-    
