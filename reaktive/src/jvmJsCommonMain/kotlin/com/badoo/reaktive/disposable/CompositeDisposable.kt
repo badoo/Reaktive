@@ -14,11 +14,10 @@ actual class CompositeDisposable actual constructor() : Disposable {
     override val isDisposed: Boolean get() = _isDisposed
 
     /**
-     * {@inheritDoc}
      * Disposes the [CompositeDisposable] and all its [Disposable]s.
      * All future [Disposable]s will be immediately disposed.
      */
-    override fun dispose() {
+    actual override fun dispose() {
         val listToDispose: List<Disposable>?
 
         synchronized(this) {

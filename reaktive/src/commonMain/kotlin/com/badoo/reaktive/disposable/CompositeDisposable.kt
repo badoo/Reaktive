@@ -7,6 +7,12 @@ package com.badoo.reaktive.disposable
 expect class CompositeDisposable() : Disposable {
 
     /**
+     * Disposes the [CompositeDisposable] and all its [Disposable]s.
+     * All future [Disposable]s will be immediately disposed.
+     */
+    override fun dispose()
+
+    /**
      * Atomically either adds the specified [Disposable] or disposes it if container is already disposed.
      * Also removes already disposed Disposables.
      */

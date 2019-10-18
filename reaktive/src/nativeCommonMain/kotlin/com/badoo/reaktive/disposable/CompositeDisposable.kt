@@ -17,7 +17,7 @@ actual class CompositeDisposable actual constructor() : Disposable {
      * Disposes the [CompositeDisposable] and all its [Disposable]s.
      * All future [Disposable]s will be immediately disposed.
      */
-    override fun dispose() {
+    actual override fun dispose() {
         list
             .getAndSet(null)
             ?.forEach(Disposable::dispose)
