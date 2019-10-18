@@ -4,11 +4,19 @@ import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndSet
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 
+/**
+ * Thread-safe collection of [Disposable]
+ */
+@Suppress("EmptyDefaultConstructor")
 actual class CompositeDisposable actual constructor() : Disposable {
 
     private val list = AtomicReference<List<Disposable>?>(emptyList())
     override val isDisposed: Boolean get() = list.value == null
 
+    /**
+     * Disposes the [CompositeDisposable] and all its [Disposable]s.
+     * All future [Disposable]s will be immediately disposed.
+     */
     override fun dispose() {
         list
             .getAndSet(null)

@@ -3,7 +3,7 @@ package com.badoo.reaktive.disposable
 /**
  * Thread-safe collection of [Disposable]
  */
-
+@Suppress("EmptyDefaultConstructor")
 expect class CompositeDisposable() : Disposable {
 
     /**

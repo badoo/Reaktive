@@ -2,6 +2,10 @@ package com.badoo.reaktive.disposable
 
 import kotlin.jvm.Volatile
 
+/**
+ * Thread-safe collection of [Disposable]
+ */
+@Suppress("EmptyDefaultConstructor")
 actual class CompositeDisposable actual constructor() : Disposable {
 
     private var list: MutableList<Disposable>? = null
@@ -9,6 +13,11 @@ actual class CompositeDisposable actual constructor() : Disposable {
     private var _isDisposed = false
     override val isDisposed: Boolean get() = _isDisposed
 
+    /**
+     * {@inheritDoc}
+     * Disposes the [CompositeDisposable] and all its [Disposable]s.
+     * All future [Disposable]s will be immediately disposed.
+     */
     override fun dispose() {
         val listToDispose: List<Disposable>?
 
@@ -21,6 +30,10 @@ actual class CompositeDisposable actual constructor() : Disposable {
         listToDispose?.forEach(Disposable::dispose)
     }
 
+    /**
+     * Atomically either adds the specified [Disposable] or disposes it if container is already disposed.
+     * Also removes already disposed Disposables.
+     */
     actual fun add(disposable: Disposable) {
         synchronized(this) {
             if (!_isDisposed) {
@@ -39,10 +52,18 @@ actual class CompositeDisposable actual constructor() : Disposable {
         disposable.dispose()
     }
 
+    /**
+     * See [add]
+     */
     actual operator fun plusAssign(disposable: Disposable) {
         add(disposable)
     }
 
+    /**
+     * Atomically clears all the [Disposable]s
+     *
+     * @param dispose if true then removed [Disposable]s will be disposed, default value is true
+     */
     actual fun clear(dispose: Boolean) {
         val listToDispose: List<Disposable>?
 
