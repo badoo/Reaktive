@@ -49,6 +49,7 @@ internal class EnhancedDelayQueue<T : Any> {
         override fun getDelay(timeUnit: TimeUnit): Long =
             timeUnit.convert(expirationNanoTime - System.nanoTime(), TimeUnit.NANOSECONDS)
 
+        @Suppress("ComplexMethod")
         override fun compareTo(other: Delayed): Int =
             when {
                 this === other -> 0

@@ -1,3 +1,5 @@
+@file:Suppress("ForbiddenComment")
+
 package com.badoo.reaktive.utils.queue
 
 internal actual class PriorityQueue<T> actual constructor(

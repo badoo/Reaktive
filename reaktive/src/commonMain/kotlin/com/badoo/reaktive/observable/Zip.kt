@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.subscribeSafe
@@ -9,6 +11,7 @@ import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.replace
 import com.badoo.reaktive.utils.serializer.serializer
 
+@Suppress("ComplexMethod")
 fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
         val disposables = CompositeDisposable()

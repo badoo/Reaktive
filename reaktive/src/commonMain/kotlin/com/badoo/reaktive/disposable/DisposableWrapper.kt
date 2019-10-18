@@ -16,7 +16,8 @@ class DisposableWrapper : Disposable {
     }
 
     /**
-     * Atomically either replaces any existing [Disposable] with the specified one or disposes it if wrapper is already disposed.
+     * Atomically either replaces any existing [Disposable]
+     * with the specified one or disposes it if wrapper is already disposed.
      * Also disposes any replaced [Disposable].
      */
     fun set(disposable: Disposable?) {
