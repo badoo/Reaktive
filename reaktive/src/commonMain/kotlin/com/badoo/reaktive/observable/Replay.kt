@@ -22,4 +22,3 @@ fun <T> Observable<T>.replay(): ConnectableObservable<T> =
             }
         }
     }
-    

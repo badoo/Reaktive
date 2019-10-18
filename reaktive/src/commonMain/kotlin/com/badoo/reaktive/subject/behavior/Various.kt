@@ -22,4 +22,3 @@ fun <T> behaviorSubject(initialValue: T): BehaviorSubject<T> =
             _value.value = value
         }
     }
-    

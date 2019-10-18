@@ -53,4 +53,3 @@ fun <T> maybe(onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T> =
             emitter.onError(e)
         }
     }
-    

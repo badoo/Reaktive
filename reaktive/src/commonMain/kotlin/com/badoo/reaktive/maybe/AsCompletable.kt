@@ -20,4 +20,3 @@ fun Maybe<*>.asCompletable(): Completable =
             }
         )
     }
-    

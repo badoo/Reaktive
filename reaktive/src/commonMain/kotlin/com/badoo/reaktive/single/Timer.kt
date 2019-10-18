@@ -8,4 +8,3 @@ fun singleTimer(delayMillis: Long, scheduler: Scheduler): Single<Long> =
         emitter.setDisposable(executor)
         executor.submit(delayMillis) { emitter.onSuccess(delayMillis) }
     }
-    

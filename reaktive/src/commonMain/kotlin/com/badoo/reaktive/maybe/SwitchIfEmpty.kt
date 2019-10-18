@@ -29,4 +29,3 @@ fun <T> Maybe<T>.switchIfEmpty(other: Maybe<T>): Maybe<T> =
 fun <T> Maybe<T>.switchIfEmpty(other: Single<T>): Single<T> =
     switchIfEmpty(other.asMaybe())
         .asSingleOrError()
-        

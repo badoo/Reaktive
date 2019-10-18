@@ -8,4 +8,3 @@ fun maybeTimer(delayMillis: Long, scheduler: Scheduler): Maybe<Long> =
         emitter.setDisposable(executor)
         executor.submit(delayMillis) { emitter.onSuccess(delayMillis) }
     }
-    

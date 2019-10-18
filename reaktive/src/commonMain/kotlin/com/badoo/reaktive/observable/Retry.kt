@@ -25,4 +25,3 @@ fun <T> Observable<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { 
 
 fun <T> Observable<T>.retry(times: Int): Observable<T> =
     retry { attempt, _ -> attempt < times }
-    

@@ -24,4 +24,3 @@ fun <T> Single<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _
 
 fun <T> Single<T>.retry(times: Int): Single<T> =
     retry { attempt, _ -> attempt < times }
-    

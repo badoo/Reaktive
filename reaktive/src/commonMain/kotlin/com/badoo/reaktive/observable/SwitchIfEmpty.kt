@@ -46,4 +46,3 @@ fun <T> Observable<T>.switchIfEmpty(otherObservable: () -> Observable<T>): Obser
             }
         )
     }
-    

@@ -13,4 +13,3 @@ fun <T, U, R> Observable<T>.switchMapMaybe(mapper: (T) -> Maybe<U>, resultSelect
     switchMapMaybe { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
-    

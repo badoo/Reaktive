@@ -20,4 +20,3 @@ fun Observable<*>.asCompletable(): Completable =
             }
         )
     }
-    

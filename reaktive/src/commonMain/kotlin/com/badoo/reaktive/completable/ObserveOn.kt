@@ -35,4 +35,3 @@ fun Completable.observeOn(scheduler: Scheduler): Completable =
             }
         )
     }
-    

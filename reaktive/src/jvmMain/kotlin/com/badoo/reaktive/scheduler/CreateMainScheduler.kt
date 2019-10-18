@@ -7,4 +7,3 @@ actual fun createMainScheduler(): Scheduler =
             threadFactory = ThreadFactoryImpl("Main")
         )
     )
-    

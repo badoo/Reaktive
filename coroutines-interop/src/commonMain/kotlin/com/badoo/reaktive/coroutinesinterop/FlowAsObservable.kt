@@ -15,4 +15,3 @@ fun <T> Flow<T>.asObservable(): Observable<T> =
             collect { emitter.onNext(it) }
         }
     }
-    

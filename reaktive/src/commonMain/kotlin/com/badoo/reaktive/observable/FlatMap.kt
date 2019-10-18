@@ -50,4 +50,3 @@ fun <T, U, R> Observable<T>.flatMap(mapper: (T) -> Observable<U>, resultSelector
     flatMap { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
-    

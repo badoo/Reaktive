@@ -29,4 +29,3 @@ fun <T> Single<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Single<T>): Sin
 
 fun <T> Single<T>.onErrorResumeNext(next: Single<T>): Single<T> =
     onErrorResumeNext { next }
-    

@@ -23,4 +23,3 @@ fun <T> Observable<T>.filter(predicate: (T) -> Boolean): Observable<T> =
             }
         )
     }
-    
