@@ -16,3 +16,4 @@ if (target.isCommon()) {
     include ':rxjava2-interop'
     include ':rxjava3-interop'
 }
+include ':retrofit'

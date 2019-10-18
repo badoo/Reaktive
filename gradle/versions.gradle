@@ -9,5 +9,7 @@ ext.deps = [
     constraintLayout           : 'com.android.support.constraint:constraint-layout:1.1.3',
     rxjava2                    : 'io.reactivex.rxjava2:rxjava:2.2.7',
     rxjava3                    : 'io.reactivex.rxjava3:rxjava:3.0.0-RC3',
-    picasso                    : 'com.squareup.picasso:picasso:2.71828'
+    picasso                    : 'com.squareup.picasso:picasso:2.71828',
+    retrofit                   : 'com.squareup.retrofit2:retrofit:2.6.2',
+    mockwebserver              : 'com.squareup.okhttp3:mockwebserver:3.14.4'
 ]
