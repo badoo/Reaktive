@@ -11,3 +11,4 @@ fun <T, K, V> Observable<T>.toMap(keySelector: (T) -> K, valueSelector: (T) -> V
         val value = valueSelector(item)
         map.plus(key to value)
     }
+    

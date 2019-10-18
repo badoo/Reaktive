@@ -101,3 +101,4 @@ fun <T, U, R> Observable<T>.switchMap(
     switchMap { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
+    

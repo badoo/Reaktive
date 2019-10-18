@@ -20,3 +20,4 @@ fun Single<*>.asCompletable(): Completable =
             }
         )
     }
+    

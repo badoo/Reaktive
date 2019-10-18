@@ -19,3 +19,4 @@ fun <T, R> Maybe<T>.map(mapper: (T) -> R): Maybe<R> =
             }
         )
     }
+    

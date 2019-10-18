@@ -30,3 +30,4 @@ fun <T> Maybe<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Maybe<T>): Maybe
 
 fun <T> Maybe<T>.onErrorResumeNext(next: Maybe<T>): Maybe<T> =
     onErrorResumeNext { next }
+    

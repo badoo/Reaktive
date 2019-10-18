@@ -22,3 +22,4 @@ fun <T : Any> Maybe<T?>.notNull(): Maybe<T> =
             }
         )
     }
+    

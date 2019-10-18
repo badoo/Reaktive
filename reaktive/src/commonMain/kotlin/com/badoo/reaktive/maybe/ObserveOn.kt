@@ -41,3 +41,4 @@ fun <T> Maybe<T>.observeOn(scheduler: Scheduler): Maybe<T> =
             }
         )
     }
+    

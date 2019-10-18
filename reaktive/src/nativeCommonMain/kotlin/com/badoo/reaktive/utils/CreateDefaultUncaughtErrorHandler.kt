@@ -11,3 +11,4 @@ internal actual fun createDefaultUncaughtErrorHandler(): (Throwable) -> Unit =
         e.printStackTrace()
         exitProcess(EXIT_FAILURE)
     }
+    

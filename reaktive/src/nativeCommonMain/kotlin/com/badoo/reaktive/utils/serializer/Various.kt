@@ -12,3 +12,4 @@ internal actual inline fun <T : Any> serializer(
     object : SerializerImpl<T>(comparator) {
         override fun onValue(value: T): Boolean = onValue.invoke(value)
     }
+    

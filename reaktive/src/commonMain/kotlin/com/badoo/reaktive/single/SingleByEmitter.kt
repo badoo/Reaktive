@@ -43,3 +43,4 @@ fun <T> single(onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
             emitter.onError(e)
         }
     }
+    

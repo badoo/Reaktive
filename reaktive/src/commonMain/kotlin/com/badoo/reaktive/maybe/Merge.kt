@@ -11,3 +11,4 @@ fun <T> merge(vararg sources: Maybe<T>): Observable<T> =
     sources
         .map(Maybe<T>::asObservable)
         .merge()
+        

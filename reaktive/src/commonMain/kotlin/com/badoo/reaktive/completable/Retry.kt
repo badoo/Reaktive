@@ -23,3 +23,4 @@ fun Completable.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -
 
 fun Completable.retry(times: Int): Completable =
     retry { attempt, _ -> attempt < times }
+    

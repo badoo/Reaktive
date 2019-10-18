@@ -8,3 +8,4 @@ fun <T> Maybe<T>.flatMapCompletable(mapper: (T) -> Completable): Completable =
         mapper(it).asMaybe<Nothing>()
     }
         .asCompletable()
+        

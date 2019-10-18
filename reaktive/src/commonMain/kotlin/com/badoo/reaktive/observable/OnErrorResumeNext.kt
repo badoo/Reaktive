@@ -30,3 +30,4 @@ fun <T> Observable<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Observable<
 
 fun <T> Observable<T>.onErrorResumeNext(next: Observable<T>): Observable<T> =
     onErrorResumeNext { next }
+    
