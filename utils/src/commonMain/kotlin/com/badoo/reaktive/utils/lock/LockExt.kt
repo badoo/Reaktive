@@ -15,5 +15,3 @@ inline fun <T> Lock.use(block: (Lock) -> T): T =
     } finally {
         destroy()
     }
-  
-        
