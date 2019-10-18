@@ -40,3 +40,4 @@ fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observ
             emitter.onError(e)
         }
     }
+    

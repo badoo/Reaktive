@@ -51,3 +51,4 @@ fun <T> SingleObserver<T>.asRxJava3(): io.reactivex.rxjava3.core.SingleObserver<
                 this@asRxJava3.onError(error)
             }
         }
+        

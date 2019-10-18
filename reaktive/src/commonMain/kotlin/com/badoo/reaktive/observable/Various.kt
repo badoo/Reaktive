@@ -41,3 +41,4 @@ fun <T> observableFromFunction(func: () -> T): Observable<T> =
         emitter.onNext(func())
         emitter.onComplete()
     }
+    

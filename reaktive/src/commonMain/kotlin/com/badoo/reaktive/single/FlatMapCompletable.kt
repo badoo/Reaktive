@@ -8,3 +8,4 @@ fun <T> Single<T>.flatMapCompletable(mapper: (T) -> Completable): Completable =
         mapper(it).asSingle(Unit)
     }
         .asCompletable()
+        

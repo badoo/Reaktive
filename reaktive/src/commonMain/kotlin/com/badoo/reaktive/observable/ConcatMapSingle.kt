@@ -7,3 +7,4 @@ fun <T, R> Observable<T>.concatMapSingle(mapper: (T) -> Single<R>): Observable<R
     concatMap {
         mapper(it).asObservable()
     }
+    

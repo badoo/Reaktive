@@ -33,3 +33,4 @@ fun <T, C> Observable<T>.collect(initialCollection: C, accumulator: (C, T) -> C)
             }
         )
     }
+    

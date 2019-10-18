@@ -16,3 +16,4 @@ fun <T> Observable<T>.firstOrError(errorSupplier: () -> Throwable): Single<T> =
         }
             .also(emitter::onError)
     }
+    

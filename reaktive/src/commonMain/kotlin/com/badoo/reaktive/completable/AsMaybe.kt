@@ -15,3 +15,4 @@ fun <T> Completable.asMaybe(): Maybe<T> =
             }
         )
     }
+    

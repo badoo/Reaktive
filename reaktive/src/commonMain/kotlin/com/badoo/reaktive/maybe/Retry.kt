@@ -25,3 +25,4 @@ fun <T> Maybe<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ 
 
 fun <T> Maybe<T>.retry(times: Int): Maybe<T> =
     retry { attempt, _ -> attempt < times }
+    

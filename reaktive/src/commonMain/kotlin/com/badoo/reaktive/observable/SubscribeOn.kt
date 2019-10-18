@@ -22,3 +22,4 @@ fun <T> Observable<T>.subscribeOn(scheduler: Scheduler): Observable<T> =
             )
         }
     }
+    

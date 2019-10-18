@@ -17,3 +17,4 @@ fun <T> Single<T>.asMaybe(): Maybe<T> =
             }
         )
     }
+    

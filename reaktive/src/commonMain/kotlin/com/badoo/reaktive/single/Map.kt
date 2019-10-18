@@ -19,3 +19,4 @@ fun <T, R> Single<T>.map(mapper: (T) -> R): Single<R> =
             }
         )
     }
+    

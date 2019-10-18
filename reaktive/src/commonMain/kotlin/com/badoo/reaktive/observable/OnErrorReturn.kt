@@ -5,3 +5,4 @@ fun <T> Observable<T>.onErrorReturn(valueSupplier: (Throwable) -> T): Observable
 
 fun <T> Observable<T>.onErrorReturnValue(value: T): Observable<T> =
     onErrorResumeNext { value.toObservable() }
+    

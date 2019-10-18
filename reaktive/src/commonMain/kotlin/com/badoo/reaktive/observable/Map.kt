@@ -19,3 +19,4 @@ fun <T, R> Observable<T>.map(mapper: (T) -> R): Observable<R> =
             }
         )
     }
+    

@@ -8,3 +8,4 @@ fun <T> merge(vararg sources: Observable<T>): Observable<T> =
     sources
         .toList()
         .merge()
+        

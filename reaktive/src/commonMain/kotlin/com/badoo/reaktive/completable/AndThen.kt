@@ -37,3 +37,4 @@ fun <T> Completable.andThen(observable: Observable<T>): Observable<T> =
 
 fun <T> Completable.andThen(maybe: Maybe<T>): Maybe<T> =
     asSingle(Unit).flatMapMaybe { maybe }
+    

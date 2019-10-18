@@ -25,3 +25,4 @@ fun <T> Maybe<T>.filter(predicate: (T) -> Boolean): Maybe<T> =
             }
         )
     }
+    

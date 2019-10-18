@@ -11,3 +11,4 @@ fun <T> concat(vararg sources: Maybe<T>): Observable<T> =
     sources
         .map(Maybe<T>::asObservable)
         .concat()
+        
