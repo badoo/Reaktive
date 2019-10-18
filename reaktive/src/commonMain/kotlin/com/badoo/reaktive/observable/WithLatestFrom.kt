@@ -88,3 +88,4 @@ fun <T, T1, T2, T3, R> Observable<T>.withLatestFrom(
         @Suppress("UNCHECKED_CAST")
         mapper(value, others[0] as T1, others[1] as T2, others[2] as T3)
     }
+    

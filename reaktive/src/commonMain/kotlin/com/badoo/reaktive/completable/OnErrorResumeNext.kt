@@ -32,3 +32,4 @@ fun Completable.onErrorResumeNext(nextSupplier: (Throwable) -> Completable): Com
 
 fun Completable.onErrorResumeNext(next: Completable): Completable =
     onErrorResumeNext { next }
+    

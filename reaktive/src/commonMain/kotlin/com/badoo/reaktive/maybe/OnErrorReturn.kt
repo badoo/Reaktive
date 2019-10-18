@@ -5,3 +5,4 @@ fun <T> Maybe<T>.onErrorReturn(valueSupplier: (Throwable) -> T): Maybe<T> =
 
 fun <T> Maybe<T>.onErrorReturnValue(value: T): Maybe<T> =
     onErrorResumeNext { value.toMaybe() }
+    

@@ -43,3 +43,4 @@ fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable
             emitter.onError(e)
         }
     }
+    

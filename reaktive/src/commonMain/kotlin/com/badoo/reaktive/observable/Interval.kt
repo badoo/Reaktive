@@ -16,3 +16,4 @@ fun observableInterval(startDelayMillis: Long, periodMillis: Long, scheduler: Sc
 
 fun observableInterval(periodMillis: Long, scheduler: Scheduler): Observable<Long> =
     observableInterval(periodMillis, periodMillis, scheduler)
+    

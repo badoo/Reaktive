@@ -18,4 +18,3 @@ class TestSingle<T>(autoFreeze: Boolean = true) : TestSource<SingleObserver<T>>(
         onEvent { it.onSuccess(value) }
     }
 }
-

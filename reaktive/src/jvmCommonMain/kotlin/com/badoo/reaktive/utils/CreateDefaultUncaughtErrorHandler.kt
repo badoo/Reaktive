@@ -10,3 +10,4 @@ internal actual fun createDefaultUncaughtErrorHandler(): (Throwable) -> Unit =
                     .uncaughtException(thread, e)
             }
     }
+    

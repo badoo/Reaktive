@@ -74,3 +74,4 @@ fun <T, R> Observable<T>.scan(getSeed: () -> R, accumulate: (acc: R, value: T) -
             }
         )
     }
+    

@@ -11,3 +11,4 @@ fun <T> concat(vararg sources: Single<T>): Observable<T> =
     sources
         .map(Single<T>::asObservable)
         .concat()
+        

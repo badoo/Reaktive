@@ -90,4 +90,3 @@ class WithLatestFromTest {
         observer.assertValues(listOf(7, 5, 2, 6), listOf(9, 8, 2, 6), listOf(12, 8, 11, 10))
     }
 }
-

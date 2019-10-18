@@ -27,3 +27,4 @@ fun <T> Single<T>.filter(predicate: (T) -> Boolean): Maybe<T> =
             }
         )
     }
+    
