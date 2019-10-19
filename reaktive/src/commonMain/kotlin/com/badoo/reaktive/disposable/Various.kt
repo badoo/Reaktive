@@ -9,6 +9,8 @@ import kotlin.js.JsName
 @JsName("disposableDeprecated")
 inline fun disposable(crossinline onDispose: () -> Unit = {}): Disposable = Disposable(onDispose)
 
+@Suppress("FunctionNaming")
 expect inline fun Disposable(crossinline onDispose: () -> Unit): Disposable
 
+@Suppress("FunctionNaming")
 expect fun Disposable(): Disposable
