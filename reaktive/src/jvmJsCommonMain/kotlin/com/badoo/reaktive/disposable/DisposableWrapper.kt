@@ -37,7 +37,6 @@ actual class DisposableWrapper actual constructor() : Disposable {
             ?.dispose()
     }
 
-    @Suppress("NOTHING_TO_INLINE")
-    private inline fun swapDisposable(new: Disposable?): Disposable? =
+    private fun swapDisposable(new: Disposable?): Disposable? =
         disposable.also { disposable = new }
 }
