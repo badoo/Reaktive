@@ -18,15 +18,11 @@ actual class DisposableWrapper actual constructor() : Disposable {
      * Any future [Disposable] will be immediately disposed.
      */
     actual override fun dispose() {
-        val disposableToDispose: Disposable?
-
         synchronized(this) {
             _isDisposed = true
-            disposableToDispose = disposable
-            disposable = null
+            swapDisposable(null)
         }
-
-        disposableToDispose?.dispose()
+            ?.dispose()
     }
 
     /**
@@ -35,17 +31,13 @@ actual class DisposableWrapper actual constructor() : Disposable {
      * Also disposes any replaced [Disposable].
      */
     actual fun set(disposable: Disposable?) {
-        val disposableToDispose: Disposable?
-
         synchronized(this) {
-            if (_isDisposed) {
-                disposableToDispose = disposable
-            } else {
-                disposableToDispose = this.disposable
-                this.disposable = disposable
-            }
+            if (_isDisposed) disposable else swapDisposable(disposable)
         }
-
-        disposableToDispose?.dispose()
+            ?.dispose()
     }
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun swapDisposable(new: Disposable?): Disposable? =
+        disposable.also { disposable = new }
 }
