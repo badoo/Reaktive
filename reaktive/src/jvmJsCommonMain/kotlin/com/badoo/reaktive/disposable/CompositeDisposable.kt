@@ -18,15 +18,11 @@ actual class CompositeDisposable actual constructor() : Disposable {
      * All future [Disposable]s will be immediately disposed.
      */
     actual override fun dispose() {
-        val listToDispose: List<Disposable>?
-
         synchronized(this) {
             _isDisposed = true
-            listToDispose = list
-            list = null
+            resetDisposables()
         }
-
-        listToDispose?.forEach(Disposable::dispose)
+            ?.forEach(Disposable::dispose)
     }
 
     /**
@@ -36,13 +32,8 @@ actual class CompositeDisposable actual constructor() : Disposable {
     actual fun add(disposable: Disposable) {
         synchronized(this) {
             if (!_isDisposed) {
-                var listToAdd = list
-                if (listToAdd == null) {
-                    listToAdd = ArrayList()
-                    list = listToAdd
-                }
-
-                listToAdd.add(disposable)
+                val listToAdd = list ?: ArrayList<Disposable>().also { list = it }
+                listToAdd += disposable
 
                 return
             }
@@ -64,13 +55,10 @@ actual class CompositeDisposable actual constructor() : Disposable {
      * @param dispose if true then removed [Disposable]s will be disposed, default value is true
      */
     actual fun clear(dispose: Boolean) {
-        val listToDispose: List<Disposable>?
-
-        synchronized(this) {
-            listToDispose = list?.takeIf { dispose }
-            list = null
-        }
-
-        listToDispose?.forEach(Disposable::dispose)
+        synchronized(this, ::resetDisposables)
+            ?.takeIf { dispose }
+            ?.forEach(Disposable::dispose)
     }
+
+    private fun resetDisposables(): MutableList<Disposable>? = list.also { list = null }
 }
