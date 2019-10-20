@@ -5,6 +5,6 @@ plugins {
 kotlin.target.browser()
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    implementation Deps.kotlin.stdlib.js
     implementation project(':sample-mpp-module')
 }

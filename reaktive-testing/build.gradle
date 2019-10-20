@@ -5,7 +5,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation kotlin('test-common')
+                implementation Deps.kotlin.test.common
                 implementation project(':reaktive')
                 implementation project(':utils')
             }
@@ -13,13 +13,13 @@ kotlin {
 
         jvmCommonMain {
             dependencies {
-                implementation kotlin('test-junit')
+                implementation Deps.kotlin.test.junit
             }
         }
 
         jsMain {
             dependencies {
-                implementation kotlin('test-js')
+                implementation Deps.kotlin.test.js
             }
         }
     }

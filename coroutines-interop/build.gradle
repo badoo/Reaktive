@@ -10,7 +10,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation deps.kotlinxCoroutinesCoreCommon
+                implementation Deps.kotlinx.coroutines.core.common
                 implementation project(':reaktive')
                 implementation project(':utils')
             }
@@ -24,25 +24,25 @@ kotlin {
 
         jvmMain {
             dependencies {
-                implementation deps.kotlinxCoroutinesCore
+                implementation Deps.kotlinx.coroutines.core
             }
         }
 
         androidMain {
             dependencies {
-                implementation deps.kotlinxCoroutinesAndroid
+                implementation Deps.kotlinx.coroutines.android
             }
         }
 
         nativeCommonMain {
             dependencies {
-                implementation deps.kotlinxCoroutinesCoreNative
+                implementation Deps.kotlinx.coroutines.core.native
             }
         }
 
         jsMain {
             dependencies {
-                implementation deps.kotlinxCoroutinesCoreJs
+                implementation Deps.kotlinx.coroutines.core.js
             }
         }
     }
