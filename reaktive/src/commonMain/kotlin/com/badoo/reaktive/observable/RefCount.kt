@@ -2,7 +2,6 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
@@ -18,7 +17,7 @@ fun <T> ConnectableObservable<T>.refCount(subscriberCount: Int = 1): Observable<
         observer.onSubscribe(disposables)
 
         disposables +=
-            disposable {
+            Disposable {
                 if (subscribeCount.addAndGet(-1) == 0) {
                     disposable
                         .getAndUpdate { null }

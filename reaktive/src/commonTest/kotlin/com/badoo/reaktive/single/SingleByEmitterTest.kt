@@ -1,6 +1,6 @@
 package com.badoo.reaktive.single
 
-import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertNotError
@@ -121,7 +121,7 @@ class SingleByEmitterTest {
 
     @Test
     fun disposable_is_not_disposed_WHEN_assigned() {
-        val disposable = disposable()
+        val disposable = Disposable()
 
         emitter.setDisposable(disposable)
 
@@ -130,7 +130,7 @@ class SingleByEmitterTest {
 
     @Test
     fun assigned_disposable_is_disposed_WHEN_disposed() {
-        val disposable = disposable()
+        val disposable = Disposable()
         emitter.setDisposable(disposable)
 
         observer.dispose()
@@ -140,10 +140,10 @@ class SingleByEmitterTest {
 
     @Test
     fun reassigned_disposable_is_disposed_WHEN_disposed() {
-        emitter.setDisposable(disposable())
+        emitter.setDisposable(Disposable())
         observer.dispose()
 
-        val disposable = disposable()
+        val disposable = Disposable()
         emitter.setDisposable(disposable)
 
         assertTrue(disposable.isDisposed)
@@ -151,7 +151,7 @@ class SingleByEmitterTest {
 
     @Test
     fun assigned_disposable_is_disposed_WHEN_onSuccess_is_signalled() {
-        val disposable = disposable()
+        val disposable = Disposable()
         emitter.setDisposable(disposable)
 
         emitter.onSuccess(0)
@@ -161,7 +161,7 @@ class SingleByEmitterTest {
 
     @Test
     fun assigned_disposable_is_disposed_WHEN_onError_is_signalled() {
-        val disposable = disposable()
+        val disposable = Disposable()
         emitter.setDisposable(disposable)
 
         emitter.onError(Throwable())
