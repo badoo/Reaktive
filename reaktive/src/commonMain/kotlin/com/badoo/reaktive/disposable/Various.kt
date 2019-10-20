@@ -1,16 +1,16 @@
 package com.badoo.reaktive.disposable
 
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import kotlin.js.JsName
 
-inline fun disposable(crossinline onDispose: () -> Unit = {}): Disposable =
-    object : Disposable {
-        @Suppress("ObjectPropertyName") // Backing property
-        private var _isDisposed = AtomicBoolean()
-        override val isDisposed: Boolean get() = _isDisposed.value
+@Deprecated(
+    message = "Use Disposable instead",
+    replaceWith = ReplaceWith("Disposable(onDispose)", "com.badoo.reaktive.disposable.Disposable")
+)
+@JsName("disposableDeprecated")
+inline fun disposable(crossinline onDispose: () -> Unit = {}): Disposable = Disposable(onDispose)
 
-        override fun dispose() {
-            if (_isDisposed.compareAndSet(false, true)) {
-                onDispose()
-            }
-        }
-    }
+@Suppress("FunctionNaming")
+expect inline fun Disposable(crossinline onDispose: () -> Unit): Disposable
+
+@Suppress("FunctionNaming")
+expect fun Disposable(): Disposable

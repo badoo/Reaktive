@@ -1,6 +1,6 @@
 package com.badoo.reaktive.subject
 
-import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicReference
@@ -67,7 +67,7 @@ internal open class DefaultSubject<T> : Subject<T> {
         }
 
     private fun onSerializedSubscribe(observer: ObservableObserver<T>) {
-        val disposable = disposable { serializer.accept(Event.OnUnsubscribe(observer)) }
+        val disposable = Disposable { serializer.accept(Event.OnUnsubscribe(observer)) }
 
         observer.onSubscribe(disposable)
 

@@ -4,7 +4,7 @@ import com.badoo.reaktive.completable.CompletableObserver
 import com.badoo.reaktive.completable.completableOfEmpty
 import com.badoo.reaktive.completable.completableTimer
 import com.badoo.reaktive.completable.completableUnsafe
-import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
@@ -273,7 +273,7 @@ class DebounceWithSelectorTest :
 
         val innerObserver1 = AtomicReference<CompletableObserver?>(null)
         val inner1 = completableUnsafe { observer -> innerObserver1.value = observer }
-        val innerDisposable1 = disposable()
+        val innerDisposable1 = Disposable()
 
         val innerObserver2 = AtomicReference<CompletableObserver?>(null)
         val inner2 = completableUnsafe { observer -> innerObserver2.value = observer }
@@ -283,7 +283,7 @@ class DebounceWithSelectorTest :
 
         source.onNext(0)
         source.onNext(1)
-        innerObserver2.value!!.onSubscribe(disposable())
+        innerObserver2.value!!.onSubscribe(Disposable())
         innerObserver1.value!!.onSubscribe(innerDisposable1)
 
         assertTrue(innerDisposable1.isDisposed)
@@ -298,7 +298,7 @@ class DebounceWithSelectorTest :
 
         val innerObserver2 = AtomicReference<CompletableObserver?>(null)
         val inner2 = completableUnsafe { observer -> innerObserver2.value = observer }
-        val innerDisposable2 = disposable()
+        val innerDisposable2 = Disposable()
 
         val inners = listOf(inner1, inner2)
         source.debounce { inners[it] }.test()
@@ -306,7 +306,7 @@ class DebounceWithSelectorTest :
         source.onNext(0)
         source.onNext(1)
         innerObserver2.value!!.onSubscribe(innerDisposable2)
-        innerObserver1.value!!.onSubscribe(disposable())
+        innerObserver1.value!!.onSubscribe(Disposable())
 
         assertFalse(innerDisposable2.isDisposed)
     }

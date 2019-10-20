@@ -1,7 +1,6 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertComplete
@@ -76,7 +75,7 @@ class RefCountTest {
 
     @Test
     fun disconnects_from_upstream_WHEN_subscriberCount_is_1_and_unsubscribed() {
-        val disposable = disposable()
+        val disposable = Disposable()
         val upstream = testUpstream(connect = { it?.invoke(disposable) })
         val observer = upstream.refCount(subscriberCount = 1).test()
 
@@ -87,7 +86,7 @@ class RefCountTest {
 
     @Test
     fun disconnects_from_upstream_WHEN_subscriberCount_is_2_and_all_subscribers_unsubscribed() {
-        val disposable = disposable()
+        val disposable = Disposable()
         val upstream = testUpstream(connect = { it?.invoke(disposable) })
         val refCount = upstream.refCount(subscriberCount = 1)
         val observer1 = refCount.test()
@@ -101,7 +100,7 @@ class RefCountTest {
 
     @Test
     fun does_not_disconnect_from_upstream_WHEN_subscriberCount_is_2_and_not_all_subscribers_unsubscribed() {
-        val disposable = disposable()
+        val disposable = Disposable()
         val upstream = testUpstream(connect = { it?.invoke(disposable) })
         val refCount = upstream.refCount(subscriberCount = 1)
         val observer1 = refCount.test()
@@ -141,7 +140,7 @@ class RefCountTest {
         val upstream =
             testUpstream(
                 subscribe = { observer ->
-                    val disposable = disposable()
+                    val disposable = Disposable()
                     upstreamDisposables += disposable
                     observer.onSubscribe(disposable)
                 }
