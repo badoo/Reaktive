@@ -154,7 +154,7 @@ fun <T> Observable<T>.doOnBeforeDispose(action: () -> Unit): Observable<T> =
 
                 private inline fun onUpstreamFinished(block: () -> Unit) {
                     try {
-                        disposables.clear(dispose = false) // Prevent "action" from being called
+                        disposables.clear(false) // Prevent "action" from being called
                         block()
                     } finally {
                         disposables.dispose()
@@ -202,7 +202,7 @@ fun <T> Observable<T>.doOnBeforeFinally(action: () -> Unit): Observable<T> =
 
                 private inline fun onUpstreamFinished(block: () -> Unit) {
                     try {
-                        disposables.clear(dispose = false) // Prevent "action" from being called while disposing
+                        disposables.clear(false) // Prevent "action" from being called while disposing
                         block()
                     } finally {
                         disposables.dispose()

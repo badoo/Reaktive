@@ -170,7 +170,7 @@ fun <T> Maybe<T>.doOnBeforeDispose(action: () -> Unit): Maybe<T> =
 
                 private inline fun onUpstreamFinished(block: () -> Unit) {
                     try {
-                        disposables.clear(dispose = false) // Prevent "action" from being called
+                        disposables.clear(false) // Prevent "action" from being called
                         block()
                     } finally {
                         disposables.dispose()
@@ -226,7 +226,7 @@ fun <T> Maybe<T>.doOnBeforeFinally(action: () -> Unit): Maybe<T> =
 
                 private inline fun onUpstreamFinished(block: () -> Unit) {
                     try {
-                        disposables.clear(dispose = false) // Prevent "action" from being called while disposing
+                        disposables.clear(false) // Prevent "action" from being called while disposing
                         block()
                     } finally {
                         disposables.dispose()
