@@ -1,7 +1,7 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.exceptions.CompositeException
-import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.base.hasSubscribers
@@ -50,7 +50,7 @@ class SubscribeTest {
 
     @Test
     fun calls_onSuccess_WHEN_upstream_succeeded_with_non_null_value() {
-        observer.onSubscribe(disposable())
+        observer.onSubscribe(Disposable())
         upstream.subscribe(onSuccess = observer::onSuccess)
 
         upstream.onSuccess(0)
@@ -60,7 +60,7 @@ class SubscribeTest {
 
     @Test
     fun calls_onSuccess_WHEN_upstream_succeeded_with_null_value() {
-        observer.onSubscribe(disposable())
+        observer.onSubscribe(Disposable())
         upstream.subscribe(onSuccess = observer::onSuccess)
 
         upstream.onSuccess(null)
@@ -70,7 +70,7 @@ class SubscribeTest {
 
     @Test
     fun calls_onComplete_WHEN_upstream_is_completed() {
-        observer.onSubscribe(disposable())
+        observer.onSubscribe(Disposable())
         upstream.subscribe(onComplete = observer::onComplete)
 
         upstream.onComplete()
@@ -89,7 +89,7 @@ class SubscribeTest {
 
     @Test
     fun calls_onError_WHEN_upstream_produced_an_error() {
-        observer.onSubscribe(disposable())
+        observer.onSubscribe(Disposable())
         upstream.subscribe(onError = observer::onError)
         val error = Throwable()
 

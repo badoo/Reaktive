@@ -1,6 +1,6 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
@@ -202,7 +202,7 @@ class SwitchMapTest :
     fun disposes_previous_inner_source_disposable_IF_it_is_provided_after_new_source_disposable() {
         val innerObserver1 = AtomicReference<ObservableObserver<String?>?>(null)
         val inner1 = observableUnsafe<String?> { observer -> innerObserver1.value = observer }
-        val innerDisposable1 = disposable()
+        val innerDisposable1 = Disposable()
 
         val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null)
         val inner2 = observableUnsafe<String?> { observer -> innerObserver2.value = observer }
@@ -210,7 +210,7 @@ class SwitchMapTest :
 
         source.onNext(0)
         source.onNext(1)
-        innerObserver2.value!!.onSubscribe(disposable())
+        innerObserver2.value!!.onSubscribe(Disposable())
         innerObserver1.value!!.onSubscribe(innerDisposable1)
 
         assertTrue(innerDisposable1.isDisposed)
@@ -223,13 +223,13 @@ class SwitchMapTest :
 
         val innerObserver2 = AtomicReference<ObservableObserver<String?>?>(null)
         val inner2 = observableUnsafe<String?> { observer -> innerObserver2.value = observer }
-        val innerDisposable2 = disposable()
+        val innerDisposable2 = Disposable()
         switchMapUpstreamAndSubscribe(listOf(inner1, inner2))
 
         source.onNext(0)
         source.onNext(1)
         innerObserver2.value!!.onSubscribe(innerDisposable2)
-        innerObserver1.value!!.onSubscribe(disposable())
+        innerObserver1.value!!.onSubscribe(Disposable())
 
         assertFalse(innerDisposable2.isDisposed)
     }
