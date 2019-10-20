@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 class DisposableWrapperTest {
 
     private val wrapper = DisposableWrapper()
-    private val disposable = disposable()
+    private val disposable = Disposable()
 
     @Test
     fun does_not_dispose_new_disposable_WHEN_not_disposed() {
@@ -38,7 +38,7 @@ class DisposableWrapperTest {
     fun disposes_previous_disposable_WHEN_new_disposable_is_set() {
         wrapper.set(disposable)
 
-        wrapper.set(disposable())
+        wrapper.set(Disposable())
 
         assertTrue(disposable.isDisposed)
     }

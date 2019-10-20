@@ -1,7 +1,6 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
@@ -74,7 +73,7 @@ class DoOnBeforeSubscribeTest
 
         completableUnsafe { observer ->
             isCalled.value = false
-            observer.onSubscribe(disposable())
+            observer.onSubscribe(Disposable())
         }
             .doOnBeforeSubscribe {
                 isCalled.value = true
