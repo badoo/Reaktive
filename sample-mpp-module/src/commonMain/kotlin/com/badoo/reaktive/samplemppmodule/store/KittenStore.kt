@@ -20,4 +20,3 @@ interface KittenStore : Disposable {
         object DismissError: Intent()
     }
 }
-

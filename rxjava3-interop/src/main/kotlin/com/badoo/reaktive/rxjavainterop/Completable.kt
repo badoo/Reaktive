@@ -51,3 +51,4 @@ fun CompletableObserver.asRxJava3(): io.reactivex.rxjava3.core.CompletableObserv
                 this@asRxJava3.onError(error)
             }
         }
+        

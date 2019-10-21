@@ -34,3 +34,4 @@ fun <T> Maybe<T>.test(autoFreeze: Boolean = true): TestMaybeObserver<T> {
     return TestMaybeObserver<T>(autoFreeze = autoFreeze)
         .also(::subscribe)
 }
+
