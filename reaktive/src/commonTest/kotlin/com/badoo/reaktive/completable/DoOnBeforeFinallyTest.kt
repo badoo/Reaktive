@@ -1,7 +1,7 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.exceptions.CompositeException
-import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
@@ -77,7 +77,7 @@ class DoOnBeforeFinallyTest
 
         completableUnsafe { observer ->
             observer.onSubscribe(
-                disposable {
+                Disposable {
                     callOrder += "dispose"
                 }
             )
