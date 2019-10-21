@@ -5,47 +5,35 @@ import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun <T> maybe(onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
         val emitter =
-            object : MaybeEmitter<T> {
-                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
-
+            object : DisposableWrapper(), MaybeEmitter<T> {
                 override fun onSuccess(value: T) {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onSuccess(value)
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
+                    if (!isDisposed) {
+                        observer.onSuccess(value)
+                        dispose()
                     }
                 }
 
                 override fun onComplete() {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onComplete()
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
+                    if (!isDisposed) {
+                        observer.onComplete()
+                        dispose()
                     }
                 }
 
                 override fun onError(error: Throwable) {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onError(error)
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
+                    if (!isDisposed) {
+                        observer.onError(error)
+                        dispose()
                     }
                 }
 
                 override fun setDisposable(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    set(disposable)
                 }
             }
+
+        observer.onSubscribe(emitter)
 
         try {
             onSubscribe(emitter)

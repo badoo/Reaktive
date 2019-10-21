@@ -5,37 +5,28 @@ import com.badoo.reaktive.disposable.DisposableWrapper
 
 fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable =
     completableUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
         val emitter =
-            object : CompletableEmitter {
-                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
-
+            object : DisposableWrapper(), CompletableEmitter {
                 override fun onComplete() {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onComplete()
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
+                    if (!isDisposed) {
+                        observer.onComplete()
+                        dispose()
                     }
                 }
 
                 override fun onError(error: Throwable) {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onError(error)
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
+                    if (!isDisposed) {
+                        observer.onError(error)
+                        dispose()
                     }
                 }
 
                 override fun setDisposable(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    set(disposable)
                 }
             }
+
+        observer.onSubscribe(emitter)
 
         try {
             onSubscribe(emitter)
