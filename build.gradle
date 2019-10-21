@@ -3,9 +3,6 @@ buildscript {
     ext.reaktive_group_id = 'com.badoo.reaktive'
 }
 
-apply from: 'gradle/versions.gradle.kts'
-apply from: 'gradle/versions.gradle'
-
 allprojects {
     repositories {
         google()
@@ -25,14 +22,14 @@ void setupMultiplatformLibrary(Project project) {
         sourceSets {
             commonMain {
                 dependencies {
-                    implementation kotlin('stdlib-common')
+                    implementation Deps.kotlin.stdlib.common
                 }
             }
 
             commonTest {
                 dependencies {
-                    implementation kotlin('test-common')
-                    implementation kotlin('test-annotations-common')
+                    implementation Deps.kotlin.test.common
+                    implementation Deps.kotlin.test.annotationsCommon
                 }
             }
         }
@@ -142,13 +139,13 @@ private void setupAndroidTarget(Project project) {
         sourceSets {
             androidMain {
                 dependencies {
-                    implementation kotlin('stdlib')
+                    implementation Deps.kotlin.stdlib
                 }
             }
 
             androidTest {
                 dependencies {
-                    implementation kotlin('test-junit')
+                    implementation Deps.kotlin.test.junit
                 }
             }
         }
@@ -166,13 +163,13 @@ private void setupJvmTarget(Project project) {
         sourceSets {
             jvmMain {
                 dependencies {
-                    implementation kotlin('stdlib')
+                    implementation Deps.kotlin.stdlib
                 }
             }
 
             jvmTest {
                 dependencies {
-                    implementation kotlin('test-junit')
+                    implementation Deps.kotlin.test.junit
                 }
             }
         }
