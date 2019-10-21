@@ -2,29 +2,25 @@ package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.doIfNotDisposed
 
 fun <T> maybe(onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
         val emitter =
             object : DisposableWrapper(), MaybeEmitter<T> {
                 override fun onSuccess(value: T) {
-                    if (!isDisposed) {
+                    doIfNotDisposed(dispose = true) {
                         observer.onSuccess(value)
-                        dispose()
                     }
                 }
 
                 override fun onComplete() {
-                    if (!isDisposed) {
-                        observer.onComplete()
-                        dispose()
-                    }
+                    doIfNotDisposed(dispose = true, block = observer::onComplete)
                 }
 
                 override fun onError(error: Throwable) {
-                    if (!isDisposed) {
+                    doIfNotDisposed(dispose = true) {
                         observer.onError(error)
-                        dispose()
                     }
                 }
 
