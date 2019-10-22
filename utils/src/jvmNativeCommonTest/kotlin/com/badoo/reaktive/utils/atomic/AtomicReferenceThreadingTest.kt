@@ -1,6 +1,6 @@
 package com.badoo.reaktive.utils.atomic
 
-import com.badoo.reaktive.test.doInBackgroundBlocking
+import com.badoo.reaktive.utils.test.doInBackgroundBlocking
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertSame

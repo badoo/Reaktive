@@ -1,11 +1,28 @@
 package com.badoo.reaktive.utils.atomic
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class AtomicReferenceTest {
+
+    @Test
+    fun returns_initial_value_WHEN_created() {
+        val ref = AtomicReference(VALUE_1)
+
+        assertEquals(VALUE_1, ref.value)
+    }
+
+    @Test
+    fun returns_updated_value() {
+        val ref = AtomicReference(VALUE_1)
+
+        ref.value = VALUE_2
+
+        assertEquals(VALUE_2, ref.value)
+    }
 
     @Test
     fun compareAndSet_success() {
