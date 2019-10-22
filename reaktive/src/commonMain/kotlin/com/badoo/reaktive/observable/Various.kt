@@ -17,13 +17,25 @@ fun <T> T.toObservable(): Observable<T> = observableOf(this)
 
 fun <T> Iterable<T>.asObservable(): Observable<T> =
     observable { emitter ->
-        forEach(emitter::onNext)
+        forEach {
+            if (emitter.isDisposed) {
+                return@observable
+            }
+            emitter.onNext(it)
+        }
+
         emitter.onComplete()
     }
 
 fun <T> observableOf(vararg values: T): Observable<T> =
     observable { emitter ->
-        values.forEach(emitter::onNext)
+        values.forEach {
+            if (emitter.isDisposed) {
+                return@observable
+            }
+            emitter.onNext(it)
+        }
+
         emitter.onComplete()
     }
 
