@@ -4,7 +4,9 @@ package com.badoo.reaktive.disposable
  * Thread-safe container of one [Disposable]
  */
 @Suppress("EmptyDefaultConstructor")
-expect class DisposableWrapper() : Disposable {
+expect open class DisposableWrapper() : Disposable {
+
+    override val isDisposed: Boolean
 
     /**
      * Disposes this [DisposableWrapper] and a stored [Disposable] if any.
