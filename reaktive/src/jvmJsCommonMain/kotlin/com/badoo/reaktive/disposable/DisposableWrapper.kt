@@ -6,11 +6,11 @@ import kotlin.jvm.Volatile
  * Thread-safe container of one [Disposable]
  */
 @Suppress("EmptyDefaultConstructor")
-actual class DisposableWrapper actual constructor() : Disposable {
+actual open class DisposableWrapper actual constructor() : Disposable {
 
     @Volatile
     private var _isDisposed: Boolean = false
-    override val isDisposed: Boolean get() = _isDisposed
+    actual override val isDisposed: Boolean get() = _isDisposed
     private var disposable: Disposable? = null
 
     /**
