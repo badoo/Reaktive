@@ -20,7 +20,6 @@ fun <T> single(onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
                     }
                 }
 
-                @Suppress("RedundantOverride") // IDEA complains that setDisposable is not implemented
                 override fun setDisposable(disposable: Disposable) {
                     set(disposable)
                 }
