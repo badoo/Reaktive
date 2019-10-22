@@ -1,8 +1,8 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.lock.Lock
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.lock.synchronized
 import com.badoo.reaktive.utils.lock.use
 
@@ -10,13 +10,15 @@ import com.badoo.reaktive.utils.lock.use
 fun <T> Single<T>.blockingGet(): T =
     Lock().use { lock ->
         lock.newCondition().use { condition ->
-            val result = AtomicReference<BlockingGetResult<T>?>(null)
-            val upstreamDisposable = AtomicReference<Disposable?>(null)
+            val result = ObjectReference<BlockingGetResult<T>?>(null)
+            val upstreamDisposable = ObjectReference<Disposable?>(null)
 
             subscribe(
                 object : SingleObserver<T> {
                     override fun onSubscribe(disposable: Disposable) {
-                        upstreamDisposable.value = disposable
+                        lock.synchronized {
+                            upstreamDisposable.value = disposable
+                        }
                     }
 
                     override fun onSuccess(value: T) {
