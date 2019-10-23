@@ -1,5 +1,7 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.disposable.Disposable
+
 inline fun completableUnsafe(crossinline onSubscribe: (observer: CompletableObserver) -> Unit): Completable =
     object : Completable {
         override fun subscribe(observer: CompletableObserver) {
@@ -8,15 +10,31 @@ inline fun completableUnsafe(crossinline onSubscribe: (observer: CompletableObse
     }
 
 fun completableOfError(error: Throwable): Completable =
-    completable { emitter ->
-        emitter.onError(error)
+    completableUnsafe { observer ->
+        val disposable = Disposable()
+        observer.onSubscribe(disposable)
+
+        if (!disposable.isDisposed) {
+            observer.onError(error)
+        }
     }
 
 fun Throwable.toCompletableOfError(): Completable = completableOfError(this)
 
-fun completableOfEmpty(): Completable = completable(CompletableEmitter::onComplete)
+fun completableOfEmpty(): Completable =
+    completableUnsafe { observer ->
+        val disposable = Disposable()
+        observer.onSubscribe(disposable)
 
-fun completableOfNever(): Completable = completable {}
+        if (!disposable.isDisposed) {
+            observer.onComplete()
+        }
+    }
+
+fun completableOfNever(): Completable =
+    completableUnsafe { observer ->
+        observer.onSubscribe(Disposable())
+    }
 
 fun completableFromFunction(func: () -> Unit): Completable =
     completable { emitter ->
