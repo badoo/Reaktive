@@ -12,7 +12,7 @@ private class SerializedCompletableEmitter(
     private val serializer =
         serializer<Event> { event ->
             when (event) {
-                is Event.OnComplete -> delegate.onComplete()
+                Event.OnComplete -> delegate.onComplete()
                 is Event.OnError -> delegate.onError(event.error)
             }
 
