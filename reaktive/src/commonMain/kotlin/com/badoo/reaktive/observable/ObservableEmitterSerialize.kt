@@ -13,7 +13,7 @@ private class SerializedObservableEmitter<T>(
         serializer<Any?> { event ->
             if (event is Event) {
                 when (event) {
-                    is Event.OnComplete -> delegate.onComplete()
+                    Event.OnComplete -> delegate.onComplete()
                     is Event.OnError -> delegate.onError(event.error)
                 }
 
