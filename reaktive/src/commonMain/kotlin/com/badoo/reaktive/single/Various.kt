@@ -1,5 +1,7 @@
 package com.badoo.reaktive.single
 
+import com.badoo.reaktive.disposable.Disposable
+
 inline fun <T> singleUnsafe(crossinline onSubscribe: (observer: SingleObserver<T>) -> Unit): Single<T> =
     object : Single<T> {
         override fun subscribe(observer: SingleObserver<T>) {
@@ -8,17 +10,30 @@ inline fun <T> singleUnsafe(crossinline onSubscribe: (observer: SingleObserver<T
     }
 
 fun <T> singleOf(value: T): Single<T> =
-    single { emitter ->
-        emitter.onSuccess(value)
+    singleUnsafe { observer ->
+        val disposable = Disposable()
+        observer.onSubscribe(disposable)
+
+        if (!disposable.isDisposed) {
+            observer.onSuccess(value)
+        }
     }
 
 fun <T> T.toSingle(): Single<T> = singleOf(this)
 
-fun <T> singleOfNever(): Single<T> = single {}
+fun <T> singleOfNever(): Single<T> =
+    singleUnsafe { observer ->
+        observer.onSubscribe(Disposable())
+    }
 
 fun <T> singleOfError(error: Throwable): Single<T> =
-    single { emitter ->
-        emitter.onError(error)
+    singleUnsafe { observer ->
+        val disposable = Disposable()
+        observer.onSubscribe(disposable)
+
+        if (!disposable.isDisposed) {
+            observer.onError(error)
+        }
     }
 
 fun <T> Throwable.toSingleOfError(): Single<T> = singleOfError(this)
