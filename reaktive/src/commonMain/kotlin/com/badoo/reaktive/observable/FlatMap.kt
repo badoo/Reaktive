@@ -12,12 +12,10 @@ import com.badoo.reaktive.utils.atomic.AtomicInt
 
 fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
     observable { emitter ->
-        val disposables = CompositeDisposable()
-        emitter.setDisposable(disposables)
         val serializedEmitter = emitter.serialize()
 
-        subscribeSafe(
-            object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
+        val upstreamObserver =
+            object : CompositeDisposable(), ObservableObserver<T>, ErrorCallback by serializedEmitter {
                 private val activeSourceCount = AtomicInt(1)
 
                 private val mappedObserver =
@@ -26,7 +24,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
                     }
 
                 override fun onSubscribe(disposable: Disposable) {
-                    disposables += disposable
+                    add(disposable)
                 }
 
                 override fun onNext(value: T) {
@@ -40,7 +38,10 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
                     }
                 }
             }
-        )
+
+        emitter.setDisposable(upstreamObserver)
+
+        subscribeSafe(upstreamObserver)
     }
 
 fun <T, U, R> Observable<T>.flatMap(mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
