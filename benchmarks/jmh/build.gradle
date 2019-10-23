@@ -1,0 +1,23 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'me.champeau.gradle.jmh'
+}
+
+dependencies {
+    implementation project(':reaktive')
+    implementation Deps.kotlin.stdlib.jdk7
+    implementation Deps.jmh.core
+    implementation Deps.rxjava2
+    implementation Deps.kotlinx.coroutines.core
+}
+
+jmh {
+    benchmarkMode = ['avgt']
+    timeUnit = 'ms'
+    fork = 1
+    warmup = '2s'
+    warmupIterations = 8
+    timeOnIteration = '2s'
+    iterations = 10
+}
