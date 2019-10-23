@@ -70,7 +70,7 @@ fun <T, R> Observable<T>.concatMap(mapper: (T) -> Observable<R>): Observable<R> 
                 }
 
                 private fun mapAndSubscribe(value: T) {
-                    serializedEmitter.tryCatch({ mapper(value) }) {
+                    serializedEmitter.tryCatch(block = { mapper(value) }) {
                         it.subscribeSafe(mappedObserver)
                     }
                 }

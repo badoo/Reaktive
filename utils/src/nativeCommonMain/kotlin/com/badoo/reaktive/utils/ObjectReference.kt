@@ -10,7 +10,7 @@ import kotlin.native.concurrent.isFrozen
  * In Native it's backed by FreezableAtomicReference so the reference can be updated from different threads.
  * Useful when concurrent access is already somehow synchronized and all you need is mutability.
  */
-actual class ObjectReference<T> actual constructor(initialValue: T) {
+actual open class ObjectReference<T> actual constructor(initialValue: T) {
 
     private val delegate = FreezableAtomicReference(initialValue)
 

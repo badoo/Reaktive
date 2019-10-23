@@ -20,7 +20,7 @@ fun <T> Observable<T>.takeUntil(predicate: (T) -> Boolean): Observable<T> =
                 override fun onNext(value: T) {
                     emitter.onNext(value)
 
-                    emitter.tryCatch({ predicate(value) }) {
+                    emitter.tryCatch(block = { predicate(value) }) {
                         if (it) {
                             emitter.onComplete()
                         }

@@ -58,7 +58,7 @@ fun <T> Observable<T>.doOnBeforeNext(consumer: (T) -> Unit): Observable<T> =
 
                 override fun onNext(value: T) {
                     if (!emitter.isDisposed) {
-                        emitter.tryCatch({ consumer(value) }) {
+                        emitter.tryCatch(block = { consumer(value) }) {
                             emitter.onNext(value)
                         }
                     }
