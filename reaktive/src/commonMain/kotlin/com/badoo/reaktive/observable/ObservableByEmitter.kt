@@ -26,5 +26,5 @@ fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observ
             }
 
         observer.onSubscribe(emitter)
-        emitter.tryCatch(block = { onSubscribe(emitter) })
+        emitter.tryCatch { onSubscribe(emitter) }
     }

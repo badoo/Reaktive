@@ -15,7 +15,7 @@ fun <T, R> Single<T>.flatMap(mapper: (T) -> Single<R>): Single<R> =
                 }
 
                 override fun onSuccess(value: T) {
-                    emitter.tryCatch({ mapper(value) }) {
+                    emitter.tryCatch(block = { mapper(value) }) {
                         it.subscribeSafe(
                             object : SingleObserver<R>, Observer by this, SingleCallbacks<R> by emitter {
                             }

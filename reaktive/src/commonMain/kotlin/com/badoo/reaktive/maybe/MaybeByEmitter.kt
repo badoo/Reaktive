@@ -26,5 +26,5 @@ fun <T> maybe(onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T> =
             }
 
         observer.onSubscribe(emitter)
-        emitter.tryCatch(block = { onSubscribe(emitter) })
+        emitter.tryCatch { onSubscribe(emitter) }
     }

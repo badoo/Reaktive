@@ -20,5 +20,5 @@ fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable
             }
 
         observer.onSubscribe(emitter)
-        emitter.tryCatch(block = { onSubscribe(emitter) })
+        emitter.tryCatch { onSubscribe(emitter) }
     }

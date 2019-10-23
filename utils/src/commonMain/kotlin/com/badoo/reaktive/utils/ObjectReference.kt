@@ -6,7 +6,7 @@ package com.badoo.reaktive.utils
  * In Native it's backed by FreezableAtomicReference so the reference can be updated from different threads.
  * Useful when concurrent access is already somehow synchronized and all you need is mutability.
  */
-expect class ObjectReference<T>(initialValue: T) {
+expect open class ObjectReference<T>(initialValue: T) {
 
     var value: T
 }

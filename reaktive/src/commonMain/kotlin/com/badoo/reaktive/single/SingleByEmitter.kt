@@ -22,5 +22,5 @@ fun <T> single(onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
             }
 
         observer.onSubscribe(emitter)
-        emitter.tryCatch(block = { onSubscribe(emitter) })
+        emitter.tryCatch { onSubscribe(emitter) }
     }
