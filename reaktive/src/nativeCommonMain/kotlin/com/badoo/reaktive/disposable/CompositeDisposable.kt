@@ -8,7 +8,7 @@ import com.badoo.reaktive.utils.atomic.getAndUpdate
  * Thread-safe collection of [Disposable]
  */
 @Suppress("EmptyDefaultConstructor")
-actual class CompositeDisposable actual constructor() : Disposable {
+actual open class CompositeDisposable actual constructor() : Disposable {
 
     private val list = AtomicReference<List<Disposable>?>(emptyList())
     override val isDisposed: Boolean get() = list.value == null

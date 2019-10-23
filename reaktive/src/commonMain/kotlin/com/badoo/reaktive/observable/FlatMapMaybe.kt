@@ -1,12 +1,11 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.base.CompositeDisposableObserver
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
-import com.badoo.reaktive.disposable.CompositeDisposable
-import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.MaybeObserver
 import com.badoo.reaktive.maybe.map
@@ -14,12 +13,10 @@ import com.badoo.reaktive.utils.atomic.AtomicInt
 
 fun <T, R> Observable<T>.flatMapMaybe(mapper: (T) -> Maybe<R>): Observable<R> =
     observable { emitter ->
-        val disposables = CompositeDisposable()
-        emitter.setDisposable(disposables)
         val serializedEmitter = emitter.serialize()
 
-        subscribeSafe(
-            object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
+        val upstreamObserver =
+            object : CompositeDisposableObserver(), ObservableObserver<T>, ErrorCallback by serializedEmitter {
                 private val activeSourceCount = AtomicInt(1)
 
                 private val mappedObserver: MaybeObserver<R> =
@@ -29,10 +26,6 @@ fun <T, R> Observable<T>.flatMapMaybe(mapper: (T) -> Maybe<R>): Observable<R> =
                             onComplete()
                         }
                     }
-
-                override fun onSubscribe(disposable: Disposable) {
-                    disposables += disposable
-                }
 
                 override fun onNext(value: T) {
                     activeSourceCount.addAndGet(1)
@@ -45,7 +38,10 @@ fun <T, R> Observable<T>.flatMapMaybe(mapper: (T) -> Maybe<R>): Observable<R> =
                     }
                 }
             }
-        )
+
+        emitter.setDisposable(upstreamObserver)
+
+        subscribeSafe(upstreamObserver)
     }
 
 fun <T, U, R> Observable<T>.flatMapMaybe(mapper: (T) -> Maybe<U>, resultSelector: (T, U) -> R): Observable<R> =

@@ -6,7 +6,7 @@ import kotlin.jvm.Volatile
  * Thread-safe collection of [Disposable]
  */
 @Suppress("EmptyDefaultConstructor")
-actual class CompositeDisposable actual constructor() : Disposable {
+actual open class CompositeDisposable actual constructor() : Disposable {
 
     private var list: MutableList<Disposable>? = null
     @Volatile
