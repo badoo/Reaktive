@@ -14,7 +14,7 @@ fun <T> Maybe<T>.filter(predicate: (T) -> Boolean): Maybe<T> =
                 }
 
                 override fun onSuccess(value: T) {
-                    emitter.tryCatch({ predicate(value) }) {
+                    emitter.tryCatch(block = { predicate(value) }) {
                         if (it) {
                             emitter.onSuccess(value)
                         } else {

@@ -31,10 +31,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
 
                 override fun onNext(value: T) {
                     activeSourceCount.addAndGet(1)
-
-                    serializedEmitter.tryCatch({ mapper(value) }) {
-                        it.subscribeSafe(mappedObserver)
-                    }
+                    serializedEmitter.tryCatch { mapper(value).subscribe(mappedObserver) }
                 }
 
                 override fun onComplete() {

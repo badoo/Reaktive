@@ -64,7 +64,7 @@ fun <T> Maybe<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Maybe<T> =
 
                 override fun onSuccess(value: T) {
                     if (!emitter.isDisposed) {
-                        emitter.tryCatch({ consumer(value) }) {
+                        emitter.tryCatch(block = { consumer(value) }) {
                             emitter.onSuccess(value)
                         }
                     }
