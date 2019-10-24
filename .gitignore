@@ -2,12 +2,10 @@
 .gradle
 /local.properties
 .idea
-/build
+build
 /classes
 /out
 .DS_Store*
-*/build
-buildSrc/buildSrc/build
 */node_modules
 */package-lock.json
 *.hprof
