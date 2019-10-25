@@ -4,6 +4,7 @@ internal interface Queue<T> {
 
     val peek: T?
     val size: Int
+    val isEmpty: Boolean
 
     fun offer(item: T)
 

@@ -7,6 +7,7 @@ internal actual class PriorityQueue<T> actual constructor(
     private val delegate = java.util.PriorityQueue(INITIAL_CAPACITY, comparator)
     override val peek: T? get() = delegate.peek()
     override val size: Int get() = delegate.size
+    override val isEmpty: Boolean get() = delegate.isEmpty()
 
     override fun offer(item: T) {
         delegate.offer(item)

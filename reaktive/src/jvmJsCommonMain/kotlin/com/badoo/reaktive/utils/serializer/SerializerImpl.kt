@@ -1,7 +1,6 @@
 package com.badoo.reaktive.utils.serializer
 
 import com.badoo.reaktive.utils.queue.Queue
-import com.badoo.reaktive.utils.queue.isEmpty
 
 internal abstract class SerializerImpl<in T>(queue: Queue<T>) : Serializer<T> {
 

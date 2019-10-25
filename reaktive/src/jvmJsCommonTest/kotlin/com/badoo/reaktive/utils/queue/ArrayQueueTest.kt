@@ -2,7 +2,9 @@ package com.badoo.reaktive.utils.queue
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class ArrayQueueTest {
 
@@ -11,6 +13,59 @@ class ArrayQueueTest {
     @Test
     fun initialSizeIsZero() {
         assertEquals(0, queue.size)
+    }
+
+    @Test
+    fun empty_after_creation() {
+        assertTrue(queue.isEmpty)
+    }
+
+    @Test
+    fun not_empty_WHEN_offered_one_item() {
+        queue.offer("a")
+
+        assertFalse(queue.isEmpty)
+    }
+
+    @Test
+    fun empty_WHEN_offered_and_polled_one_item() {
+        queue.offer("a")
+        queue.poll()
+
+        assertTrue(queue.isEmpty)
+    }
+
+    @Test
+    fun not_empty_WHEN_offered_100_items() {
+        repeat(100) {
+            queue.offer("a")
+        }
+
+        assertFalse(queue.isEmpty)
+    }
+
+    @Test
+    fun empty_WHEN_offered_and_polled_100_items() {
+        repeat(100) {
+            queue.offer("a")
+        }
+        repeat(100) {
+            queue.poll()
+        }
+
+        assertTrue(queue.isEmpty)
+    }
+
+    @Test
+    fun not_empty_WHEN_offered_100_items_and_polled_99_items() {
+        repeat(100) {
+            queue.offer("a")
+        }
+        repeat(99) {
+            queue.poll()
+        }
+
+        assertFalse(queue.isEmpty)
     }
 
     @Test
