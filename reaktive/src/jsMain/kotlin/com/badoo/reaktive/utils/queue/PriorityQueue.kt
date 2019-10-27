@@ -9,6 +9,7 @@ internal actual class PriorityQueue<T> actual constructor(
     private val list: MutableList<T> = ArrayList()
     override val peek: T? get() = list.getOrNull(0)
     override val size: Int get() = list.size
+    override val isEmpty: Boolean get() = list.isEmpty()
 
     override fun offer(item: T) {
         list.add(item)
