@@ -15,11 +15,12 @@ publishing {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation Deps.kotlin.stdlib.jdk7
     implementation project(':reaktive')
-    implementation project(':reaktive-testing')
-    implementation deps.retrofit
-    testImplementation deps.mockwebserver
+    implementation Deps.retrofit
+
+    testImplementation project(':reaktive-testing')
+    testImplementation Deps.mockwebserver
 }
 
 apply plugin: PublishPlugin
