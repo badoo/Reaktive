@@ -14,12 +14,10 @@ matrix:
           - build-tools-28.0.3
           - android-28
       env: MP_TARGET=COMMON
-      script: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build rxjava2-interop:build rxjava3-interop:build retrofit-adapter:build coroutines-interop:build :sample-android-app:assembleDebug :sample-js-browser-app:assemble :sample-linuxx64-app:linkDebugExecutableLinux -DMP_TARGET=$MP_TARGET
     - os: osx
       osx_image: xcode10.2
       language: java
       env: MP_TARGET=IOS
-      script: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build buildIosSample -DMP_TARGET=$MP_TARGET
     - os: linux
       language: android
       android:
@@ -27,8 +25,10 @@ matrix:
           - build-tools-28.0.3
           - android-28
       env: MP_TARGET=META
-      script: true
-install: echo 'org.gradle.jvmargs=-Xmx4g -XX:MaxPermSize=1g -Dkotlin.compiler.execution.strategy="in-process"' >> gradle.properties
+before_install: true
+install: true
+before_script: true
+script: true
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
