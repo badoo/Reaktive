@@ -1,6 +1,6 @@
 package com.badoo.reaktive.maybe
 
-import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
@@ -31,7 +31,7 @@ class DoOnBeforeDisposeTest
 
         maybeUnsafe<Nothing> { observer ->
             observer.onSubscribe(
-                disposable {
+                Disposable {
                     callOrder += "dispose"
                 }
             )

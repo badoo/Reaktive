@@ -18,7 +18,9 @@ fun <T> Completable.asSingle(defaultValueSupplier: () -> T): Single<T> =
         observer.tryCatch(block = defaultValueSupplier, onSuccess = observer::onSuccess)
     }
 
-private inline fun <T> Completable.asSingleOrAction(crossinline onComplete: (observer: SingleEmitter<T>) -> Unit): Single<T> =
+private inline fun <T> Completable.asSingleOrAction(
+    crossinline onComplete: (observer: SingleEmitter<T>) -> Unit
+): Single<T> =
     single { emitter ->
         subscribeSafe(
             object : CompletableObserver, ErrorCallback by emitter {

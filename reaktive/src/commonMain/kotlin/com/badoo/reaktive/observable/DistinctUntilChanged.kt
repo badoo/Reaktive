@@ -3,6 +3,7 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.atomic.AtomicReference
 
@@ -16,7 +17,7 @@ fun <T, R> Observable<T>.distinctUntilChanged(
     observable { emitter ->
         subscribeSafe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
-                val cache = AtomicReference<Any?>(Uninitialized)
+                val cache = ObjectReference<Any?>(Uninitialized)
 
                 override fun onNext(value: T) {
                     val previous = cache.value
@@ -25,7 +26,11 @@ fun <T, R> Observable<T>.distinctUntilChanged(
                     val next =
                         try {
                             @Suppress("UNCHECKED_CAST")
-                            if ((previous === Uninitialized) || !comparator(keySelector(previous as T), keySelector(value))) {
+                            if (previous === Uninitialized || !comparator(
+                                    keySelector(previous as T),
+                                    keySelector(value)
+                                )
+                            ) {
                                 value
                             } else {
                                 return

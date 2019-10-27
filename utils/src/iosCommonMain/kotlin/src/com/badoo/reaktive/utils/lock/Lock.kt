@@ -71,8 +71,10 @@ actual class Lock {
         override fun await(timeoutNanos: Long) {
             if (timeoutNanos >= 0L) {
                 memScoped {
-                    // can't use monotonic time, pthread_condattr_setclock() nor clock_gettime(), iOS does not support it
-                    // can't use NSRecursiveLock and NSCondition, it can't wait less then 1 second and lock can't create condition
+                    // can't use monotonic time, pthread_condattr_setclock() nor clock_gettime(),
+                    // iOS does not support it
+                    // can't use NSRecursiveLock and NSCondition,
+                    // it can't wait less then 1 second and lock can't create condition
                     val tv: timeval = alloc { gettimeofday(ptr, null) }
                     val ts: timespec = alloc()
                     ts.tv_sec = tv.tv_sec

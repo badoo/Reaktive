@@ -38,7 +38,6 @@ cache:
     - $HOME/.gradle/wrapper/
     - $HOME/.gradle/nodejs/
     - $HOME/.gradle/yarn/
-    - $HOME/.konan/
     - build/js/node_modules
 deploy:
   skip_cleanup: true

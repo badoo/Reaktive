@@ -29,7 +29,10 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
                 }
 
                 override fun onNext(value: T) {
-                    serializedEmitter.tryCatch(block = { mapper(value) }, onSuccess = ::onInnerObservable)
+                    serializedEmitter.tryCatch(
+                        block = { mapper(value) },
+                        onSuccess = ::onInnerObservable
+                    )
                 }
 
                 private fun onInnerObservable(observable: Observable<R>) {
@@ -37,7 +40,8 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
 
                     /*
                      * Dispose any existing inner Observable.
-                     * If a previous Observable did not provide its disposable yet it will be disposed automatically later since
+                     * If a previous Observable did not provide its disposable yet
+                     * it will be disposed automatically later since
                      * its localDisposableWrapper is disposed.
                      */
                     innerDisposableWrapper.set(localDisposableWrapper)
@@ -50,19 +54,27 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
                             }
 
                             override fun onComplete() {
-                                val actualState = state.updateAndGet { previousState ->
-                                    if (previousState.innerObserver == this) previousState.copy(innerObserver = null) else previousState
-                                }
+                                val actualState = state
+                                    .updateAndGet { previousState ->
+                                        if (previousState.innerObserver == this) {
+                                            previousState.copy(innerObserver = null)
+                                        } else {
+                                            previousState
+                                        }
+                                    }
                                 checkStateFinished(actualState)
                             }
                         }
 
-                    state.update { previousState -> previousState.copy(innerObserver = innerObserver) }
+                    state.update { previousState ->
+                        previousState.copy(innerObserver = innerObserver)
+                    }
                     observable.subscribeSafe(innerObserver)
                 }
 
                 override fun onComplete() {
-                    val actualState = state.updateAndGet { previousState -> previousState.copy(isUpstreamCompleted = true) }
+                    val actualState =
+                        state.updateAndGet { previousState -> previousState.copy(isUpstreamCompleted = true) }
                     checkStateFinished(actualState)
                 }
 
@@ -82,7 +94,10 @@ private data class SwitchMapState(
     val isFinished: Boolean get() = isUpstreamCompleted && (innerObserver == null)
 }
 
-fun <T, U, R> Observable<T>.switchMap(mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
+fun <T, U, R> Observable<T>.switchMap(
+    mapper: (T) -> Observable<U>,
+    resultSelector: (T, U) -> R
+): Observable<R> =
     switchMap { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }

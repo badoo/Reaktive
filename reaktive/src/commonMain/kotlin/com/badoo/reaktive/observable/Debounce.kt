@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName")
+
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.subscribeSafe

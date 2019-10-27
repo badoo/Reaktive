@@ -12,5 +12,6 @@ actual class AtomicLong actual constructor(initialValue: Long) {
 
     actual fun addAndGet(delta: Long): Long = delegate.addAndGet(delta)
 
-    actual fun compareAndSet(expectedValue: Long, newValue: Long): Boolean = delegate.compareAndSet(expectedValue, newValue)
+    actual fun compareAndSet(expectedValue: Long, newValue: Long): Boolean =
+        delegate.compareAndSet(expectedValue, newValue)
 }

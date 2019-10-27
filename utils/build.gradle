@@ -1,4 +1,14 @@
 setupMultiplatformLibrary(project)
 setupAllTargetsWithDefaultSourceSets(project)
 
+kotlin {
+    sourceSets {
+        commonTest {
+            dependencies {
+                implementation project(':reaktive-testing')
+            }
+        }
+    }
+}
+
 apply plugin: PublishPlugin

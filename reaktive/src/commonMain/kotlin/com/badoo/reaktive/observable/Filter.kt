@@ -14,7 +14,7 @@ fun <T> Observable<T>.filter(predicate: (T) -> Boolean): Observable<T> =
                 }
 
                 override fun onNext(value: T) {
-                    emitter.tryCatch({ predicate(value) }) {
+                    emitter.tryCatch(block = { predicate(value) }) {
                         if (it) {
                             emitter.onNext(value)
                         }

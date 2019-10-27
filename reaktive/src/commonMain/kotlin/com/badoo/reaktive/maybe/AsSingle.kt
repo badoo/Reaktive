@@ -18,7 +18,9 @@ fun <T> Maybe<T>.asSingle(defaultValueSupplier: () -> T): Single<T> =
         observer.tryCatch(block = defaultValueSupplier, onSuccess = observer::onSuccess)
     }
 
-internal inline fun <T> Maybe<T>.asSingleOrAction(crossinline onComplete: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
+internal inline fun <T> Maybe<T>.asSingleOrAction(
+    crossinline onComplete: (emitter: SingleEmitter<T>) -> Unit
+): Single<T> =
     single { emitter ->
         subscribeSafe(
             object : MaybeObserver<T>, SingleCallbacks<T> by emitter {

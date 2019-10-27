@@ -8,7 +8,6 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.utils.handleSourceError
 
@@ -59,7 +58,7 @@ fun <T> Single<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Single<T> =
 
                 override fun onSuccess(value: T) {
                     if (!emitter.isDisposed) {
-                        emitter.tryCatch({ consumer(value) }) {
+                        emitter.tryCatch(block = { consumer(value) }) {
                             emitter.onSuccess(value)
                         }
                     }
@@ -114,7 +113,7 @@ fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
         observer.onSubscribe(disposables)
 
         disposables +=
-            disposable {
+            Disposable {
                 try {
                     action()
                 } catch (e: Throwable) {
@@ -138,7 +137,7 @@ fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
 
                 private inline fun onUpstreamFinished(block: () -> Unit) {
                     try {
-                        disposables.clear(dispose = false) // Prevent "action" from being called
+                        disposables.clear(false) // Prevent "action" from being called
                         block()
                     } finally {
                         disposables.dispose()
@@ -154,7 +153,7 @@ fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
         observer.onSubscribe(disposables)
 
         disposables +=
-            disposable {
+            Disposable {
                 try {
                     action()
                 } catch (e: Throwable) {
@@ -186,7 +185,7 @@ fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
 
                 private inline fun onUpstreamFinished(block: () -> Unit) {
                     try {
-                        disposables.clear(dispose = false) // Prevent "action" from being called while disposing
+                        disposables.clear(false) // Prevent "action" from being called while disposing
                         block()
                     } finally {
                         disposables.dispose()

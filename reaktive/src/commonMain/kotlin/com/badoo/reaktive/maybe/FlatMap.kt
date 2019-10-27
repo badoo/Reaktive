@@ -15,8 +15,8 @@ fun <T, R> Maybe<T>.flatMap(mapper: (T) -> Maybe<R>): Maybe<R> =
                 }
 
                 override fun onSuccess(value: T) {
-                    emitter.tryCatch({ mapper(value) }) {
-                        it.subscribeSafe(
+                    emitter.tryCatch {
+                        mapper(value).subscribe(
                             object : MaybeObserver<R>, Observer by this, MaybeCallbacks<R> by emitter {
                             }
                         )

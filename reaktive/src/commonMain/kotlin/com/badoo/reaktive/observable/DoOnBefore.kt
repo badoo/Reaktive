@@ -10,7 +10,6 @@ import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.utils.handleSourceError
 
@@ -59,7 +58,7 @@ fun <T> Observable<T>.doOnBeforeNext(consumer: (T) -> Unit): Observable<T> =
 
                 override fun onNext(value: T) {
                     if (!emitter.isDisposed) {
-                        emitter.tryCatch({ consumer(value) }) {
+                        emitter.tryCatch(block = { consumer(value) }) {
                             emitter.onNext(value)
                         }
                     }
@@ -131,7 +130,7 @@ fun <T> Observable<T>.doOnBeforeDispose(action: () -> Unit): Observable<T> =
         observer.onSubscribe(disposables)
 
         disposables +=
-            disposable {
+            Disposable {
                 try {
                     action()
                 } catch (e: Throwable) {
@@ -155,7 +154,7 @@ fun <T> Observable<T>.doOnBeforeDispose(action: () -> Unit): Observable<T> =
 
                 private inline fun onUpstreamFinished(block: () -> Unit) {
                     try {
-                        disposables.clear(dispose = false) // Prevent "action" from being called
+                        disposables.clear(false) // Prevent "action" from being called
                         block()
                     } finally {
                         disposables.dispose()
@@ -171,7 +170,7 @@ fun <T> Observable<T>.doOnBeforeFinally(action: () -> Unit): Observable<T> =
         observer.onSubscribe(disposables)
 
         disposables +=
-            disposable {
+            Disposable {
                 try {
                     action()
                 } catch (e: Throwable) {
@@ -203,7 +202,7 @@ fun <T> Observable<T>.doOnBeforeFinally(action: () -> Unit): Observable<T> =
 
                 private inline fun onUpstreamFinished(block: () -> Unit) {
                     try {
-                        disposables.clear(dispose = false) // Prevent "action" from being called while disposing
+                        disposables.clear(false) // Prevent "action" from being called while disposing
                         block()
                     } finally {
                         disposables.dispose()

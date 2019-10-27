@@ -10,6 +10,7 @@ actual fun createTrampolineScheduler(): Scheduler =
         }
     )
 
+@Suppress("EmptyWhileBlock")
 private fun busySleep(millis: Long) {
     val end = DefaultClock.uptimeMillis + millis
     while (DefaultClock.uptimeMillis < end) {

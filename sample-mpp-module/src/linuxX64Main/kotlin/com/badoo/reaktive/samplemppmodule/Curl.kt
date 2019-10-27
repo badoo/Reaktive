@@ -42,7 +42,12 @@ fun curl(url: String): ByteArray? {
     }
 }
 
-private fun writeCallback(buffer: CPointer<ByteVar>?, itemSize: size_t, itemCount: size_t, userData: COpaquePointer?): size_t {
+private fun writeCallback(
+    buffer: CPointer<ByteVar>?,
+    itemSize: size_t,
+    itemCount: size_t,
+    userData: COpaquePointer?
+): size_t {
     if (buffer == null) {
         return 0U
     }

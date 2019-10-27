@@ -1,11 +1,34 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.base.Observer
+import com.badoo.reaktive.base.subscribeSafe
+import com.badoo.reaktive.base.tryCatch
+import com.badoo.reaktive.completable.CompletableCallbacks
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.observable.flatMap
+import com.badoo.reaktive.observable.ObservableCallbacks
+import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.observable
 
 fun <T, R> Maybe<T>.flatMapObservable(mapper: (T) -> Observable<R>): Observable<R> =
-    asObservable().flatMap(mapper)
+    observable { emitter ->
+        subscribeSafe(
+            object : MaybeObserver<T>, CompletableCallbacks by emitter {
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                }
+
+                override fun onSuccess(value: T) {
+                    val innerObserver =
+                        object : ObservableObserver<R>, Observer by this, ObservableCallbacks<R> by emitter {
+                        }
+
+                    emitter.tryCatch(block = { mapper(value).subscribe(innerObserver) })
+                }
+            }
+        )
+    }
 
 fun <T, U, R> Maybe<T>.flatMapObservable(mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
     flatMapObservable { t ->

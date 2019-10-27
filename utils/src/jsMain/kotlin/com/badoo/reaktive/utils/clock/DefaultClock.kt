@@ -27,6 +27,6 @@ actual object DefaultClock : Clock {
         get() {
             val t = process.hrtime()
 
-            return ((t[0] as Int) * NANOS_IN_SECOND + t[1] as Int)
+            return (t[0] as Int) * NANOS_IN_SECOND + t[1] as Int
         }
 }

@@ -1,7 +1,6 @@
 package com.badoo.reaktive.coroutinesinterop
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.disposable
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -15,7 +14,7 @@ internal actual inline fun <T> launchCoroutine(
     crossinline onError: (Throwable) -> Unit,
     crossinline block: suspend CoroutineScope.() -> T
 ) {
-    val disposable = disposable()
+    val disposable = Disposable()
     setDisposable(disposable)
 
     try {
@@ -41,8 +40,10 @@ internal actual inline fun <T> launchCoroutine(
 private fun CoroutineScope.launchWatchdog(disposable: Disposable) {
     launch {
         while (!disposable.isDisposed) {
-            delay(100L)
+            delay(COROUTINE_DELAY_CHECK_MS)
         }
         this@launchWatchdog.cancel()
     }
 }
+
+private const val COROUTINE_DELAY_CHECK_MS = 100L

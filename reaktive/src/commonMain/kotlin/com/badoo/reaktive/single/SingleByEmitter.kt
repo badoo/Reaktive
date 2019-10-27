@@ -1,45 +1,26 @@
 package com.badoo.reaktive.single
 
-import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.base.DisposableEmitter
+import com.badoo.reaktive.base.tryCatch
+import com.badoo.reaktive.disposable.doIfNotDisposed
 
 fun <T> single(onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
     singleUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
         val emitter =
-            object : SingleEmitter<T> {
-                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
-
+            object : DisposableEmitter(), SingleEmitter<T> {
                 override fun onSuccess(value: T) {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onSuccess(value)
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
+                    doIfNotDisposed(dispose = true) {
+                        observer.onSuccess(value)
                     }
                 }
 
                 override fun onError(error: Throwable) {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onError(error)
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
+                    doIfNotDisposed(dispose = true) {
+                        observer.onError(error)
                     }
-                }
-
-                override fun setDisposable(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
                 }
             }
 
-        try {
-            onSubscribe(emitter)
-        } catch (e: Throwable) {
-            emitter.onError(e)
-        }
+        observer.onSubscribe(emitter)
+        emitter.tryCatch { onSubscribe(emitter) }
     }

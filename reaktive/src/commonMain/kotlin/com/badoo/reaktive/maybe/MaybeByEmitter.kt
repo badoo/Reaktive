@@ -1,55 +1,30 @@
 package com.badoo.reaktive.maybe
 
-import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.base.DisposableEmitter
+import com.badoo.reaktive.base.tryCatch
+import com.badoo.reaktive.disposable.doIfNotDisposed
 
 fun <T> maybe(onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
         val emitter =
-            object : MaybeEmitter<T> {
-                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
-
+            object : DisposableEmitter(), MaybeEmitter<T> {
                 override fun onSuccess(value: T) {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onSuccess(value)
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
+                    doIfNotDisposed(dispose = true) {
+                        observer.onSuccess(value)
                     }
                 }
 
                 override fun onComplete() {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onComplete()
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
-                    }
+                    doIfNotDisposed(dispose = true, block = observer::onComplete)
                 }
 
                 override fun onError(error: Throwable) {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onError(error)
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
+                    doIfNotDisposed(dispose = true) {
+                        observer.onError(error)
                     }
-                }
-
-                override fun setDisposable(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
                 }
             }
 
-        try {
-            onSubscribe(emitter)
-        } catch (e: Throwable) {
-            emitter.onError(e)
-        }
+        observer.onSubscribe(emitter)
+        emitter.tryCatch { onSubscribe(emitter) }
     }

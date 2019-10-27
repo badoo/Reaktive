@@ -55,7 +55,12 @@ internal class ExecutorServiceScheduler(
 
         override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
             executeIfNotRecycled {
-                it.scheduleAtFixedRate(wrapSchedulerTaskSafe(task), startDelayMillis, periodMillis, TimeUnit.MILLISECONDS)
+                it.scheduleAtFixedRate(
+                    wrapSchedulerTaskSafe(task),
+                    startDelayMillis,
+                    periodMillis,
+                    TimeUnit.MILLISECONDS
+                )
             }
                 ?.toDisposable()
                 ?.also(disposables::add)
