@@ -32,11 +32,11 @@ internal class BodyObservable<T>(private val upstream: Observable<Response<T>>) 
         }
 
         override fun onComplete() {
-            if (terminated.not()) observer.onComplete()
+            if (!terminated) observer.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            if (terminated.not()) observer.onError(error)
+            if (!terminated) observer.onError(error)
         }
     }
 }

@@ -18,17 +18,17 @@ internal class CallExecuteObservable<T>(private val originalCall: Call<T>) : Obs
         var terminated = false
         try {
             val response = call.execute()
-            if (disposable.isDisposed.not())
+            if (!disposable.isDisposed)
                 observer.onNext(response)
 
-            if (disposable.isDisposed.not()) {
+            if (!disposable.isDisposed) {
                 terminated = true
                 observer.onComplete()
             }
 
         } catch (t: Throwable) {
 
-            if (terminated.not() && disposable.isDisposed.not())
+            if (!terminated && !disposable.isDisposed)
                 observer.onError(t)
 
         }
