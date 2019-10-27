@@ -18,6 +18,7 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.Test
 import retrofit2.HttpException
 import retrofit2.Retrofit
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 
 @Suppress("USELESS_IS_CHECK")
@@ -43,7 +44,7 @@ internal class ReaktiveCallAdapterFactoryTest {
     private val testApi: TestApi = Retrofit.Builder()
         .baseUrl(server.url("/"))
         .addCallAdapterFactory(ReaktiveCallAdapterFactory())
-        .addConverterFactory(StringConverterFactory())
+        .addConverterFactory(ScalarsConverterFactory.create())
         .build()
         .create(TestApi::class.java)
 

@@ -21,6 +21,7 @@ dependencies {
 
     testImplementation project(':reaktive-testing')
     testImplementation Deps.mockwebserver
+    testImplementation Deps.converterScalars
 }
 
 apply plugin: PublishPlugin

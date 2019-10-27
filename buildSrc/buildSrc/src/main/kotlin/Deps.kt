@@ -12,6 +12,7 @@ object Deps {
     val bintray = "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
     val detekt = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.1.0"
     val retrofit = "com.squareup.retrofit2:retrofit:2.6.2"
+    val converterScalars = "com.squareup.retrofit2:converter-scalars:2.6.2"
     val mockwebserver = "com.squareup.okhttp3:mockwebserver:3.14.4"
 
     object Kotlin {
