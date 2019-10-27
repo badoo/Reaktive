@@ -1,9 +1,10 @@
 package com.badoo.reaktive.retrofit
 
-import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.observable.asCompletable
-import com.badoo.reaktive.observable.firstOrComplete
-import com.badoo.reaktive.observable.firstOrError
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.asCompletable
+import com.badoo.reaktive.single.asMaybe
+import com.badoo.reaktive.single.asObservable
+import com.badoo.reaktive.single.observeBody
 import retrofit2.Call
 import retrofit2.CallAdapter
 import java.lang.reflect.Type
@@ -21,16 +22,16 @@ internal class ReaktiveCallAdapter(
     }
 
     override fun adapt(call: Call<Any>): Any {
-        val responseObservable = CallExecuteObservable(call)
+        val responseSingle = call.asSingle()
 
-        val observable: Observable<*> = if (isBody) BodyObservable(responseObservable)
-        else responseObservable
+        val single: Single<*> = if (isBody) responseSingle.observeBody()
+        else responseSingle
 
         return when {
-            isSingle -> observable.firstOrError()
-            isMaybe -> observable.firstOrComplete()
-            isCompletable -> observable.asCompletable()
-            else -> observable
+            isSingle -> single
+            isMaybe -> single.asMaybe()
+            isCompletable -> single.asCompletable()
+            else -> single.asObservable()
         }
     }
 }
