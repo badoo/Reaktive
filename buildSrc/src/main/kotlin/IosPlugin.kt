@@ -94,8 +94,14 @@ abstract class IosPlugin : Plugin<Project> {
         open fun runTest() {
             val files = testExecutables.filter { it.exists() }.files.toTypedArray()
             if (files.isNotEmpty()) {
-                project.exec {
-                    commandLine("xcrun", "simctl", "spawn", "iPhone X", *files)
+                val bootResult = project.exec { commandLine("xcrun", "simctl", "boot", "iPhone 8") }
+                try {
+                    val spawnResult = project.exec { commandLine("xcrun", "simctl", "spawn", "iPhone 8", *files) }
+                    spawnResult.assertNormalExitValue()
+                } finally {
+                    if (bootResult.exitValue == 0) {
+                        project.exec { commandLine("xcrun", "simctl", "shutdown", "iPhone 8") }
+                    }
                 }
             } else {
                 logger.error("No test executable for iOS")
