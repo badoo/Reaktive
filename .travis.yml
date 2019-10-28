@@ -14,10 +14,12 @@ matrix:
           - build-tools-28.0.3
           - android-28
       env: MP_TARGET=COMMON
+      script: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build rxjava2-interop:build rxjava3-interop:build coroutines-interop:build :sample-android-app:assembleDebug :sample-js-browser-app:assemble :sample-linuxx64-app:linkDebugExecutableLinux -DMP_TARGET=$MP_TARGET
     - os: osx
       osx_image: xcode10.2
       language: java
       env: MP_TARGET=IOS
+      script: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build buildIosSample -DMP_TARGET=$MP_TARGET
     - os: linux
       language: android
       android:
@@ -25,10 +27,8 @@ matrix:
           - build-tools-28.0.3
           - android-28
       env: MP_TARGET=META
-before_install: true
-install: true
-before_script: true
-script: true
+      script: true
+install: echo 'org.gradle.jvmargs=-Xmx4g -XX:MaxPermSize=1g -Dkotlin.compiler.execution.strategy="in-process"' >> gradle.properties
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -39,9 +39,9 @@ cache:
     - $HOME/.gradle/nodejs/
     - $HOME/.gradle/yarn/
     - build/js/node_modules
-deploy:
-  skip_cleanup: true
-  provider: script
-  script: ./gradlew bintrayUpload -DMP_TARGET=$MP_TARGET -Pbintray_user=$BINTRAY_USER -Pbintray_key=$BINTRAY_KEY
-  on:
-    tags: true
+#deploy:
+  #skip_cleanup: true
+  #provider: script
+  #script: ./gradlew bintrayUpload -DMP_TARGET=$MP_TARGET -Pbintray_user=$BINTRAY_USER -Pbintray_key=$BINTRAY_KEY
+  #on:
+    #tags: true
