@@ -55,7 +55,7 @@ fun Completable.doOnBeforeComplete(action: () -> Unit): Completable =
                 }
 
                 override fun onComplete() {
-                    tryCatch(action) {
+                    emitter.tryCatch(action) {
                         emitter.onComplete()
                     }
                 }

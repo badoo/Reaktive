@@ -82,7 +82,7 @@ fun <T> Maybe<T>.doOnBeforeComplete(action: () -> Unit): Maybe<T> =
                 }
 
                 override fun onComplete() {
-                    tryCatch(action) {
+                    emitter.tryCatch(action) {
                         emitter.onComplete()
                     }
                 }
