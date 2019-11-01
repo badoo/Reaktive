@@ -23,6 +23,11 @@ val ioScheduler: Scheduler get() = ioSchedulerFactory.value.value
  */
 val trampolineScheduler: Scheduler get() = trampolineSchedulerFactory.value.value
 
+/**
+ * Provides the global instance of Single [Scheduler]
+ */
+val singleScheduler: Scheduler get() = singleSchedulerFactory.value.value
+
 @SharedImmutable
 private val mainSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
     AtomicReference(lazy(::createMainScheduler))
@@ -38,6 +43,10 @@ private val ioSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
 @SharedImmutable
 private val trampolineSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
     AtomicReference(lazy(::createTrampolineScheduler))
+
+@SharedImmutable
+private val singleSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
+    AtomicReference(lazy(::createSingleScheduler))
 
 /**
  * Creates a new instance of Main [Scheduler]
@@ -60,21 +69,29 @@ expect fun createComputationScheduler(): Scheduler
 expect fun createTrampolineScheduler(): Scheduler
 
 /**
+ * Creates a new instance of Trampoline [Scheduler]
+ */
+expect fun createSingleScheduler(): Scheduler
+
+/**
  * Overrides [Scheduler]s if they were not created yet
  *
  * @param main a factory for Main [Scheduler], if not set then default factory will be used
  * @param computation a factory for Computation [Scheduler], if not set then default factory will be used
  * @param io a factory for IO [Scheduler], if not set then default factory will be used
  * @param trampoline a factory for Trampoline [Scheduler], if not set then default factory will be used
+ * @param single a factory for Single [Scheduler], if not set then default factory will be used
  */
 fun overrideSchedulers(
     main: () -> Scheduler = ::createMainScheduler,
     computation: () -> Scheduler = ::createComputationScheduler,
     io: () -> Scheduler = ::createIoScheduler,
-    trampoline: () -> Scheduler = ::createTrampolineScheduler
+    trampoline: () -> Scheduler = ::createTrampolineScheduler,
+    single: () -> Scheduler = ::createSingleScheduler
 ) {
     mainSchedulerFactory.value = lazy(main)
     computationSchedulerFactory.value = lazy(computation)
     ioSchedulerFactory.value = lazy(io)
     trampolineSchedulerFactory.value = lazy(trampoline)
+    singleSchedulerFactory.value = lazy(single)
 }
