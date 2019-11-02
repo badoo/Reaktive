@@ -62,5 +62,4 @@ abstract class JsPlugin : Plugin<Project> {
 
         const val TARGET_NAME_JS = "js"
     }
-
 }
