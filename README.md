@@ -1,7 +1,7 @@
 # <img src="https://raw.githubusercontent.com/badoo/Reaktive/master/assets/logo_reaktive.png" height="36">
 
 [![Download](https://api.bintray.com/packages/badoo/maven/reaktive/images/download.svg)](https://bintray.com/badoo/maven/reaktive/_latestVersion)
-[![Build Status](https://travis-ci.org/badoo/Reaktive.svg?branch=master)](https://travis-ci.org/badoo/Reaktive)
+[![Build Status](https://github.com/badoo/Reaktive/workflows/Build/badge.svg?branch=master)](https://github.com/badoo/Reaktive/actions)
 [![License](https://img.shields.io/badge/License-Apache/2.0-blue.svg)](https://github.com/badoo/Reaktive/blob/master/LICENSE)
 
 Kotlin multiplatform implementation of Reactive Extensions.
@@ -73,7 +73,7 @@ implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
 ```
 
 #### Typical dependencies configuration for MPP module (metadata mode)
-```
+```groovy
 kotlin {
     sourceSets {
         commonMain {
@@ -124,7 +124,7 @@ Sometimes freezing is not acceptable, e.g. we might want to load some data in ba
 Obviously UI can not be frozen. With Reaktive it is possible to achieve such a behaviour in two ways:
 
 Use `threadLocal` operator:
-```
+```kotlin
 val values = mutableListOf<Any>()
 var isFinished = false
 
@@ -140,7 +140,7 @@ observable<Any> { emitter ->
 ```
 
 Set `isThreadLocal` flag to `true` in `subscribe` operator:
-```
+```kotlin
 val values = mutableListOf<Any>()
 var isComplete = false
 
