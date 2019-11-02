@@ -76,7 +76,7 @@ fun <T> Observable<T>.doOnBeforeComplete(action: () -> Unit): Observable<T> =
                 }
 
                 override fun onComplete() {
-                    tryCatch(action) {
+                    emitter.tryCatch(action) {
                         emitter.onComplete()
                     }
                 }
