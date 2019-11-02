@@ -8,13 +8,7 @@ import com.badoo.reaktive.utils.freeze
 class TestSingleObserver<T>(autoFreeze: Boolean = true) : TestObserver(), SingleObserver<T> {
 
     private val _value = AtomicReference<Value<T>?>(null)
-
-    val value: T
-        get() {
-            assertSuccess()
-            return _value.value!!.value
-        }
-
+    val value: T get() = _value.value!!.value
     val isSuccess: Boolean get() = _value.value != null
 
     init {

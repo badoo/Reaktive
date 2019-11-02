@@ -1,15 +1,17 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.exceptions.CompositeException
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -49,7 +51,7 @@ class RetryTest : ObservableToObservableTests by ObservableToObservableTests<Uni
         val observer = upstream.retry { _, _ -> false }.test()
         val throwable = Throwable()
         upstream.onError(throwable)
-        assertSame(observer.error, throwable)
+        observer.assertError(throwable)
     }
 
     @Test
@@ -57,7 +59,7 @@ class RetryTest : ObservableToObservableTests by ObservableToObservableTests<Uni
         val observer = upstream.retry().test()
         upstream.onError(Throwable())
         upstream.onComplete()
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -65,7 +67,7 @@ class RetryTest : ObservableToObservableTests by ObservableToObservableTests<Uni
         val observer = upstream.retry().test()
         upstream.onError(Throwable())
         upstream.onNext(1, null)
-        assertEquals(listOf(1, null), observer.values)
+        observer.assertValues(1, null)
     }
 
     @Test

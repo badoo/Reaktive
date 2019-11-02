@@ -1,14 +1,15 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.exceptions.CompositeException
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.single.TestSingle
+import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -48,7 +49,7 @@ class RetryTest : SingleToSingleTests by SingleToSingleTests({ retry() }) {
         val observer = upstream.retry { _, _ -> false }.test()
         val throwable = Throwable()
         upstream.onError(throwable)
-        assertSame(observer.error, throwable)
+        observer.assertError(throwable)
     }
 
     @Test
@@ -56,7 +57,7 @@ class RetryTest : SingleToSingleTests by SingleToSingleTests({ retry() }) {
         val observer = upstream.retry().test()
         upstream.onError(Throwable())
         upstream.onSuccess(1)
-        assertEquals(1, observer.value)
+        observer.assertSuccess(1)
     }
 
     @Test
