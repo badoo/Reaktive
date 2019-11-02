@@ -42,6 +42,6 @@ class TestObservableObserver<T>(autoFreeze: Boolean = true) : TestObserver(), Ob
     override fun checkActive() {
         super.checkActive()
 
-        check(!isComplete) { "Already complete" }
+        check(!isComplete) { "Already completed" }
     }
 }

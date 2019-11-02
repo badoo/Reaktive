@@ -6,38 +6,36 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-val TestObserver.isError: Boolean get() = error != null
-
 fun TestObserver.assertError() {
-    assertTrue(isError)
+    assertTrue(isError, "Source did not fail")
 }
 
 fun TestObserver.assertError(expectedError: Throwable) {
-    assertEquals(expectedError, error)
+    assertEquals(expectedError, error, "Source error does not match")
 }
 
 fun TestObserver.assertError(predicate: (Throwable) -> Boolean) {
-    val error = this.error
-    assertNotNull(error)
-    assertTrue(predicate(error))
+    assertError()
+    val error = this.error!!
+    assertTrue(predicate(error), "Source error does not match the predicate: $error")
 }
 
 fun TestObserver.assertNotError() {
-    assertFalse(isError)
+    assertFalse(isError, "Source failed")
 }
 
 fun TestObserver.assertSubscribed() {
-    assertNotNull(disposable)
+    assertNotNull(disposable, "Source is not subscribed")
 }
 
 fun TestObserver.assertNotSubscribed() {
-    assertNull(disposable)
+    assertNull(disposable, "Source is subscribed")
 }
 
 fun TestObserver.assertDisposed() {
-    assertTrue(isDisposed)
+    assertTrue(isDisposed, "Source is not disposed")
 }
 
 fun TestObserver.assertNotDisposed() {
-    assertFalse(isDisposed)
+    assertFalse(isDisposed, "Source is disposed")
 }
