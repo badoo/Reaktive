@@ -14,7 +14,7 @@ internal actual inline fun <T> launchCoroutine(
     crossinline block: suspend CoroutineScope.() -> T
 ) {
     GlobalScope
-        .launch(Dispatchers.Unconfined) outer@{
+        .launch(Dispatchers.Unconfined) {
             try {
                 onSuccess(block())
             } catch (ignored: CancellationException) {
