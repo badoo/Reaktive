@@ -1,5 +1,6 @@
 package com.badoo.reaktive.base
 
+@PublishedApi
 internal inline fun <T> ErrorCallback.tryCatch(
     block: () -> T,
     errorTransformer: (Throwable) -> Throwable = { it },
@@ -14,6 +15,7 @@ internal inline fun <T> ErrorCallback.tryCatch(
         .also(onSuccess)
 }
 
+@PublishedApi
 internal inline fun ErrorCallback.tryCatch(
     errorTransformer: (Throwable) -> Throwable = { it },
     block: () -> Unit

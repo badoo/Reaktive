@@ -2,18 +2,18 @@ package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.DisposableEmitter
 import com.badoo.reaktive.base.tryCatch
-import com.badoo.reaktive.disposable.doIfNotDisposed
+import com.badoo.reaktive.disposable.doIfNotDisposedAndDispose
 
-fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable =
+inline fun completable(crossinline onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable =
     completableUnsafe { observer ->
         val emitter =
             object : DisposableEmitter(), CompletableEmitter {
                 override fun onComplete() {
-                    doIfNotDisposed(dispose = true, block = observer::onComplete)
+                    doIfNotDisposedAndDispose(observer::onComplete)
                 }
 
                 override fun onError(error: Throwable) {
-                    doIfNotDisposed(dispose = true) {
+                    doIfNotDisposedAndDispose {
                         observer.onError(error)
                     }
                 }

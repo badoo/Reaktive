@@ -20,7 +20,7 @@ fun <T, R> Observable<T>.concatMap(mapper: (T) -> Observable<R>): Observable<R> 
 
         subscribeSafe(
             object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
-                val mappedObserver =
+                val mappedObserver: ObservableObserver<R> =
                     object : ObservableObserver<R>, Observer by this, ObservableCallbacks<R> by serializedEmitter {
                         override fun onComplete() {
                             val oldState =

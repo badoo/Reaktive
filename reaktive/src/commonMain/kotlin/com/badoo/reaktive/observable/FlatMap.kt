@@ -17,7 +17,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
             object : CompositeDisposableObserver(), ObservableObserver<T>, ErrorCallback by serializedEmitter {
                 private val activeSourceCount = AtomicInt(1)
 
-                private val mappedObserver =
+                private val mappedObserver: ObservableObserver<R> =
                     object : ObservableObserver<R>, Observer by this, CompletableCallbacks by this,
                         ValueCallback<R> by serializedEmitter {
                     }

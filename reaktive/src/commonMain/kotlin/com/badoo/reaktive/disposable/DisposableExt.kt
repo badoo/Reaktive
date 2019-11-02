@@ -23,3 +23,14 @@ internal inline fun Disposable.doIfNotDisposed(dispose: Boolean = false, block: 
         }
     }
 }
+
+@PublishedApi
+internal inline fun Disposable.doIfNotDisposedAndDispose(block: () -> Unit) {
+    if (!isDisposed) {
+        try {
+            block()
+        } finally {
+            dispose()
+        }
+    }
+}
