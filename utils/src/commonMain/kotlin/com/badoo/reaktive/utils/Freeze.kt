@@ -1,7 +1,8 @@
 package com.badoo.reaktive.utils
 
-expect fun <T> T.freeze(): T
+expect inline fun <T> T.freeze(): T
 
-expect fun <T: Any> T.ensureNeverFrozen(): T
+expect inline fun <T: Any> T.ensureNeverFrozen(): T
 
-expect val Any?.isFrozen: Boolean
+// Uncomment when KT-31464 will be fixed.
+expect /*inline*/ val Any?.isFrozen: Boolean
