@@ -2,7 +2,6 @@ package com.badoo.reaktive.base
 
 import com.badoo.reaktive.utils.handleSourceError
 
-@PublishedApi
 internal inline fun <T> ErrorCallback.tryCatch(
     block: () -> T,
     errorTransformer: (Throwable) -> Throwable = { it },
