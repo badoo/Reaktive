@@ -29,7 +29,7 @@ class ReaktiveCallAdapterFactory private constructor(private val scheduler: Sche
     override fun get(returnType: Type, annotations: Array<Annotation>, retrofit: Retrofit): CallAdapter<*, *>? {
 
         val rawType = getRawType(returnType)
-        val isBody = rawType.isBodyType()
+        val isBody = returnType.isBodyType()
 
         return when(rawType) {
             Single::class.java -> callAdapter(returnType.getResponseType()) { call -> call.asSingle(scheduler).transformToBody(isBody) }
