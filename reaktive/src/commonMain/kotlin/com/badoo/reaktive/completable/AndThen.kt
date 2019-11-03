@@ -13,7 +13,7 @@ import com.badoo.reaktive.single.flatMapObservable
 
 fun Completable.andThen(completable: Completable): Completable =
     completable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : CompletableObserver, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

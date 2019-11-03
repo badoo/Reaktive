@@ -8,7 +8,7 @@ import com.badoo.reaktive.disposable.Disposable
 
 fun <T> Maybe<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Maybe<T> =
     maybe { emitter ->
-        subscribeSafe(
+        subscribe(
             object : MaybeObserver<T>, SuccessCallback<T> by emitter, CompleteCallback by emitter {
                 private val retry = Retry(emitter, predicate)
 

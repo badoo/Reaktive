@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.clock.Clock
@@ -10,7 +9,7 @@ fun <T> Observable<T>.throttle(windowMillis: Long): Observable<T> = throttle(win
 
 internal fun <T> Observable<T>.throttle(windowMillis: Long, clock: Clock): Observable<T> =
     observable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ObservableCallbacks<T> by emitter {
                 private val lastTime = AtomicLong(-windowMillis)
 

@@ -15,7 +15,7 @@ fun <T> Observable<T>.switchIfEmpty(otherObservable: () -> Observable<T>): Obser
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ErrorCallback by emitter {
                 private val isEmpty = AtomicBoolean(true)
 

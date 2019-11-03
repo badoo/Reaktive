@@ -3,7 +3,6 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.CompositeDisposableObserver
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.SingleObserver
@@ -40,7 +39,7 @@ fun <T, R> Observable<T>.flatMapSingle(mapper: (T) -> Single<R>): Observable<R> 
 
         emitter.setDisposable(upstreamObserver)
 
-        subscribeSafe(upstreamObserver)
+        subscribe(upstreamObserver)
     }
 
 fun <T, U, R> Observable<T>.flatMapSingle(mapper: (T) -> Single<U>, resultSelector: (T, U) -> R): Observable<R> =

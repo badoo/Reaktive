@@ -2,7 +2,6 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.completable.CompletableCallbacks
@@ -19,7 +18,7 @@ fun <T> Observable<T>.flatMapCompletable(mapper: (T) -> Completable): Completabl
         emitter.setDisposable(disposables)
         val serializedEmitter = emitter.serialize()
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
                 private val activeSourceCount = AtomicInt(1)
 

@@ -22,7 +22,7 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
         val state = AtomicReference(SwitchMapState())
         val serializedEmitter = emitter.serialize()
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable

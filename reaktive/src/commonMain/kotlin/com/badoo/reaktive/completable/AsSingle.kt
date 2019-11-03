@@ -1,7 +1,6 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.base.ErrorCallback
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.single.Single
@@ -22,7 +21,7 @@ private inline fun <T> Completable.asSingleOrAction(
     crossinline onComplete: (observer: SingleEmitter<T>) -> Unit
 ): Single<T> =
     single { emitter ->
-        subscribeSafe(
+        subscribe(
             object : CompletableObserver, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

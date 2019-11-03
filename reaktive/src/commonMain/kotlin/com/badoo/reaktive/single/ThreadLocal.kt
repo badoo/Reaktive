@@ -1,7 +1,6 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.exceptions.CompositeException
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.ThreadLocalStorage
@@ -14,7 +13,7 @@ fun <T> Single<T>.threadLocal(): Single<T> =
         val emitterStorage = ThreadLocalStorage(it)
         disposables += emitterStorage
 
-        subscribeSafe(
+        subscribe(
             object : SingleObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable

@@ -1,14 +1,13 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.ErrorCallback
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observable
 
 fun <T> Single<T>.asObservable(): Observable<T> =
     observable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : SingleObserver<T>, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

@@ -1,11 +1,9 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.Uninitialized
-import com.badoo.reaktive.utils.atomic.AtomicReference
 
 fun <T> Observable<T>.distinctUntilChanged(comparator: (T, T) -> Boolean = ::equals): Observable<T> =
     distinctUntilChanged({ it }, comparator)
@@ -15,7 +13,7 @@ fun <T, R> Observable<T>.distinctUntilChanged(
     comparator: (R, R) -> Boolean = ::equals
 ): Observable<T> =
     observable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
                 val cache = ObjectReference<Any?>(Uninitialized)
 
