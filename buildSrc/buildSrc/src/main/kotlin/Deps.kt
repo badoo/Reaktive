@@ -6,11 +6,13 @@ object Deps {
     val kotlin = Kotlin
     val kotlinx = Kotlinx
     val android = Android
+    val jmh = Jmh
     val rxjava2 = "io.reactivex.rxjava2:rxjava:2.2.7"
     val rxjava3 = "io.reactivex.rxjava3:rxjava:3.0.0-RC3"
     val picasso = "com.squareup.picasso:picasso:2.71828"
     val bintray = "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
     val detekt = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.1.0"
+    val shadow = "com.github.jengelman.gradle.plugins:shadow:5.1.0"
     val retrofit = "com.squareup.retrofit2:retrofit:2.6.2"
     val converterScalars = "com.squareup.retrofit2:converter-scalars:2.6.2"
     val mockwebserver = "com.squareup.okhttp3:mockwebserver:3.14.4"
@@ -66,5 +68,10 @@ object Deps {
             const val exifinterface = "com.android.support:exifinterface:28.0.0"
             const val constraintLayout = "com.android.support.constraint:constraint-layout:1.1.3"
         }
+    }
+
+    object Jmh {
+        const val plugin = "me.champeau.gradle:jmh-gradle-plugin:0.5.0-rc-2"
+        const val core = "org.openjdk.jmh:jmh-core:1.21"
     }
 }

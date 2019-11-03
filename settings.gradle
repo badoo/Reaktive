@@ -9,6 +9,7 @@ include ':reaktive-annotations'
 include ':utils'
 include ':coroutines-interop'
 include ':sample-mpp-module'
+include ':benchmarks:jmh'
 if (target.isCommon()) {
     include ':sample-android-app'
     include ':sample-js-browser-app'

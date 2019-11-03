@@ -7,6 +7,7 @@ internal class ArrayQueue<T> : Queue<T> {
     private var tail = 0
     private var isFull = false
     override val peek: T? get() = queue[head]
+    override val isEmpty: Boolean get() = head == tail
 
     override val size: Int
         get() =
