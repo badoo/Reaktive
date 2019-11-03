@@ -1,7 +1,7 @@
 PODS:
-  - Alamofire (5.0.0-rc.2)
-  - AlamofireImage (4.0.0-beta.5):
-    - Alamofire (~> 5.0.0-rc.2)
+  - Alamofire (5.0.0-rc.3)
+  - AlamofireImage (4.0.0-beta.6):
+    - Alamofire (~> 5.0.0-rc.3)
 
 DEPENDENCIES:
   - Alamofire (~> 5.0.0-beta.7)
@@ -13,8 +13,8 @@ SPEC REPOS:
     - AlamofireImage
 
 SPEC CHECKSUMS:
-  Alamofire: f9450d3c7f6bea2ad62e7a541c3e9b186c7991d6
-  AlamofireImage: f6dfe201f6d59cc6a045b5cb228b58962b8ef31d
+  Alamofire: ca8c0de6906873be89d6deec5c8de279e00bf872
+  AlamofireImage: edf3216fd178a89d63e681e609909d7ac98fa3c6
 
 PODFILE CHECKSUM: feb97d3f82af479e230e040613030187ea255ad2
 

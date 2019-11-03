@@ -1,4 +1,4 @@
-Before opening Xcode build native library with command `./gradlew sample-mpp-module:iosSimMainBinaries`
+Before opening Xcode build native library with command `./gradlew sample-mpp-module:fatDebug sample-mpp-module:fatRelease`
 and install all required Pod dependencies via `pod install`.
 
 See [Multiplatform Project: iOS and Android](https://kotlinlang.org/docs/tutorials/native/mpp-ios-android.html)
