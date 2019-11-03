@@ -3,7 +3,6 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.CompositeDisposableObserver
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.maybe.Maybe
@@ -41,7 +40,7 @@ fun <T, R> Observable<T>.flatMapMaybe(mapper: (T) -> Maybe<R>): Observable<R> =
 
         emitter.setDisposable(upstreamObserver)
 
-        subscribeSafe(upstreamObserver)
+        subscribe(upstreamObserver)
     }
 
 fun <T, U, R> Observable<T>.flatMapMaybe(mapper: (T) -> Maybe<U>, resultSelector: (T, U) -> R): Observable<R> =

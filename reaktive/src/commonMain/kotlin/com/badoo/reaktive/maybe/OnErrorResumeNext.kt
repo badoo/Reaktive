@@ -10,7 +10,7 @@ import com.badoo.reaktive.disposable.Disposable
 
 fun <T> Maybe<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Maybe<T>): Maybe<T> =
     maybe { emitter ->
-        subscribeSafe(
+        subscribe(
             object : MaybeObserver<T>, SuccessCallback<T> by emitter, CompleteCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

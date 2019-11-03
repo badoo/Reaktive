@@ -4,7 +4,6 @@ import com.badoo.reaktive.base.CompositeDisposableObserver
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.base.ValueCallback
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.utils.atomic.AtomicInt
@@ -36,7 +35,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
 
         emitter.setDisposable(upstreamObserver)
 
-        subscribeSafe(upstreamObserver)
+        subscribe(upstreamObserver)
     }
 
 fun <T, U, R> Observable<T>.flatMap(mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
