@@ -205,6 +205,6 @@ import tasks.BuildIosSampleTask
 
 if (Target.currentTarget().isIos()) {
     tasks.register('buildIosSample', BuildIosSampleTask) {
-        dependsOn ':sample-mpp-module:linkReleaseFrameworkIosSim'
+        dependsOn ':sample-mpp-module:fatDebug', ':sample-mpp-module:fatRelease'
     }
 }
