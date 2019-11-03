@@ -40,7 +40,7 @@ fun <T, U, R> Observable<T>.withLatestFrom(
             )
         }
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable

@@ -48,7 +48,7 @@ fun Completable.doOnBeforeSubscribe(action: (Disposable) -> Unit): Completable =
 
 fun Completable.doOnBeforeComplete(action: () -> Unit): Completable =
     completable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : CompletableObserver, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -65,7 +65,7 @@ fun Completable.doOnBeforeComplete(action: () -> Unit): Completable =
 
 fun Completable.doOnBeforeError(consumer: (Throwable) -> Unit): Completable =
     completable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : CompletableObserver, CompleteCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -82,7 +82,7 @@ fun Completable.doOnBeforeError(consumer: (Throwable) -> Unit): Completable =
 
 fun Completable.doOnBeforeTerminate(action: () -> Unit): Completable =
     completable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : CompletableObserver {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

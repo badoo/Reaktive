@@ -7,7 +7,7 @@ import com.badoo.reaktive.disposable.Disposable
 
 fun <T> Single<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Single<T> =
     single { emitter ->
-        subscribeSafe(
+        subscribe(
             object : SingleObserver<T>, SuccessCallback<T> by emitter {
                 private val retry = Retry(emitter, predicate)
 

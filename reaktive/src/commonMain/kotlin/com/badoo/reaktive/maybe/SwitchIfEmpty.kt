@@ -10,7 +10,7 @@ import com.badoo.reaktive.single.asMaybe
 
 fun <T> Maybe<T>.switchIfEmpty(other: Maybe<T>): Maybe<T> =
     maybe { emitter ->
-        subscribeSafe(
+        subscribe(
             object : MaybeObserver<T>, SuccessCallback<T> by emitter, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

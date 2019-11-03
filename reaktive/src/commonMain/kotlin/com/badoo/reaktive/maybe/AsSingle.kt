@@ -1,6 +1,5 @@
 package com.badoo.reaktive.maybe
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.single.Single
@@ -22,7 +21,7 @@ internal inline fun <T> Maybe<T>.asSingleOrAction(
     crossinline onComplete: (emitter: SingleEmitter<T>) -> Unit
 ): Single<T> =
     single { emitter ->
-        subscribeSafe(
+        subscribe(
             object : MaybeObserver<T>, SingleCallbacks<T> by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

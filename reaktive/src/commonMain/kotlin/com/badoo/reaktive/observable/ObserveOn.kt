@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.scheduler.BufferedExecutor
@@ -14,7 +13,7 @@ fun <T> Observable<T>.observeOn(scheduler: Scheduler): Observable<T> =
         val executor = scheduler.newExecutor()
         disposables += executor
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T> {
                 private val bufferedExecutor = BufferedExecutor(executor, emitter::onNext)
 

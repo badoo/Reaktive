@@ -2,7 +2,6 @@ package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
@@ -13,7 +12,7 @@ import com.badoo.reaktive.observable.observable
 
 fun <T, R> Single<T>.flatMapObservable(mapper: (T) -> Observable<R>): Observable<R> =
     observable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : SingleObserver<T>, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
