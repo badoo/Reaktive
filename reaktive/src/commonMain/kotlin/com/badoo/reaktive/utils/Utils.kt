@@ -4,6 +4,7 @@ package com.badoo.reaktive.utils
 
 import com.badoo.reaktive.base.exceptions.CompositeException
 
+@PublishedApi
 internal fun handleSourceError(error: Throwable, onError: ((Throwable) -> Unit)? = null) {
     try {
         if (onError == null) {
