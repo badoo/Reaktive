@@ -42,7 +42,7 @@ internal class ReaktiveCallAdapterFactoryTest {
 
     private val testApi: TestApi = Retrofit.Builder()
         .baseUrl(server.url("/"))
-        .addCallAdapterFactory(ReaktiveCallAdapterFactory())
+        .addCallAdapterFactory(ReaktiveCallAdapterFactory.create())
         .addConverterFactory(ScalarsConverterFactory.create())
         .build()
         .create(TestApi::class.java)

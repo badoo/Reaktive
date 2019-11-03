@@ -3,6 +3,7 @@ package com.badoo.reaktive.retrofit
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.asCompletable
 import com.badoo.reaktive.single.asMaybe
@@ -14,7 +15,16 @@ import retrofit2.Retrofit
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-class ReaktiveCallAdapterFactory : CallAdapter.Factory() {
+class ReaktiveCallAdapterFactory private constructor(private val scheduler: Scheduler?): CallAdapter.Factory() {
+
+    companion object {
+
+        @JvmStatic
+        fun create() = ReaktiveCallAdapterFactory(null)
+
+        @JvmStatic
+        fun createWithScheduler(scheduler: Scheduler) = ReaktiveCallAdapterFactory(scheduler)
+    }
 
     override fun get(returnType: Type, annotations: Array<Annotation>, retrofit: Retrofit): CallAdapter<*, *>? {
 
@@ -22,10 +32,10 @@ class ReaktiveCallAdapterFactory : CallAdapter.Factory() {
         val isBody = rawType.isBodyType()
 
         return when(rawType) {
-            Single::class.java -> callAdapter(returnType.getResponseType()) { call -> call.asSingle().transformToBody(isBody) }
-            Completable::class.java -> callAdapter(Unit::class.java) { call -> call.asSingle().observeBody().asCompletable() }
-            Maybe::class.java -> callAdapter(returnType.getResponseType()) { call -> call.asSingle().transformToBody(isBody).asMaybe() }
-            Observable::class.java -> callAdapter(returnType.getResponseType()) { call -> call.asSingle().transformToBody(isBody).asObservable() }
+            Single::class.java -> callAdapter(returnType.getResponseType()) { call -> call.asSingle(scheduler).transformToBody(isBody) }
+            Completable::class.java -> callAdapter(Unit::class.java) { call -> call.asSingle(scheduler).observeBody().asCompletable() }
+            Maybe::class.java -> callAdapter(returnType.getResponseType()) { call -> call.asSingle(scheduler).transformToBody(isBody).asMaybe() }
+            Observable::class.java -> callAdapter(returnType.getResponseType()) { call -> call.asSingle(scheduler).transformToBody(isBody).asObservable() }
             else -> return null
         }
     }
