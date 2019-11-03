@@ -56,7 +56,7 @@ fun <T> Maybe<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Maybe<T> =
 
 fun <T> Maybe<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Maybe<T> =
     maybe { emitter ->
-        subscribeSafe(
+        subscribe(
             object : MaybeObserver<T>, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -75,7 +75,7 @@ fun <T> Maybe<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Maybe<T> =
 
 fun <T> Maybe<T>.doOnBeforeComplete(action: () -> Unit): Maybe<T> =
     maybe { emitter ->
-        subscribeSafe(
+        subscribe(
             object : MaybeObserver<T>, SuccessCallback<T> by emitter, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -92,7 +92,7 @@ fun <T> Maybe<T>.doOnBeforeComplete(action: () -> Unit): Maybe<T> =
 
 fun <T> Maybe<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Maybe<T> =
     maybe { emitter ->
-        subscribeSafe(
+        subscribe(
             object : MaybeObserver<T>, SuccessCallback<T> by emitter, CompleteCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -109,7 +109,7 @@ fun <T> Maybe<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Maybe<T> =
 
 fun <T> Maybe<T>.doOnBeforeTerminate(action: () -> Unit): Maybe<T> =
     maybe { emitter ->
-        subscribeSafe(
+        subscribe(
             object : MaybeObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

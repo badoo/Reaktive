@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.scheduler.Scheduler
@@ -13,7 +12,7 @@ fun <T> Observable<T>.sample(windowMillis: Long, scheduler: Scheduler): Observab
         val executor = scheduler.newExecutor()
         disposableWrapper += executor
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T> {
                 private val lastValue = AtomicReference<SampleLastValue<T>?>(null)
 

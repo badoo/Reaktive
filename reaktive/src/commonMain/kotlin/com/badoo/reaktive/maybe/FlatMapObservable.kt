@@ -1,7 +1,6 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.Observer
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
@@ -13,7 +12,7 @@ import com.badoo.reaktive.observable.observable
 
 fun <T, R> Maybe<T>.flatMapObservable(mapper: (T) -> Observable<R>): Observable<R> =
     observable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : MaybeObserver<T>, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

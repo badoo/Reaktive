@@ -10,7 +10,7 @@ import com.badoo.reaktive.disposable.Disposable
 
 fun <T> Observable<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Observable<T>): Observable<T> =
     observable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ValueCallback<T> by emitter, CompleteCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

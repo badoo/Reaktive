@@ -18,7 +18,7 @@ fun <T, R> Observable<T>.concatMap(mapper: (T) -> Observable<R>): Observable<R> 
 
         val state = AtomicReference(ConcatMapState<T>())
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
                 val mappedObserver: ObservableObserver<R> =
                     object : ObservableObserver<R>, Observer by this, ObservableCallbacks<R> by serializedEmitter {

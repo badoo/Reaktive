@@ -1,6 +1,5 @@
 package com.badoo.reaktive.completable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.scheduler.Scheduler
@@ -13,7 +12,7 @@ fun Completable.observeOn(scheduler: Scheduler): Completable =
         val executor = scheduler.newExecutor()
         disposables += executor
 
-        subscribeSafe(
+        subscribe(
             object : CompletableObserver {
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable
