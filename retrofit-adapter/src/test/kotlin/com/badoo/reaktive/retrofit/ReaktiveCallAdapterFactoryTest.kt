@@ -21,23 +21,22 @@ import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 
-@Suppress("USELESS_IS_CHECK")
 internal class ReaktiveCallAdapterFactoryTest {
 
     private val server = MockWebServer()
 
     internal interface TestApi {
 
-        @GET("/completable")
+        @GET("/")
         fun completable(): Completable
 
-        @GET("/completable")
+        @GET("/")
         fun single(): Single<String>
 
-        @GET("/completable")
+        @GET("/")
         fun observable(): Observable<String>
 
-        @GET("/completable")
+        @GET("/")
         fun maybe(): Maybe<String>
     }
 
@@ -53,7 +52,7 @@ internal class ReaktiveCallAdapterFactoryTest {
     private val errorResponseMessage = "HTTP 404 Client Error"
 
     @Test
-    fun `completable was success`() {
+    fun `completable completes WHEN server response with success`() {
         server.enqueue(MockResponse().setBody(responseBody))
         testApi.completable()
             .test()
@@ -61,7 +60,7 @@ internal class ReaktiveCallAdapterFactoryTest {
     }
 
     @Test
-    fun `single was success`() {
+    fun `single returns value WHEN server response with success`() {
         server.enqueue(MockResponse().setBody(responseBody))
         testApi.single()
             .test()
@@ -69,7 +68,7 @@ internal class ReaktiveCallAdapterFactoryTest {
     }
 
     @Test
-    fun `observable was success`() {
+    fun `observable returns value WHEN server response with success`() {
         server.enqueue(MockResponse().setBody(responseBody))
         testApi.observable()
             .test()
@@ -77,7 +76,7 @@ internal class ReaktiveCallAdapterFactoryTest {
     }
 
     @Test
-    fun `maybe was success`() {
+    fun `maybe returns value WHEN server response with success`() {
         server.enqueue(MockResponse().setBody(responseBody))
         testApi.maybe()
             .test()
@@ -85,7 +84,7 @@ internal class ReaktiveCallAdapterFactoryTest {
     }
 
     @Test
-    fun `completable was failed`() {
+    fun `completable fails WHEN server response with error`() {
         server.enqueue(MockResponse().setResponseCode(errorResponseCode))
         testApi.completable()
             .test()
@@ -93,7 +92,7 @@ internal class ReaktiveCallAdapterFactoryTest {
     }
 
     @Test
-    fun `single was failed`() {
+    fun `single fails WHEN server response with error`() {
         server.enqueue(MockResponse().setResponseCode(errorResponseCode))
         testApi.single()
             .test()
@@ -101,7 +100,7 @@ internal class ReaktiveCallAdapterFactoryTest {
     }
 
     @Test
-    fun `observable was failed`() {
+    fun `observable fails WHEN server response with error`() {
         server.enqueue(MockResponse().setResponseCode(errorResponseCode))
         testApi.observable()
             .test()
@@ -109,7 +108,7 @@ internal class ReaktiveCallAdapterFactoryTest {
     }
 
     @Test
-    fun `maybe was failed`() {
+    fun `maybe fails WHEN server response with error`() {
         server.enqueue(MockResponse().setResponseCode(errorResponseCode))
         testApi.maybe()
             .test()
