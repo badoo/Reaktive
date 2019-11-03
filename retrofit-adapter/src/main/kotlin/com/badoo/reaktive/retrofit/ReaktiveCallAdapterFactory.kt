@@ -44,7 +44,7 @@ class ReaktiveCallAdapterFactory : CallAdapter.Factory() {
     }
 
     private fun Type.isBodyType(): Boolean {
-        return when(this) {
+        return when (this) {
             Completable::class.java -> true
             else -> {
                 check(this is ParameterizedType) { "Return type must be parameterized" }
@@ -52,11 +52,7 @@ class ReaktiveCallAdapterFactory : CallAdapter.Factory() {
             }
         }
     }
-}
 
-private fun <T> Single<Response<T>>.transformToBody(transform: Boolean): Single<*> {
-    return when(transform) {
-        true -> this.observeBody()
-        else -> this
-    }
+    private fun <T> Single<Response<T>>.transformToBody(transform: Boolean): Single<*> =
+            if (transform) this.observeBody() else this
 }
