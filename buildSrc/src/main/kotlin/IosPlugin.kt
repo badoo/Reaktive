@@ -96,21 +96,22 @@ abstract class IosPlugin : Plugin<Project> {
                     val framework = this
                     val binaryBaseName = baseName.takeIf { it != target.name } ?: ""
                     val buildType = buildType.name.toLowerCase()
-                    val taskName = TASK_NAME_FAT + binaryBaseName.capitalize() + buildType.capitalize()
+                    val taskName = "$TASK_NAME_FAT${binaryBaseName.capitalize()}${buildType.capitalize()}"
                     // get or create fat-X-Y task
-                    val provider = try {
-                        target.tasks.named(taskName, FatFrameworkTask::class.java)
-                    } catch (unknownException: UnknownDomainObjectException) {
-                        target.tasks.register(taskName, FatFrameworkTask::class.java) {
-                            baseName = framework.baseName
-                            // Skip base name, if it was not changed
-                            // e.g. fatDebug, fatCustomBaseNameDebug
-                            val binaryNameFolder = "$binaryBaseName/".takeIf { binaryBaseName.isNotEmpty() } ?: ""
-                            destinationDir = project.file(
-                                "${project.buildDir}/fat-framework/$binaryNameFolder$buildType"
-                            )
+                    val provider =
+                        try {
+                            target.tasks.named(taskName, FatFrameworkTask::class.java)
+                        } catch (unknownException: UnknownDomainObjectException) {
+                            target.tasks.register(taskName, FatFrameworkTask::class.java) {
+                                baseName = framework.baseName
+                                // Skip base name, if it was not changed
+                                // e.g. fatDebug, fatCustomBaseNameDebug
+                                val binaryNameFolder = if (binaryBaseName.isNotEmpty()) "$binaryBaseName/" else ""
+                                destinationDir = project.file(
+                                    "${project.buildDir}/fat-framework/$binaryNameFolder$buildType"
+                                )
+                            }
                         }
-                    }
                     // Add current framework to fat output
                     provider.configure { from(framework) }
                 }
