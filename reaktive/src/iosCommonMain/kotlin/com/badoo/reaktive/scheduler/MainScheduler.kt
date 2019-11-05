@@ -2,6 +2,9 @@ package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.disposable.minusAssign
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.NANOS_IN_MILLI
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndSet
@@ -14,21 +17,25 @@ internal class MainScheduler : Scheduler {
 
     private val disposables = CompositeDisposable()
 
-    override fun newExecutor(): Scheduler.Executor =
-        ExecutorImpl()
-            .also(disposables::add)
+    override fun newExecutor(): Scheduler.Executor = ExecutorImpl(disposables)
 
     override fun destroy() {
         disposables.dispose()
     }
 
-    private class ExecutorImpl : Scheduler.Executor {
+    private class ExecutorImpl(
+        private val disposables: CompositeDisposable
+    ) : Scheduler.Executor {
 
         private val operations = CompositeDisposable()
 
+        init {
+            disposables += this
+        }
+
         override fun submit(delayMillis: Long, task: () -> Unit) {
-            val operation = Operation(task)
-                .also(operations::add)
+            operations.purge()
+            val operation = Operation(task).addTo(operations)
             dispatch_after(
                 dispatch_time(DISPATCH_TIME_NOW, delayMillis.toNanos()),
                 dispatch_get_main_queue(),
@@ -37,10 +44,12 @@ internal class MainScheduler : Scheduler {
         }
 
         override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
-            val operation = Operation {
-                task()
-                submitRepeating(periodMillis, periodMillis, task)
-            }.also(operations::add)
+            operations.purge()
+            val operation =
+                Operation {
+                    task()
+                    submitRepeating(periodMillis, periodMillis, task)
+                }.addTo(operations)
             dispatch_after(
                 dispatch_time(DISPATCH_TIME_NOW, startDelayMillis.toNanos()),
                 dispatch_get_main_queue(),
@@ -57,6 +66,7 @@ internal class MainScheduler : Scheduler {
 
         override fun dispose() {
             operations.dispose()
+            disposables -= this
         }
 
         private class Operation(

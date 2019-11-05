@@ -8,13 +8,13 @@ import kotlin.jvm.Volatile
 @Suppress("EmptyDefaultConstructor")
 actual open class CompositeDisposable actual constructor() : Disposable {
 
-    private var list: MutableList<Disposable>? = null
+    private var collection: MutableCollection<Disposable>? = null
     @Volatile
     private var _isDisposed = false
     override val isDisposed: Boolean get() = _isDisposed
 
     /**
-     * Disposes the [CompositeDisposable] and all its [Disposable]s.
+     * Atomically disposes the collection and all its [Disposable]s.
      * All future [Disposable]s will be immediately disposed.
      */
     actual override fun dispose() {
@@ -26,27 +26,57 @@ actual open class CompositeDisposable actual constructor() : Disposable {
     }
 
     /**
-     * Atomically either adds the specified [Disposable] or disposes it if container is already disposed.
-     * Also removes already disposed Disposables.
+     * Atomically either adds the specified [Disposable] or disposes it if container is already disposed
+     *
+     * @param disposable the [Disposable] to add
+     * @return true if [Disposable] was added to the collection, false otherwise
      */
-    actual fun add(disposable: Disposable) {
+    actual fun add(disposable: Disposable): Boolean {
         synchronized(this) {
             if (!_isDisposed) {
-                val listToAdd = list ?: ArrayList<Disposable>().also { list = it }
-                listToAdd += disposable
+                ensureCollection() += disposable
 
-                return
+                return true
             }
         }
 
         disposable.dispose()
+
+        return false
+    }
+
+    private fun ensureCollection(): MutableCollection<Disposable> {
+        var result = collection
+
+        if (result == null) {
+            result = ArrayList()
+            collection = result
+        } else if (result.size >= SIZE_THRESHOLD_FOR_HASH_SET) {
+            result = LinkedHashSet(result)
+            collection = result
+        }
+
+        return result
     }
 
     /**
-     * See [add]
+     * Atomically removes the specified [Disposable] from the collection.
+     *
+     * @param disposable the [Disposable] to remove
+     * @param dispose if true then the [Disposable] will be disposed if removed, default value is false
+     * @return true if [Disposable] was removed, false otherwise
      */
-    actual operator fun plusAssign(disposable: Disposable) {
-        add(disposable)
+    actual fun remove(disposable: Disposable, dispose: Boolean): Boolean {
+        val result =
+            synchronized(this) {
+                collection?.remove(disposable) ?: false
+            }
+
+        if (result && dispose) {
+            disposable.dispose()
+        }
+
+        return result
     }
 
     /**
@@ -60,5 +90,18 @@ actual open class CompositeDisposable actual constructor() : Disposable {
             ?.forEach(Disposable::dispose)
     }
 
-    private fun resetDisposables(): MutableList<Disposable>? = list.also { list = null }
+    /**
+     * Atomically removes already disposed [Disposable]s
+     */
+    actual fun purge() {
+        synchronized(this) {
+            collection?.removeAll(Disposable::isDisposed)
+        }
+    }
+
+    private fun resetDisposables(): MutableCollection<Disposable>? = collection.also { collection = null }
+
+    private companion object {
+        private const val SIZE_THRESHOLD_FOR_HASH_SET = 32
+    }
 }

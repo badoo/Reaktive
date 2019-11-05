@@ -1,6 +1,8 @@
 package com.badoo.reaktive.rxjavainterop
 
 import com.badoo.reaktive.disposable.CompositeDisposable
+import com.badoo.reaktive.disposable.minusAssign
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import java.util.concurrent.TimeUnit
 
@@ -11,8 +13,7 @@ fun io.reactivex.Scheduler.asReaktive(): Scheduler =
         override fun newExecutor(): Scheduler.Executor =
             this@asReaktive
                 .createWorker()
-                .asExecutor()
-                .also(disposables::add)
+                .asExecutor(disposables)
 
         override fun destroy() {
             disposables.dispose()
@@ -20,32 +21,40 @@ fun io.reactivex.Scheduler.asReaktive(): Scheduler =
         }
     }
 
-private fun io.reactivex.Scheduler.Worker.asExecutor(): Scheduler.Executor =
+private fun io.reactivex.Scheduler.Worker.asExecutor(disposables: CompositeDisposable): Scheduler.Executor =
     object : Scheduler.Executor {
-        private val disposables = CompositeDisposable()
-        override val isDisposed: Boolean get() = disposables.isDisposed
+        private val taskDisposables = CompositeDisposable()
+        override val isDisposed: Boolean get() = taskDisposables.isDisposed
+
+        init {
+            disposables += this
+        }
 
         override fun dispose() {
-            disposables.dispose()
+            taskDisposables.dispose()
             this@asExecutor.dispose()
+            disposables -= this
         }
 
         override fun submit(delayMillis: Long, task: () -> Unit) {
-            disposables +=
+            taskDisposables.purge()
+
+            taskDisposables +=
                 this@asExecutor
                     .schedule(task, delayMillis, TimeUnit.MILLISECONDS)
                     .asReaktive()
         }
 
         override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
-            disposables +=
+            taskDisposables.purge()
+
+            taskDisposables +=
                 this@asExecutor
                     .schedulePeriodically(task, startDelayMillis, periodMillis, TimeUnit.MILLISECONDS)
                     .asReaktive()
         }
 
         override fun cancel() {
-            disposables.clear()
+            taskDisposables.clear()
         }
     }
-    
