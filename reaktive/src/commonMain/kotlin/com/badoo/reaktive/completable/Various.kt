@@ -36,7 +36,7 @@ fun completableOfNever(): Completable =
         observer.onSubscribe(Disposable())
     }
 
-fun completableFromFunction(func: () -> Unit): Completable =
+inline fun completableFromFunction(crossinline func: () -> Unit): Completable =
     completable { emitter ->
         func()
         emitter.onComplete()

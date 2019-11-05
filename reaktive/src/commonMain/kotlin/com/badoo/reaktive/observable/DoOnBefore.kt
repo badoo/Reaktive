@@ -12,7 +12,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.handleSourceError
+import com.badoo.reaktive.utils.handleReaktiveError
 
 fun <T> Observable<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Observable<T> =
     observableUnsafe { observer ->
@@ -135,7 +135,7 @@ fun <T> Observable<T>.doOnBeforeDispose(action: () -> Unit): Observable<T> =
                 try {
                     action()
                 } catch (e: Throwable) {
-                    handleSourceError(e) // Can't send error to downstream, already disposed
+                    handleReaktiveError(e) // Can't send error to downstream, already disposed
                 }
             }
 
@@ -175,7 +175,7 @@ fun <T> Observable<T>.doOnBeforeFinally(action: () -> Unit): Observable<T> =
                 try {
                     action()
                 } catch (e: Throwable) {
-                    handleSourceError(e) // Can't send error to downstream, already disposed
+                    handleReaktiveError(e) // Can't send error to downstream, already disposed
                 }
             }
 

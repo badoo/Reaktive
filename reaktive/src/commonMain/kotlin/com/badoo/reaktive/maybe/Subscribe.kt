@@ -5,7 +5,7 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.doIfNotDisposed
-import com.badoo.reaktive.utils.handleSourceError
+import com.badoo.reaktive.utils.handleReaktiveError
 
 @UseReturnValue
 fun <T> Maybe<T>.subscribe(
@@ -21,7 +21,7 @@ fun <T> Maybe<T>.subscribe(
         onSubscribe?.invoke(disposableWrapper)
     } catch (e: Throwable) {
         try {
-            handleSourceError(e, onError)
+            handleReaktiveError(e, onError)
         } finally {
             disposableWrapper.dispose()
         }
@@ -42,7 +42,7 @@ fun <T> Maybe<T>.subscribe(
                     try {
                         onSuccess?.invoke(value)
                     } catch (e: Throwable) {
-                        handleSourceError(e)
+                        handleReaktiveError(e)
                     }
                 }
             }
@@ -52,14 +52,14 @@ fun <T> Maybe<T>.subscribe(
                     try {
                         onComplete?.invoke()
                     } catch (e: Throwable) {
-                        handleSourceError(e)
+                        handleReaktiveError(e)
                     }
                 }
             }
 
             override fun onError(error: Throwable) {
                 disposableWrapper.doIfNotDisposed(dispose = true) {
-                    handleSourceError(error, onError)
+                    handleReaktiveError(error, onError)
                 }
             }
         }

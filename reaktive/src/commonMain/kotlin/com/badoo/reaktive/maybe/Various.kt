@@ -64,7 +64,7 @@ fun <T> maybeOfNever(): Maybe<T> =
         observer.onSubscribe(Disposable())
     }
 
-fun <T> maybeFromFunction(func: () -> T): Maybe<T> =
+inline fun <T> maybeFromFunction(crossinline func: () -> T): Maybe<T> =
     maybe { emitter ->
         emitter.onSuccess(func())
     }
