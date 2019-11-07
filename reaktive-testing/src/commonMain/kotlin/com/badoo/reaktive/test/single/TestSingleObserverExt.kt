@@ -7,15 +7,15 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 fun <T> TestSingleObserver<T>.assertSuccess() {
-    assertTrue(isSuccess, "Single was not success")
+    assertTrue(isSuccess, "Single did not succeed")
 }
 
 fun <T> TestSingleObserver<T>.assertSuccess(expectedValue: T) {
-    assertEquals(expectedValue, value, "Single success values do not match")
+    assertEquals(expectedValue, value, "Single success value does not match")
 }
 
 fun <T> TestSingleObserver<T>.assertNotSuccess() {
-    assertFalse(isSuccess, "Single is succeeded")
+    assertFalse(isSuccess, "Single succeeded")
 }
 
 fun <T> Single<T>.test(autoFreeze: Boolean = true): TestSingleObserver<T> {
