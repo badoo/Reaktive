@@ -21,7 +21,7 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
 
         val serializedEmitter = emitter.serialize()
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
                 private val pendingValue = AtomicReference<DebouncePendingValue<T>?>(null)
 

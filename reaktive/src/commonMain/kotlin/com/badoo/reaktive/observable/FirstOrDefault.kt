@@ -1,7 +1,6 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.ErrorCallback
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
@@ -26,7 +25,7 @@ internal inline fun <T> Observable<T>.firstOrAction(
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
