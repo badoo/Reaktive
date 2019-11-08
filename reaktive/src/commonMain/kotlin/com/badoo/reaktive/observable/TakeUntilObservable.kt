@@ -4,6 +4,7 @@ import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.plusAssign
 
 fun <T> Observable<T>.takeUntil(other: Observable<*>): Observable<T> =
     observable {

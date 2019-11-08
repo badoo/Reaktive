@@ -30,7 +30,7 @@ internal class KittenStoreImpl(
     }
 
     override fun accept(intent: Intent) {
-        execute(intent)?.also(disposables::add)
+        execute(intent)?.let(disposables::add)
     }
 
     private fun execute(intent: Intent): Disposable? =

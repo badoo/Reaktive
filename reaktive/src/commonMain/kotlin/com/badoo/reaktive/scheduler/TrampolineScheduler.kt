@@ -1,6 +1,8 @@
 package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.disposable.CompositeDisposable
+import com.badoo.reaktive.disposable.minusAssign
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.clock.Clock
@@ -14,15 +16,14 @@ internal class TrampolineScheduler(
 
     private val disposables = CompositeDisposable()
 
-    override fun newExecutor(): Scheduler.Executor =
-        ExecutorImpl(clock, sleep)
-            .also(disposables::add)
+    override fun newExecutor(): Scheduler.Executor = ExecutorImpl(disposables, clock, sleep)
 
     override fun destroy() {
         disposables.dispose()
     }
 
     private class ExecutorImpl(
+        private val disposables: CompositeDisposable,
         private val clock: Clock,
         private val sleep: (mills: Long) -> Boolean
     ) : Scheduler.Executor {
@@ -31,9 +32,14 @@ internal class TrampolineScheduler(
         private val _isDisposed = AtomicBoolean()
         override val isDisposed: Boolean get() = _isDisposed.value
 
+        init {
+            disposables += this
+        }
+
         override fun dispose() {
             if (_isDisposed.compareAndSet(false, true)) {
                 serializer.clear()
+                disposables -= this
             }
         }
 

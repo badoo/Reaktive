@@ -11,6 +11,7 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.doIfNotDisposed
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.handleSourceError
 
 fun <T> Maybe<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Maybe<T> =
