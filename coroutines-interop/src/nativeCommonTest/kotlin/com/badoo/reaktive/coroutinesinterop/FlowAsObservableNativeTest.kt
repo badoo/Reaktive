@@ -7,12 +7,14 @@ import com.badoo.reaktive.observable.toList
 import com.badoo.reaktive.scheduler.ioScheduler
 import com.badoo.reaktive.single.blockingGet
 import com.badoo.reaktive.test.observable.test
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
+@ExperimentalCoroutinesApi
 class FlowAsObservableNativeTest {
 
     @Test
