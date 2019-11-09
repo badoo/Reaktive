@@ -1,7 +1,9 @@
 *.iml
 .gradle
 /local.properties
-.idea
+.idea/*
+!.idea/codeStyles
+!.idea/dictionaries
 build
 /classes
 /out
