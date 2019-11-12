@@ -21,3 +21,4 @@ dependencies {
 }
 
 apply plugin: PublishPlugin
+apply plugin: DetektPlugin
