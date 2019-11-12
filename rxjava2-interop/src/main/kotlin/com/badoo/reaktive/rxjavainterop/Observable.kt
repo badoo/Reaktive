@@ -59,4 +59,3 @@ fun <T> ObservableObserver<T>.asRxJava2(): io.reactivex.Observer<T> =
             this@asRxJava2.onError(error)
         }
     }
-    
