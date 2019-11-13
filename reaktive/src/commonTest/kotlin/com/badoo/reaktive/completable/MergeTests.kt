@@ -27,6 +27,14 @@ class MergeTests : CompletableToCompletableTests by CompletableToCompletableTest
     }
 
     @Test
+    fun produces_error_WHEN_first_upstream_produced_error() {
+        val throwable = Throwable()
+        upstream1.onError(throwable)
+
+        inner.assertError(throwable)
+    }
+
+    @Test
     fun produces_error_WHEN_second_upstream_produced_error() {
         val throwable = Throwable()
         upstream1.onComplete()
