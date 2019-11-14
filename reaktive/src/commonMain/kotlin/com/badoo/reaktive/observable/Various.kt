@@ -85,7 +85,7 @@ fun <T> observableOfNever(): Observable<T> =
         observer.onSubscribe(Disposable())
     }
 
-inline fun <T> observableFromFunction(crossinline func: () -> T): Observable<T> =
+fun <T> observableFromFunction(func: () -> T): Observable<T> =
     observable { emitter ->
         emitter.onNext(func())
         emitter.onComplete()

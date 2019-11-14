@@ -38,7 +38,7 @@ fun <T> singleOfError(error: Throwable): Single<T> =
 
 fun <T> Throwable.toSingleOfError(): Single<T> = singleOfError(this)
 
-inline fun <T> singleFromFunction(crossinline func: () -> T): Single<T> =
+fun <T> singleFromFunction(func: () -> T): Single<T> =
     single { emitter ->
         emitter.onSuccess(func())
     }
