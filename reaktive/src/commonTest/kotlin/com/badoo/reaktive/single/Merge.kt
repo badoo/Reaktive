@@ -1,4 +1,4 @@
-package com.badoo.reaktive.maybe
+package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.disposable.CompositeDisposable
@@ -11,7 +11,7 @@ import com.badoo.reaktive.observable.serialize
 import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
-fun <T> Iterable<Maybe<T>>.merge(): Observable<T> =
+fun <T> Iterable<Single<T>>.merge(): Observable<T> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
@@ -21,7 +21,7 @@ fun <T> Iterable<Maybe<T>>.merge(): Observable<T> =
         forEach { upstream ->
             activeSourceCount.addAndGet(1)
             upstream.subscribe(
-                object : ObjectReference<Disposable?>(null), MaybeObserver<T>, ErrorCallback by serializedEmitter {
+                object : ObjectReference<Disposable?>(null), SingleObserver<T>, ErrorCallback by serializedEmitter {
                     override fun onSubscribe(disposable: Disposable) {
                         value = disposable
                         disposables += disposable
@@ -29,11 +29,8 @@ fun <T> Iterable<Maybe<T>>.merge(): Observable<T> =
 
                     override fun onSuccess(value: T) {
                         serializedEmitter.onNext(value)
-                        onComplete()
-                    }
 
-                    override fun onComplete() {
-                        disposables -= requireNotNull(value)
+                        disposables -= requireNotNull(this.value)
                         if (activeSourceCount.addAndGet(-1) == 0) {
                             emitter.onComplete()
                         }
@@ -47,7 +44,7 @@ fun <T> Iterable<Maybe<T>>.merge(): Observable<T> =
         }
     }
 
-fun <T> merge(vararg sources: Maybe<T>): Observable<T> =
+fun <T> merge(vararg sources: Single<T>): Observable<T> =
     sources
         .asIterable()
         .merge()

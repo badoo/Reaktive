@@ -1,64 +1,62 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.ObjectReference
+import com.badoo.reaktive.utils.PairReference
 import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.lock.synchronized
 import com.badoo.reaktive.utils.lock.withLockAndCondition
 
 fun <T> Maybe<T>.blockingGet(): T? =
     withLockAndCondition { lock, condition ->
-        val result = ObjectReference<Any?>(Uninitialized)
-        val upstreamDisposable = ObjectReference<Disposable?>(null)
-
-        subscribe(
-            object : MaybeObserver<T> {
+        val observer =
+            object : PairReference<Any?, Disposable?>(Uninitialized, null), MaybeObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
                     lock.synchronized {
-                        upstreamDisposable.value = disposable
+                        second = disposable
                     }
                 }
 
                 override fun onSuccess(value: T) {
                     lock.synchronized {
-                        result.value = value
+                        first = value
                         condition.signal()
                     }
                 }
 
                 override fun onComplete() {
                     lock.synchronized {
-                        result.value = BlockingGetResult.Completed
+                        first = BlockingGetResult.Completed
                         condition.signal()
                     }
                 }
 
                 override fun onError(error: Throwable) {
                     lock.synchronized {
-                        result.value = BlockingGetResult.Error(error)
+                        first = BlockingGetResult.Error(error)
                         condition.signal()
                     }
                 }
             }
-        )
+
+        subscribe(observer)
 
         lock.synchronized {
-            while (result.value === Uninitialized) {
+            while (observer.first === Uninitialized) {
                 try {
                     condition.await()
                 } catch (e: Throwable) {
-                    upstreamDisposable.value?.dispose()
+                    observer.second?.dispose()
                     throw e
                 }
             }
         }
 
-        result
-            .value
+        observer
+            .first
             .let {
                 @Suppress("UNCHECKED_CAST")
                 when (it) {
-                    is BlockingGetResult.Completed -> null
+                    BlockingGetResult.Completed -> null
                     is BlockingGetResult.Error -> throw it.error
                     else -> it as T
                 }

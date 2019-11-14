@@ -2,12 +2,13 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.queue.ArrayQueue
+import com.badoo.reaktive.utils.queue.Queue
 
 internal actual open class SerializedObservableCallbacks<in T> actual constructor(
     private val delegate: ObservableCallbacks<T>
 ) : ObservableCallbacks<T> {
 
-    private val queue = ArrayQueue<T>()
+    private var queue: Queue<T>? = null
     private var isComplete: Boolean = false
     private var error: Throwable? = null
     private var isDraining = false
@@ -15,13 +16,14 @@ internal actual open class SerializedObservableCallbacks<in T> actual constructo
     private var isEmpty = true
 
     override fun onNext(value: T) {
-        synchronized(queue) {
+        synchronized(this) {
             if (isFinished) {
                 return
             }
 
             if (isDraining) {
-                queue.offer(value)
+                val q = queue ?: ArrayQueue<T>().also { queue = it }
+                q.offer(value)
                 isEmpty = false
                 return
             }
@@ -34,7 +36,7 @@ internal actual open class SerializedObservableCallbacks<in T> actual constructo
     }
 
     override fun onComplete() {
-        synchronized(queue) {
+        synchronized(this) {
             if (isFinished) {
                 return
             }
@@ -52,7 +54,7 @@ internal actual open class SerializedObservableCallbacks<in T> actual constructo
     }
 
     override fun onError(error: Throwable) {
-        synchronized(queue) {
+        synchronized(this) {
             if (isFinished) {
                 return
             }
@@ -73,14 +75,14 @@ internal actual open class SerializedObservableCallbacks<in T> actual constructo
         while (true) {
             var sendItem: Any? = Uninitialized
 
-            synchronized(queue) {
+            synchronized(this) {
                 when {
                     isEmpty -> {
                         isDraining = false
                         return
                     }
 
-                    !queue.isEmpty -> sendItem = queue.poll()
+                    queue?.isEmpty == false -> sendItem = queue!!.poll()
 
                     !isComplete && (error == null) -> {
                         isEmpty = true

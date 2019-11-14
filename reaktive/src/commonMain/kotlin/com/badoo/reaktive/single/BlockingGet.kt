@@ -1,53 +1,51 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.ObjectReference
+import com.badoo.reaktive.utils.PairReference
 import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.lock.synchronized
 import com.badoo.reaktive.utils.lock.withLockAndCondition
 
 fun <T> Single<T>.blockingGet(): T =
     withLockAndCondition { lock, condition ->
-        val result = ObjectReference<Any?>(Uninitialized)
-        val upstreamDisposable = ObjectReference<Disposable?>(null)
-
-        subscribe(
-            object : SingleObserver<T> {
+        val observer =
+            object : PairReference<Any?, Disposable?>(Uninitialized, null), SingleObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
                     lock.synchronized {
-                        upstreamDisposable.value = disposable
+                        second = disposable
                     }
                 }
 
                 override fun onSuccess(value: T) {
                     lock.synchronized {
-                        result.value = value
+                        first = value
                         condition.signal()
                     }
                 }
 
                 override fun onError(error: Throwable) {
                     lock.synchronized {
-                        result.value = BlockingGetError(error)
+                        first = BlockingGetError(error)
                         condition.signal()
                     }
                 }
             }
-        )
+
+        subscribe(observer)
 
         lock.synchronized {
-            while (result.value === Uninitialized) {
+            while (observer.first === Uninitialized) {
                 try {
                     condition.await()
                 } catch (e: Throwable) {
-                    upstreamDisposable.value?.dispose()
+                    observer.second?.dispose()
                     throw e
                 }
             }
         }
 
-        result
-            .value
+        observer
+            .first
             .let {
                 if (it is BlockingGetError) {
                     throw it.error

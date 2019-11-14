@@ -1,5 +1,6 @@
 package com.badoo.reaktive.utils
 
+import com.badoo.reaktive.utils.atomic.setValue
 import kotlin.native.concurrent.FreezableAtomicReference
 import kotlin.native.concurrent.freeze
 import kotlin.native.concurrent.isFrozen
@@ -17,14 +18,6 @@ actual open class ObjectReference<T> actual constructor(initialValue: T) {
     actual var value: T
         get() = delegate.value
         set(value) {
-            delegate.value = value.freezeIfNeeded()
+            delegate.setValue(value)
         }
-
-    private fun T.freezeIfNeeded(): T {
-        if (delegate.isFrozen) {
-            freeze()
-        }
-
-        return this
-    }
 }

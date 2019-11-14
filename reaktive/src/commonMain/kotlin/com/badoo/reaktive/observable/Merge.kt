@@ -6,5 +6,5 @@ fun <T> Iterable<Observable<T>>.merge(): Observable<T> =
 
 fun <T> merge(vararg sources: Observable<T>): Observable<T> =
     sources
-        .toList()
+        .asIterable()
         .merge()
