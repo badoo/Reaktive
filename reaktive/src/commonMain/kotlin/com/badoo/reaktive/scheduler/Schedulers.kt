@@ -57,7 +57,6 @@ private val singleSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
 private val newThreadSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
     AtomicReference(lazy(::createNewThreadScheduler))
 
-
 /**
  * Creates a new instance of Main [Scheduler]
  */

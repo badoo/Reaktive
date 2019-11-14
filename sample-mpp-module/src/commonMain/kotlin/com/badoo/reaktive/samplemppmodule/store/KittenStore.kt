@@ -17,6 +17,6 @@ interface KittenStore : Disposable {
 
     sealed class Intent {
         object Reload : Intent()
-        object DismissError: Intent()
+        object DismissError : Intent()
     }
 }

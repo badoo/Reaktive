@@ -1,3 +1,4 @@
+import io.gitlab.arturbosch.detekt.CONFIGURATION_DETEKT_PLUGINS
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -15,5 +16,6 @@ abstract class DetektPlugin : Plugin<Project> {
             )
             config = target.rootProject.files("detekt.yml")
         }
+        target.dependencies.add(CONFIGURATION_DETEKT_PLUGINS, Deps.Detekt.ktlint)
     }
 }

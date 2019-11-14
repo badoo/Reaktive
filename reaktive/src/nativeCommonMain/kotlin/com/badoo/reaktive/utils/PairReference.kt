@@ -2,8 +2,6 @@ package com.badoo.reaktive.utils
 
 import com.badoo.reaktive.utils.atomic.setValue
 import kotlin.native.concurrent.FreezableAtomicReference
-import kotlin.native.concurrent.freeze
-import kotlin.native.concurrent.isFrozen
 
 internal actual open class PairReference<T, R> actual constructor(firstInitial: T, secondInitial: R) {
 

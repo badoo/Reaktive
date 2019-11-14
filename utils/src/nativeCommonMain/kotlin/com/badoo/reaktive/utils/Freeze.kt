@@ -8,7 +8,7 @@ import kotlin.native.concurrent.isFrozen
 
 actual inline fun <T> T.freeze(): T = freeze()
 
-actual inline fun <T: Any> T.ensureNeverFrozen(): T {
+actual inline fun <T : Any> T.ensureNeverFrozen(): T {
     ensureNeverFrozen()
 
     return this

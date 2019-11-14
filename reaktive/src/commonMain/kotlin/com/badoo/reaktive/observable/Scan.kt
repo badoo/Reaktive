@@ -34,7 +34,6 @@ fun <T> Observable<T>.scan(accumulate: (acc: T, value: T) -> T): Observable<T> =
 
                 override fun onSubscribe(disposable: Disposable) =
                     emitter.setDisposable(disposable)
-
             }
         )
     }
