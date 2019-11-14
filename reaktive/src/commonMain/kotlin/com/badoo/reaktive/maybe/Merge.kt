@@ -33,7 +33,7 @@ fun <T> Iterable<Maybe<T>>.merge(): Observable<T> =
                     }
 
                     override fun onComplete() {
-                        disposables -= this.value!!
+                        disposables -= requireNotNull(value)
                         if (activeSourceCount.addAndGet(-1) == 0) {
                             emitter.onComplete()
                         }

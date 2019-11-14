@@ -30,7 +30,7 @@ fun <T> Iterable<Single<T>>.merge(): Observable<T> =
                     override fun onSuccess(value: T) {
                         serializedEmitter.onNext(value)
 
-                        disposables -= this.value!!
+                        disposables -= requireNotNull(this.value)
                         if (activeSourceCount.addAndGet(-1) == 0) {
                             emitter.onComplete()
                         }
