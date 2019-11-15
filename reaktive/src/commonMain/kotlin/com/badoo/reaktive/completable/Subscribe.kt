@@ -5,7 +5,7 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.doIfNotDisposed
-import com.badoo.reaktive.utils.handleSourceError
+import com.badoo.reaktive.utils.handleReaktiveError
 
 @UseReturnValue
 fun Completable.subscribe(
@@ -20,7 +20,7 @@ fun Completable.subscribe(
         onSubscribe?.invoke(disposableWrapper)
     } catch (e: Throwable) {
         try {
-            handleSourceError(e, onError)
+            handleReaktiveError(e, onError)
         } finally {
             disposableWrapper.dispose()
         }
@@ -41,14 +41,14 @@ fun Completable.subscribe(
                     try {
                         onComplete?.invoke()
                     } catch (e: Throwable) {
-                        handleSourceError(e)
+                        handleReaktiveError(e)
                     }
                 }
             }
 
             override fun onError(error: Throwable) {
                 disposableWrapper.doIfNotDisposed(dispose = true) {
-                    handleSourceError(error, onError)
+                    handleReaktiveError(error, onError)
                 }
             }
         }

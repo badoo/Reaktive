@@ -4,7 +4,7 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.handleSourceError
+import com.badoo.reaktive.utils.handleReaktiveError
 import java.util.concurrent.Future
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -101,7 +101,7 @@ internal class ExecutorServiceScheduler(
                     try {
                         task()
                     } catch (e: Throwable) {
-                        handleSourceError(e)
+                        handleReaktiveError(e)
                     }
                 }
         }
