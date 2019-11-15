@@ -74,7 +74,7 @@ object Deps {
     }
 
     object Detekt {
-        val plugin = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektVersion"
-        val ktlint = "io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion"
+        const val plugin = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektVersion"
+        const val ktlint = "io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion"
     }
 }
