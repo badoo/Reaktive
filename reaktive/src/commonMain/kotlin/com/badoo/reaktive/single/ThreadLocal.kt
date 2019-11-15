@@ -5,7 +5,7 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.ThreadLocalStorage
-import com.badoo.reaktive.utils.handleSourceError
+import com.badoo.reaktive.utils.handleReaktiveError
 
 fun <T> Single<T>.threadLocal(): Single<T> =
     single {
@@ -32,7 +32,7 @@ fun <T> Single<T>.threadLocal(): Single<T> =
                     try {
                         requireNotNull(emitterStorage.get())
                     } catch (e: Throwable) {
-                        handleSourceError(if (existingError == null) e else CompositeException(existingError, e))
+                        handleReaktiveError(if (existingError == null) e else CompositeException(existingError, e))
                         null
                     }
             }

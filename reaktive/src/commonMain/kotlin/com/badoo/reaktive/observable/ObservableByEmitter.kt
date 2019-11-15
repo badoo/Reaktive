@@ -1,13 +1,17 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.DisposableEmitter
 import com.badoo.reaktive.base.tryCatch
-import com.badoo.reaktive.disposable.doIfNotDisposed
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.DisposableWrapper
 
-fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observable<T> =
+inline fun <T> observable(crossinline onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observable<T> =
     observableUnsafe { observer ->
         val emitter =
-            object : DisposableEmitter(), ObservableEmitter<T> {
+            object : DisposableWrapper(), ObservableEmitter<T> {
+                override fun setDisposable(disposable: Disposable) {
+                    set(disposable)
+                }
+
                 override fun onNext(value: T) {
                     if (!isDisposed) {
                         observer.onNext(value)
@@ -15,12 +19,22 @@ fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observ
                 }
 
                 override fun onComplete() {
-                    doIfNotDisposed(dispose = true, block = observer::onComplete)
+                    doIfNotDisposedAndDispose(observer::onComplete)
                 }
 
                 override fun onError(error: Throwable) {
-                    doIfNotDisposed(dispose = true) {
+                    doIfNotDisposedAndDispose {
                         observer.onError(error)
+                    }
+                }
+
+                private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
+                    if (!isDisposed) {
+                        try {
+                            block()
+                        } finally {
+                            dispose()
+                        }
                     }
                 }
             }

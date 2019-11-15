@@ -1,8 +1,8 @@
 package com.badoo.reaktive.base
 
-import com.badoo.reaktive.utils.handleSourceError
+import com.badoo.reaktive.utils.handleReaktiveError
 
-internal inline fun <T> ErrorCallback.tryCatch(
+inline fun <T> ErrorCallback.tryCatch(
     block: () -> T,
     errorTransformer: (Throwable) -> Throwable = { it },
     onSuccess: (T) -> Unit
@@ -10,19 +10,19 @@ internal inline fun <T> ErrorCallback.tryCatch(
     try {
         block()
     } catch (e: Throwable) {
-        handleSourceError(errorTransformer(e), ::onError)
+        handleReaktiveError(errorTransformer(e), ::onError)
         return
     }
         .also(onSuccess)
 }
 
-internal inline fun ErrorCallback.tryCatch(
+inline fun ErrorCallback.tryCatch(
     errorTransformer: (Throwable) -> Throwable = { it },
     block: () -> Unit
 ) {
     try {
         block()
     } catch (e: Throwable) {
-        handleSourceError(errorTransformer(e), ::onError)
+        handleReaktiveError(errorTransformer(e), ::onError)
     }
 }
