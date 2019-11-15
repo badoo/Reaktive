@@ -8,13 +8,13 @@ import kotlin.test.Test
 class FlatMapIterableTest
     : SingleToObservableTests by SingleToObservableTests({ flatMapIterable { listOf(Unit) } }) {
 
-    private val upstream = TestSingle<() -> List<Int>>()
-    private val observer = upstream.flatMapIterable { it() }.test()
+    private val upstream = TestSingle<List<Int?>>()
+    private val observer = upstream.flatMapIterable { it }.test()
 
     @Test
     fun emits_values_WHEN_upstream_succeeded() {
-        upstream.onSuccess { listOf(1, 2, 3, 4, 5) }
+        upstream.onSuccess(listOf(1, 2, null, 4, 5))
 
-        observer.assertValues(1, 2, 3, 4, 5)
+        observer.assertValues(1, 2, null, 4, 5)
     }
 }
