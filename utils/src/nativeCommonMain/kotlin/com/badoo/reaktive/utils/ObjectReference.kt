@@ -2,8 +2,6 @@ package com.badoo.reaktive.utils
 
 import com.badoo.reaktive.utils.atomic.setValue
 import kotlin.native.concurrent.FreezableAtomicReference
-import kotlin.native.concurrent.freeze
-import kotlin.native.concurrent.isFrozen
 
 /**
  * A simple mutable reference holder for cases when atomic semantics are not required.

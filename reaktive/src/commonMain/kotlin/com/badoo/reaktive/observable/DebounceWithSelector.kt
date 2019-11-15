@@ -72,7 +72,6 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
                         ?.let { serializedEmitter.onNext(it.value) }
                     serializedEmitter.onComplete()
                 }
-
             }
         )
     }

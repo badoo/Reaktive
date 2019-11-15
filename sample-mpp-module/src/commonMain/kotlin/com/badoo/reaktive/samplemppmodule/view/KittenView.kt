@@ -16,6 +16,6 @@ interface KittenView {
 
     sealed class Event {
         object Reload : Event()
-        object ErrorShown: Event()
+        object ErrorShown : Event()
     }
 }

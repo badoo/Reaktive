@@ -104,7 +104,6 @@ fun Completable.doOnBeforeTerminate(action: () -> Unit): Completable =
         )
     }
 
-
 fun Completable.doOnBeforeDispose(action: () -> Unit): Completable =
     completableUnsafe { observer ->
         val disposables = CompositeDisposable()
