@@ -1,7 +1,6 @@
 package com.badoo.reaktive.samplemppmodule.store
 
-import com.badoo.reaktive.disposable.CompositeDisposable
-import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.scope.DisposableScope
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.samplemppmodule.store.KittenStore.Intent
 import com.badoo.reaktive.samplemppmodule.store.KittenStore.State
@@ -9,58 +8,47 @@ import com.badoo.reaktive.scheduler.computationScheduler
 import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.single.map
 import com.badoo.reaktive.single.observeOn
-import com.badoo.reaktive.single.subscribe
 import com.badoo.reaktive.subject.behavior.behaviorSubject
 import com.badoo.reaktive.utils.ensureNeverFrozen
 
 internal class KittenStoreImpl(
     private val loader: KittenLoader
-) : KittenStore {
+) : KittenStore, DisposableScope by DisposableScope() {
 
-    private val _states = behaviorSubject(State()).ensureNeverFrozen()
+    private val _states = +behaviorSubject(State()).ensureNeverFrozen()
     override val states: Observable<State> = _states
     private val state: State get() = _states.value
 
-    private val disposables = CompositeDisposable()
-    override val isDisposed: Boolean get() = disposables.isDisposed
-
-    override fun dispose() {
-        disposables.dispose()
-        _states.onComplete()
-    }
-
     override fun accept(intent: Intent) {
-        execute(intent)?.let(disposables::add)
+        execute(intent)
     }
 
-    private fun execute(intent: Intent): Disposable? =
+    private fun execute(intent: Intent) {
         when (intent) {
             is Intent.Reload -> reload()
+            is Intent.DismissError -> onResult(Effect.DismissErrorRequested)
+        }.also {}
+    }
 
-            is Intent.DismissError -> {
-                onResult(Effect.DismissErrorRequested)
-                null
-            }
-        }
-
-    private fun reload(): Disposable? =
+    private fun reload() {
         if (state.isLoading) {
-            null
-        } else {
-            onResult(Effect.LoadingStarted)
-
-            loader
-                .load()
-                .observeOn(computationScheduler)
-                .map {
-                    when (it) {
-                        is KittenLoader.Result.Success -> Effect.Loaded(parseUrl(it.json))
-                        is KittenLoader.Result.Error -> Effect.LoadingFailed
-                    }
-                }
-                .observeOn(mainScheduler)
-                .subscribe(isThreadLocal = true, onSuccess = ::onResult)
+            return
         }
+
+        onResult(Effect.LoadingStarted)
+
+        loader
+            .load()
+            .observeOn(computationScheduler)
+            .map {
+                when (it) {
+                    is KittenLoader.Result.Success -> Effect.Loaded(parseUrl(it.json))
+                    is KittenLoader.Result.Error -> Effect.LoadingFailed
+                }
+            }
+            .observeOn(mainScheduler)
+            .subscribeScoped(isThreadLocal = true, onSuccess = ::onResult)
+    }
 
     private fun onResult(effect: Effect) {
         _states.onNext(Reducer(effect, _states.value))
