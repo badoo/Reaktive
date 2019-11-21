@@ -4,16 +4,21 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.getValue
+import com.badoo.reaktive.utils.atomic.setValue
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.ProducerScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.isActive
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 @ExperimentalCoroutinesApi
-class FlowAsObservableJvmJsTest {
+class FlowAsObservableTest {
 
     @Test
     fun produces_values_in_correct_order_WHEN_flow_produced_values() {
@@ -49,17 +54,19 @@ class FlowAsObservableJvmJsTest {
 
     @Test
     fun cancels_flow_WHEN_disposable_is_disposed() {
-        lateinit var producerScope: ProducerScope<Nothing>
+        var scope by AtomicReference<CoroutineScope?>(null)
 
         val observer =
             channelFlow<Nothing> {
-                producerScope = this
+                coroutineScope {
+                    scope = this
+                }
             }
                 .asObservable()
                 .test()
 
         observer.dispose()
 
-        assertTrue(producerScope.isClosedForSend)
+        assertFalse(scope!!.isActive)
     }
 }
