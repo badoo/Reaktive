@@ -1,7 +1,6 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.ErrorCallback
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
@@ -19,12 +18,14 @@ fun <T> Observable<T>.firstOrDefault(defaultValueSupplier: () -> T): Single<T> =
         emitter.tryCatch(block = defaultValueSupplier, onSuccess = emitter::onSuccess)
     }
 
-internal inline fun <T> Observable<T>.firstOrAction(crossinline onComplete: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
+internal inline fun <T> Observable<T>.firstOrAction(
+    crossinline onComplete: (emitter: SingleEmitter<T>) -> Unit
+): Single<T> =
     single { emitter ->
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)

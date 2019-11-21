@@ -1,6 +1,6 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.observable.TestObservable
@@ -31,7 +31,7 @@ class DoOnBeforeDisposeTest
 
         observableUnsafe<Nothing> { observer ->
             observer.onSubscribe(
-                disposable {
+                Disposable {
                     callOrder += "dispose"
                 }
             )

@@ -6,7 +6,7 @@ import com.badoo.reaktive.disposable.Disposable
 
 fun Completable.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Completable =
     completable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : CompletableObserver, CompletableCallbacks by emitter {
                 private val retry = Retry(emitter, predicate)
 

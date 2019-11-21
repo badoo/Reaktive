@@ -1,6 +1,8 @@
 package com.badoo.reaktive.sample.linux
 
 import com.badoo.reaktive.disposable.CompositeDisposable
+import com.badoo.reaktive.disposable.minusAssign
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.scheduler.Scheduler.Executor
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
@@ -21,24 +23,29 @@ class MainScheduler : Scheduler {
 
     private val disposables = CompositeDisposable()
 
-    override fun newExecutor(): Executor =
-        ExecutorImpl()
-            .also(disposables::add)
+    override fun newExecutor(): Executor = ExecutorImpl(disposables)
 
     override fun destroy() {
         disposables.dispose()
     }
 }
 
-private class ExecutorImpl : Executor {
+private class ExecutorImpl(
+    private val disposables: CompositeDisposable
+) : Executor {
 
     private val taskRefs: AtomicReference<List<StableRef<TaskHolder>>> = AtomicReference(emptyList())
     private var _isDisposed = AtomicBoolean()
     override val isDisposed: Boolean get() = _isDisposed.value
 
+    init {
+        disposables += this
+    }
+
     override fun dispose() {
         _isDisposed.value = true
         cancel()
+        disposables -= this
     }
 
     override fun submit(delayMillis: Long, task: () -> Unit) {

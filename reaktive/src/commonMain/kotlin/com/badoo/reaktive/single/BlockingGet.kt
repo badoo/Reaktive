@@ -1,62 +1,59 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.synchronized
-import com.badoo.reaktive.utils.useCondition
-import com.badoo.reaktive.utils.useLock
+import com.badoo.reaktive.utils.PairReference
+import com.badoo.reaktive.utils.Uninitialized
+import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.lock.withLockAndCondition
 
 fun <T> Single<T>.blockingGet(): T =
-    useLock { lock ->
-        lock.useCondition { condition ->
-            val result = AtomicReference<BlockingGetResult<T>?>(null)
-            val upstreamDisposable = AtomicReference<Disposable?>(null)
-
-            subscribe(
-                object : SingleObserver<T> {
-                    override fun onSubscribe(disposable: Disposable) {
-                        upstreamDisposable.value = disposable
-                    }
-
-                    override fun onSuccess(value: T) {
-                        lock.synchronized {
-                            result.value = BlockingGetResult.Success(value)
-                            condition.signal()
-                        }
-                    }
-
-                    override fun onError(error: Throwable) {
-                        lock.synchronized {
-                            result.value = BlockingGetResult.Error(error)
-                            condition.signal()
-                        }
+    withLockAndCondition { lock, condition ->
+        val observer =
+            object : PairReference<Any?, Disposable?>(Uninitialized, null), SingleObserver<T> {
+                override fun onSubscribe(disposable: Disposable) {
+                    lock.synchronized {
+                        second = disposable
                     }
                 }
-            )
 
-            lock.synchronized {
-                while (result.value == null) {
-                    try {
-                        condition.await()
-                    } catch (e: Throwable) {
-                        upstreamDisposable.value?.dispose()
-                        throw e
+                override fun onSuccess(value: T) {
+                    lock.synchronized {
+                        first = value
+                        condition.signal()
+                    }
+                }
+
+                override fun onError(error: Throwable) {
+                    lock.synchronized {
+                        first = BlockingGetError(error)
+                        condition.signal()
                     }
                 }
             }
 
-            result
-                .value!!
-                .let {
-                    when (it) {
-                        is BlockingGetResult.Success -> it.value
-                        is BlockingGetResult.Error -> throw it.error
-                    }
+        subscribe(observer)
+
+        lock.synchronized {
+            while (observer.first === Uninitialized) {
+                try {
+                    condition.await()
+                } catch (e: Throwable) {
+                    observer.second?.dispose()
+                    throw e
                 }
+            }
         }
+
+        observer
+            .first
+            .let {
+                if (it is BlockingGetError) {
+                    throw it.error
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                it as T
+            }
     }
 
-private sealed class BlockingGetResult<out T> {
-    class Success<out T>(val value: T) : BlockingGetResult<T>()
-    class Error(val error: Throwable) : BlockingGetResult<Nothing>()
-}
+private class BlockingGetError(val error: Throwable)

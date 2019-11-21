@@ -8,6 +8,7 @@ import com.badoo.reaktive.completable.CompletableObserver
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 
@@ -21,7 +22,7 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
 
         val serializedEmitter = emitter.serialize()
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
                 private val pendingValue = AtomicReference<DebouncePendingValue<T>?>(null)
 
@@ -44,7 +45,8 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
 
                     /*
                      * Dispose any existing inner Completable.
-                     * If a previous Completable did not provide its disposable yet it will be disposed automatically later since
+                     * If a previous Completable did not provide its disposable yet
+                     * it will be disposed automatically later since
                      * its localDisposableWrapper is disposed.
                      */
                     innerDisposableWrapper.set(localDisposableWrapper)
@@ -70,7 +72,6 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
                         ?.let { serializedEmitter.onNext(it.value) }
                     serializedEmitter.onComplete()
                 }
-
             }
         )
     }

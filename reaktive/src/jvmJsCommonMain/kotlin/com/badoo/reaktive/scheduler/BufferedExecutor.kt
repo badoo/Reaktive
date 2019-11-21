@@ -2,7 +2,6 @@ package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.utils.queue.ArrayQueue
 import com.badoo.reaktive.utils.queue.Queue
-import com.badoo.reaktive.utils.queue.isEmpty
 
 internal actual class BufferedExecutor<in T> actual constructor(
     private val executor: Scheduler.Executor,

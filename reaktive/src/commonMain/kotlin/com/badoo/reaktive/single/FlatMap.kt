@@ -2,21 +2,20 @@ package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 
 fun <T, R> Single<T>.flatMap(mapper: (T) -> Single<R>): Single<R> =
     single { emitter ->
-        subscribeSafe(
+        subscribe(
             object : SingleObserver<T>, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
                 }
 
                 override fun onSuccess(value: T) {
-                    emitter.tryCatch({ mapper(value) }) {
-                        it.subscribeSafe(
+                    emitter.tryCatch {
+                        mapper(value).subscribe(
                             object : SingleObserver<R>, Observer by this, SingleCallbacks<R> by emitter {
                             }
                         )

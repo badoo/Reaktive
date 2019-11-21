@@ -49,7 +49,7 @@ class TestMaybeObserver<T>(autoFreeze: Boolean = true) : TestObserver(), MaybeOb
         super.checkActive()
 
         check(!isSuccess) { "Already succeeded" }
-        check(!isComplete) { "Already complete" }
+        check(!isComplete) { "Already completed" }
     }
 
     private class Value<T>(val value: T)

@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
@@ -11,7 +10,7 @@ fun <T> Observable<T>.takeUntil(predicate: (T) -> Boolean): Observable<T> =
         val disposableWrapper = DisposableWrapper()
         emitter.setDisposable(disposableWrapper)
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     disposableWrapper.set(disposable)
@@ -20,7 +19,7 @@ fun <T> Observable<T>.takeUntil(predicate: (T) -> Boolean): Observable<T> =
                 override fun onNext(value: T) {
                     emitter.onNext(value)
 
-                    emitter.tryCatch({ predicate(value) }) {
+                    emitter.tryCatch(block = { predicate(value) }) {
                         if (it) {
                             emitter.onComplete()
                         }

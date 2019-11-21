@@ -1,16 +1,7 @@
 package com.badoo.reaktive.disposable
 
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
+@Suppress("FunctionName")
+expect inline fun Disposable(crossinline onDispose: () -> Unit): Disposable
 
-inline fun disposable(crossinline onDispose: () -> Unit = {}): Disposable =
-    object : Disposable {
-        @Suppress("ObjectPropertyName") // Backing property
-        private var _isDisposed = AtomicBoolean()
-        override val isDisposed: Boolean get() = _isDisposed.value
-
-        override fun dispose() {
-            if (_isDisposed.compareAndSet(false, true)) {
-                onDispose()
-            }
-        }
-    }
+@Suppress("FunctionName")
+expect fun Disposable(): Disposable

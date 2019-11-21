@@ -1,6 +1,6 @@
 package com.badoo.reaktive.scheduler
 
-import com.badoo.reaktive.utils.uptimeMillis
+import com.badoo.reaktive.utils.clock.DefaultClock
 
 actual fun createTrampolineScheduler(): Scheduler =
     TrampolineScheduler(
@@ -10,8 +10,9 @@ actual fun createTrampolineScheduler(): Scheduler =
         }
     )
 
+@Suppress("EmptyWhileBlock")
 private fun busySleep(millis: Long) {
-    val end = uptimeMillis + millis
-    while (uptimeMillis < end) {
+    val end = DefaultClock.uptimeMillis + millis
+    while (DefaultClock.uptimeMillis < end) {
     }
 }

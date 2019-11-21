@@ -1,45 +1,38 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
-fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable =
+inline fun completable(crossinline onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable =
     completableUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
-
         val emitter =
-            object : CompletableEmitter {
-                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
+            object : DisposableWrapper(), CompletableEmitter {
+                override fun setDisposable(disposable: Disposable) {
+                    set(disposable)
+                }
 
                 override fun onComplete() {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onComplete()
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
-                    }
+                    doIfNotDisposedAndDispose(block = observer::onComplete)
                 }
 
                 override fun onError(error: Throwable) {
-                    if (!disposableWrapper.isDisposed) {
-                        try {
-                            observer.onError(error)
-                        } finally {
-                            disposableWrapper.dispose()
-                        }
+                    doIfNotDisposedAndDispose {
+                        observer.onError(error)
                     }
                 }
 
-                override fun setDisposable(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
+                    if (!isDisposed) {
+                        try {
+                            block()
+                        } finally {
+                            dispose()
+                        }
+                    }
                 }
             }
 
-        try {
-            onSubscribe(emitter)
-        } catch (e: Throwable) {
-            emitter.onError(e)
-        }
+        observer.onSubscribe(emitter)
+        emitter.tryCatch { onSubscribe(emitter) }
     }

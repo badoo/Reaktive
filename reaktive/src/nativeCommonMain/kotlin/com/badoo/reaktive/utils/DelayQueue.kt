@@ -1,6 +1,8 @@
 package com.badoo.reaktive.utils
 
 import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.lock.Lock
+import com.badoo.reaktive.utils.lock.synchronized
 import kotlin.native.concurrent.AtomicLong
 import kotlin.system.getTimeMillis
 
@@ -11,7 +13,8 @@ internal class DelayQueue<T : Any> {
     private val queueRef: AtomicReference<List<Holder<T>>?> = AtomicReference(emptyList())
 
     /**
-     * Terminates the queue. Any currently waiting [take] methods will immediately return null. All methods will do nothing.
+     * Terminates the queue. Any currently waiting [take] methods will immediately return null.
+     * All methods will do nothing.
      */
     fun terminate() {
         lock.synchronized {
@@ -40,6 +43,7 @@ internal class DelayQueue<T : Any> {
      * Waits until an item will be available and then returns the item.
      * Immediately returns null when terminated.
      */
+    @Suppress("NestedBlockDepth")
     fun take(): T? {
         lock.acquire()
         try {
@@ -50,7 +54,7 @@ internal class DelayQueue<T : Any> {
                 if (item == null) {
                     condition.await()
                 } else {
-                    val timeoutNanos = (item.endTimeMillis - getTimeMillis()) * NANOS_IN_MILLIS
+                    val timeoutNanos = (item.endTimeMillis - getTimeMillis()) * NANOS_IN_MILLI
 
                     if (timeoutNanos <= 0L) {
                         queueRef.value = queue.drop(1)
@@ -100,10 +104,6 @@ internal class DelayQueue<T : Any> {
         lock.synchronized {
             queueRef.value?.let(block)
         }
-
-    private companion object {
-        private const val NANOS_IN_MILLIS = 1_000_000L
-    }
 
     private data class Holder<out T>(
         val value: T,

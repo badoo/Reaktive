@@ -6,7 +6,9 @@ import com.badoo.reaktive.completable.CompletableObserver
 import com.badoo.reaktive.test.base.TestSource
 import com.badoo.reaktive.utils.freeze
 
-class TestCompletable(autoFreeze: Boolean = true) : TestSource<CompletableObserver>(), Completable, CompletableCallbacks {
+class TestCompletable(
+    autoFreeze: Boolean = true
+) : TestSource<CompletableObserver>(), Completable, CompletableCallbacks {
 
     init {
         if (autoFreeze) {

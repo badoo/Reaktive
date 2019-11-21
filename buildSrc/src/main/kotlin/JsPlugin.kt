@@ -31,12 +31,12 @@ abstract class JsPlugin : Plugin<Project> {
             }
             sourceSets.getByName(TARGET_NAME_JS.appendCapitalized(SourceSet.MAIN_SOURCE_SET_NAME)) {
                 dependencies {
-                    implementation(kotlin("stdlib-js"))
+                    implementation(Deps.kotlin.stdlib.js)
                 }
             }
             sourceSets.getByName(TARGET_NAME_JS.appendCapitalized(SourceSet.TEST_SOURCE_SET_NAME)) {
                 dependencies {
-                    implementation(kotlin("test-js"))
+                    implementation(Deps.kotlin.test.js)
                 }
             }
         }
@@ -62,5 +62,4 @@ abstract class JsPlugin : Plugin<Project> {
 
         const val TARGET_NAME_JS = "js"
     }
-
 }

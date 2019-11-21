@@ -17,14 +17,13 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7'
-    implementation 'com.android.support:appcompat-v7'
-    implementation 'com.android.support.constraint:constraint-layout'
-    implementation 'io.reactivex.rxjava2:rxjava'
-    implementation 'io.reactivex.rxjava2:rxandroid'
+    implementation Deps.kotlin.stdlib.jdk7
+    implementation Deps.android.support.appcompatV7
+    implementation Deps.android.support.constraintLayout
+    implementation Deps.android.support.exifinterface
     implementation project(':reaktive')
     implementation project(':reaktive-testing')
     implementation project(':rxjava2-interop')
     implementation project(':sample-mpp-module')
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation Deps.picasso
 }

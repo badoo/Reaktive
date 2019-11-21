@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.observable.firstOrError

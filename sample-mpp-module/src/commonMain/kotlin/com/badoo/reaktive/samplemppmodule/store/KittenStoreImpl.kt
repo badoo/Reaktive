@@ -11,12 +11,13 @@ import com.badoo.reaktive.single.map
 import com.badoo.reaktive.single.observeOn
 import com.badoo.reaktive.single.subscribe
 import com.badoo.reaktive.subject.behavior.behaviorSubject
+import com.badoo.reaktive.utils.ensureNeverFrozen
 
 internal class KittenStoreImpl(
     private val loader: KittenLoader
 ) : KittenStore {
 
-    private val _states = behaviorSubject(State())
+    private val _states = behaviorSubject(State()).ensureNeverFrozen()
     override val states: Observable<State> = _states
     private val state: State get() = _states.value
 
@@ -29,7 +30,7 @@ internal class KittenStoreImpl(
     }
 
     override fun accept(intent: Intent) {
-        execute(intent)?.also(disposables::add)
+        execute(intent)?.let(disposables::add)
     }
 
     private fun execute(intent: Intent): Disposable? =

@@ -1,7 +1,10 @@
 /*
- * In order to build this app you should install libcurl4-openssl-dev and libgtk-3-dev packages in your system
+ * In order to build this app you should install libcurl4-openssl-dev and libgtk-3-dev packages in your system.
+ *
+ * Use the following Gradle tasks to run your application:
+ * :runReleaseExecutableLinux - without debug symbols
+ * :runDebugExecutableLinux - with debug symbols
  */
-
 plugins {
     id 'kotlin-multiplatform'
 }
@@ -44,7 +47,3 @@ kotlin {
         }
     }
 }
-
-// Use the following Gradle tasks to run your application:
-// :runReleaseExecutableLinux - without debug symbols
-// :runDebugExecutableLinux - with debug symbols

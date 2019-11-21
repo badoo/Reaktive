@@ -1,5 +1,6 @@
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.internal.AbstractTask
 import org.gradle.api.tasks.InputFiles
@@ -8,8 +9,10 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 
 @Suppress("UnstableApiUsage")
 abstract class IosPlugin : Plugin<Project> {
@@ -42,6 +45,7 @@ abstract class IosPlugin : Plugin<Project> {
             }
         }
         setupBuildAll(target, buildBinariesTasks)
+        setupBuildFat(target)
     }
 
     private fun setupTest(
@@ -75,6 +79,36 @@ abstract class IosPlugin : Plugin<Project> {
         }
     }
 
+    private fun setupBuildFat(target: Project) {
+        target.extensions.configure(KotlinMultiplatformExtension::class.java) {
+            targets.withType(KotlinNativeTarget::class.java).configureEach {
+                binaries.withType(Framework::class.java).configureEach {
+                    val framework = this
+                    val binaryBaseName = baseName.takeIf { it != target.name } ?: ""
+                    val buildType = buildType.name.toLowerCase()
+                    val taskName = "$TASK_NAME_FAT${binaryBaseName.capitalize()}${buildType.capitalize()}"
+                    // get or create fat-X-Y task
+                    val provider =
+                        try {
+                            target.tasks.named(taskName, FatFrameworkTask::class.java)
+                        } catch (unknownException: UnknownDomainObjectException) {
+                            target.tasks.register(taskName, FatFrameworkTask::class.java) {
+                                baseName = framework.baseName
+                                // Skip base name, if it was not changed
+                                // e.g. fatDebug, fatCustomBaseNameDebug
+                                val binaryNameFolder = if (binaryBaseName.isNotEmpty()) "$binaryBaseName/" else ""
+                                destinationDir = project.file(
+                                    "${project.buildDir}/fat-framework/$binaryNameFolder$buildType"
+                                )
+                            }
+                        }
+                    // Add current framework to fat output
+                    provider.configure { from(framework) }
+                }
+            }
+        }
+    }
+
     abstract class RunIosTestTask : AbstractTask() {
 
         @InputFiles
@@ -84,8 +118,14 @@ abstract class IosPlugin : Plugin<Project> {
         open fun runTest() {
             val files = testExecutables.filter { it.exists() }.files.toTypedArray()
             if (files.isNotEmpty()) {
-                project.exec {
-                    commandLine("xcrun", "simctl", "spawn", "iPhone X", *files)
+                val bootResult = project.exec { commandLine("xcrun", "simctl", "boot", "iPhone 8") }
+                try {
+                    val spawnResult = project.exec { commandLine("xcrun", "simctl", "spawn", "iPhone 8", *files) }
+                    spawnResult.assertNormalExitValue()
+                } finally {
+                    if (bootResult.exitValue == 0) {
+                        project.exec { commandLine("xcrun", "simctl", "shutdown", "iPhone 8") }
+                    }
                 }
             } else {
                 logger.error("No test executable for iOS")
@@ -100,5 +140,6 @@ abstract class IosPlugin : Plugin<Project> {
 
         const val TASK_NAME_IOS_BINARIES = "iosBinaries"
         const val TASK_NAME_IOS_TEST = "iosTest"
+        const val TASK_NAME_FAT = "fat"
     }
 }

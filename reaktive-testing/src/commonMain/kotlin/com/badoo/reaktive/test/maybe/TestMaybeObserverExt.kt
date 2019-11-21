@@ -7,15 +7,15 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 fun <T> TestMaybeObserver<T>.assertSuccess() {
-    assertTrue(isSuccess, "Maybe did not success")
+    assertTrue(isSuccess, "Maybe did not succeed")
 }
 
 fun <T> TestMaybeObserver<T>.assertSuccess(expectedValue: T) {
-    assertEquals(expectedValue, value, "Maybe success values do not match")
+    assertEquals(expectedValue, value, "Maybe success value does not match")
 }
 
 fun <T> TestMaybeObserver<T>.assertNotSuccess() {
-    assertFalse(isSuccess, "Maybe is succeeded")
+    assertFalse(isSuccess, "Maybe succeeded")
 }
 
 fun TestMaybeObserver<*>.assertComplete() {
@@ -23,7 +23,7 @@ fun TestMaybeObserver<*>.assertComplete() {
 }
 
 fun TestMaybeObserver<*>.assertNotComplete() {
-    assertFalse(isComplete, "Maybe is complete")
+    assertFalse(isComplete, "Maybe completed")
 }
 
 fun <T> Maybe<T>.test(autoFreeze: Boolean = true): TestMaybeObserver<T> {

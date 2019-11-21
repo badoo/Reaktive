@@ -3,7 +3,7 @@ package com.badoo.reaktive.base.operator
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.observable.ConnectableObservable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableObserver
@@ -31,7 +31,7 @@ internal fun <T> Observable<T>.publish(subjectFactory: () -> Subject<T>): Connec
             onConnect?.invoke(disposables)
 
             if ((oldState !is PublishState.Connected) && !disposables.isDisposed) {
-                this@publish.subscribeSafe(newState.subject.getObserver(disposables::add))
+                this@publish.subscribeSafe(newState.subject.getObserver { disposables.add(it) })
             }
         }
 
@@ -50,7 +50,7 @@ internal fun <T> Observable<T>.publish(subjectFactory: () -> Subject<T>): Connec
             val disposables = CompositeDisposable()
 
             disposables +=
-                disposable {
+                Disposable {
                     state.update {
                         it?.takeUnless { it.subject === subject }
                     }

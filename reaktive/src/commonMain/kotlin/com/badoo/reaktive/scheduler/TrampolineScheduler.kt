@@ -1,28 +1,30 @@
 package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.disposable.CompositeDisposable
+import com.badoo.reaktive.disposable.minusAssign
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicLong
+import com.badoo.reaktive.utils.clock.Clock
+import com.badoo.reaktive.utils.clock.DefaultClock
 import com.badoo.reaktive.utils.serializer.serializer
-import com.badoo.reaktive.utils.uptimeMillis
 
 internal class TrampolineScheduler(
-    private val getUptimeMillis: () -> Long = ::uptimeMillis,
+    private val clock: Clock = DefaultClock,
     private val sleep: (mills: Long) -> Boolean
 ) : Scheduler {
 
     private val disposables = CompositeDisposable()
 
-    override fun newExecutor(): Scheduler.Executor =
-        ExecutorImpl(getUptimeMillis, sleep)
-            .also(disposables::add)
+    override fun newExecutor(): Scheduler.Executor = ExecutorImpl(disposables, clock, sleep)
 
     override fun destroy() {
         disposables.dispose()
     }
 
     private class ExecutorImpl(
-        private val getUptimeMillis: () -> Long,
+        private val disposables: CompositeDisposable,
+        private val clock: Clock,
         private val sleep: (mills: Long) -> Boolean
     ) : Scheduler.Executor {
 
@@ -30,9 +32,14 @@ internal class TrampolineScheduler(
         private val _isDisposed = AtomicBoolean()
         override val isDisposed: Boolean get() = _isDisposed.value
 
+        init {
+            disposables += this
+        }
+
         override fun dispose() {
             if (_isDisposed.compareAndSet(false, true)) {
                 serializer.clear()
+                disposables -= this
             }
         }
 
@@ -49,7 +56,7 @@ internal class TrampolineScheduler(
         }
 
         private fun submit(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
-            submit(Task(getUptimeMillis() + startDelayMillis, periodMillis, task))
+            submit(Task(clock.uptimeMillis + startDelayMillis, periodMillis, task))
         }
 
         private fun submit(task: Task) {
@@ -63,7 +70,7 @@ internal class TrampolineScheduler(
                 return false
             }
 
-            val delay = task.startTime - getUptimeMillis()
+            val delay = task.startTime - clock.uptimeMillis
             if ((delay > 0) && !sleep(delay)) {
                 return false
             }
@@ -72,7 +79,7 @@ internal class TrampolineScheduler(
                 return false
             }
 
-            val nextStartMillis = if (task.periodMillis >= 0L) getUptimeMillis() + task.periodMillis else -1L
+            val nextStartMillis = if (task.periodMillis >= 0L) clock.uptimeMillis + task.periodMillis else -1L
 
             task.task()
 

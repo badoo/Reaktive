@@ -21,7 +21,6 @@ import kotlinx.cinterop.value
 import libgtk3.GBytes
 import libgtk3.GInputStream
 import libgtk3.GTK_DIALOG_DESTROY_WITH_PARENT
-import libgtk3.GTK_DIALOG_USE_HEADER_BAR
 import libgtk3.GdkPixbuf
 import libgtk3.GtkBox
 import libgtk3.GtkButton
@@ -148,7 +147,7 @@ class KittenViewImpl(
             requireNotNull(
                 gtk_message_dialog_new(
                     parent = window,
-                    flags = GTK_DIALOG_USE_HEADER_BAR or GTK_DIALOG_DESTROY_WITH_PARENT,
+                    flags = GTK_DIALOG_DESTROY_WITH_PARENT,
                     type = GtkMessageType.GTK_MESSAGE_ERROR,
                     buttons = GtkButtonsType.GTK_BUTTONS_CLOSE,
                     message_format = "Error loading kitten :-("

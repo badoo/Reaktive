@@ -1,8 +1,8 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 
 fun <T> Observable<T>.delay(delayMillis: Long, scheduler: Scheduler, delayError: Boolean = false): Observable<T> =
@@ -12,7 +12,7 @@ fun <T> Observable<T>.delay(delayMillis: Long, scheduler: Scheduler, delayError:
         val executor = scheduler.newExecutor()
         disposables += executor
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable

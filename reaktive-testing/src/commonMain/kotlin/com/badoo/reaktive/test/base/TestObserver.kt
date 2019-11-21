@@ -11,6 +11,7 @@ open class TestObserver : Observer, Disposable, ErrorCallback {
     val disposable: Disposable? get() = _disposable.value
     private val _error = AtomicReference<Throwable?>(null)
     val error: Throwable? get() = _error.value
+    val isError: Boolean get() = error != null
     override val isDisposed: Boolean get() = _disposable.value?.isDisposed == true
 
     override fun onSubscribe(disposable: Disposable) {
@@ -37,7 +38,7 @@ open class TestObserver : Observer, Disposable, ErrorCallback {
 
     protected open fun checkActive() {
         checkNotNull(disposable) { "Not subscribed" }
-        check(error == null) { "Already has error" }
+        check(error == null) { "Already failed" }
         check(!isDisposed) { "Already disposed" }
     }
 }

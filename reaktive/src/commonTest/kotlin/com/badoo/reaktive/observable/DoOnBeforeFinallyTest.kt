@@ -1,7 +1,7 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.exceptions.CompositeException
-import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
@@ -78,7 +78,7 @@ class DoOnBeforeFinallyTest
 
         observableUnsafe<Unit> { observer ->
             observer.onSubscribe(
-                disposable {
+                Disposable {
                     callOrder += "dispose"
                 }
             )

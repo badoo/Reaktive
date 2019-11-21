@@ -1,10 +1,12 @@
 package com.badoo.reaktive.coroutinesinterop
 
+import com.badoo.reaktive.observable.observableUnsafe
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.onNext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
@@ -14,6 +16,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@ExperimentalCoroutinesApi
 class ObservableAsFlowTest {
 
     private val upstream = TestObservable<Int?>(autoFreeze = false)
@@ -75,5 +78,24 @@ class ObservableAsFlowTest {
         scope.cancel()
 
         assertFalse(upstream.hasSubscribers)
+    }
+
+    @Test
+    fun throws_exception_WHEN_upstream_subscribe_throws_exception() {
+        var isThrown = false
+
+        GlobalScope.launch(Dispatchers.Unconfined) {
+            observableUnsafe<Nothing> { throw Exception() }
+                .asFlow()
+                .run {
+                    try {
+                        collect()
+                    } catch (e: Exception) {
+                        isThrown = true
+                    }
+                }
+        }
+
+        assertTrue(isThrown)
     }
 }

@@ -23,11 +23,11 @@ fun TestObservableObserver<*>.assertNoValues() {
 }
 
 fun TestObservableObserver<*>.assertComplete() {
-    assertTrue(isComplete, "Observable was not complete")
+    assertTrue(isComplete, "Observable did not complete")
 }
 
 fun TestObservableObserver<*>.assertNotComplete() {
-    assertFalse(isComplete, "Observable is complete")
+    assertFalse(isComplete, "Observable completed")
 }
 
 fun <T> Observable<T>.test(autoFreeze: Boolean = true): TestObservableObserver<T> {

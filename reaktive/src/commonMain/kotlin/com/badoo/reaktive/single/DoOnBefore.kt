@@ -8,9 +8,9 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.disposable.disposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
-import com.badoo.reaktive.utils.handleSourceError
+import com.badoo.reaktive.disposable.plusAssign
+import com.badoo.reaktive.utils.handleReaktiveError
 
 fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =
     singleUnsafe { observer ->
@@ -51,7 +51,7 @@ fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =
 
 fun <T> Single<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Single<T> =
     single { emitter ->
-        subscribeSafe(
+        subscribe(
             object : SingleObserver<T>, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -59,7 +59,7 @@ fun <T> Single<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Single<T> =
 
                 override fun onSuccess(value: T) {
                     if (!emitter.isDisposed) {
-                        emitter.tryCatch({ consumer(value) }) {
+                        emitter.tryCatch(block = { consumer(value) }) {
                             emitter.onSuccess(value)
                         }
                     }
@@ -70,7 +70,7 @@ fun <T> Single<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Single<T> =
 
 fun <T> Single<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Single<T> =
     single { emitter ->
-        subscribeSafe(
+        subscribe(
             object : SingleObserver<T>, SuccessCallback<T> by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -87,7 +87,7 @@ fun <T> Single<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Single<T> =
 
 fun <T> Single<T>.doOnBeforeTerminate(action: () -> Unit): Single<T> =
     single { emitter ->
-        subscribeSafe(
+        subscribe(
             object : SingleObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -114,11 +114,11 @@ fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
         observer.onSubscribe(disposables)
 
         disposables +=
-            disposable {
+            Disposable {
                 try {
                     action()
                 } catch (e: Throwable) {
-                    handleSourceError(e) // Can't send error to downstream, already disposed
+                    handleReaktiveError(e) // Can't send error to downstream, already disposed
                 }
             }
 
@@ -138,7 +138,7 @@ fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
 
                 private inline fun onUpstreamFinished(block: () -> Unit) {
                     try {
-                        disposables.clear(dispose = false) // Prevent "action" from being called
+                        disposables.clear(false) // Prevent "action" from being called
                         block()
                     } finally {
                         disposables.dispose()
@@ -154,11 +154,11 @@ fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
         observer.onSubscribe(disposables)
 
         disposables +=
-            disposable {
+            Disposable {
                 try {
                     action()
                 } catch (e: Throwable) {
-                    handleSourceError(e) // Can't send error to downstream, already disposed
+                    handleReaktiveError(e) // Can't send error to downstream, already disposed
                 }
             }
 
@@ -186,7 +186,7 @@ fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
 
                 private inline fun onUpstreamFinished(block: () -> Unit) {
                     try {
-                        disposables.clear(dispose = false) // Prevent "action" from being called while disposing
+                        disposables.clear(false) // Prevent "action" from being called while disposing
                         block()
                     } finally {
                         disposables.dispose()

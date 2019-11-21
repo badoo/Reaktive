@@ -1,22 +1,21 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.Observer
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 
 fun <T, R> Maybe<T>.flatMap(mapper: (T) -> Maybe<R>): Maybe<R> =
     maybe { emitter ->
-        subscribeSafe(
+        subscribe(
             object : MaybeObserver<T>, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
                 }
 
                 override fun onSuccess(value: T) {
-                    emitter.tryCatch({ mapper(value) }) {
-                        it.subscribeSafe(
+                    emitter.tryCatch {
+                        mapper(value).subscribe(
                             object : MaybeObserver<R>, Observer by this, MaybeCallbacks<R> by emitter {
                             }
                         )

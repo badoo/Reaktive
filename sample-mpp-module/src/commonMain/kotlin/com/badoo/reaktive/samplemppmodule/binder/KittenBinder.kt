@@ -1,6 +1,7 @@
 package com.badoo.reaktive.samplemppmodule.binder
 
 import com.badoo.reaktive.disposable.CompositeDisposable
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.observable.map
 import com.badoo.reaktive.observable.subscribe
 import com.badoo.reaktive.samplemppmodule.store.KittenStoreBuilder
@@ -23,13 +24,13 @@ class KittenBinder(
             requireNotNull(view)
                 .events
                 .map(KittenViewEventToIntentMapper::invoke)
-                .subscribe(isThreadLocal = true, onNext = store::accept)
+                .subscribe(onNext = store::accept)
 
         disposables +=
             store
                 .states
                 .map(KittenStateToViewModelMapper::invoke)
-                .subscribe(isThreadLocal = true, onNext = { requireNotNull(view).show(it) })
+                .subscribe(onNext = { requireNotNull(view).show(it) })
     }
 
     fun onStop() {

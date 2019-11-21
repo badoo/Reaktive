@@ -1,7 +1,7 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.exceptions.CompositeException
-import com.badoo.reaktive.disposable.disposable
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.base.hasSubscribers
@@ -12,10 +12,8 @@ import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.isPrintErrorEnabled
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
@@ -26,14 +24,8 @@ class SubscribeTest {
     private val upstream = TestObservable<Int?>()
     private val observer = TestObservableObserver<Int?>()
 
-    @BeforeTest
-    fun before() {
-        isPrintErrorEnabled = false
-    }
-
     @AfterTest
     fun after() {
-        isPrintErrorEnabled = true
         resetReaktiveUncaughtErrorHandler()
     }
 
@@ -58,7 +50,7 @@ class SubscribeTest {
 
     @Test
     fun calls_onNext_in_the_same_order_WHEN_upstream_emitted_values() {
-        observer.onSubscribe(disposable())
+        observer.onSubscribe(Disposable())
         upstream.subscribe(onNext = observer::onNext)
 
         upstream.onNext(null)
@@ -70,7 +62,7 @@ class SubscribeTest {
 
     @Test
     fun calls_onComplete_WHEN_upstream_is_completed() {
-        observer.onSubscribe(disposable())
+        observer.onSubscribe(Disposable())
         upstream.subscribe(onComplete = observer::onComplete)
 
         upstream.onComplete()
@@ -90,7 +82,7 @@ class SubscribeTest {
 
     @Test
     fun calls_onError_WHEN_upstream_produced_an_error() {
-        observer.onSubscribe(disposable())
+        observer.onSubscribe(Disposable())
         upstream.subscribe(onError = observer::onError)
         val error = Throwable()
 
