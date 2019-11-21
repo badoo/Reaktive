@@ -43,16 +43,6 @@ abstract class IosPlugin : Plugin<Project> {
                 }
                 buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
             }
-            // TODO Remove after virtualization fix https://github.com/JetBrains/kotlin-native/issues/3275
-            targets.configureEach {
-                if (this is KotlinNativeTarget) {
-                    compilations.configureEach {
-                        kotlinOptions {
-                            freeCompilerArgs = freeCompilerArgs + "-Xdisable-phases=Devirtualization,DCEPhase"
-                        }
-                    }
-                }
-            }
         }
         setupBuildAll(target, buildBinariesTasks)
         setupBuildFat(target)
