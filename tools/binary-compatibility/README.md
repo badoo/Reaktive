@@ -1,0 +1,1 @@
+Copy-pasted https://github.com/JetBrains/kotlin/tree/master/libraries/tools/binary-compatibility-validator
