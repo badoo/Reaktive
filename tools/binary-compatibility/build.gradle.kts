@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    kotlin("jvm")
+    `kotlin-platform-jvm`
 }
 
 dependencies {
@@ -12,6 +12,8 @@ dependencies {
 }
 
 tasks.named("test", Test::class) {
+
+    // Build all jars, sync this list with RuntimePublicAPITest
     dependsOn(
         ":coroutines-interop:jvmJar",
         ":reaktive-annotations:jvmJar",
@@ -23,8 +25,11 @@ tasks.named("test", Test::class) {
         ":utils:jvmJar"
     )
 
-    systemProperty("overwrite.output", "false")
-    systemProperty("kotlinVersion", rootProject.ext["reaktive_version"].toString())
+    // Re-run this task always, caching is broken because of writing files by test
+    outputs.upToDateWhen { false }
+
+    systemProperty("overwrite.output", findProperty("binary-compatibility-override") ?: "true")
+    systemProperty("kotlinVersion", findProperty("reaktive_version").toString())
     systemProperty("testCasesClassesDirs", sourceSets.test.get().output.classesDirs.asPath)
     jvmArgs("-ea")
 }

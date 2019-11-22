@@ -18,31 +18,31 @@ class RuntimePublicAPITest {
     val testName = TestName()
 
     @Test fun coroutinesInterop() {
-        snapshotAPIAndCompare("../../coroutines-interop/build/libs", "coroutines-interop-jvm", listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../coroutines-interop/build/libs", "coroutines-interop-jvm", listOf("com.badoo.reaktive"))
     }
 
     @Test fun reaktive() {
-        snapshotAPIAndCompare("../../reaktive/build/libs", "reaktive-jvm", listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../reaktive/build/libs", "reaktive-jvm", listOf("com.badoo.reaktive"))
     }
 
     @Test fun reaktiveAnnotations() {
-        snapshotAPIAndCompare("../../reaktive-annotations/build/libs", "reaktive-annotations-jvm", listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../reaktive-annotations/build/libs", "reaktive-annotations-jvm", listOf("com.badoo.reaktive"))
     }
 
     @Test fun reaktiveTesting() {
-        snapshotAPIAndCompare("../../reaktive-testing/build/libs", "reaktive-testing-jvm", listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../reaktive-testing/build/libs", "reaktive-testing-jvm", listOf("com.badoo.reaktive"))
     }
 
     @Test fun rxjava2Interop() {
-        snapshotAPIAndCompare("../../rxjava2-interop/build/libs", "rxjava2-interop", listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../rxjava2-interop/build/libs", "rxjava2-interop", listOf("com.badoo.reaktive"))
     }
 
     @Test fun rxjava3Interop() {
-        snapshotAPIAndCompare("../../rxjava3-interop/build/libs", "rxjava3-interop", listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../rxjava3-interop/build/libs", "rxjava3-interop", listOf("com.badoo.reaktive"))
     }
 
     @Test fun utils() {
-        snapshotAPIAndCompare("../../utils/build/libs", "utils-jvm", listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../utils/build/libs", "utils-jvm", listOf("com.badoo.reaktive"))
     }
 
     private fun snapshotAPIAndCompare(

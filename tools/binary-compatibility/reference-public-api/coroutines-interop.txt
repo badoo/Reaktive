@@ -12,6 +12,10 @@ public final class com/badoo/reaktive/coroutinesinterop/FlowAsObservableKt {
 	public static final fun asObservable (Lkotlinx/coroutines/flow/Flow;)Lcom/badoo/reaktive/observable/Observable;
 }
 
+public final class com/badoo/reaktive/coroutinesinterop/LaunchCoroutineKt {
+	public static final fun launchCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+}
+
 public final class com/badoo/reaktive/coroutinesinterop/MaybeFromCoroutineKt {
 	public static final fun asMaybe (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
 	public static final fun asMaybe (Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/maybe/Maybe;
