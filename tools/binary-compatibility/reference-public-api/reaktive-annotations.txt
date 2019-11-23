@@ -1,0 +1,18 @@
+public abstract interface annotation class com/badoo/reaktive/annotations/EventsOnAnyScheduler : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/badoo/reaktive/annotations/EventsOnComputationScheduler : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/badoo/reaktive/annotations/EventsOnIoScheduler : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/badoo/reaktive/annotations/EventsOnMainScheduler : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/badoo/reaktive/annotations/EventsOnUnspecifiedScheduler : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/badoo/reaktive/annotations/UseReturnValue : java/lang/annotation/Annotation {
+}
+
