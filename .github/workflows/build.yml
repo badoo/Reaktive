@@ -41,5 +41,5 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Run binrary compatibility test suite
+      - name: Run binary compatibility test suite
         run: ./gradlew :tools:binary-compatibility:test -Pbinary-compatibility-override=false
