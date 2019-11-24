@@ -303,6 +303,10 @@ public final class com/badoo/reaktive/maybe/MapKt {
 	public static final fun map (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
 }
 
+public final class com/badoo/reaktive/maybe/MapNotNullKt {
+	public static final fun mapNotNull (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
+}
+
 public abstract interface class com/badoo/reaktive/maybe/Maybe : com/badoo/reaktive/base/Source {
 }
 
@@ -549,6 +553,10 @@ public final class com/badoo/reaktive/observable/IntervalKt {
 
 public final class com/badoo/reaktive/observable/MapKt {
 	public static final fun map (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/observable/MapNotNullKt {
+	public static final fun mapNotNull (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/MergeKt {
@@ -929,6 +937,10 @@ public final class com/badoo/reaktive/single/FlattenKt {
 
 public final class com/badoo/reaktive/single/MapKt {
 	public static final fun map (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
+}
+
+public final class com/badoo/reaktive/single/MapNotNullKt {
+	public static final fun mapNotNull (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
 }
 
 public final class com/badoo/reaktive/single/MergeKt {
