@@ -24,7 +24,7 @@ fun <T> Observable<T>.repeat(count: Int = -1): Observable<T> =
                 }
 
                 override fun onComplete() {
-                    if ((count < 0) || (counter!!.addAndGet(-1) >= 0)) {
+                    if ((counter == null) || (counter.addAndGet(-1) >= 0)) {
                         subscribeToUpstream()
                     } else {
                         emitter.onComplete()
