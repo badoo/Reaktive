@@ -13,6 +13,7 @@ import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -163,6 +164,29 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTests<No
         upstream.repeat(count = 1).test()
 
         assertFalse(isSecondIterationRecursive.value)
+    }
+
+    @Test
+    fun does_not_resubsribe_to_upstream_WHEN_disposed_and_upstream_completed() {
+        val isResubscribed = AtomicBoolean()
+        val upstreamObserver = AtomicReference<ObservableObserver<Int>?>(null)
+
+        val upstream =
+            observableUnsafe<Int> { observer ->
+                if (upstreamObserver.value == null) {
+                    observer.onSubscribe(Disposable())
+                    upstreamObserver.value = observer
+                } else {
+                    isResubscribed.value = true
+                }
+            }
+
+        val downstreamObserver = upstream.repeat(count = 1).test()
+
+        downstreamObserver.dispose()
+        upstreamObserver.value!!.onComplete()
+
+        assertFalse(isResubscribed.value)
     }
 
     @Test
