@@ -167,7 +167,7 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTests<No
     }
 
     @Test
-    fun does_not_resubsribe_to_upstream_WHEN_disposed_and_upstream_completed() {
+    fun does_not_resubscribe_to_upstream_WHEN_disposed_and_upstream_completed() {
         val isResubscribed = AtomicBoolean()
         val upstreamObserver = AtomicReference<ObservableObserver<Int>?>(null)
 
