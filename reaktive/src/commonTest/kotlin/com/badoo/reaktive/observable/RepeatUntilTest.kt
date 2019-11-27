@@ -56,7 +56,7 @@ class RepeatUntilTest : ObservableToObservableTests by ObservableToObservableTes
         upstream.repeatUntil { index.value == 1 }.test()
 
         upstreams[0].onComplete()
-
+        assertFalse(upstreams[0].hasSubscribers)
         assertTrue(upstreams[1].hasSubscribers)
     }
 
@@ -114,15 +114,15 @@ class RepeatUntilTest : ObservableToObservableTests by ObservableToObservableTes
                 if (upstreamObserver.value == null) {
                     observer.onSubscribe(Disposable())
                     upstreamObserver.value = observer
-                    count.addAndGet(1)
                 } else {
                     isResubscribed.value = true
                 }
             }
 
-        val downstreamObserver = upstream.repeatUntil { count.value == 1 }.test()
+        val downstreamObserver = upstream.repeatUntil { count.value == 2 }.test()
 
         downstreamObserver.dispose()
+        upstreamObserver.value!!.onNext(count.addAndGet(1))
         upstreamObserver.value!!.onComplete()
 
         assertFalse(isResubscribed.value)
@@ -171,5 +171,15 @@ class RepeatUntilTest : ObservableToObservableTests by ObservableToObservableTes
         upstream.onNext(0, null, 2)
 
         observer.assertValues(0, null, 2)
+    }
+
+    @Test
+    fun unsubscribes_from_upstream_WHEN_predicate_throw_exception() {
+        val upstream = TestObservable<Int?>()
+        val error = Exception()
+        val observer = upstream.repeatUntil { throw error }.test()
+        upstream.onNext(0, 1, 2)
+        upstream.onComplete()
+        observer.assertError(error)
     }
 }

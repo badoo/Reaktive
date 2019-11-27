@@ -2,6 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.ValueCallback
+import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.serializer.serializer
 
@@ -21,13 +22,17 @@ fun <T> Observable<T>.repeatUntil(predicate: () -> Boolean): Observable<T> =
                 }
 
                 override fun onComplete() {
-                    if (!emitter.isDisposed) {
-                        if (predicate()) {
-                            emitter.onComplete()
-                        } else {
-                            subscribeToUpstream()
-                        }
-                    }
+                    emitter.tryCatch(
+                        block = { predicate() },
+                        onSuccess = {
+                            if (!emitter.isDisposed) {
+                                if (it) {
+                                    emitter.onComplete()
+                                } else {
+                                    subscribeToUpstream()
+                                }
+                            }
+                        })
                 }
 
                 fun subscribeToUpstream() {
