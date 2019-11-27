@@ -988,7 +988,7 @@ public final class com/badoo/reaktive/single/RepeatKt {
 }
 
 public final class com/badoo/reaktive/single/RepeatUntilKt {
-	public static final fun repeatUntil (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun repeatUntil (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/single/RetryKt {
