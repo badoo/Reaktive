@@ -299,6 +299,11 @@ public final class com/badoo/reaktive/maybe/FlattenKt {
 	public static final fun flattenObservable (Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/observable/Observable;
 }
 
+public final class com/badoo/reaktive/maybe/MapIterableKt {
+	public static final fun mapIterable (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun mapIterableTo (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
+}
+
 public final class com/badoo/reaktive/maybe/MapKt {
 	public static final fun map (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
 }
@@ -549,6 +554,11 @@ public final class com/badoo/reaktive/observable/FlattenKt {
 public final class com/badoo/reaktive/observable/IntervalKt {
 	public static final fun observableInterval (JJLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun observableInterval (JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/observable/MapIterableKt {
+	public static final fun mapIterable (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun mapIterableTo (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/MapKt {
@@ -933,6 +943,11 @@ public final class com/badoo/reaktive/single/FlatMapObservableKt {
 public final class com/badoo/reaktive/single/FlattenKt {
 	public static final fun flatten (Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flattenObservable (Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/single/MapIterableKt {
+	public static final fun mapIterable (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
+	public static final fun mapIterableTo (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
 }
 
 public final class com/badoo/reaktive/single/MapKt {
