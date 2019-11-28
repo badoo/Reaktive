@@ -23,7 +23,7 @@ fun <T> Observable<T>.repeatUntil(predicate: () -> Boolean): Observable<T> =
 
                 override fun onComplete() {
                     emitter.tryCatch(
-                        block = { predicate() },
+                        block = predicate,
                         onSuccess = {
                             if (!emitter.isDisposed) {
                                 if (it) {

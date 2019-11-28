@@ -1,5 +1,6 @@
 package com.badoo.reaktive.single
 
+import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
@@ -9,7 +10,7 @@ import com.badoo.reaktive.utils.serializer.serializer
 fun <T> Single<T>.repeatUntil(predicate: (T) -> Boolean): Observable<T> =
     observable { emitter ->
         val observer =
-            object : SingleObserver<T> {
+            object : SingleObserver<T>, ErrorCallback by emitter {
                 // Prevents recursive subscriptions
                 private val serializer =
                     serializer<Unit> {
@@ -26,19 +27,13 @@ fun <T> Single<T>.repeatUntil(predicate: (T) -> Boolean): Observable<T> =
 
                     emitter.tryCatch(
                         block = { predicate(value) },
-                        onSuccess = {
-                            if (!emitter.isDisposed) {
-                                if (it) {
-                                    emitter.onComplete()
-                                } else {
-                                    subscribeToUpstream()
-                                }
+                        onSuccess = { shouldComplete ->
+                            if (shouldComplete) {
+                                emitter.onComplete()
+                            } else if (!emitter.isDisposed) {
+                                subscribeToUpstream()
                             }
                         })
-                }
-
-                override fun onError(error: Throwable) {
-                    emitter.onError(error)
                 }
 
                 fun subscribeToUpstream() {
