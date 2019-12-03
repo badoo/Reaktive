@@ -1238,6 +1238,7 @@ public final class com/badoo/reaktive/utils/queue/ArrayQueue : com/badoo/reaktiv
 	public static final field Companion Lcom/badoo/reaktive/utils/queue/ArrayQueue$Companion;
 	public static final field INITIAL_CAPACITY I
 	public fun <init> ()V
+	public final fun asList ()Ljava/util/List;
 	public fun clear ()V
 	public fun getPeek ()Ljava/lang/Object;
 	public fun getSize ()I
