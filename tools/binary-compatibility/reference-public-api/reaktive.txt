@@ -613,6 +613,7 @@ public final class com/badoo/reaktive/observable/RepeatUntilKt {
 
 public final class com/badoo/reaktive/observable/ReplayKt {
 	public static final fun replay (Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/ConnectableObservable;
+	public static final fun replay (Lcom/badoo/reaktive/observable/Observable;I)Lcom/badoo/reaktive/observable/ConnectableObservable;
 }
 
 public final class com/badoo/reaktive/observable/RetryKt {
