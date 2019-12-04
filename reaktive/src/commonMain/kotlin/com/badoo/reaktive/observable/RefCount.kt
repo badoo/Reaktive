@@ -13,9 +13,9 @@ fun <T> ConnectableObservable<T>.refCount(subscriberCount: Int = 1): Observable<
     val subscribeCount = AtomicInt()
     val disposable = AtomicReference<Disposable?>(null)
 
-    return observableUnsafe { observer ->
+    return observable { emitter ->
         val disposables = CompositeDisposable()
-        observer.onSubscribe(disposables)
+        emitter.setDisposable(disposables)
 
         disposables +=
             Disposable {
@@ -27,7 +27,7 @@ fun <T> ConnectableObservable<T>.refCount(subscriberCount: Int = 1): Observable<
             }
 
         this@refCount.subscribe(
-            object : ObservableObserver<T>, ObservableCallbacks<T> by observer {
+            object : ObservableObserver<T>, ObservableCallbacks<T> by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable
                 }
