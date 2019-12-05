@@ -58,40 +58,27 @@ internal class ArrayQueue<T> : Queue<T> {
         isFull = false
     }
 
-    fun asList(): List<T> {
-        if (isEmpty) {
-            return emptyList()
-        }
+    override fun iterator(): Iterator<T> =
+        object : Iterator<T> {
+            private var counter = size
+            private var index = head
+            private val lastIndex = queue.lastIndex
 
-        val list = ArrayList<T>(size)
-        val headIndex = head
-        val tailIndex = tail
-        val lastIndex = queue.lastIndex
+            override fun hasNext(): Boolean = counter > 0
 
-        if (isFull) {
-            for (i in headIndex..lastIndex) {
+            override fun next(): T {
                 @Suppress("UNCHECKED_CAST")
-                list += queue[i] as T
-            }
-            for (i in 0 until tailIndex) {
-                @Suppress("UNCHECKED_CAST")
-                list += queue[i] as T
-            }
-        } else {
-            var index = headIndex
+                val item = queue[index] as T
 
-            while (index != tailIndex) {
-                @Suppress("UNCHECKED_CAST")
-                list += queue[index] as T
+                counter--
                 index++
                 if (index > lastIndex) {
                     index = 0
                 }
+
+                return item
             }
         }
-
-        return list
-    }
 
     private fun ensureCapacity() {
         if (!isFull) {

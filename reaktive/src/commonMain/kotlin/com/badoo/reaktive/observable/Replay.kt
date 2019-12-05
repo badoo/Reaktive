@@ -16,10 +16,7 @@ fun <T> Observable<T>.replay(bufferSize: Int): ConnectableObservable<T> {
             override fun onAfterSubscribe(observer: ObservableObserver<T>) {
                 super.onAfterSubscribe(observer)
 
-                while (!values.isEmpty) {
-                    @Suppress("UNCHECKED_CAST")
-                    observer.onNext(values.poll() as T)
-                }
+                values.forEach(observer::onNext)
             }
 
             override fun onBeforeNext(value: T) {
