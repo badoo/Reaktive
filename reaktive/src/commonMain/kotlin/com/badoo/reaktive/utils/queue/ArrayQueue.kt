@@ -1,13 +1,19 @@
 package com.badoo.reaktive.utils.queue
 
+import com.badoo.reaktive.utils.ensureNeverFrozen
+
 internal class ArrayQueue<T> : Queue<T> {
+
+    init {
+        ensureNeverFrozen()
+    }
 
     private var queue: Array<T?> = createArray(INITIAL_CAPACITY)
     private var head = 0
     private var tail = 0
     private var isFull = false
     override val peek: T? get() = queue[head]
-    override val isEmpty: Boolean get() = head == tail
+    override val isEmpty: Boolean get() = (head == tail) && !isFull
 
     override val size: Int
         get() =
@@ -50,6 +56,41 @@ internal class ArrayQueue<T> : Queue<T> {
         head = 0
         tail = 0
         isFull = false
+    }
+
+    fun asList(): List<T> {
+        if (isEmpty) {
+            return emptyList()
+        }
+
+        val list = ArrayList<T>(size)
+        val headIndex = head
+        val tailIndex = tail
+        val lastIndex = queue.lastIndex
+
+        if (isFull) {
+            for (i in headIndex..lastIndex) {
+                @Suppress("UNCHECKED_CAST")
+                list += queue[i] as T
+            }
+            for (i in 0 until tailIndex) {
+                @Suppress("UNCHECKED_CAST")
+                list += queue[i] as T
+            }
+        } else {
+            var index = headIndex
+
+            while (index != tailIndex) {
+                @Suppress("UNCHECKED_CAST")
+                list += queue[index] as T
+                index++
+                if (index > lastIndex) {
+                    index = 0
+                }
+            }
+        }
+
+        return list
     }
 
     private fun ensureCapacity() {
