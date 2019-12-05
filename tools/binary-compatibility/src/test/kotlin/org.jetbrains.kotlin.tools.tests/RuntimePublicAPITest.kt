@@ -22,27 +22,27 @@ class RuntimePublicAPITest {
     }
 
     @Test fun reaktive() {
-        snapshotAPIAndCompare("../../reaktive/build/libs", "reaktive-jvm", listOf("com.badoo.reaktive"))
+        snapshotAPIAndCompare("../../reaktive/build/libs", "reaktive-jvm")
     }
 
     @Test fun reaktiveAnnotations() {
-        snapshotAPIAndCompare("../../reaktive-annotations/build/libs", "reaktive-annotations-jvm", listOf("com.badoo.reaktive"))
+        snapshotAPIAndCompare("../../reaktive-annotations/build/libs", "reaktive-annotations-jvm")
     }
 
     @Test fun reaktiveTesting() {
-        snapshotAPIAndCompare("../../reaktive-testing/build/libs", "reaktive-testing-jvm", listOf("com.badoo.reaktive"))
+        snapshotAPIAndCompare("../../reaktive-testing/build/libs", "reaktive-testing-jvm")
     }
 
     @Test fun rxjava2Interop() {
-        snapshotAPIAndCompare("../../rxjava2-interop/build/libs", "rxjava2-interop", listOf("com.badoo.reaktive"))
+        snapshotAPIAndCompare("../../rxjava2-interop/build/libs", "rxjava2-interop")
     }
 
     @Test fun rxjava3Interop() {
-        snapshotAPIAndCompare("../../rxjava3-interop/build/libs", "rxjava3-interop", listOf("com.badoo.reaktive"))
+        snapshotAPIAndCompare("../../rxjava3-interop/build/libs", "rxjava3-interop")
     }
 
     @Test fun utils() {
-        snapshotAPIAndCompare("../../utils/build/libs", "utils-jvm", listOf("com.badoo.reaktive"))
+        snapshotAPIAndCompare("../../utils/build/libs", "utils-jvm")
     }
 
     private fun snapshotAPIAndCompare(
