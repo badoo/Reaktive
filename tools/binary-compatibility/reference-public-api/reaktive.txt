@@ -598,6 +598,10 @@ public final class com/badoo/reaktive/observable/PublishKt {
 	public static final fun publish (Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/ConnectableObservable;
 }
 
+public final class com/badoo/reaktive/observable/PublishWithSelectorKt {
+	public static final fun publish (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+}
+
 public final class com/badoo/reaktive/observable/ReduceKt {
 	public static final fun reduce (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/maybe/Maybe;
 }
