@@ -19,6 +19,8 @@ internal actual class PriorityQueue<T> actual constructor(
         delegate.clear()
     }
 
+    override fun iterator(): Iterator<T> = delegate.iterator()
+
     private companion object {
         private const val INITIAL_CAPACITY = 11
     }

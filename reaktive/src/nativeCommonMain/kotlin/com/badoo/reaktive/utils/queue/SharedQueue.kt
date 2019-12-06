@@ -9,7 +9,7 @@ internal actual class SharedQueue<T> actual constructor() : Queue<T> {
         MutableFreezableHelper(
             mutableFactory = ::ArrayQueue,
             freezableFactory = { mutable: ArrayQueue<T>? ->
-                CopyOnWriteQueue(mutable?.asList() ?: emptyList())
+                CopyOnWriteQueue(mutable?.toList() ?: emptyList())
             }
         )
 
@@ -27,4 +27,6 @@ internal actual class SharedQueue<T> actual constructor() : Queue<T> {
     override fun clear() {
         delegate.clear()
     }
+
+    override fun iterator(): Iterator<T> = delegate.iterator()
 }

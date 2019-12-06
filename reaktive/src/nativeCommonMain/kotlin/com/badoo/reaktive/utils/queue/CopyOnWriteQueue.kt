@@ -4,6 +4,7 @@ import com.badoo.reaktive.utils.atomic.AtomicList
 import com.badoo.reaktive.utils.atomic.clear
 import com.badoo.reaktive.utils.atomic.firstOrNull
 import com.badoo.reaktive.utils.atomic.isEmpty
+import com.badoo.reaktive.utils.atomic.iterator
 import com.badoo.reaktive.utils.atomic.plusAssign
 import com.badoo.reaktive.utils.atomic.size
 
@@ -28,4 +29,6 @@ internal class CopyOnWriteQueue<T>(initialList: List<T> = emptyList()) : Queue<T
     override fun clear() {
         delegate.clear()
     }
+
+    override fun iterator(): Iterator<T> = delegate.iterator()
 }
