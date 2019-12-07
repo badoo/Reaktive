@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 
 class DefaultIfEmptyTest
-    : ObservableToObservableTests by ObservableToObservableTests<Int>({ defaultIfEmpty(10) }) {
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ defaultIfEmpty(10) }) {
 
     @Test
     fun should_return_default_value_when_source_is_empty() {

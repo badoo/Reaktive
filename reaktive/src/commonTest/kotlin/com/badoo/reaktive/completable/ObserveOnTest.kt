@@ -12,7 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class ObserveOnTest
-    : CompletableToCompletableTests by CompletableToCompletableTests({ observeOn(TestScheduler()) }) {
+    : CompletableToCompletableTests by CompletableToCompletableTestsImpl({ observeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
     private val upstream = TestCompletable()

@@ -10,7 +10,7 @@ import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
 
 class DelayTest :
-    CompletableToCompletableTests by CompletableToCompletableTests({ delay(0L, TestScheduler()) }),
+    CompletableToCompletableTests by CompletableToCompletableTestsImpl({ delay(0L, TestScheduler()) }),
     DelayErrorTests by DelayErrorTests(
         TestCompletable(),
         { delayMillis, scheduler, delayError -> delay(delayMillis, scheduler, delayError).test() }

@@ -8,7 +8,7 @@ import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 
-class TakeUntilPredicateTest : ObservableToObservableTests by ObservableToObservableTests<Unit>({ takeUntil { false } }) {
+class TakeUntilPredicateTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ takeUntil { false } }) {
 
     private val upstream = TestObservable<Int?>()
 

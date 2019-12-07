@@ -15,7 +15,7 @@ import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class FlatMapObservableTest : MaybeToObservableTests by MaybeToObservableTests({ flatMapObservable { observableOfEmpty<Nothing>() } }) {
+class FlatMapObservableTest : MaybeToObservableTests by MaybeToObservableTestsImpl({ flatMapObservable { observableOfEmpty<Nothing>() } }) {
 
     private val upstream = TestMaybe<Int?>()
 

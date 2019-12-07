@@ -15,7 +15,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FlatMapCompletableTest
-    : ObservableToCompletableTests by ObservableToCompletableTests({ flatMapCompletable { TestCompletable() } }) {
+    : ObservableToCompletableTests by ObservableToCompletableTestsImpl({ flatMapCompletable { TestCompletable() } }) {
 
     private val upstream = TestObservable<Int?>()
 

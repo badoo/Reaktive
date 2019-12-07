@@ -4,11 +4,11 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.test.observable.assertComplete
-import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicReference
@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class RepeatUntilTest : ObservableToObservableTests by ObservableToObservableTests<Nothing>({ repeatUntil { true } }) {
+class RepeatUntilTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ repeatUntil { true } }) {
     @Test
     fun resubscribes_on_complete_till_predicate_is_true() {
         val count = AtomicInt(0)

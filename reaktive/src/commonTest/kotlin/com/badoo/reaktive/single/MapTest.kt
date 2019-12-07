@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
 
-class MapTest : SingleToSingleTests by SingleToSingleTests({ map {} }) {
+class MapTest : SingleToSingleTests by SingleToSingleTestsImpl({ map {} }) {
 
     private val upstream = TestSingle<String?>()
     private val observer = upstream.map { it?.length }.test()

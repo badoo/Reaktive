@@ -10,7 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class SubscribeOnTest : SingleToSingleTests by SingleToSingleTests({ subscribeOn(TestScheduler()) }) {
+class SubscribeOnTest : SingleToSingleTests by SingleToSingleTestsImpl({ subscribeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
     private val upstream = TestSingle<Int>()

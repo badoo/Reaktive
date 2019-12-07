@@ -14,7 +14,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class FlatMapTest : MaybeToMaybeTests by MaybeToMaybeTests({ flatMap { TestMaybe<Int>() } }) {
+class FlatMapTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ flatMap { TestMaybe<Int>() } }) {
 
     private val upstream = TestMaybe<Int?>()
     private val inner = TestMaybe<String?>()

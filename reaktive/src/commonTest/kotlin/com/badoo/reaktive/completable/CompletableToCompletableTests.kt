@@ -1,76 +1,40 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.base.SourceTests
+import com.badoo.reaktive.base.SourceTestsImpl
 import com.badoo.reaktive.test.base.assertDisposed
-import com.badoo.reaktive.test.base.assertError
-import com.badoo.reaktive.test.base.assertSubscribed
-import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.test.completable.test
+import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertFalse
 
-interface CompletableToCompletableTests {
-
-    @Test
-    fun calls_onSubscribe_only_once_WHEN_subscribed()
+interface CompletableToCompletableTests : SourceTests {
 
     @Test
     fun completes_WHEN_upstream_completed()
 
     @Test
-    fun produces_error_WHEN_upstream_produced_error()
-
-    @Test
-    fun unsubscribes_from_upstream_WHEN_disposed()
-
-    @Test
     fun disposes_downstream_disposable_WHEN_upstream_completed()
+}
 
-    @Test
-    fun disposes_downstream_disposable_WHEN_upstream_produced_error()
+@Ignore
+class CompletableToCompletableTestsImpl(
+    transform: Completable.() -> Completable
+) : CompletableToCompletableTests, SourceTests by SourceTestsImpl(TestCompletable(), { transform().test() }) {
 
-    companion object {
-        operator fun invoke(transform: Completable.() -> Completable): CompletableToCompletableTests =
-            object : CompletableToCompletableTests {
-                private val upstream = TestCompletable()
-                private val observer = upstream.transform().test()
+    private val upstream = TestCompletable()
+    private val observer = upstream.transform().test()
 
-                override fun calls_onSubscribe_only_once_WHEN_subscribed() {
-                    observer.assertSubscribed()
-                }
+    override fun completes_WHEN_upstream_completed() {
+        upstream.onComplete()
 
-                override fun completes_WHEN_upstream_completed() {
-                    upstream.onComplete()
+        observer.assertComplete()
+    }
 
-                    observer.assertComplete()
-                }
+    override fun disposes_downstream_disposable_WHEN_upstream_completed() {
+        upstream.onComplete()
 
-                override fun produces_error_WHEN_upstream_produced_error() {
-                    val error = Throwable()
-
-                    upstream.onError(error)
-
-                    observer.assertError(error)
-                }
-
-                override fun unsubscribes_from_upstream_WHEN_disposed() {
-                    observer.dispose()
-
-                    assertFalse(upstream.hasSubscribers)
-                }
-
-                override fun disposes_downstream_disposable_WHEN_upstream_completed() {
-                    upstream.onComplete()
-
-                    observer.assertDisposed()
-                }
-
-                override fun disposes_downstream_disposable_WHEN_upstream_produced_error() {
-                    upstream.onError(Throwable())
-
-                    observer.assertDisposed()
-                }
-            }
+        observer.assertDisposed()
     }
 }

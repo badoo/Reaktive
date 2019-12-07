@@ -1,67 +1,30 @@
 package com.badoo.reaktive.single
 
+import com.badoo.reaktive.base.SourceTests
+import com.badoo.reaktive.base.SourceTestsImpl
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.test.base.assertDisposed
-import com.badoo.reaktive.test.base.assertError
-import com.badoo.reaktive.test.base.assertSubscribed
-import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.single.TestSingle
+import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertFalse
 
-interface SingleToMaybeTests {
-
-    @Test
-    fun calls_onSubscribe_only_once_WHEN_subscribed()
-
-    @Test
-    fun produces_error_WHEN_upstream_produced_error()
-
-    @Test
-    fun unsubscribes_from_upstream_WHEN_disposed()
+interface SingleToMaybeTests : SourceTests {
 
     @Test
     fun disposes_downstream_disposable_WHEN_upstream_succeeded()
+}
 
-    @Test
-    fun disposes_downstream_disposable_WHEN_upstream_produced_error()
+@Ignore
+class SingleToMaybeTestsImpl(
+    transform: Single<Unit>.() -> Maybe<*>
+) : SingleToMaybeTests, SourceTests by SourceTestsImpl(TestSingle<Nothing>(), { transform().test() }) {
+    private val upstream = TestSingle<Unit>()
+    private val observer = upstream.transform().test()
 
-    companion object {
-        operator fun invoke(transform: Single<Unit>.() -> Maybe<*>): SingleToMaybeTests =
-            object : SingleToMaybeTests {
-                private val upstream = TestSingle<Unit>()
-                private val observer = upstream.transform().test()
+    override fun disposes_downstream_disposable_WHEN_upstream_succeeded() {
+        upstream.onSuccess(Unit)
 
-                override fun calls_onSubscribe_only_once_WHEN_subscribed() {
-                    observer.assertSubscribed()
-                }
-
-                override fun produces_error_WHEN_upstream_produced_error() {
-                    val error = Throwable()
-
-                    upstream.onError(error)
-
-                    observer.assertError(error)
-                }
-
-                override fun unsubscribes_from_upstream_WHEN_disposed() {
-                    observer.dispose()
-
-                    assertFalse(upstream.hasSubscribers)
-                }
-
-                override fun disposes_downstream_disposable_WHEN_upstream_succeeded() {
-                    upstream.onSuccess(Unit)
-
-                    observer.assertDisposed()
-                }
-
-                override fun disposes_downstream_disposable_WHEN_upstream_produced_error() {
-                    upstream.onError(Throwable())
-
-                    observer.assertDisposed()
-                }
-            }
+        observer.assertDisposed()
     }
 }

@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class FirstOrDefaultSupplierTests : ObservableToSingleTests by ObservableToSingleTests<Unit>({ firstOrDefault { Unit } }) {
+class FirstOrDefaultSupplierTests : ObservableToSingleTests by ObservableToSingleTestsImpl({ firstOrDefault { Unit } }) {
 
     private val upstream = TestObservable<Int>()
     private val observer = upstream.firstOrDefault { -1 }.test()

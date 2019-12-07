@@ -17,7 +17,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FlatMapMaybeTest
-    : ObservableToObservableTests by ObservableToObservableTests<Nothing>({ flatMapMaybe { TestMaybe<Nothing>() } }) {
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ flatMapMaybe { TestMaybe<Nothing>() } }) {
 
     private val upstream = TestObservable<Int?>()
 

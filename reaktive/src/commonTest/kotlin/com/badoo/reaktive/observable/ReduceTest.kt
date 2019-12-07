@@ -8,7 +8,7 @@ import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.onNext
 import kotlin.test.Test
 
-class ReduceTest : ObservableToMaybeTests by ObservableToMaybeTests<Unit>({ reduce { _, _ -> Unit } }) {
+class ReduceTest : ObservableToMaybeTests by ObservableToMaybeTestsImpl({ reduce { _, _ -> Unit } }) {
 
     private val upstream = TestObservable<Int?>()
 

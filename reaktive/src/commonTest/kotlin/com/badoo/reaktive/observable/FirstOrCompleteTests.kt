@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class FirstOrCompleteTests : ObservableToMaybeTests by ObservableToMaybeTests<Nothing>({ firstOrComplete() }) {
+class FirstOrCompleteTests : ObservableToMaybeTests by ObservableToMaybeTestsImpl({ firstOrComplete() }) {
 
     private val upstream = TestObservable<Int>()
     private val observer = upstream.firstOrComplete().test()

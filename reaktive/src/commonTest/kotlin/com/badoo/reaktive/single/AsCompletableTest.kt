@@ -5,7 +5,7 @@ import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.single.TestSingle
 import kotlin.test.Test
 
-class AsCompletableTest : SingleToCompletableTests by SingleToCompletableTests({ asCompletable() }) {
+class AsCompletableTest : SingleToCompletableTests by SingleToCompletableTestsImpl({ asCompletable() }) {
 
     private val upstream = TestSingle<Int?>()
     private val observer = upstream.asCompletable().test()
