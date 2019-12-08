@@ -8,7 +8,7 @@ import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 
-class MapTest : ObservableToObservableTests by ObservableToObservableTests<Unit>({ map {} }) {
+class MapTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ map {} }) {
 
     private val upstream = TestObservable<String?>()
     private val observer = upstream.map { it?.length }.test()

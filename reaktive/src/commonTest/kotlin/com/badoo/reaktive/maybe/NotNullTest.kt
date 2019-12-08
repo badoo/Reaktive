@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
 import kotlin.test.Test
 
-class NotNullTest : MaybeToMaybeTests by MaybeToMaybeTests({ notNull() }) {
+class NotNullTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ notNull() }) {
 
     private val upstream = TestMaybe<Int?>()
     private val observer = upstream.notNull().test()

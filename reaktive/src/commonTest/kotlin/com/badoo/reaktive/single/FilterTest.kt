@@ -8,7 +8,7 @@ import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
 
-class FilterTest : SingleToMaybeTests by SingleToMaybeTests.Companion({ filter { true } }) {
+class FilterTest : SingleToMaybeTests by SingleToMaybeTestsImpl({ filter { true } }) {
 
     private val upstream = TestSingle<Int?>()
     private val observer = upstream.filter { it == null || it > 0 }.test()

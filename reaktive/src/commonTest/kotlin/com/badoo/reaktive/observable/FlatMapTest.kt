@@ -14,7 +14,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FlatMapTest
-    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ flatMap { TestObservable<Int>() } }) {
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ flatMap { TestObservable<Int>() } }) {
 
     private val source = TestObservable<Int?>()
 

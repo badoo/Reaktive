@@ -10,7 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ConcatTests : CompletableToCompletableTests by CompletableToCompletableTests({ concat(this) }) {
+class ConcatTests : CompletableToCompletableTests by CompletableToCompletableTestsImpl({ concat(this) }) {
 
     private val upstream1 = TestCompletable()
     private val upstream2 = TestCompletable()

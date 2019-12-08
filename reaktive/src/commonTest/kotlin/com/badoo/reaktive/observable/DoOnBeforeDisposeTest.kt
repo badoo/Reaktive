@@ -16,7 +16,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeDisposeTest
-    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ doOnBeforeDispose {} }) {
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeDispose {} }) {
 
     private val upstream = TestObservable<Int>()
 

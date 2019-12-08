@@ -19,7 +19,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeFinallyTest
-    : CompletableToCompletableTests by CompletableToCompletableTests({ doOnBeforeFinally {} }) {
+    : CompletableToCompletableTests by CompletableToCompletableTestsImpl({ doOnBeforeFinally {} }) {
 
     private val upstream = TestCompletable()
 

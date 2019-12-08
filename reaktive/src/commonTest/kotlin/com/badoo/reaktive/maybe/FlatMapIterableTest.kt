@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 
 class FlatMapIterableTest
-    : MaybeToObservableTests by MaybeToObservableTests({ flatMapIterable { listOf(Unit) } }) {
+    : MaybeToObservableTests by MaybeToObservableTestsImpl({ flatMapIterable { listOf(Unit) } }) {
 
     private val upstream = TestMaybe<List<Int?>>()
     private val observer = upstream.flatMapIterable { it }.test()

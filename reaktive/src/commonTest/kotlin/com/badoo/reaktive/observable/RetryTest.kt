@@ -14,7 +14,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class RetryTest : ObservableToObservableTests by ObservableToObservableTests<Unit>({ retry() }) {
+class RetryTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ retry() }) {
 
     private val upstream = TestObservable<Int?>()
 

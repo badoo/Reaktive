@@ -16,7 +16,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class OnErrorResumeNextTest :
-    MaybeToMaybeTests by MaybeToMaybeTests({ onErrorResumeNext { Unit.toMaybe() } }) {
+    MaybeToMaybeTests by MaybeToMaybeTestsImpl({ onErrorResumeNext { Unit.toMaybe() } }) {
 
     private val upstream = TestMaybe<Int?>()
 

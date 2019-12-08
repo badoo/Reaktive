@@ -10,7 +10,7 @@ import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.clock.Clock
 import kotlin.test.Test
 
-class ThrottleTest : ObservableToObservableTests by ObservableToObservableTests<Unit>({ throttle(0L) }) {
+class ThrottleTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ throttle(0L) }) {
 
     private val clock = TestClock()
     private val upstream = TestObservable<Int>()

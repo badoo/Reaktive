@@ -10,7 +10,7 @@ import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
 
 class DebounceTest
-    : ObservableToObservableTests by ObservableToObservableTests<Int>({ debounce(0L, TestScheduler()) }) {
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ debounce(0L, TestScheduler()) }) {
 
     private val upstream = TestObservable<Int?>()
     private val scheduler = TestScheduler()

@@ -5,7 +5,7 @@ import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.single.TestSingle
 import kotlin.test.Test
 
-class AsMaybeTest : SingleToMaybeTests by SingleToMaybeTests({ asMaybe() }) {
+class AsMaybeTest : SingleToMaybeTests by SingleToMaybeTestsImpl({ asMaybe() }) {
 
     private val upstream = TestSingle<Int?>()
     private val observer = upstream.asMaybe().test()

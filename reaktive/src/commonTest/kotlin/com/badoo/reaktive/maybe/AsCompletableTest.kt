@@ -5,7 +5,7 @@ import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.maybe.TestMaybe
 import kotlin.test.Test
 
-class AsCompletableTest : MaybeToCompletableTests by MaybeToCompletableTests({ asCompletable() }) {
+class AsCompletableTest : MaybeToCompletableTests by MaybeToCompletableTestsImpl({ asCompletable() }) {
 
     private val upstream = TestMaybe<Int?>()
     private val observer = upstream.asCompletable().test()

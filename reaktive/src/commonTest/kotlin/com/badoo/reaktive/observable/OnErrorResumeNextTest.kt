@@ -17,7 +17,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class OnErrorResumeNextTest :
-    ObservableToObservableTests by ObservableToObservableTests<Unit>({ onErrorResumeNext { Unit.toObservable() } }) {
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ onErrorResumeNext { Unit.toObservable() } }) {
 
     private val upstream = TestObservable<Int?>()
 
