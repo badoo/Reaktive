@@ -596,6 +596,7 @@ public final class com/badoo/reaktive/observable/OnErrorReturnKt {
 
 public final class com/badoo/reaktive/observable/PublishKt {
 	public static final fun publish (Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/ConnectableObservable;
+	public static final fun publish (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/ReduceKt {
