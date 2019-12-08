@@ -9,7 +9,7 @@ import com.badoo.reaktive.utils.atomic.AtomicInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class PublishWithSelectorTest : ObservableToObservableTests by ObservableToObservableTests<Nothing>({ publish { it } }) {
+class PublishWithSelectorTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ publish { it } }) {
 
     private val upstream = TestObservable<Int?>()
 
