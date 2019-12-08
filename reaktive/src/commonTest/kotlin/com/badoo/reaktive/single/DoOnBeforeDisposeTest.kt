@@ -16,7 +16,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeDisposeTest
-    : SingleToSingleTests by SingleToSingleTests({ doOnBeforeDispose {} }) {
+    : SingleToSingleTests by SingleToSingleTestsImpl({ doOnBeforeDispose {} }) {
 
     private val upstream = TestSingle<Int>()
 

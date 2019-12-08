@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 
-class AsObservableTest : MaybeToObservableTests by MaybeToObservableTests({ asObservable() }) {
+class AsObservableTest : MaybeToObservableTests by MaybeToObservableTestsImpl({ asObservable() }) {
 
     private val upstream = TestMaybe<Int?>()
     private val observer = upstream.asObservable().test()

@@ -14,7 +14,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class OnErrorResumeNextTest :
-    CompletableToCompletableTests by CompletableToCompletableTests({ onErrorResumeNext { completableOfEmpty() } }) {
+    CompletableToCompletableTests by CompletableToCompletableTestsImpl({ onErrorResumeNext { completableOfEmpty() } }) {
 
     private val upstream = TestCompletable()
 

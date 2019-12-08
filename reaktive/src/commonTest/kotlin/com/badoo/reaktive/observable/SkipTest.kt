@@ -5,7 +5,7 @@ import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 
-class SkipTest : ObservableToObservableTests by ObservableToObservableTests<Unit>({ skip(0) }) {
+class SkipTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ skip(0) }) {
 
     @Test
     fun should_skip_n_values() {

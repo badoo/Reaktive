@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class FirstOrErrorValueTests : ObservableToSingleTests by ObservableToSingleTests<Unit>({ firstOrError(Throwable()) }) {
+class FirstOrErrorValueTests : ObservableToSingleTests by ObservableToSingleTestsImpl({ firstOrError(Throwable()) }) {
 
     private val upstream = TestObservable<Int>()
     private val error = Exception()

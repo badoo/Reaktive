@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.single.TestSingle
 import kotlin.test.Test
 
 class FlatMapIterableTest
-    : SingleToObservableTests by SingleToObservableTests({ flatMapIterable { listOf(Unit) } }) {
+    : SingleToObservableTests by SingleToObservableTestsImpl({ flatMapIterable { listOf(Unit) } }) {
 
     private val upstream = TestSingle<List<Int?>>()
     private val observer = upstream.flatMapIterable { it }.test()

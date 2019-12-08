@@ -19,7 +19,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeFinallyTest
-    : MaybeToMaybeTests by MaybeToMaybeTests({ doOnBeforeFinally {} }) {
+    : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOnBeforeFinally {} }) {
 
     private val upstream = TestMaybe<Int>()
 

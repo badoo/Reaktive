@@ -8,7 +8,7 @@ import com.badoo.reaktive.utils.isFrozen
 import kotlin.test.Test
 import kotlin.test.assertFalse
 
-class ToListTest : ObservableToSingleTests by ObservableToSingleTests<Nothing>({ toList() }) {
+class ToListTest : ObservableToSingleTests by ObservableToSingleTestsImpl({ toList() }) {
 
     @Test
     fun collects_all_items_without_freezing() {

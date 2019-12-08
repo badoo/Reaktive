@@ -21,7 +21,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class DebounceWithSelectorTest :
-    ObservableToObservableTests by ObservableToObservableTests<Int>({ debounce { completableTimer(0L, TestScheduler()) } }) {
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ debounce { completableTimer(0L, TestScheduler()) } }) {
 
     private val upstream = TestObservable<String?>()
     private val scheduler = TestScheduler()

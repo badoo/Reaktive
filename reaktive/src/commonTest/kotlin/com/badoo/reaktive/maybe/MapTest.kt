@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
 import kotlin.test.Test
 
-class MapTest : MaybeToMaybeTests by MaybeToMaybeTests({ map {} }) {
+class MapTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ map {} }) {
 
     private val upstream = TestMaybe<String?>()
     private val observer = upstream.map { it?.length }.test()

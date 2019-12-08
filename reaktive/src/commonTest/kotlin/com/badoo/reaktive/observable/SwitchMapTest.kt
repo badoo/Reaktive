@@ -17,7 +17,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SwitchMapTest :
-    ObservableToObservableTests by ObservableToObservableTests<Unit>({ switchMap { TestObservable<Int>() } }) {
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ switchMap { TestObservable<Int>() } }) {
 
     private val source = TestObservable<Int>()
 

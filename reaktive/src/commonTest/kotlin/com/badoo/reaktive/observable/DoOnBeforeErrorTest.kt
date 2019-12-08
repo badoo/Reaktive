@@ -13,7 +13,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeErrorTest
-    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ doOnBeforeError {} }) {
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeError {} }) {
 
     private val upstream = TestObservable<Int>()
 

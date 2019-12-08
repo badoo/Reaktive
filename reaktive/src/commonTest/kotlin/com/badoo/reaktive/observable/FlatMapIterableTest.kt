@@ -7,7 +7,7 @@ import kotlin.test.Test
 
 class FlatMapIterableTest
     :
-    ObservableToObservableTests by ObservableToObservableTests<Unit>({ flatMapIterable { listOf(Unit) } }) {
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ flatMapIterable { listOf(Unit) } }) {
 
     private val upstream = TestObservable<List<Int?>>()
     private val observer = upstream.flatMapIterable { it }.test()

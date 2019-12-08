@@ -11,7 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 
 class TakeUntilObservableTest :
-    ObservableToObservableTests by ObservableToObservableTests<Unit>({ takeUntil(observableOfNever<Nothing>()) }) {
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ takeUntil(observableOfNever<Nothing>()) }) {
 
     private val upstream = TestObservable<Int?>()
     private val other = TestObservable<Unit?>()

@@ -9,7 +9,7 @@ import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 
 class SwitchIfEmptyTest :
-    ObservableToObservableTests by ObservableToObservableTests<Int>({ switchIfEmpty(observableOf(10)) }) {
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ switchIfEmpty(observableOf(10)) }) {
 
     @Test
     fun should_switch_streams_when_source_is_empty() {
