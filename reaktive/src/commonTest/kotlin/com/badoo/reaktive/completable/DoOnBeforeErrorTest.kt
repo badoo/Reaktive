@@ -4,8 +4,8 @@ import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.SharedList
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -13,7 +13,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeErrorTest
-    : CompletableToCompletableTests by CompletableToCompletableTests({ doOnBeforeError {} }) {
+    : CompletableToCompletableTests by CompletableToCompletableTestsImpl({ doOnBeforeError {} }) {
 
     private val upstream = TestCompletable()
 

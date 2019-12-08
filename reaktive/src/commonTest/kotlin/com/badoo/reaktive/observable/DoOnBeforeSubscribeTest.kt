@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class DoOnBeforeSubscribeTest
-    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ doOnBeforeSubscribe {} }) {
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeSubscribe {} }) {
 
     @Test
     fun calls_action_before_downstream_onSubscribe_WHEN_action_does_not_throw_exception() {

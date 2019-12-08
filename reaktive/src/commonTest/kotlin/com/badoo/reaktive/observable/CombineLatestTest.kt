@@ -18,7 +18,7 @@ class CombineLatestTest {
     private val relay1 = TestObservableRelay<String?>()
     private val relay2 = TestObservableRelay<String?>()
     private val relay3 = TestObservableRelay<String?>()
-    private val mapper = AtomicReference<(List<String?>) -> String?>{ it.joinToString(separator = ",") }
+    private val mapper = AtomicReference<(List<String?>) -> String?> { it.joinToString(separator = ",") }
     private val observer = createAndSubscribe(mapper)
 
     private fun createAndSubscribe(mapper: AtomicReference<(List<String?>) -> String?>): TestObservableObserver<String?> =

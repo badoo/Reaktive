@@ -12,7 +12,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class RetryTest : CompletableToCompletableTests by CompletableToCompletableTests({ retry() }) {
+class RetryTest : CompletableToCompletableTests by CompletableToCompletableTestsImpl({ retry() }) {
 
     private val upstream = TestCompletable()
 

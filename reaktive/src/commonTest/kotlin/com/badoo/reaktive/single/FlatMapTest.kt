@@ -12,7 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class FlatMapTest : SingleToSingleTests by SingleToSingleTests({ flatMap { TestSingle<Int>() } }) {
+class FlatMapTest : SingleToSingleTests by SingleToSingleTestsImpl({ flatMap { TestSingle<Int>() } }) {
 
     private val upstream = TestSingle<Int?>()
     private val inner = TestSingle<String?>()

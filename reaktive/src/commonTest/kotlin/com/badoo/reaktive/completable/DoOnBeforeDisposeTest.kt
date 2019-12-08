@@ -16,7 +16,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeDisposeTest
-    : CompletableToCompletableTests by CompletableToCompletableTests({ doOnBeforeDispose {} }) {
+    : CompletableToCompletableTests by CompletableToCompletableTestsImpl({ doOnBeforeDispose {} }) {
 
     private val upstream = TestCompletable()
 

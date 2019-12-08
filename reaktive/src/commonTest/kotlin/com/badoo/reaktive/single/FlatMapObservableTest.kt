@@ -15,7 +15,7 @@ import com.badoo.reaktive.test.single.TestSingle
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class FlatMapObservableTest : SingleToObservableTests by SingleToObservableTests({ flatMapObservable { observableOfEmpty<Nothing>() } }) {
+class FlatMapObservableTest : SingleToObservableTests by SingleToObservableTestsImpl({ flatMapObservable { observableOfEmpty<Nothing>() } }) {
 
     private val upstream = TestSingle<Int?>()
 

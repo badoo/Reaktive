@@ -12,7 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MergeTest : MaybeToObservableTests by MaybeToObservableTests({ merge(this) }) {
+class MergeTest : MaybeToObservableTests by MaybeToObservableTestsImpl({ merge(this) }) {
 
     private val upstream1 = TestMaybe<Int?>()
     private val upstream2 = TestMaybe<Int?>()

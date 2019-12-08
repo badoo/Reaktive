@@ -14,7 +14,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class ObserveOnTest
-    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ observeOn(TestScheduler()) }) {
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ observeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
     private val upstream = TestObservable<Int?>()

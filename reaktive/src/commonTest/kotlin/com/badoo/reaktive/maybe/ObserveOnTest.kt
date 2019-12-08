@@ -14,7 +14,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class ObserveOnTest
-    : MaybeToMaybeTests by MaybeToMaybeTests({ observeOn(TestScheduler()) }) {
+    : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ observeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
     private val upstream = TestMaybe<Int?>()

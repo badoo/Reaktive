@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class DoOnBeforeSuccessTest
-    : MaybeToMaybeTests by MaybeToMaybeTests({ doOnBeforeSuccess {} }) {
+    : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOnBeforeSuccess {} }) {
 
     private val upstream = TestMaybe<Int>()
 

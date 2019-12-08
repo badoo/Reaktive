@@ -11,7 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class AndThenTest : CompletableToCompletableTests by CompletableToCompletableTests({ andThen(TestCompletable()) }) {
+class AndThenTest : CompletableToCompletableTests by CompletableToCompletableTestsImpl({ andThen(TestCompletable()) }) {
 
     private val upstream = TestCompletable()
     private val inner = TestCompletable()

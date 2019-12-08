@@ -12,7 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class TakeObservableTests :
-    ObservableToObservableTests by ObservableToObservableTests<Unit>({ take(1) }) {
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ take(1) }) {
 
     private val upstream = TestObservable<Int?>()
     private val observer = upstream.take(10).test()

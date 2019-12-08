@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class RepeatTest : ObservableToObservableTests by ObservableToObservableTests<Nothing>({ repeat(count = 0) }) {
+class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ repeat(count = 0) }) {
 
     @Test
     fun emits_all_values_of_first_iteration_WHEN_count_is_positive() {

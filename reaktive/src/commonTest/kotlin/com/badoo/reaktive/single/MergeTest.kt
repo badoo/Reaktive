@@ -12,7 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MergeTest : SingleToObservableTests by SingleToObservableTests({ merge(this) }) {
+class MergeTest : SingleToObservableTests by SingleToObservableTestsImpl({ merge(this) }) {
 
     private val upstream1 = TestSingle<Int?>()
     private val upstream2 = TestSingle<Int?>()

@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
 
-class AsSingleSupplierTests : MaybeToSingleTests by MaybeToSingleTests({ asSingle { Unit } }) {
+class AsSingleSupplierTests : MaybeToSingleTests by MaybeToSingleTestsImpl({ asSingle { Unit } }) {
 
     private val upstream = TestMaybe<Int?>()
     private val observer = upstream.asSingle { -1 }.test()

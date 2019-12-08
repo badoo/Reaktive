@@ -10,7 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MergeTests : CompletableToCompletableTests by CompletableToCompletableTests({ merge(this) }) {
+class MergeTests : CompletableToCompletableTests by CompletableToCompletableTestsImpl({ merge(this) }) {
 
     private val upstream1 = TestCompletable()
     private val upstream2 = TestCompletable()
