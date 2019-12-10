@@ -1,14 +1,15 @@
 package com.badoo.reaktive.utils
 
+import kotlin.native.concurrent.freeze
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class SharedListTest {
+class CopyOnWriteListTest {
 
-    private val list: MutableList<Int?> = SharedList()
+    private val list = CopyOnWriteList<Int?>().freeze()
 
     @Test
     fun contains() {

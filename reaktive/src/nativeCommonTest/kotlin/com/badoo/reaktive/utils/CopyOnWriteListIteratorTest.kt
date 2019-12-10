@@ -1,13 +1,14 @@
 package com.badoo.reaktive.utils
 
+import kotlin.native.concurrent.freeze
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SharedListIteratorTest {
+class CopyOnWriteListIteratorTest {
 
     @Test
     fun listIterator() {
-        val lists: Pair<MutableList<Int?>, MutableList<Int?>> = Pair(SharedList(), ArrayList())
+        val lists: Pair<MutableList<Int?>, MutableList<Int?>> = Pair(CopyOnWriteList<Int?>().freeze(), ArrayList())
         lists.first.addAll(listOf(0, null, 1, null, 2))
         lists.second.addAll(listOf(0, null, 1, null, 2))
         val iterators = Pair(lists.first.listIterator(), lists.second.listIterator())

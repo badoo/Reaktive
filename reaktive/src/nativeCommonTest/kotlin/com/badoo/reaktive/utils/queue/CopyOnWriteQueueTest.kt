@@ -1,5 +1,5 @@
 package com.badoo.reaktive.utils.queue
 
-import com.badoo.reaktive.utils.freeze
+import kotlin.native.concurrent.freeze
 
 class CopyOnWriteQueueTest : QueueTests by QueueTestsImpl(CopyOnWriteQueue<String?>().freeze())
