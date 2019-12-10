@@ -6,12 +6,13 @@ import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.NANOS_IN_MILLI
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndSet
+import platform.Foundation.NSThread
 import platform.darwin.DISPATCH_TIME_NOW
 import platform.darwin.dispatch_after
 import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_time
+import kotlin.native.concurrent.FreezableAtomicReference
+import kotlin.native.concurrent.freeze
 
 internal class MainScheduler : Scheduler {
 
@@ -73,10 +74,18 @@ internal class MainScheduler : Scheduler {
             task: () -> Unit
         ) : () -> Unit, Disposable {
 
-            private val taskReference = AtomicReference<(() -> Unit)?>(task)
+            private val taskReference = FreezableAtomicReference<(() -> Unit)?>(task)
+
+            init {
+                if (!NSThread.isMainThread) {
+                    freeze()
+                }
+            }
 
             override fun invoke() {
-                taskReference.getAndSet(null)?.invoke()
+                val task: (() -> Unit)? = taskReference.value
+                taskReference.value = null
+                task?.invoke()
             }
 
             override val isDisposed: Boolean
