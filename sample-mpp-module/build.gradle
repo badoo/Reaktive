@@ -20,8 +20,8 @@ kotlin {
                     // Reaktive should be included into framework file, so we don't need to generate 2 framework files
                     it.export project(':reaktive')
                     it.transitiveExport = true
+                    it.compilation.kotlinOptions.freeCompilerArgs += '-Xobjc-generics'
                 }
-                it.compilations.configureEach { it.kotlinOptions.freeCompilerArgs += '-Xobjc-generics' }
             }
         }
     }
