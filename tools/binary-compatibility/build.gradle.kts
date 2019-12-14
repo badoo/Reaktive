@@ -1,6 +1,5 @@
 plugins {
-    `kotlin-dsl`
-    `kotlin-platform-jvm`
+    kotlin
 }
 
 dependencies {
