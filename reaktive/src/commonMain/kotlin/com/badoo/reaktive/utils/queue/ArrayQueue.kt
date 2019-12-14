@@ -67,6 +67,9 @@ internal class ArrayQueue<T> : Queue<T> {
             override fun hasNext(): Boolean = counter > 0
 
             override fun next(): T {
+                if (!hasNext()) {
+                    throw NoSuchElementException()
+                }
                 @Suppress("UNCHECKED_CAST")
                 val item = queue[index] as T
 
