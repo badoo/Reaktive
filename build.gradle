@@ -130,6 +130,7 @@ private void setupAndroidTarget(Project project) {
 
         defaultConfig {
             minSdkVersion 1
+            targetSdkVersion 28
         }
     }
 
