@@ -400,6 +400,7 @@ public final class com/badoo/reaktive/maybe/ZipKt {
 
 public final class com/badoo/reaktive/maybe/ZipWithKt {
 	public static final fun zipWith (Lcom/badoo/reaktive/maybe/Maybe;Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun zipWith (Lcom/badoo/reaktive/maybe/Maybe;Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/maybe/Maybe;
 }
 
 public final class com/badoo/reaktive/observable/AsCompletableKt {
@@ -757,6 +758,7 @@ public final class com/badoo/reaktive/observable/ZipKt {
 
 public final class com/badoo/reaktive/observable/ZipWithKt {
 	public static final fun zipWith (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun zipWith (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/scheduler/CreateComputationSchedulerKt {
@@ -988,6 +990,7 @@ public final class com/badoo/reaktive/single/ZipKt {
 
 public final class com/badoo/reaktive/single/ZipWithKt {
 	public static final fun zipWith (Lcom/badoo/reaktive/single/Single;Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/single/Single;
+	public static final fun zipWith (Lcom/badoo/reaktive/single/Single;Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/single/Single;
 }
 
 public abstract interface class com/badoo/reaktive/subject/Relay : com/badoo/reaktive/base/ValueCallback, com/badoo/reaktive/observable/Observable {
