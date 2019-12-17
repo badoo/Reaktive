@@ -700,6 +700,10 @@ public final class com/badoo/reaktive/observable/TakeUntilPredicateKt {
 	public static final fun takeUntil (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 }
 
+public final class com/badoo/reaktive/observable/TakeWhilePredicateKt {
+	public static final fun takeWhile (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+}
+
 public final class com/badoo/reaktive/observable/ThreadLocalKt {
 	public static final fun threadLocal (Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
 }
