@@ -11,7 +11,7 @@ inline fun <T> AtomicReference<T>.getAndUpdate(update: (T) -> T): T {
     return prev
 }
 
-inline fun <T, R: T> AtomicReference<T>.updateAndGet(update: (T) -> R): R {
+inline fun <T, R : T> AtomicReference<T>.updateAndGet(update: (T) -> R): R {
     var next: R
     do {
         val prev = value

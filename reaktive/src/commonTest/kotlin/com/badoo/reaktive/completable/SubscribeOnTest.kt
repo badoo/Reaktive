@@ -11,7 +11,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SubscribeOnTest
-    : CompletableToCompletableTests by CompletableToCompletableTests({ subscribeOn(TestScheduler()) }) {
+    : CompletableToCompletableTests by CompletableToCompletableTestsImpl({ subscribeOn(TestScheduler()) }) {
 
     private val scheduler = TestScheduler(isManualProcessing = true)
     private val upstream = TestCompletable()

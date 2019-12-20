@@ -1,9 +1,6 @@
 package com.badoo.reaktive.maybe
 
-import com.badoo.reaktive.base.Observer
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
-import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableCallbacks
@@ -13,18 +10,14 @@ import com.badoo.reaktive.observable.observable
 
 fun <T, R> Maybe<T>.flatMapObservable(mapper: (T) -> Observable<R>): Observable<R> =
     observable { emitter ->
-        subscribeSafe(
-            object : MaybeObserver<T>, CompletableCallbacks by emitter {
+        subscribe(
+            object : MaybeObserver<T>, ObservableObserver<R>, ObservableCallbacks<R> by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
                 }
 
                 override fun onSuccess(value: T) {
-                    val innerObserver =
-                        object : ObservableObserver<R>, Observer by this, ObservableCallbacks<R> by emitter {
-                        }
-
-                    emitter.tryCatch(block = { mapper(value).subscribe(innerObserver) })
+                    emitter.tryCatch(block = { mapper(value).subscribe(this) })
                 }
             }
         )

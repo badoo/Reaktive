@@ -2,9 +2,9 @@
 
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
@@ -17,7 +17,7 @@ fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Obser
         val executor = scheduler.newExecutor()
         disposables += executor
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T> {
                 private val pendingValue = AtomicReference<DebouncePendingValue<T>?>(null)
 

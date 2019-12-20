@@ -21,4 +21,6 @@ internal actual class PriorityQueue<T> actual constructor(
     override fun clear() {
         list.clear()
     }
+
+    override fun iterator(): Iterator<T> = list.iterator()
 }

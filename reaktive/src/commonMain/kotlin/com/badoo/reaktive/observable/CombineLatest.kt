@@ -2,9 +2,9 @@
 
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.atomic.AtomicInt
@@ -59,7 +59,7 @@ fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Obse
             }
 
         forEachIndexed { index, source ->
-            source.subscribeSafe(
+            source.subscribe(
                 object : ObservableObserver<T> {
                     override fun onSubscribe(disposable: Disposable) {
                         disposables += disposable

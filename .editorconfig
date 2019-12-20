@@ -1,0 +1,13 @@
+# See https://github.com/pinterest/ktlint#option-3
+[*.{kt, kts}]
+max_line_length = 140
+insert_final_newline = true
+indent_size = 4
+ij_continuation_indent_size = 4
+ij_kotlin_line_comment_at_first_column = false
+ij_kotlin_line_comment_add_space = true
+ij_kotlin_name_count_to_use_star_import = 2147483647
+ij_kotlin_name_count_to_use_star_import_for_members = 2147483647
+ij_kotlin_keep_blank_lines_in_declarations = 1
+ij_kotlin_keep_blank_lines_in_code = 1
+ij_kotlin_keep_blank_lines_before_right_brace = 0

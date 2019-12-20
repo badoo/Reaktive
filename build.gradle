@@ -1,5 +1,5 @@
 buildscript {
-    ext.reaktive_version = '1.0.2'
+    ext.reaktive_version = '1.1.5'
     ext.reaktive_group_id = 'com.badoo.reaktive'
 }
 
@@ -130,6 +130,7 @@ private void setupAndroidTarget(Project project) {
 
         defaultConfig {
             minSdkVersion 1
+            targetSdkVersion 28
         }
     }
 
@@ -205,6 +206,6 @@ import tasks.BuildIosSampleTask
 
 if (Target.currentTarget().isIos()) {
     tasks.register('buildIosSample', BuildIosSampleTask) {
-        dependsOn ':sample-mpp-module:linkReleaseFrameworkIosSim'
+        dependsOn ':sample-mpp-module:fatDebug', ':sample-mpp-module:fatRelease'
     }
 }

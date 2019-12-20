@@ -7,6 +7,7 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.atomic.updateAndGet
@@ -22,7 +23,7 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
         val state = AtomicReference(SwitchMapState())
         val serializedEmitter = emitter.serialize()
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ErrorCallback by serializedEmitter {
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable

@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
 
-class AsSingleSupplierTests : CompletableToSingleTests by CompletableToSingleTests({ asSingle { 0 } }) {
+class AsSingleSupplierTests : CompletableToSingleTests by CompletableToSingleTestsImpl({ asSingle { 0 } }) {
 
     val upstream = TestCompletable()
 

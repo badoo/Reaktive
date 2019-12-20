@@ -1,10 +1,10 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.Observer
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.plusAssign
 
 fun <T> Observable<T>.takeUntil(other: Observable<*>): Observable<T> =
     observable {
@@ -19,7 +19,7 @@ fun <T> Observable<T>.takeUntil(other: Observable<*>): Observable<T> =
                 }
             }
 
-        other.subscribeSafe(
+        other.subscribe(
             object : ObservableObserver<Any?>, Observer by upstreamObserver, CompletableCallbacks by upstreamObserver {
                 override fun onNext(value: Any?) {
                     upstreamObserver.onComplete()
@@ -27,5 +27,5 @@ fun <T> Observable<T>.takeUntil(other: Observable<*>): Observable<T> =
             }
         )
 
-        subscribeSafe(upstreamObserver)
+        subscribe(upstreamObserver)
     }

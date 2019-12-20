@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
@@ -18,7 +17,7 @@ fun <T> Observable<T>.take(limit: Int): Observable<T> {
 
         val remaining = AtomicInt(limit)
 
-        subscribeSafe(object : ObservableObserver<T>, CompletableCallbacks by emitter {
+        subscribe(object : ObservableObserver<T>, CompletableCallbacks by emitter {
             override fun onSubscribe(disposable: Disposable) {
                 disposableWrapper.set(disposable)
 

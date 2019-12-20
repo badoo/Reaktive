@@ -9,7 +9,7 @@ import com.badoo.reaktive.disposable.Disposable
 
 fun Completable.onErrorResumeNext(nextSupplier: (Throwable) -> Completable): Completable =
     completable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : CompletableObserver, CompleteCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)

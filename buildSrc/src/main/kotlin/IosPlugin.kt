@@ -1,5 +1,6 @@
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.internal.AbstractTask
 import org.gradle.api.tasks.InputFiles
@@ -8,8 +9,10 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 
 @Suppress("UnstableApiUsage")
 abstract class IosPlugin : Plugin<Project> {
@@ -40,18 +43,9 @@ abstract class IosPlugin : Plugin<Project> {
                 }
                 buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
             }
-            // TODO Remove after virtualization fix https://github.com/JetBrains/kotlin-native/issues/3275
-            targets.configureEach {
-                if (this is KotlinNativeTarget) {
-                    compilations.configureEach {
-                        kotlinOptions {
-                            freeCompilerArgs = freeCompilerArgs + "-Xdisable-phases=Devirtualization,DCEPhase"
-                        }
-                    }
-                }
-            }
         }
         setupBuildAll(target, buildBinariesTasks)
+        setupBuildFat(target)
     }
 
     private fun setupTest(
@@ -82,6 +76,36 @@ abstract class IosPlugin : Plugin<Project> {
         }
         target.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
             dependsOn(allBinariesTaskProvider)
+        }
+    }
+
+    private fun setupBuildFat(target: Project) {
+        target.extensions.configure(KotlinMultiplatformExtension::class.java) {
+            targets.withType(KotlinNativeTarget::class.java).configureEach {
+                binaries.withType(Framework::class.java).configureEach {
+                    val framework = this
+                    val binaryBaseName = baseName.takeIf { it != target.name } ?: ""
+                    val buildType = buildType.name.toLowerCase()
+                    val taskName = "$TASK_NAME_FAT${binaryBaseName.capitalize()}${buildType.capitalize()}"
+                    // get or create fat-X-Y task
+                    val provider =
+                        try {
+                            target.tasks.named(taskName, FatFrameworkTask::class.java)
+                        } catch (unknownException: UnknownDomainObjectException) {
+                            target.tasks.register(taskName, FatFrameworkTask::class.java) {
+                                baseName = framework.baseName
+                                // Skip base name, if it was not changed
+                                // e.g. fatDebug, fatCustomBaseNameDebug
+                                val binaryNameFolder = if (binaryBaseName.isNotEmpty()) "$binaryBaseName/" else ""
+                                destinationDir = project.file(
+                                    "${project.buildDir}/fat-framework/$binaryNameFolder$buildType"
+                                )
+                            }
+                        }
+                    // Add current framework to fat output
+                    provider.configure { from(framework) }
+                }
+            }
         }
     }
 
@@ -116,5 +140,6 @@ abstract class IosPlugin : Plugin<Project> {
 
         const val TASK_NAME_IOS_BINARIES = "iosBinaries"
         const val TASK_NAME_IOS_TEST = "iosTest"
+        const val TASK_NAME_FAT = "fat"
     }
 }

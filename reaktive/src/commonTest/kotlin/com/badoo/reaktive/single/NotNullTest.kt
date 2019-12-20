@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.single.TestSingle
 import kotlin.test.Test
 
-class NotNullTest : SingleToMaybeTests by SingleToMaybeTests.Companion({ notNull() }) {
+class NotNullTest : SingleToMaybeTests by SingleToMaybeTestsImpl({ notNull() }) {
 
     private val upstream = TestSingle<Int?>()
     private val observer = upstream.notNull().test()

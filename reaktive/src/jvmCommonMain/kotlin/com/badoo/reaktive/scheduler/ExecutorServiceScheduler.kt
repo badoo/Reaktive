@@ -2,7 +2,9 @@ package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.handleSourceError
+import com.badoo.reaktive.disposable.minusAssign
+import com.badoo.reaktive.disposable.plusAssign
+import com.badoo.reaktive.utils.handleReaktiveError
 import java.util.concurrent.Future
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -13,9 +15,7 @@ internal class ExecutorServiceScheduler(
 
     private val disposables = CompositeDisposable()
 
-    override fun newExecutor(): Scheduler.Executor =
-        ExecutorImpl(executorServiceStrategy)
-            .also(disposables::add)
+    override fun newExecutor(): Scheduler.Executor = ExecutorImpl(disposables, executorServiceStrategy)
 
     override fun destroy() {
         disposables.dispose()
@@ -23,15 +23,20 @@ internal class ExecutorServiceScheduler(
     }
 
     private class ExecutorImpl(
+        private val disposables: CompositeDisposable,
         private val executorServiceStrategy: ExecutorServiceStrategy
     ) : Scheduler.Executor {
 
         @Volatile
         private var executor: ScheduledExecutorService? = executorServiceStrategy.get()
 
-        private val disposables = CompositeDisposable()
-        private val monitor: Any = disposables
+        private val taskDisposables = CompositeDisposable()
+        private val monitor: Any = taskDisposables
         override val isDisposed: Boolean get() = executor == null
+
+        init {
+            disposables += this
+        }
 
         override fun dispose() {
             if (executor != null) {
@@ -40,8 +45,9 @@ internal class ExecutorServiceScheduler(
                     executorToRecycle = executor ?: return
                     executor = null
                 }
-                disposables.dispose()
+                taskDisposables.dispose()
                 executorServiceStrategy.recycle(executorToRecycle)
+                disposables -= this
             }
         }
 
@@ -50,7 +56,7 @@ internal class ExecutorServiceScheduler(
                 it.schedule(wrapSchedulerTaskSafe(task), delayMillis, TimeUnit.MILLISECONDS)
             }
                 ?.toDisposable()
-                ?.also(disposables::add)
+                ?.let(taskDisposables::add)
         }
 
         override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
@@ -63,11 +69,11 @@ internal class ExecutorServiceScheduler(
                 )
             }
                 ?.toDisposable()
-                ?.also(disposables::add)
+                ?.let(taskDisposables::add)
         }
 
         override fun cancel() {
-            disposables.clear(true)
+            taskDisposables.clear(true)
         }
 
         private inline fun <T> executeIfNotRecycled(block: (ScheduledExecutorService) -> T): T? {
@@ -95,7 +101,7 @@ internal class ExecutorServiceScheduler(
                     try {
                         task()
                     } catch (e: Throwable) {
-                        handleSourceError(e)
+                        handleReaktiveError(e)
                     }
                 }
         }

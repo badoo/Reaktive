@@ -1,22 +1,36 @@
 package com.badoo.reaktive.single
 
-import com.badoo.reaktive.base.DisposableEmitter
 import com.badoo.reaktive.base.tryCatch
-import com.badoo.reaktive.disposable.doIfNotDisposed
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.DisposableWrapper
 
-fun <T> single(onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
+inline fun <T> single(crossinline onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
     singleUnsafe { observer ->
         val emitter =
-            object : DisposableEmitter(), SingleEmitter<T> {
+            object : DisposableWrapper(), SingleEmitter<T> {
+                override fun setDisposable(disposable: Disposable?) {
+                    set(disposable)
+                }
+
                 override fun onSuccess(value: T) {
-                    doIfNotDisposed(dispose = true) {
+                    doIfNotDisposedAndDispose {
                         observer.onSuccess(value)
                     }
                 }
 
                 override fun onError(error: Throwable) {
-                    doIfNotDisposed(dispose = true) {
+                    doIfNotDisposedAndDispose {
                         observer.onError(error)
+                    }
+                }
+
+                private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
+                    if (!isDisposed) {
+                        try {
+                            block()
+                        } finally {
+                            dispose()
+                        }
                     }
                 }
             }

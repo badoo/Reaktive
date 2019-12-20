@@ -4,6 +4,7 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
+@ExperimentalCoroutinesApi
 class FlowAsObservableJvmJsTest {
 
     @Test

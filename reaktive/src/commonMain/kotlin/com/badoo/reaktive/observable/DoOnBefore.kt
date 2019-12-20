@@ -11,7 +11,8 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.doIfNotDisposed
-import com.badoo.reaktive.utils.handleSourceError
+import com.badoo.reaktive.disposable.plusAssign
+import com.badoo.reaktive.utils.handleReaktiveError
 
 fun <T> Observable<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Observable<T> =
     observableUnsafe { observer ->
@@ -50,7 +51,7 @@ fun <T> Observable<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Observa
 
 fun <T> Observable<T>.doOnBeforeNext(consumer: (T) -> Unit): Observable<T> =
     observable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -69,7 +70,7 @@ fun <T> Observable<T>.doOnBeforeNext(consumer: (T) -> Unit): Observable<T> =
 
 fun <T> Observable<T>.doOnBeforeComplete(action: () -> Unit): Observable<T> =
     observable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ValueCallback<T> by emitter, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -86,7 +87,7 @@ fun <T> Observable<T>.doOnBeforeComplete(action: () -> Unit): Observable<T> =
 
 fun <T> Observable<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Observable<T> =
     observable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ValueCallback<T> by emitter, CompleteCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -103,7 +104,7 @@ fun <T> Observable<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Observable
 
 fun <T> Observable<T>.doOnBeforeTerminate(action: () -> Unit): Observable<T> =
     observable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, ValueCallback<T> by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -134,7 +135,7 @@ fun <T> Observable<T>.doOnBeforeDispose(action: () -> Unit): Observable<T> =
                 try {
                     action()
                 } catch (e: Throwable) {
-                    handleSourceError(e) // Can't send error to downstream, already disposed
+                    handleReaktiveError(e) // Can't send error to downstream, already disposed
                 }
             }
 
@@ -174,7 +175,7 @@ fun <T> Observable<T>.doOnBeforeFinally(action: () -> Unit): Observable<T> =
                 try {
                     action()
                 } catch (e: Throwable) {
-                    handleSourceError(e) // Can't send error to downstream, already disposed
+                    handleReaktiveError(e) // Can't send error to downstream, already disposed
                 }
             }
 

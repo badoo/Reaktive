@@ -14,7 +14,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class RetryTest : SingleToSingleTests by SingleToSingleTests({ retry() }) {
+class RetryTest : SingleToSingleTests by SingleToSingleTestsImpl({ retry() }) {
 
     private val upstream = TestSingle<Int?>()
 

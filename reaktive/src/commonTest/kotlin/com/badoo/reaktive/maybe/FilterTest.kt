@@ -7,7 +7,7 @@ import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
 import kotlin.test.Test
 
-class FilterTest : MaybeToMaybeTests by MaybeToMaybeTests({ filter { true } }) {
+class FilterTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ filter { true } }) {
 
     private val upstream = TestMaybe<Int?>()
     private val observer = upstream.filter { it == null || it > 0 }.test()

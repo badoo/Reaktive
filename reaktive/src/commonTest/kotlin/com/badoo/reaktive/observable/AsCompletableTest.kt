@@ -5,7 +5,7 @@ import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.observable.TestObservable
 import kotlin.test.Test
 
-class AsCompletableTest : ObservableToCompletableTests by ObservableToCompletableTests({ asCompletable() }) {
+class AsCompletableTest : ObservableToCompletableTests by ObservableToCompletableTestsImpl({ asCompletable() }) {
 
     private val upstream = TestObservable<Int>()
     private val observer = upstream.asCompletable().test()

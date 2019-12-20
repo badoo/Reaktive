@@ -12,7 +12,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeTerminateTest
-    : MaybeToMaybeTests by MaybeToMaybeTests({ doOnBeforeTerminate {} }) {
+    : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOnBeforeTerminate {} }) {
 
     private val upstream = TestMaybe<Int>()
     private val callOrder = SharedList<String>()

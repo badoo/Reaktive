@@ -5,7 +5,7 @@ import kotlin.test.assertEquals
 
 
 class DistinctUntilChangedTest
-    : ObservableToObservableTests by ObservableToObservableTests<Unit>({ distinctUntilChanged() }) {
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ distinctUntilChanged() }) {
 
     private val thirteen = Question(13)
     private val fortyTwo = Question(42)

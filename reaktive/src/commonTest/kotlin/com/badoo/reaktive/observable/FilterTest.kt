@@ -10,7 +10,7 @@ import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 
-class FilterTest : ObservableToObservableTests by ObservableToObservableTests<Unit>({ filter { true } }) {
+class FilterTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ filter { true } }) {
 
     private val upstream = TestObservable<Int?>()
     private val observer = upstream.filter { it == null || it > 0 }.test()

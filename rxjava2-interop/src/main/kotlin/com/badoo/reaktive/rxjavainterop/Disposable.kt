@@ -19,4 +19,3 @@ fun io.reactivex.disposables.Disposable.asReaktive(): Disposable =
             this@asReaktive.dispose()
         }
     }
-    

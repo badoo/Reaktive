@@ -10,7 +10,7 @@ import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
 
 class DelayTest :
-    SingleToSingleTests by SingleToSingleTests({ delay(0L, TestScheduler()) }),
+    SingleToSingleTests by SingleToSingleTestsImpl({ delay(0L, TestScheduler()) }),
     DelayErrorTests by DelayErrorTests<TestSingle<Int>>(
         TestSingle(),
         { delayMillis, scheduler, delayError -> delay(delayMillis, scheduler, delayError).test() }

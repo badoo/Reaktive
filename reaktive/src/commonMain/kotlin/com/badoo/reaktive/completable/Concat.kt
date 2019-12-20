@@ -30,7 +30,7 @@ fun Iterable<Completable>.concat(): Completable =
                 }
             }
 
-        sources[0].subscribeSafe(upstreamObserver)
+        sources[0].subscribe(upstreamObserver)
     }
 
 fun concat(vararg sources: Completable): Completable =

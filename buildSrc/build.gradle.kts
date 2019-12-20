@@ -13,7 +13,7 @@ dependencies {
     implementation(Deps.android.plugin)
     implementation(Deps.jmh.plugin)
     implementation(Deps.bintray)
-    implementation(Deps.detekt)
+    implementation(Deps.detekt.plugin)
     implementation(Deps.shadow)
 }
 

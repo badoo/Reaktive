@@ -13,7 +13,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeErrorTest
-    : SingleToSingleTests by SingleToSingleTests({ doOnBeforeError {} }) {
+    : SingleToSingleTests by SingleToSingleTestsImpl({ doOnBeforeError {} }) {
 
     private val upstream = TestSingle<Int>()
 

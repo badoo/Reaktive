@@ -15,7 +15,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class RetryTest : MaybeToMaybeTests by MaybeToMaybeTests({ retry() }) {
+class RetryTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ retry() }) {
 
     private val upstream = TestMaybe<Int?>()
 

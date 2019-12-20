@@ -1,8 +1,8 @@
 package com.badoo.reaktive.maybe
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.freeze
 
@@ -13,7 +13,7 @@ fun <T> Maybe<T>.observeOn(scheduler: Scheduler): Maybe<T> =
         val executor = scheduler.newExecutor()
         disposables += executor
 
-        subscribeSafe(
+        subscribe(
             object : MaybeObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable

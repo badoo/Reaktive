@@ -19,7 +19,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeFinallyTest
-    : SingleToSingleTests by SingleToSingleTests({ doOnBeforeFinally {} }) {
+    : SingleToSingleTests by SingleToSingleTestsImpl({ doOnBeforeFinally {} }) {
 
     private val upstream = TestSingle<Int>()
 

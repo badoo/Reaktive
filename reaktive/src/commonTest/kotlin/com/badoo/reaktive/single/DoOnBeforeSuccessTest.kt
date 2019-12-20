@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class DoOnBeforeSuccessTest
-    : SingleToSingleTests by SingleToSingleTests({ doOnBeforeSuccess {} }) {
+    : SingleToSingleTests by SingleToSingleTestsImpl({ doOnBeforeSuccess {} }) {
 
     private val upstream = TestSingle<Int>()
 

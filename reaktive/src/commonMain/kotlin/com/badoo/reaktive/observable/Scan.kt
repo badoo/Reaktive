@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.ObjectReference
@@ -8,7 +7,7 @@ import com.badoo.reaktive.utils.Uninitialized
 
 fun <T> Observable<T>.scan(accumulate: (acc: T, value: T) -> T): Observable<T> =
     observable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
                 var cache = ObjectReference<Any?>(Uninitialized)
 
@@ -35,7 +34,6 @@ fun <T> Observable<T>.scan(accumulate: (acc: T, value: T) -> T): Observable<T> =
 
                 override fun onSubscribe(disposable: Disposable) =
                     emitter.setDisposable(disposable)
-
             }
         )
     }
@@ -50,7 +48,7 @@ fun <T, R> Observable<T>.scan(getSeed: () -> R, accumulate: (acc: R, value: T) -
                 .also(emitter::onNext)
                 .let(::ObjectReference)
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
 
                 override fun onNext(value: T) {

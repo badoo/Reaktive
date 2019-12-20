@@ -10,7 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MergeTests : CompletableToCompletableTests by CompletableToCompletableTests({ merge(this) }) {
+class MergeTests : CompletableToCompletableTests by CompletableToCompletableTestsImpl({ merge(this) }) {
 
     private val upstream1 = TestCompletable()
     private val upstream2 = TestCompletable()
@@ -24,6 +24,14 @@ class MergeTests : CompletableToCompletableTests by CompletableToCompletableTest
     @Test
     fun subscribes_to_second_upstream_WHEN_subscribed() {
         assertTrue(upstream2.hasSubscribers)
+    }
+
+    @Test
+    fun produces_error_WHEN_first_upstream_produced_error() {
+        val throwable = Throwable()
+        upstream1.onError(throwable)
+
+        inner.assertError(throwable)
     }
 
     @Test

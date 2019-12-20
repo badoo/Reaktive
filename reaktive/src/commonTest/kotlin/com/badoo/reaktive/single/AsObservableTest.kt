@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.single.TestSingle
 import kotlin.test.Test
 
-class AsObservableTest : SingleToObservableTests by SingleToObservableTests({ asObservable() }) {
+class AsObservableTest : SingleToObservableTests by SingleToObservableTestsImpl({ asObservable() }) {
 
     private val upstream = TestSingle<Int?>()
     private val observer = upstream.asObservable().test()

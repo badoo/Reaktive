@@ -3,6 +3,7 @@ package com.badoo.reaktive.completable
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 
 fun Completable.subscribeOn(scheduler: Scheduler): Completable =

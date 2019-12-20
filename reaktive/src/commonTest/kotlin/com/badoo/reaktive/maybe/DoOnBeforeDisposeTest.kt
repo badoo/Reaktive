@@ -16,7 +16,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeDisposeTest
-    : MaybeToMaybeTests by MaybeToMaybeTests({ doOnBeforeDispose {} }) {
+    : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOnBeforeDispose {} }) {
 
     private val upstream = TestMaybe<Int>()
 

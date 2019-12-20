@@ -25,7 +25,7 @@ class TestCompletableRelay : Completable, CompletableEmitter {
 
     override val isDisposed: Boolean get() = emitter.isDisposed
 
-    override fun setDisposable(disposable: Disposable) {
+    override fun setDisposable(disposable: Disposable?) {
         emitter.setDisposable(disposable)
     }
 

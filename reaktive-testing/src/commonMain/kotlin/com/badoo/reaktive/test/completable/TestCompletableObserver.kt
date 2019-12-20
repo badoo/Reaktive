@@ -31,6 +31,6 @@ class TestCompletableObserver(autoFreeze: Boolean = true) : TestObserver(), Comp
     override fun checkActive() {
         super.checkActive()
 
-        check(!isComplete) { "Already complete" }
+        check(!isComplete) { "Already completed" }
     }
 }

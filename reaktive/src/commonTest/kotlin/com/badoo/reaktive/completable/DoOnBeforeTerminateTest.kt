@@ -12,7 +12,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class DoOnBeforeTerminateTest
-    : CompletableToCompletableTests by CompletableToCompletableTests({ doOnBeforeTerminate {} }) {
+    : CompletableToCompletableTests by CompletableToCompletableTestsImpl({ doOnBeforeTerminate {} }) {
 
     private val upstream = TestCompletable()
     private val callOrder = SharedList<String>()

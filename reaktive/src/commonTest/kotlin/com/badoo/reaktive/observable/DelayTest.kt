@@ -11,7 +11,7 @@ import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
 
 class DelayTest :
-    ObservableToObservableTests by ObservableToObservableTests<Unit>({ delay(0L, TestScheduler()) }),
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ delay(0L, TestScheduler()) }),
     DelayErrorTests by DelayErrorTests<TestObservable<Int>>(
         TestObservable(),
         { delayMillis, scheduler, delayError -> delay(delayMillis, scheduler, delayError).test() }

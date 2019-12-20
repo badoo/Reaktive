@@ -9,7 +9,8 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.doIfNotDisposed
-import com.badoo.reaktive.utils.handleSourceError
+import com.badoo.reaktive.disposable.plusAssign
+import com.badoo.reaktive.utils.handleReaktiveError
 
 fun Completable.doOnBeforeSubscribe(action: (Disposable) -> Unit): Completable =
     completableUnsafe { observer ->
@@ -48,7 +49,7 @@ fun Completable.doOnBeforeSubscribe(action: (Disposable) -> Unit): Completable =
 
 fun Completable.doOnBeforeComplete(action: () -> Unit): Completable =
     completable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : CompletableObserver, ErrorCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -65,7 +66,7 @@ fun Completable.doOnBeforeComplete(action: () -> Unit): Completable =
 
 fun Completable.doOnBeforeError(consumer: (Throwable) -> Unit): Completable =
     completable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : CompletableObserver, CompleteCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -82,7 +83,7 @@ fun Completable.doOnBeforeError(consumer: (Throwable) -> Unit): Completable =
 
 fun Completable.doOnBeforeTerminate(action: () -> Unit): Completable =
     completable { emitter ->
-        subscribeSafe(
+        subscribe(
             object : CompletableObserver {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -103,7 +104,6 @@ fun Completable.doOnBeforeTerminate(action: () -> Unit): Completable =
         )
     }
 
-
 fun Completable.doOnBeforeDispose(action: () -> Unit): Completable =
     completableUnsafe { observer ->
         val disposables = CompositeDisposable()
@@ -114,7 +114,7 @@ fun Completable.doOnBeforeDispose(action: () -> Unit): Completable =
                 try {
                     action()
                 } catch (e: Throwable) {
-                    handleSourceError(e) // Can't send error to downstream, already disposed
+                    handleReaktiveError(e) // Can't send error to downstream, already disposed
                 }
             }
 
@@ -154,7 +154,7 @@ fun Completable.doOnBeforeFinally(action: () -> Unit): Completable =
                 try {
                     action()
                 } catch (e: Throwable) {
-                    handleSourceError(e) // Can't send error to downstream, already disposed
+                    handleReaktiveError(e) // Can't send error to downstream, already disposed
                 }
             }
 

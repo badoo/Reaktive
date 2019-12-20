@@ -10,7 +10,7 @@ fun TestCompletableObserver.assertComplete() {
 }
 
 fun TestCompletableObserver.assertNotComplete() {
-    assertFalse(isComplete, "Completable is complete")
+    assertFalse(isComplete, "Completable completed")
 }
 
 fun Completable.test(autoFreeze: Boolean = true): TestCompletableObserver {

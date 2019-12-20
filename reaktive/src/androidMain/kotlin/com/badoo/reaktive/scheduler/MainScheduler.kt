@@ -3,25 +3,31 @@ package com.badoo.reaktive.scheduler
 import android.os.Handler
 import android.os.Looper
 import com.badoo.reaktive.disposable.CompositeDisposable
+import com.badoo.reaktive.disposable.minusAssign
+import com.badoo.reaktive.disposable.plusAssign
 
 internal class MainScheduler : Scheduler {
 
     private val disposables = CompositeDisposable()
 
-    override fun newExecutor(): Scheduler.Executor =
-        ExecutorImpl()
-            .also(disposables::add)
+    override fun newExecutor(): Scheduler.Executor = ExecutorImpl(disposables)
 
     override fun destroy() {
         disposables.dispose()
     }
 
-    private class ExecutorImpl : Scheduler.Executor {
+    private class ExecutorImpl(
+        private val disposables: CompositeDisposable
+    ) : Scheduler.Executor {
         @Volatile
         private var handler: Handler? = Handler(Looper.getMainLooper())
 
         private val monitor = Any()
         override val isDisposed: Boolean get() = handler == null
+
+        init {
+            disposables += this
+        }
 
         override fun dispose() {
             if (handler != null) {
@@ -31,6 +37,7 @@ internal class MainScheduler : Scheduler {
                     handler = null
                 }
                 handlerToCancel.removeCallbacksAndMessages(null)
+                disposables -= this
             }
         }
 

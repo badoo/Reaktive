@@ -1,11 +1,11 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.ErrorCallback
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.update
@@ -21,7 +21,7 @@ fun <T, U, R> Observable<T>.withLatestFrom(
         val otherValues = atomicList<Any?>(List(others.size) { Uninitialized })
 
         others.forEachIndexed { index, source ->
-            source.subscribeSafe(
+            source.subscribe(
                 object : ObservableObserver<U>, ErrorCallback by emitter {
                     override fun onSubscribe(disposable: Disposable) {
                         disposables += disposable
@@ -40,7 +40,7 @@ fun <T, U, R> Observable<T>.withLatestFrom(
             )
         }
 
-        subscribeSafe(
+        subscribe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable
