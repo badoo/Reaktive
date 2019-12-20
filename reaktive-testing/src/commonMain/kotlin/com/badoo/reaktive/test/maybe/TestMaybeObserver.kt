@@ -12,7 +12,7 @@ class TestMaybeObserver<T>(autoFreeze: Boolean = true) : TestObserver(), MaybeOb
 
     val value: T
         get() =
-            requireNotNull(_value.value) { "Single did not success. Assert that with 'assertSuccess()' before accessing the 'value'."}
+            requireNotNull(_value.value) { "Single did not success. Assert that with 'assertSuccess()' before accessing the 'value'." }
                 .value
 
     val isSuccess: Boolean get() = _value.value != null
