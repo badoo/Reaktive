@@ -8,7 +8,7 @@ inline fun completable(crossinline onSubscribe: (emitter: CompletableEmitter) ->
     completableUnsafe { observer ->
         val emitter =
             object : DisposableWrapper(), CompletableEmitter {
-                override fun setDisposable(disposable: Disposable) {
+                override fun setDisposable(disposable: Disposable?) {
                     set(disposable)
                 }
 

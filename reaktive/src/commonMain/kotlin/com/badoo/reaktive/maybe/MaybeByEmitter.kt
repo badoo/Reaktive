@@ -8,7 +8,7 @@ inline fun <T> maybe(crossinline onSubscribe: (emitter: MaybeEmitter<T>) -> Unit
     maybeUnsafe { observer ->
         val emitter =
             object : DisposableWrapper(), MaybeEmitter<T> {
-                override fun setDisposable(disposable: Disposable) {
+                override fun setDisposable(disposable: Disposable?) {
                     set(disposable)
                 }
 

@@ -8,7 +8,7 @@ inline fun <T> observable(crossinline onSubscribe: (emitter: ObservableEmitter<T
     observableUnsafe { observer ->
         val emitter =
             object : DisposableWrapper(), ObservableEmitter<T> {
-                override fun setDisposable(disposable: Disposable) {
+                override fun setDisposable(disposable: Disposable?) {
                     set(disposable)
                 }
 
