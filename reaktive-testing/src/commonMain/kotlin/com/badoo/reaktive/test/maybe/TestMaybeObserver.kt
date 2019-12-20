@@ -9,7 +9,12 @@ import com.badoo.reaktive.utils.freeze
 class TestMaybeObserver<T>(autoFreeze: Boolean = true) : TestObserver(), MaybeObserver<T> {
 
     private val _value = AtomicReference<Value<T>?>(null)
-    val value: T get() = _value.value!!.value
+
+    val value: T
+        get() =
+            requireNotNull(_value.value) { "Single did not success. Assert that with 'assertSuccess()' before accessing the 'value'."}
+                .value
+
     val isSuccess: Boolean get() = _value.value != null
     private val _isComplete = AtomicBoolean()
     val isComplete: Boolean get() = _isComplete.value
