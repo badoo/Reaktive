@@ -211,21 +211,21 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_subscribe_to_other_second_time_WHEN_timeout_reached_after_second_value_and_has_other() {
-        lateinit var upstreamObserver: ObservableObserver<Int?>
+        val upstreamObserver = AtomicReference<ObservableObserver<Int>?>(null)
         val upstream =
-            observableUnsafe<Int?> {
-                upstreamObserver = it
+            observableUnsafe<Int> {
+                upstreamObserver.value = it
                 it.onSubscribe(Disposable())
             }
 
         val otherSubscribeCount = AtomicInt()
-        val other = observable<Int?> { otherSubscribeCount.addAndGet(1) }
+        val other = observable<Int> { otherSubscribeCount.addAndGet(1) }
 
         upstream.timeout(1000L, scheduler, other).test()
 
-        upstreamObserver.onNext(0)
+        upstreamObserver.value!!.onNext(0)
         scheduler.timer.advanceBy(1000L)
-        upstreamObserver.onNext(1)
+        upstreamObserver.value!!.onNext(1)
         scheduler.timer.advanceBy(1000L)
 
         assertEquals(1, otherSubscribeCount.value)
