@@ -25,7 +25,7 @@ class TestSingleRelay<T> : Single<T>, SingleEmitter<T> {
 
     override val isDisposed: Boolean get() = emitter.isDisposed
 
-    override fun setDisposable(disposable: Disposable) {
+    override fun setDisposable(disposable: Disposable?) {
         emitter.setDisposable(disposable)
     }
 

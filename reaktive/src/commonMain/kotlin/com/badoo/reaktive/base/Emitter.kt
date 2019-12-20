@@ -12,10 +12,10 @@ interface Emitter {
     val isDisposed: Boolean
 
     /**
-     * Sets a [Disposable] on this emitter, any previous [Disposable]
-     * will be replaced.
+     * Sets a [Disposable] on this emitter, any existing [Disposable]
+     * will be replaced and disposed.
      *
      * @param disposable the [Disposable]
      */
-    fun setDisposable(disposable: Disposable)
+    fun setDisposable(disposable: Disposable?)
 }
