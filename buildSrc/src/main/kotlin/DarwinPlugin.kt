@@ -19,7 +19,7 @@ import java.io.File
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
-abstract class IosPlugin : Plugin<Project> {
+abstract class DarwinPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         configureIosCompilation(target)
@@ -101,8 +101,8 @@ abstract class IosPlugin : Plugin<Project> {
             val appleTestProvider = target
                 .tasks
                 .register(
-                    RunAppleTestTask.createNameFromTarget(konanTarget),
-                    RunAppleTestTask::class.java,
+                    DarwinTestTask.createNameFromTarget(konanTarget),
+                    DarwinTestTask::class.java,
                     testBinariesFile,
                     konanTarget
                 )
@@ -156,7 +156,7 @@ abstract class IosPlugin : Plugin<Project> {
         }
     }
 
-    open class RunAppleTestTask @Inject constructor(
+    open class DarwinTestTask @Inject constructor(
         private val testExecutable: File,
         @Input val target: KonanTarget
     ) : AbstractTask() {

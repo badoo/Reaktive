@@ -94,7 +94,7 @@ void setupAllTargetsWithDefaultSourceSets(Project project, Boolean isLinuxArm32H
         }
     }
 
-    if (target.isIos() || target.isMeta()) {
+    if (target.isDarwin() || target.isMeta()) {
         setupIosTargets(project)
 
         project.kotlin {
@@ -105,35 +105,35 @@ void setupAllTargetsWithDefaultSourceSets(Project project, Boolean isLinuxArm32H
                 nativeCommonMain.dependsOn jvmNativeCommonMain
                 nativeCommonTest.dependsOn jvmNativeCommonTest
 
-                iosCommonMain.dependsOn nativeCommonMain
-                iosCommonTest.dependsOn nativeCommonTest
+                darwinCommonMain.dependsOn nativeCommonMain
+                darwinCommonTest.dependsOn nativeCommonTest
 
-                watchosArm32Main.dependsOn iosCommonMain
-                watchosArm32Test.dependsOn iosCommonTest
+                watchosArm32Main.dependsOn darwinCommonMain
+                watchosArm32Test.dependsOn darwinCommonTest
 
-                watchosArm64Main.dependsOn iosCommonMain
-                watchosArm64Test.dependsOn iosCommonTest
+                watchosArm64Main.dependsOn darwinCommonMain
+                watchosArm64Test.dependsOn darwinCommonTest
 
-                watchosSimMain.dependsOn iosCommonMain
-                watchosSimTest.dependsOn iosCommonTest
+                watchosSimMain.dependsOn darwinCommonMain
+                watchosSimTest.dependsOn darwinCommonTest
 
-                tvosArm64Main.dependsOn iosCommonMain
-                tvosArm64Test.dependsOn iosCommonTest
+                tvosArm64Main.dependsOn darwinCommonMain
+                tvosArm64Test.dependsOn darwinCommonTest
 
-                tvosSimMain.dependsOn iosCommonMain
-                tvosSimTest.dependsOn iosCommonTest
+                tvosSimMain.dependsOn darwinCommonMain
+                tvosSimTest.dependsOn darwinCommonTest
 
-                macosX64Main.dependsOn iosCommonMain
-                macosX64Test.dependsOn iosCommonTest
+                macosX64Main.dependsOn darwinCommonMain
+                macosX64Test.dependsOn darwinCommonTest
 
-                ios32Main.dependsOn iosCommonMain
-                ios32Test.dependsOn iosCommonTest
+                ios32Main.dependsOn darwinCommonMain
+                ios32Test.dependsOn darwinCommonTest
 
-                ios64Main.dependsOn iosCommonMain
-                ios64Test.dependsOn iosCommonTest
+                ios64Main.dependsOn darwinCommonMain
+                ios64Test.dependsOn darwinCommonTest
 
-                iosSimMain.dependsOn iosCommonMain
-                iosSimTest.dependsOn iosCommonTest
+                iosSimMain.dependsOn darwinCommonMain
+                iosSimTest.dependsOn darwinCommonTest
             }
         }
     }
@@ -217,12 +217,12 @@ private void setupLinuxArm32HfpTarget(Project project) {
 }
 
 private void setupIosTargets(Project project) {
-    project.apply plugin: IosPlugin
+    project.apply plugin: DarwinPlugin
 }
 
 import tasks.BuildIosSampleTask
 
-if (Target.currentTarget().isIos()) {
+if (Target.currentTarget().isDarwin()) {
     tasks.register('buildIosSample', BuildIosSampleTask) {
         dependsOn ':sample-mpp-module:fatIosDebug', ':sample-mpp-module:fatIosRelease'
     }

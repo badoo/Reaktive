@@ -30,7 +30,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Build iOS, watchOS, tvOS, macOS
-        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build buildIosSample -DMP_TARGET=IOS
+        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build buildIosSample -DMP_TARGET=DARWIN
   ubuntu-check-compatibility:
     name: Binary compatibility
     runs-on: ubuntu-latest

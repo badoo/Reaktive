@@ -14,7 +14,7 @@ kotlin {
                 }
             }
         }
-        if (Target.currentTarget().isIos()) {
+        if (Target.currentTarget().isDarwin()) {
             [ios32, ios64, iosSim].each {
                 [it.binaries.getFramework('DEBUG'), it.binaries.getFramework('RELEASE')].each {
                     // Reaktive should be included into framework file, so we don't need to generate 2 framework files
