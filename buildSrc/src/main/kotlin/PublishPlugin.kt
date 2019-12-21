@@ -42,9 +42,15 @@ abstract class PublishPlugin : Plugin<Project> {
             "androidRelease" to mppTarget.common,
             "linuxX64" to mppTarget.common,
             "linuxArm32Hfp" to mppTarget.common,
-            IosPlugin.TARGET_NAME_X32 to mppTarget.ios,
-            IosPlugin.TARGET_NAME_X64 to mppTarget.ios,
-            IosPlugin.TARGET_NAME_SIM to mppTarget.ios
+            IosPlugin.TARGET_NAME_IOS_ARM32 to mppTarget.ios,
+            IosPlugin.TARGET_NAME_IOS_ARM64 to mppTarget.ios,
+            IosPlugin.TARGET_NAME_IOS_X64 to mppTarget.ios,
+            IosPlugin.TARGET_NAME_WATCHOS_ARM32 to mppTarget.ios,
+            IosPlugin.TARGET_NAME_WATCHOS_ARM64 to mppTarget.ios,
+            IosPlugin.TARGET_NAME_WATCHOS_SIM to mppTarget.ios,
+            IosPlugin.TARGET_NAME_TVOS_ARM64 to mppTarget.ios,
+            IosPlugin.TARGET_NAME_TVOS_X64 to mppTarget.ios,
+            IosPlugin.TARGET_NAME_MACOS_X64 to mppTarget.ios
         )
     }
 

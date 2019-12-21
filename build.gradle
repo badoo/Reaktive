@@ -108,6 +108,24 @@ void setupAllTargetsWithDefaultSourceSets(Project project, Boolean isLinuxArm32H
                 iosCommonMain.dependsOn nativeCommonMain
                 iosCommonTest.dependsOn nativeCommonTest
 
+                watchosArm32Main.dependsOn iosCommonMain
+                watchosArm32Test.dependsOn iosCommonTest
+
+                watchosArm64Main.dependsOn iosCommonMain
+                watchosArm64Test.dependsOn iosCommonTest
+
+                watchosSimMain.dependsOn iosCommonMain
+                watchosSimTest.dependsOn iosCommonTest
+
+                tvosArm64Main.dependsOn iosCommonMain
+                tvosArm64Test.dependsOn iosCommonTest
+
+                tvosSimMain.dependsOn iosCommonMain
+                tvosSimTest.dependsOn iosCommonTest
+
+                macosX64Main.dependsOn iosCommonMain
+                macosX64Test.dependsOn iosCommonTest
+
                 ios32Main.dependsOn iosCommonMain
                 ios32Test.dependsOn iosCommonTest
 
@@ -206,6 +224,6 @@ import tasks.BuildIosSampleTask
 
 if (Target.currentTarget().isIos()) {
     tasks.register('buildIosSample', BuildIosSampleTask) {
-        dependsOn ':sample-mpp-module:fatDebug', ':sample-mpp-module:fatRelease'
+        dependsOn ':sample-mpp-module:fatIosDebug', ':sample-mpp-module:fatIosRelease'
     }
 }

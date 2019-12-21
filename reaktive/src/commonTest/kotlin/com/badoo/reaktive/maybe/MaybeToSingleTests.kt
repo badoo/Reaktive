@@ -22,6 +22,10 @@ interface MaybeToSingleTests : SourceTests {
 class MaybeToSingleTestsImpl(
     transform: Maybe<Unit>.() -> Single<*>
 ) : MaybeToSingleTests, SourceTests by SourceTestsImpl(TestMaybe<Nothing>(), { transform().test() }) {
+
+    @Deprecated("Just to fix complilation issues")
+    constructor() : this({ throw UnsupportedOperationException() })
+
     private val upstream = TestMaybe<Unit>()
     private val observer = upstream.transform().test()
 

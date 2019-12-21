@@ -382,7 +382,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../sample-mpp-module/build/fat-framework/debug/**",
+					"$(SRCROOT)/../sample-mpp-module/build/fat-framework/ios/debug/**",
 				);
 				INFOPLIST_FILE = "sample-ios-app/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -404,7 +404,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../sample-mpp-module/build/fat-framework/release/**",
+					"$(SRCROOT)/../sample-mpp-module/build/fat-framework/ios/release/**",
 				);
 				INFOPLIST_FILE = "sample-ios-app/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
