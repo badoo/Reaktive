@@ -34,7 +34,7 @@ kotlin {
                 implementation project(':utils')
             }
         }
-        iosCommonMain {
+        darwinCommonMain {
             dependencies {
                 // Reaktive should be included into framework file, so we don't need to generate 2 framework files
                 api project(':reaktive')

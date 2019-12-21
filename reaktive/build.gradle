@@ -10,7 +10,7 @@ kotlin {
 //            fromPreset(presets.linuxArm32Hfp, 'nativeCommon')
 //            fromPreset(presets.linuxX64, 'linuxCommon')
 
-//            fromPreset(presets.iosX64, 'iosCommon')
+//            fromPreset(presets.iosX64, 'darwinCommon')
     }
 
     sourceSets {

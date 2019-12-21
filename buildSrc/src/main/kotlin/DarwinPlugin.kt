@@ -22,10 +22,10 @@ import javax.inject.Inject
 abstract class DarwinPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        configureIosCompilation(target)
+        configureDarwinCompilation(target)
     }
 
-    private fun configureIosCompilation(target: Project) {
+    private fun configureDarwinCompilation(target: Project) {
         val buildBinariesTasks = mutableListOf<String>()
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
             iosArm32(TARGET_NAME_IOS_ARM32) {
