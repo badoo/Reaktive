@@ -106,7 +106,7 @@ abstract class IosPlugin : Plugin<Project> {
                     testBinariesFile,
                     konanTarget
                 )
-                .configure { dependsOn(target.tasks.named(testBinariesTaskName)) }
+                .apply { configure { dependsOn(target.tasks.named(testBinariesTaskName)) } }
             target.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
                 dependsOn(appleTestProvider)
             }
