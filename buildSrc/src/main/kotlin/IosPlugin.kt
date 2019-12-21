@@ -51,6 +51,7 @@ abstract class IosPlugin : Plugin<Project> {
                 binaries {
                     framework()
                 }
+                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
             }
             watchosArm64(TARGET_NAME_WATCHOS_ARM64) {
                 binaries {
@@ -62,22 +63,26 @@ abstract class IosPlugin : Plugin<Project> {
                     framework()
                     setupTest(this@watchosX86, this, target)
                 }
+                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
             }
             tvosArm64(TARGET_NAME_TVOS_ARM64) {
                 binaries {
                     framework()
                 }
+                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
             }
             tvosX64(TARGET_NAME_TVOS_X64) {
                 binaries {
                     framework()
                     setupTest(this@tvosX64, this, target)
                 }
+                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
             }
             macosX64(TARGET_NAME_MACOS_X64) {
                 binaries {
                     framework()
                 }
+                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
             }
         }
         setupBuildAll(target, buildBinariesTasks)
