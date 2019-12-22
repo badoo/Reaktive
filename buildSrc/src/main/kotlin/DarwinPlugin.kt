@@ -4,6 +4,7 @@ import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.internal.AbstractTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
@@ -158,13 +159,28 @@ abstract class DarwinPlugin : Plugin<Project> {
 
     open class DarwinTestTask @Inject constructor(
         private val testExecutable: File,
-        @Input val target: KonanTarget
+        private val target: KonanTarget
     ) : AbstractTask() {
+
+        // KonanTarget is not serializable property, so we need to provide string representation for caching
+        @get:[Input]
+        val targetSerialized: String
+            get() = target.name
 
         // There is no SkipWhenEmpty equivalent for single file, use workaround
         @get:[SkipWhenEmpty InputFiles]
         val testExecutables: Collection<File>?
             get() = listOf(testExecutable).takeIf { testExecutable.exists() }
+
+        // We can't run multiple DarwinTestTask of same target in parallel due emulator restriction
+        // Synchronize with OutputDirectory workaround until SharedResource is released
+        // https://discuss.gradle.org/t/disabling-parallel-for-certain-tasks-only/10151/7
+        @get:OutputDirectory
+        val synchronizationDirectory: File by lazy {
+            val parentFolder = File(project.rootProject.buildDir, "darwin-emulator-sync")
+            val targetFolder = File(parentFolder, target.name)
+            targetFolder
+        }
 
         init {
             group = LifecycleBasePlugin.VERIFICATION_GROUP
