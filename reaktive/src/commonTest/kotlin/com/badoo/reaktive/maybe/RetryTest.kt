@@ -1,14 +1,16 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.exceptions.CompositeException
+import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.maybe.TestMaybe
+import com.badoo.reaktive.test.maybe.assertComplete
+import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -48,7 +50,7 @@ class RetryTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ retry() }) {
         val observer = upstream.retry { _, _ -> false }.test()
         val throwable = Throwable()
         upstream.onError(throwable)
-        assertSame(observer.error, throwable)
+        observer.assertError(throwable)
     }
 
     @Test
@@ -56,7 +58,7 @@ class RetryTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ retry() }) {
         val observer = upstream.retry().test()
         upstream.onError(Throwable())
         upstream.onComplete()
-        assertTrue(observer.isComplete)
+        observer.assertComplete()
     }
 
     @Test
@@ -64,7 +66,7 @@ class RetryTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ retry() }) {
         val observer = upstream.retry().test()
         upstream.onError(Throwable())
         upstream.onSuccess(1)
-        assertEquals(1, observer.value)
+        observer.assertSuccess(1)
     }
 
     @Test
