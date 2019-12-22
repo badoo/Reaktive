@@ -49,6 +49,10 @@ public final class com/badoo/reaktive/base/exceptions/CompositeException : java/
 	public final fun getCause2 ()Ljava/lang/Throwable;
 }
 
+public final class com/badoo/reaktive/base/exceptions/TimeoutException : java/lang/Exception {
+	public fun <init> ()V
+}
+
 public final class com/badoo/reaktive/completable/AndThenKt {
 	public static final fun andThen (Lcom/badoo/reaktive/completable/Completable;Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun andThen (Lcom/badoo/reaktive/completable/Completable;Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
@@ -710,6 +714,11 @@ public final class com/badoo/reaktive/observable/ThreadLocalKt {
 
 public final class com/badoo/reaktive/observable/ThrottleKt {
 	public static final fun throttle (Lcom/badoo/reaktive/observable/Observable;J)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/observable/TimeoutKt {
+	public static final fun timeout (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun timeout$default (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;Lcom/badoo/reaktive/observable/Observable;ILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/TimerKt {
