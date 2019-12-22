@@ -1,16 +1,16 @@
 enum class Target {
     ALL,
     COMMON,
-    IOS,
+    DARWIN,
     META;
 
     val common: Boolean
         @JvmName("isCommon")
         get() = this == ALL || this == COMMON
 
-    val ios: Boolean
-        @JvmName("isIos")
-        get() = this == ALL || this == IOS
+    val darwin: Boolean
+        @JvmName("isDarwin")
+        get() = this == ALL || this == DARWIN
 
     val meta: Boolean
         @JvmName("isMeta")
