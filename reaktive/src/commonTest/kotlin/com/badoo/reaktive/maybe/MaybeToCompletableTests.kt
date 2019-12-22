@@ -26,6 +26,10 @@ interface MaybeToCompletableTests : SourceTests {
 class MaybeToCompletableTestsImpl(
     transform: Maybe<Unit>.() -> Completable
 ) : MaybeToCompletableTests, SourceTests by SourceTestsImpl(TestMaybe<Nothing>(), { transform().test() }) {
+
+    @Deprecated("Just to fix complilation issues")
+    constructor() : this({ throw UnsupportedOperationException() })
+
     private val upstream = TestMaybe<Unit>()
     private val observer = upstream.transform().test()
 

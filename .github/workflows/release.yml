@@ -30,4 +30,4 @@ jobs:
         with:
           java-version: 1.8
       - name: Release iOS
-        run: ./gradlew bintrayUpload -DMP_TARGET=IOS -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
+        run: ./gradlew bintrayUpload -DMP_TARGET=DARWIN -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}

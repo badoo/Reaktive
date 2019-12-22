@@ -23,6 +23,10 @@ interface ObservableToMaybeTests : SourceTests {
 class ObservableToMaybeTestsImpl(
     transform: Observable<*>.() -> Maybe<*>
 ) : ObservableToMaybeTests, SourceTests by SourceTestsImpl(TestObservable<Nothing>(), { transform().test() }) {
+
+    @Deprecated("Just to fix complilation issues")
+    constructor() : this({ throw UnsupportedOperationException() })
+
     private val upstream = TestObservable<Nothing>()
     private val observer = upstream.transform().test()
 

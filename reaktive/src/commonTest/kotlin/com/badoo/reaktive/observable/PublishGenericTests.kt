@@ -101,6 +101,9 @@ class PublishGenericTestsImpl(
     transform: Observable<Int?>.() -> ConnectableObservable<Int?>
 ) : PublishGenericTests {
 
+    @Deprecated("Just to fix complilation issues")
+    constructor() : this({ throw UnsupportedOperationException() })
+
     private val upstream = TestObservable<Int?>()
     private val publish = upstream.transform()
 
