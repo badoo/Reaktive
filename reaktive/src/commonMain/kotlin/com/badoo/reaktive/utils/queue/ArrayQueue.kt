@@ -1,12 +1,6 @@
 package com.badoo.reaktive.utils.queue
 
-import com.badoo.reaktive.utils.ensureNeverFrozen
-
 internal class ArrayQueue<T> : Queue<T> {
-
-    init {
-        ensureNeverFrozen()
-    }
 
     private var queue: Array<T?> = createArray(INITIAL_CAPACITY)
     private var head = 0
