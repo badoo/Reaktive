@@ -231,4 +231,48 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
         assertEquals(1, otherSubscribeCount.value)
     }
 
+    @Test
+    fun does_not_produce_error_WHEN_timeout_not_reached_after_subscribe() {
+        val observer = upstream.timeout(1000L, scheduler).test()
+
+        scheduler.timer.advanceBy(999L)
+
+        observer.assertNotError()
+    }
+
+    @Test
+    fun produces_error_WHEN_timeout_reached_after_subscribe() {
+        val observer = upstream.timeout(1000L, scheduler).test()
+
+        scheduler.timer.advanceBy(1000L)
+
+        observer.assertError { it is TimeoutException }
+    }
+
+    @Test
+    fun does_not_subscribe_to_other_WHEN_timeout_not_reached_after_subscribe() {
+        upstream.timeout(1000L, scheduler, other).test()
+
+        scheduler.timer.advanceBy(999L)
+
+        assertFalse(other.hasSubscribers)
+    }
+
+    @Test
+    fun subscribes_to_other_WHEN_timeout_reached_after_subscribe() {
+        upstream.timeout(1000L, scheduler, other).test()
+
+        scheduler.timer.advanceBy(1000L)
+
+        assertTrue(other.hasSubscribers)
+    }
+
+    @Test
+    fun does_not_produce_error_WHEN_timeout_reached_after_subscribe_and_has_other() {
+        val observer = upstream.timeout(1000L, scheduler, other).test()
+
+        scheduler.timer.advanceBy(1000L)
+
+        observer.assertNotError()
+    }
 }
