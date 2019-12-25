@@ -4,9 +4,7 @@ import com.badoo.reaktive.samplemppmodule.store.KittenStore
 import com.badoo.reaktive.samplemppmodule.store.KittenStoreBuilder
 import com.badoo.reaktive.samplemppmodule.store.KittenStoreImpl
 
-class KittenStoreBuilderImpl(
-    private val dataSource: KittenDataSource
-) : KittenStoreBuilder {
+class KittenStoreBuilderImpl : KittenStoreBuilder {
 
-    override fun build(): KittenStore = KittenStoreImpl(loader = KittenLoaderImpl(dataSource))
+    override fun build(): KittenStore = KittenStoreImpl(loader = KittenLoaderImpl())
 }

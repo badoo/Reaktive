@@ -1,6 +1,5 @@
 import UIKit
 import sample_mpp_module
-import Alamofire
 import AlamofireImage
 
 class ViewController: UIViewController {
@@ -9,7 +8,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var button: UIButton!
     @IBOutlet weak var image: UIImageView!
     
-    private let kittenBinder = KittenBinder(storeBuilder: KittenStoreBuilderImpl(dataSource: KittenDataSourceImpl()))
+    private let kittenBinder = KittenBinder(storeBuilder: KittenStoreBuilderImpl())
     private var kittenView: KittenView? = nil
     
     override func viewDidLoad() {
