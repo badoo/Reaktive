@@ -305,8 +305,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/../sample-mpp-module/build/bin/macosX64/releaseFramework",
 					"${inherited}",
+					"$(SRCROOT)/../sample-mpp-module/build/bin/macosX64/debugFramework",
 				);
 				INFOPLIST_FILE = "sample-macos-app/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -327,8 +327,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/../sample-mpp-module/build/bin/macosX64/releaseFramework",
 					"${inherited}",
+					"$(SRCROOT)/../sample-mpp-module/build/bin/macosX64/releaseFramework",
 				);
 				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "";
 				INFOPLIST_FILE = "sample-macos-app/Info.plist";
