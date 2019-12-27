@@ -12,7 +12,6 @@
 		8D2796002270D8760013B409 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D2795FE2270D8760013B409 /* Main.storyboard */; };
 		8D2796022270D8770013B409 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D2796012270D8770013B409 /* Assets.xcassets */; };
 		8D2796052270D8770013B409 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D2796032270D8770013B409 /* LaunchScreen.storyboard */; };
-		CE2F84A92312A2AD0054B97F /* KittenDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2F84A82312A2AD0054B97F /* KittenDataSourceImpl.swift */; };
 		CE5ECF8723132779009DB046 /* sample_mpp_module.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE5ECF8623132779009DB046 /* sample_mpp_module.framework */; };
 		CE5ECF8823132779009DB046 /* sample_mpp_module.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE5ECF8623132779009DB046 /* sample_mpp_module.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E01C230D5397474A0642BB7A /* Pods_sample_ios_app.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF9828E64A865F77A1FF80AA /* Pods_sample_ios_app.framework */; };
@@ -43,7 +42,6 @@
 		8D2796042270D8770013B409 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D2796062270D8770013B409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BF9828E64A865F77A1FF80AA /* Pods_sample_ios_app.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_sample_ios_app.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CE2F84A82312A2AD0054B97F /* KittenDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KittenDataSourceImpl.swift; sourceTree = "<group>"; };
 		CE5ECF8623132779009DB046 /* sample_mpp_module.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sample_mpp_module.framework; path = "../sample-mpp-module/build/bin/iosSim/releaseFramework/sample_mpp_module.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -96,7 +94,6 @@
 				8D2796012270D8770013B409 /* Assets.xcassets */,
 				8D2796032270D8770013B409 /* LaunchScreen.storyboard */,
 				8D2796062270D8770013B409 /* Info.plist */,
-				CE2F84A82312A2AD0054B97F /* KittenDataSourceImpl.swift */,
 			);
 			path = "sample-ios-app";
 			sourceTree = "<group>";
@@ -228,7 +225,6 @@
 			files = (
 				8D2795FD2270D8760013B409 /* ViewController.swift in Sources */,
 				8D2795FB2270D8760013B409 /* AppDelegate.swift in Sources */,
-				CE2F84A92312A2AD0054B97F /* KittenDataSourceImpl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
