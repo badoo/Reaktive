@@ -221,9 +221,14 @@ private void setupIosTargets(Project project) {
 }
 
 import tasks.BuildIosSampleTask
+import tasks.BuildMacosSampleTask
 
 if (Target.currentTarget().isDarwin()) {
     tasks.register('buildIosSample', BuildIosSampleTask) {
         dependsOn ':sample-mpp-module:fatIosDebug', ':sample-mpp-module:fatIosRelease'
+    }
+
+    tasks.register('buildMacosSample', BuildMacosSampleTask) {
+        dependsOn ':sample-mpp-module:macosX64MainBinaries'
     }
 }
