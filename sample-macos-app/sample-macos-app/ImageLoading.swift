@@ -13,10 +13,10 @@ public extension NSImageView {
     func loadImageByUrl(url: String, completion: @escaping () -> Void) {
         cancelImageLoading()
 
-        let task = URLSession.shared.dataTask(with: URL(string: url)!) { [weak self] data, d, error in
-            guard let data = data, error == nil else { return }
+        let task = URLSession.shared.dataTask(with: URL(string: url)!) { [weak self] data, _, error in
+            let image: NSImage? = (data != nil) && (error == nil) ? NSImage(data: data!) : nil
             DispatchQueue.main.async {
-                self?.image = NSImage(data: data)
+                self?.image = image
                 completion()
             }
         }
