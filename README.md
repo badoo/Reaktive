@@ -162,5 +162,6 @@ In both cases subscription (`subscribe` call) **must** be performed on the Main 
 * [MPP module](https://github.com/badoo/Reaktive/tree/master/sample-mpp-module)
 * [Android app](https://github.com/badoo/Reaktive/tree/master/sample-android-app)
 * [iOS app](https://github.com/badoo/Reaktive/tree/master/sample-ios-app)
+* [macOS app](https://github.com/badoo/Reaktive/tree/master/sample-macos-app)
 * [JavaScript browser app](https://github.com/badoo/Reaktive/tree/master/sample-js-browser-app)
 * [Linux x64 app](https://github.com/badoo/Reaktive/tree/master/sample-linuxx64-app)
