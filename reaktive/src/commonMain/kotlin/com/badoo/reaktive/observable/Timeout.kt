@@ -32,11 +32,16 @@ fun <T> Observable<T>.timeout(timeoutMillis: Long, scheduler: Scheduler, other: 
                 override fun onNext(value: T) {
                     executor.cancel()
                     emitter.onNext(value)
+                    startTimeout()
+                }
+
+                fun startTimeout() {
                     executor.submit(timeoutMillis, onTimeout)
                 }
             }
 
         emitter.setDisposable(upstreamObserver)
+        upstreamObserver.startTimeout()
 
         subscribe(upstreamObserver)
     }
