@@ -8,25 +8,25 @@ import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class ThreadLocalStorageTest {
+class ThreadLocalHolderTest {
 
     @Test
     fun value_is_null_WHEN_created_without_initial_value() {
-        val storage = ThreadLocalStorage<Unit>()
+        val storage = ThreadLocalHolder<Unit>()
 
         assertNull(storage.get())
     }
 
     @Test
     fun value_is_same_as_initial_WHEN_created_with_initial_value() {
-        val storage = ThreadLocalStorage(Unit)
+        val storage = ThreadLocalHolder(Unit)
 
         assertSame(Unit, storage.get())
     }
 
     @Test
     fun value_is_new_WHEN_new_value_is_set() {
-        val storage = ThreadLocalStorage(0)
+        val storage = ThreadLocalHolder(0)
         storage.set(1)
 
         assertEquals(1, storage.get())
@@ -34,7 +34,7 @@ class ThreadLocalStorageTest {
 
     @Test
     fun value_is_null_WHEN_had_value_and_disposed() {
-        val storage = ThreadLocalStorage(Unit)
+        val storage = ThreadLocalHolder(Unit)
         storage.dispose()
 
         assertNull(storage.get())
@@ -42,7 +42,7 @@ class ThreadLocalStorageTest {
 
     @Test
     fun throws_IllegalStateException_WHEN_disposed_and_set_value() {
-        val storage = ThreadLocalStorage<Unit>()
+        val storage = ThreadLocalHolder<Unit>()
         storage.dispose()
 
         assertFailsWith<IllegalStateException> {
@@ -52,12 +52,12 @@ class ThreadLocalStorageTest {
 
     @Test
     fun isDisposed_is_false_WHEN_not_disposed() {
-        assertFalse(ThreadLocalStorage<Unit>().isDisposed)
+        assertFalse(ThreadLocalHolder<Unit>().isDisposed)
     }
 
     @Test
     fun isDisposed_is_true_WHEN_disposed() {
-        val storage = ThreadLocalStorage<Unit>()
+        val storage = ThreadLocalHolder<Unit>()
         storage.dispose()
 
         assertTrue(storage.isDisposed)

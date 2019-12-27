@@ -1,7 +1,7 @@
 package com.badoo.reaktive.utils
 
-import com.badoo.reaktive.test.doInBackgroundBlocking
 import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.test.doInBackgroundBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
