@@ -52,7 +52,31 @@ implementation 'com.badoo.reaktive:<module-name>-ios64:<latest-version>'
 ```
 iOS sim:
 ```groovy
-implementation 'com.badoo.reaktive:<module-name>-sim:<latest-version>'
+implementation 'com.badoo.reaktive:<module-name>-iossim:<latest-version>'
+```
+macOS x64:
+```groovy
+implementation 'com.badoo.reaktive:<module-name>-macosx64:<latest-version>'
+```
+watchOS ARM32
+```
+implementation 'com.badoo.reaktive:<module-name>-watchosarm32:<latest-version>'
+```
+watchOS ARM64
+```
+implementation 'com.badoo.reaktive:<module-name>-watchosarm64:<latest-version>'
+```
+watchOS sim
+```
+implementation 'com.badoo.reaktive:<module-name>-watchossim:<latest-version>'
+```
+tvOS ARM64
+```
+implementation 'com.badoo.reaktive:<module-name>-tvosarm64:<latest-version>'
+```
+tvOS sim
+```
+implementation 'com.badoo.reaktive:<module-name>-tvossim:<latest-version>'
 ```
 JavaScript:
 ```groovy
