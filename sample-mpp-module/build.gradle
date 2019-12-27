@@ -7,6 +7,7 @@ setupAllTargetsWithDefaultSourceSets(project)
 
 kotlin {
     targets {
+//        fromPreset(presets.iosX64, 'darwinCommon')
         if (Target.currentTarget().isCommon()) {
             linuxX64 {
                 compilations.main.cinterops {
@@ -15,7 +16,7 @@ kotlin {
             }
         }
         if (Target.currentTarget().isDarwin()) {
-            [ios32, ios64, iosSim].each {
+            [ios32, ios64, iosSim, macosX64].each {
                 [it.binaries.getFramework('DEBUG'), it.binaries.getFramework('RELEASE')].each {
                     // Reaktive should be included into framework file, so we don't need to generate 2 framework files
                     it.export project(':reaktive')
