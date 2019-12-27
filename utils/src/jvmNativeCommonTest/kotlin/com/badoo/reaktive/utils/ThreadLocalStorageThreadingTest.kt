@@ -1,7 +1,7 @@
 package com.badoo.reaktive.utils
 
-import com.badoo.reaktive.test.doInBackgroundBlocking
 import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.test.doInBackgroundBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -27,8 +27,8 @@ class ThreadLocalStorageThreadingTest {
         testThrowsRuntimeExceptionFromAnotherThread { it.isDisposed }
     }
 
-    private fun testThrowsRuntimeExceptionFromAnotherThread(block: (ThreadLocalStorage<Unit>) -> Unit) {
-        val storage = ThreadLocalStorage(Unit)
+    private fun testThrowsRuntimeExceptionFromAnotherThread(block: (ThreadLocalHolder<Unit>) -> Unit) {
+        val storage = ThreadLocalHolder(Unit)
         val isFailed = AtomicReference<Boolean?>(null)
 
         doInBackgroundBlocking {
