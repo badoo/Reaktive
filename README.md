@@ -118,7 +118,7 @@ kotlin {
 ```
 
 ### Features:
-* Multiplatform: JVM, Android, iOS, JavaScript, Linux X64, Linux ARM 32 hfp
+* Multiplatform: JVM, Android, iOS, macOS, watchOS, tvOS, JavaScript, Linux X64, Linux ARM 32 hfp
 * Schedulers support: computation, IO, trampoline, main
 * True multithreading for Kotlin/Native (there are some [limitations](https://kotlinlang.org/docs/reference/native/concurrency.html#object-transfer-and-freezing))
 * Thread local subscriptions without freezing for Kotlin/Native
