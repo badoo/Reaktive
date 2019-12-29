@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install libcurl4-openssl-dev libgtk-3-dev nodejs chromium-browser
       - name: Build JVM, Android, JS, Linux
-        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build rxjava2-interop:build rxjava3-interop:build coroutines-interop:build :sample-android-app:assembleDebug :sample-js-browser-app:assemble :sample-linuxx64-app:linkDebugExecutableLinux -DMP_TARGET=COMMON
+        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build rxjava2-interop:build rxjava3-interop:build coroutines-interop:build :sample-android-app:assembleDebug :sample-js-browser-app:assemble :sample-linuxx64-app:linkDebugExecutableLinux -Ptarget=all_linux_hosted
   macos-build:
     name: Build on macOS
     runs-on: macOS-latest
@@ -30,7 +30,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Build iOS, watchOS, tvOS, macOS
-        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build buildIosSample buildMacosSample -DMP_TARGET=DARWIN
+        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build buildIosSample buildMacosSample -Ptarget=all_macos_hosted
   ubuntu-check-compatibility:
     name: Binary compatibility
     runs-on: ubuntu-latest
@@ -42,4 +42,4 @@ jobs:
         with:
           java-version: 1.8
       - name: Run binary compatibility test suite
-        run: ./gradlew :tools:binary-compatibility:test -Pbinary-compatibility-override=false
+        run: ./gradlew :tools:binary-compatibility:test -Pbinary-compatibility-override=false -Ptarget=jvm

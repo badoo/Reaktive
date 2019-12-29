@@ -1,7 +1,7 @@
 enableFeaturePreview('GRADLE_METADATA')
 
-final target = Target.currentTarget()
-println("Current environment: $target")
+final target = Target.currentTarget(this as ExtensionAware)
+logger.warn("Current environment: $target")
 
 include ':reaktive'
 include ':reaktive-testing'
@@ -11,7 +11,7 @@ include ':coroutines-interop'
 include ':sample-mpp-module'
 include ':benchmarks:jmh'
 include ':tools:binary-compatibility'
-if (target.isCommon()) {
+if (Target.shouldDefineTarget(this as ExtensionAware, Target.ALL_LINUX_HOSTED)) {
     include ':sample-android-app'
     include ':sample-js-browser-app'
     include ':sample-linuxx64-app'

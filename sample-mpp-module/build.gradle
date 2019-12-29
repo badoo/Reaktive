@@ -8,21 +8,29 @@ setupAllTargetsWithDefaultSourceSets(project)
 kotlin {
     targets {
 //        fromPreset(presets.iosX64, 'darwinCommon')
-        if (Target.currentTarget().isCommon()) {
+        if (Target.shouldDefineTarget(project, Target.LINUX)) {
             linuxX64 {
                 compilations.main.cinterops {
                     libcurl.includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
                 }
             }
         }
-        if (Target.currentTarget().isDarwin()) {
-            [ios32, ios64, iosSim, macosX64].each {
-                [it.binaries.getFramework('DEBUG'), it.binaries.getFramework('RELEASE')].each {
+        if (Target.shouldDefineTarget(project, Target.ALL_MACOS_HOSTED)) {
+            def configureFrameworks = { target ->
+                [target.binaries.getFramework('DEBUG'), target.binaries.getFramework('RELEASE')].each {
                     // Reaktive should be included into framework file, so we don't need to generate 2 framework files
                     it.export project(':reaktive')
                     it.transitiveExport = true
                     it.compilation.kotlinOptions.freeCompilerArgs += '-Xobjc-generics'
                 }
+            }
+            if (Target.shouldDefineTarget(project, Target.IOS)) {
+                configureFrameworks(ios32)
+                configureFrameworks(ios64)
+                configureFrameworks(iosSim)
+            }
+            if (Target.shouldDefineTarget(project, Target.MACOS)) {
+                configureFrameworks(macosX64)
             }
         }
     }
@@ -30,15 +38,9 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation project(':reaktive')
+                api project(':reaktive')
                 implementation project(':reaktive-annotations')
                 implementation project(':utils')
-            }
-        }
-        darwinCommonMain {
-            dependencies {
-                // Reaktive should be included into framework file, so we don't need to generate 2 framework files
-                api project(':reaktive')
             }
         }
     }
