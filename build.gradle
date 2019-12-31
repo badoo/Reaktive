@@ -138,6 +138,10 @@ void setupAllTargetsWithDefaultSourceSets(Project project, Boolean isLinuxArm32H
 }
 
 private void setupAndroidTarget(Project project) {
+    if (!Target.shouldDefineTarget(project, Target.JVM)) {
+        return
+    }
+
     project.apply plugin: 'com.android.library'
 
     project.android {
@@ -174,6 +178,10 @@ private void setupAndroidTarget(Project project) {
 }
 
 private void setupJvmTarget(Project project) {
+    if (!Target.shouldDefineTarget(project, Target.JVM)) {
+        return
+    }
+
     project.kotlin {
         targets.fromPreset(presets.jvm, 'jvm')
 
@@ -199,6 +207,10 @@ private void setupJsTarget(Project project) {
 }
 
 private void setupLinuxX64Target(Project project) {
+    if (!Target.shouldDefineTarget(project, Target.LINUX)) {
+        return
+    }
+
     project.kotlin {
         targets {
             fromPreset(presets.linuxX64, 'linuxX64')
@@ -207,6 +219,10 @@ private void setupLinuxX64Target(Project project) {
 }
 
 private void setupLinuxArm32HfpTarget(Project project) {
+    if (!Target.shouldDefineTarget(project, Target.LINUX)) {
+        return
+    }
+
     project.kotlin {
         targets {
             fromPreset(presets.linuxArm32Hfp, 'linuxArm32Hfp')
