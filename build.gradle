@@ -38,15 +38,13 @@ void setupMultiplatformLibrary(Project project) {
 
 void setupAllTargetsWithDefaultSourceSets(Map parameters) {
     setupAllTargetsWithDefaultSourceSets(
-        parameters['project'],
-        parameters.getOrDefault('isLinuxArm32HfpEnabled', true)
+            parameters['project'],
+            parameters.getOrDefault('isLinuxArm32HfpEnabled', true)
     )
 }
 
 void setupAllTargetsWithDefaultSourceSets(Project project, Boolean isLinuxArm32HfpEnabled = true) {
-    final target = Target.currentTarget()
-
-    if (target.isCommon() || target.isMeta()) {
+    if (Target.shouldDefineTarget(project, Target.ALL_LINUX_HOSTED)) {
         setupAndroidTarget(project)
         setupJvmTarget(project)
         setupJsTarget(project)
@@ -94,7 +92,7 @@ void setupAllTargetsWithDefaultSourceSets(Project project, Boolean isLinuxArm32H
         }
     }
 
-    if (target.isDarwin() || target.isMeta()) {
+    if (Target.shouldDefineTarget(project, Target.ALL_MACOS_HOSTED)) {
         setupIosTargets(project)
 
         project.kotlin {
@@ -140,6 +138,10 @@ void setupAllTargetsWithDefaultSourceSets(Project project, Boolean isLinuxArm32H
 }
 
 private void setupAndroidTarget(Project project) {
+    if (!Target.shouldDefineTarget(project, Target.JVM)) {
+        return
+    }
+
     project.apply plugin: 'com.android.library'
 
     project.android {
@@ -176,6 +178,10 @@ private void setupAndroidTarget(Project project) {
 }
 
 private void setupJvmTarget(Project project) {
+    if (!Target.shouldDefineTarget(project, Target.JVM)) {
+        return
+    }
+
     project.kotlin {
         targets.fromPreset(presets.jvm, 'jvm')
 
@@ -201,6 +207,10 @@ private void setupJsTarget(Project project) {
 }
 
 private void setupLinuxX64Target(Project project) {
+    if (!Target.shouldDefineTarget(project, Target.LINUX)) {
+        return
+    }
+
     project.kotlin {
         targets {
             fromPreset(presets.linuxX64, 'linuxX64')
@@ -209,6 +219,10 @@ private void setupLinuxX64Target(Project project) {
 }
 
 private void setupLinuxArm32HfpTarget(Project project) {
+    if (!Target.shouldDefineTarget(project, Target.LINUX)) {
+        return
+    }
+
     project.kotlin {
         targets {
             fromPreset(presets.linuxArm32Hfp, 'linuxArm32Hfp')
@@ -223,11 +237,13 @@ private void setupIosTargets(Project project) {
 import tasks.BuildIosSampleTask
 import tasks.BuildMacosSampleTask
 
-if (Target.currentTarget().isDarwin()) {
+if (Target.shouldDefineTarget(project, Target.IOS)) {
     tasks.register('buildIosSample', BuildIosSampleTask) {
         dependsOn ':sample-mpp-module:fatIosDebug', ':sample-mpp-module:fatIosRelease'
     }
+}
 
+if (Target.shouldDefineTarget(project, Target.MACOS)) {
     tasks.register('buildMacosSample', BuildMacosSampleTask) {
         dependsOn ':sample-mpp-module:macosX64MainBinaries'
     }
