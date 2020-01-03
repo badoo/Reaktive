@@ -218,8 +218,6 @@ public abstract interface class com/badoo/reaktive/disposable/scope/DisposableSc
 	public abstract fun subscribeScoped (Lcom/badoo/reaktive/maybe/Maybe;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
 	public abstract fun subscribeScoped (Lcom/badoo/reaktive/observable/Observable;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
 	public abstract fun subscribeScoped (Lcom/badoo/reaktive/single/Single;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
-	public abstract fun unaryPlus (Lcom/badoo/reaktive/base/CompleteCallback;)Lcom/badoo/reaktive/base/CompleteCallback;
-	public abstract fun unaryPlus (Lcom/badoo/reaktive/disposable/Disposable;)Lcom/badoo/reaktive/disposable/Disposable;
 }
 
 public final class com/badoo/reaktive/disposable/scope/DisposableScope$DefaultImpls {
