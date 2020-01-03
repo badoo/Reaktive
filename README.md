@@ -59,23 +59,23 @@ macOS x64:
 implementation 'com.badoo.reaktive:<module-name>-macosx64:<latest-version>'
 ```
 watchOS ARM32
-```
+```groovy
 implementation 'com.badoo.reaktive:<module-name>-watchosarm32:<latest-version>'
 ```
 watchOS ARM64
-```
+```groovy
 implementation 'com.badoo.reaktive:<module-name>-watchosarm64:<latest-version>'
 ```
 watchOS sim
-```
+```groovy
 implementation 'com.badoo.reaktive:<module-name>-watchossim:<latest-version>'
 ```
 tvOS ARM64
-```
+```groovy
 implementation 'com.badoo.reaktive:<module-name>-tvosarm64:<latest-version>'
 ```
 tvOS sim
-```
+```groovy
 implementation 'com.badoo.reaktive:<module-name>-tvossim:<latest-version>'
 ```
 JavaScript:
@@ -181,6 +181,63 @@ observable<Any> { emitter ->
 ```
 
 In both cases subscription (`subscribe` call) **must** be performed on the Main thread.
+
+### Subscription management with DisposableScope
+
+Reaktive provides an easy way to manage subscriptions: [DisposableScope](https://github.com/badoo/Reaktive/blob/master/reaktive/src/commonMain/kotlin/com/badoo/reaktive/disposable/scope/DisposableScope.kt).
+
+Take a look at the following examples:
+
+```kotlin
+val scope =
+    disposableScope {
+        observable.subscribeScoped(...) // Subscription will be disposed when the scope is disposed
+
+        doOnDispose {
+            // Will be called when the scope is disposed
+        }
+
+        someDisposable.scope() // `someDisposable` will be disposed when the scope is disposed
+    }
+
+// At some point later
+scope.dispose()
+```
+
+```kotlin
+class MyPresenter(
+    private val view: MyView,
+    private val longRunningAction: Completable
+) : DisposableScope by DisposableScope() {
+
+    init {
+        doOnDispose {
+            // Will be called when the presenter is disposed
+        }
+    }
+
+    fun load() {
+        view.showProgressBar()
+
+        // Subscription will be disposed when the presenter is disposed
+        longRunningAction.subscribeScoped(onComplete = view::hideProgressBar)
+    }
+}
+
+class MyActivity : AppCompatActivity(), DisposableScope by DisposableScope() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        MyPresenter(...).scope()
+    }
+
+    override fun onDestroy() {
+        dispose()
+
+        super.onDestroy()
+    }
+}
+```
 
 ### Samples:
 * [MPP module](https://github.com/badoo/Reaktive/tree/master/sample-mpp-module)
