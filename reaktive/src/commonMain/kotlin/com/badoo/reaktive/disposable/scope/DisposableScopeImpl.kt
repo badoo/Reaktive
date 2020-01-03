@@ -21,15 +21,11 @@ internal class DisposableScopeImpl : DisposableScope, CompositeDisposable() {
         return this
     }
 
-    override fun <T : Disposable> T.unaryPlus(): T = scope()
-
     override fun <T : CompleteCallback> T.scope(): T {
         Disposable(::onComplete).scope()
 
         return this
     }
-
-    override fun <T : CompleteCallback> T.unaryPlus(): T = scope()
 
     override fun <T> Observable<T>.subscribeScoped(
         isThreadLocal: Boolean,

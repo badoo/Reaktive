@@ -15,7 +15,7 @@ internal class KittenStoreImpl(
     private val loader: KittenLoader
 ) : KittenStore, DisposableScope by DisposableScope() {
 
-    private val _states = +behaviorSubject(State()).ensureNeverFrozen()
+    private val _states = behaviorSubject(State()).ensureNeverFrozen().scope()
     override val states: Observable<State> = _states
     private val state: State get() = _states.value
 

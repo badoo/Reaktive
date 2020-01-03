@@ -18,19 +18,9 @@ interface DisposableScope : Disposable {
     fun <T : Disposable> T.scope(): T
 
     /**
-     * Adds this [Disposable] to the scope
-     */
-    operator fun <T : Disposable> T.unaryPlus(): T
-
-    /**
      * Adds this [CompleteCallback] to the scope and calls its [CompleteCallback.onComplete] callback when disposed
      */
     fun <T : CompleteCallback> T.scope(): T
-
-    /**
-     * Adds this [CompleteCallback] to the scope and calls its [CompleteCallback.onComplete] callback when disposed
-     */
-    operator fun <T : CompleteCallback> T.unaryPlus(): T
 
     /**
      * Same as [Observable.subscribe][com.badoo.reaktive.observable.subscribe] but also adds the [Disposable] to the scope
