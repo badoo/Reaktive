@@ -10,7 +10,7 @@ import kotlin.js.JsName
 fun DisposableScope(): DisposableScope = DisposableScopeImpl()
 
 /**
- * Creates a new instance os [DisposableScope] and calls the provided `block` on it
+ * Creates a new instance of [DisposableScope] and calls the provided `block` on it
  */
 inline fun disposableScope(block: DisposableScope.() -> Unit): DisposableScope =
     DisposableScope().apply(block)
