@@ -56,6 +56,12 @@ interface SubjectGenericTests {
     @Test
     fun does_not_emit_values_to_unsubscribed_observers()
 
+    @Test
+    fun completes_WHEN_subscribed_after_completion()
+
+    @Test
+    fun produces_error_WHEN_subscribed_after_error()
+
     companion object {
         operator fun invoke(subject: Subject<Int?>): SubjectGenericTests = SubjectGenericTestsImpl(subject)
     }
@@ -200,5 +206,20 @@ private class SubjectGenericTestsImpl(
         val observer = subject.test()
         observer.dispose()
         subject.onNext(0)
+    }
+
+    override fun completes_WHEN_subscribed_after_completion() {
+        subject.onComplete()
+        val observer = subject.test()
+
+        observer.assertComplete()
+    }
+
+    override fun produces_error_WHEN_subscribed_after_error() {
+        val error = Throwable()
+        subject.onError(error)
+        val observer = subject.test()
+
+        observer.assertError(error)
     }
 }

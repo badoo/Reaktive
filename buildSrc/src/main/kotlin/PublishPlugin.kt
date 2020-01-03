@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 abstract class PublishPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        val taskConfigurationMap = createConfigurationMap()
+        val taskConfigurationMap = createConfigurationMap(target)
         createFilteredPublishToMavenLocalTask(target)
         setupLocalPublishing(target, taskConfigurationMap)
         setupBintrayPublishingInformation(target)
@@ -31,26 +31,25 @@ abstract class PublishPlugin : Plugin<Project> {
         }
     }
 
-    private fun createConfigurationMap(): Map<String, Boolean> {
-        val mppTarget = Target.currentTarget()
+    private fun createConfigurationMap(project: Project): Map<String, Boolean> {
         return mapOf(
-            "kotlinMultiplatform" to mppTarget.meta,
-            KotlinMultiplatformPlugin.METADATA_TARGET_NAME to mppTarget.meta,
-            "jvm" to mppTarget.common,
-            JsPlugin.TARGET_NAME_JS to mppTarget.common,
-            "androidDebug" to mppTarget.common,
-            "androidRelease" to mppTarget.common,
-            "linuxX64" to mppTarget.common,
-            "linuxArm32Hfp" to mppTarget.common,
-            DarwinPlugin.TARGET_NAME_IOS_ARM32 to mppTarget.darwin,
-            DarwinPlugin.TARGET_NAME_IOS_ARM64 to mppTarget.darwin,
-            DarwinPlugin.TARGET_NAME_IOS_X64 to mppTarget.darwin,
-            DarwinPlugin.TARGET_NAME_WATCHOS_ARM32 to mppTarget.darwin,
-            DarwinPlugin.TARGET_NAME_WATCHOS_ARM64 to mppTarget.darwin,
-            DarwinPlugin.TARGET_NAME_WATCHOS_SIM to mppTarget.darwin,
-            DarwinPlugin.TARGET_NAME_TVOS_ARM64 to mppTarget.darwin,
-            DarwinPlugin.TARGET_NAME_TVOS_X64 to mppTarget.darwin,
-            DarwinPlugin.TARGET_NAME_MACOS_X64 to mppTarget.darwin
+            "kotlinMultiplatform" to Target.shouldDefineTarget(project, Target.META),
+            KotlinMultiplatformPlugin.METADATA_TARGET_NAME to Target.shouldDefineTarget(project, Target.META),
+            "jvm" to Target.shouldDefineTarget(project, Target.JVM),
+            JsPlugin.TARGET_NAME_JS to Target.shouldDefineTarget(project, Target.JS),
+            "androidDebug" to Target.shouldDefineTarget(project, Target.JVM),
+            "androidRelease" to Target.shouldDefineTarget(project, Target.JVM),
+            "linuxX64" to Target.shouldDefineTarget(project, Target.LINUX),
+            "linuxArm32Hfp" to Target.shouldDefineTarget(project, Target.LINUX),
+            DarwinPlugin.TARGET_NAME_IOS_ARM32 to Target.shouldDefineTarget(project, Target.IOS),
+            DarwinPlugin.TARGET_NAME_IOS_ARM64 to Target.shouldDefineTarget(project, Target.IOS),
+            DarwinPlugin.TARGET_NAME_IOS_X64 to Target.shouldDefineTarget(project, Target.IOS),
+            DarwinPlugin.TARGET_NAME_WATCHOS_ARM32 to Target.shouldDefineTarget(project, Target.WATCHOS),
+            DarwinPlugin.TARGET_NAME_WATCHOS_ARM64 to Target.shouldDefineTarget(project, Target.WATCHOS),
+            DarwinPlugin.TARGET_NAME_WATCHOS_SIM to Target.shouldDefineTarget(project, Target.WATCHOS),
+            DarwinPlugin.TARGET_NAME_TVOS_ARM64 to Target.shouldDefineTarget(project, Target.TVOS),
+            DarwinPlugin.TARGET_NAME_TVOS_X64 to Target.shouldDefineTarget(project, Target.TVOS),
+            DarwinPlugin.TARGET_NAME_MACOS_X64 to Target.shouldDefineTarget(project, Target.MACOS)
         )
     }
 

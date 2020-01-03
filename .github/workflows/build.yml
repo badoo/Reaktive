@@ -18,9 +18,9 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install libcurl4-openssl-dev libgtk-3-dev nodejs chromium-browser
       - name: Build JVM, Android, JS, Linux
-        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build rxjava2-interop:build rxjava3-interop:build coroutines-interop:build :sample-android-app:assembleDebug :sample-js-browser-app:assemble :sample-linuxx64-app:linkDebugExecutableLinux -DMP_TARGET=COMMON
+        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build rxjava2-interop:build rxjava3-interop:build coroutines-interop:build :sample-android-app:assembleDebug :sample-js-browser-app:assemble :sample-linuxx64-app:linkDebugExecutableLinux -Ptarget=all_linux_hosted
   macos-build:
-    name: Build on macOS
+    name: Build macOS
     runs-on: macOS-latest
     steps:
       - name: Checkout
@@ -29,8 +29,44 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Build iOS, watchOS, tvOS, macOS
-        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build buildIosSample buildMacosSample -DMP_TARGET=DARWIN
+      - name: Build macOS
+        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build buildMacosSample -Ptarget=macos
+  watchos-build:
+    name: Build watchOS
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Build watchOS
+        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build -Ptarget=watchos
+  tvos-build:
+    name: Build tvOS
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Build tvOS
+        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build -Ptarget=tvos
+  ios-build:
+    name: Build iOS
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Build iOS
+        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build buildIosSample -Ptarget=ios
   ubuntu-check-compatibility:
     name: Binary compatibility
     runs-on: ubuntu-latest
@@ -42,4 +78,4 @@ jobs:
         with:
           java-version: 1.8
       - name: Run binary compatibility test suite
-        run: ./gradlew :tools:binary-compatibility:test -Pbinary-compatibility-override=false
+        run: ./gradlew :tools:binary-compatibility:test -Pbinary-compatibility-override=false -Ptarget=jvm

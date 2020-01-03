@@ -29,42 +29,32 @@ internal open class DefaultSubject<T> : Subject<T> {
         serializer.accept(Event.OnError(error))
     }
 
-    open fun onAfterSubscribe(observer: ObservableObserver<T>) {
+    protected open fun onSubscribed(observer: ObservableObserver<T>) {
     }
 
-    open fun onBeforeNext(value: T) {
+    protected open fun onAfterSubscribe(observer: ObservableObserver<T>) {
     }
 
-    private fun onSerializedValue(value: Any?): Boolean =
+    protected open fun onBeforeNext(value: T) {
+    }
+
+    private fun onSerializedValue(value: Any?): Boolean {
         if (value is Event<*>) {
             @Suppress("UNCHECKED_CAST") // Either Event<T> or T, to avoid unnecessary allocations
             val event = value as Event<T>
             when (event) {
-                is Event.OnSubscribe -> {
-                    onSerializedSubscribe(event.observer)
-                    true
-                }
-
-                is Event.OnUnsubscribe -> {
-                    onSerializedUnsubscribe(event.observer)
-                    true
-                }
-
-                is Event.OnComplete -> {
-                    onSerializedComplete()
-                    false
-                }
-
-                is Event.OnError -> {
-                    onSerializedError(event.error)
-                    false
-                }
+                is Event.OnSubscribe -> onSerializedSubscribe(event.observer)
+                is Event.OnUnsubscribe -> onSerializedUnsubscribe(event.observer)
+                is Event.OnComplete -> onSerializedComplete()
+                is Event.OnError -> onSerializedError(event.error)
             }
         } else {
             @Suppress("UNCHECKED_CAST") // Either Event<T> or T, to avoid unnecessary allocations
             onSerializedNext(value as T)
-            true
         }
+
+        return true
+    }
 
     private fun onSerializedSubscribe(observer: ObservableObserver<T>) {
         val disposable = Disposable { serializer.accept(Event.OnUnsubscribe(observer)) }
@@ -74,6 +64,8 @@ internal open class DefaultSubject<T> : Subject<T> {
         if (disposable.isDisposed) {
             return
         }
+
+        onSubscribed(observer)
 
         status.also {
             when (it) {
@@ -102,21 +94,24 @@ internal open class DefaultSubject<T> : Subject<T> {
     }
 
     private fun onSerializedNext(value: T) {
-        onBeforeNext(value)
-
-        observers.forEach { it.onNext(value) }
+        if (isActive) {
+            onBeforeNext(value)
+            observers.forEach { it.onNext(value) }
+        }
     }
 
     private fun onSerializedComplete() {
-        _status.value = Subject.Status.Completed
-
-        observers.forEach(ObservableObserver<*>::onComplete)
+        if (isActive) {
+            _status.value = Subject.Status.Completed
+            observers.forEach(ObservableObserver<*>::onComplete)
+        }
     }
 
     private fun onSerializedError(error: Throwable) {
-        _status.value = Subject.Status.Error(error)
-
-        observers.forEach { it.onError(error) }
+        if (isActive) {
+            _status.value = Subject.Status.Error(error)
+            observers.forEach { it.onError(error) }
+        }
     }
 
     private sealed class Event<out T> {

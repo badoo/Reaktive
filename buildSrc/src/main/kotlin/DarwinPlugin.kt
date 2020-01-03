@@ -29,65 +29,36 @@ abstract class DarwinPlugin : Plugin<Project> {
     private fun configureDarwinCompilation(target: Project) {
         val buildBinariesTasks = mutableListOf<String>()
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
-            iosArm32(TARGET_NAME_IOS_ARM32) {
-                binaries {
-                    framework()
-                }
-                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
+            if (Target.shouldDefineTarget(target, Target.IOS)) {
+                iosArm32(TARGET_NAME_IOS_ARM32).configureFramework(buildBinariesTasks)
+                iosArm64(TARGET_NAME_IOS_ARM64).configureFramework(buildBinariesTasks)
+                iosX64(TARGET_NAME_IOS_X64).configureFramework(buildBinariesTasks, withTest = true)
             }
-            iosArm64(TARGET_NAME_IOS_ARM64) {
-                binaries {
-                    framework()
-                }
-                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
+            if (Target.shouldDefineTarget(target, Target.WATCHOS)) {
+                watchosArm32(TARGET_NAME_WATCHOS_ARM32).configureFramework(buildBinariesTasks)
+                watchosArm64(TARGET_NAME_WATCHOS_ARM64).configureFramework(buildBinariesTasks)
+                watchosX86(TARGET_NAME_WATCHOS_SIM).configureFramework(buildBinariesTasks, withTest = true)
             }
-            iosX64(TARGET_NAME_IOS_X64) {
-                binaries {
-                    framework()
-                    setupTest(this@iosX64, this, target)
-                }
-                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
+            if (Target.shouldDefineTarget(target, Target.TVOS)) {
+                tvosArm64(TARGET_NAME_TVOS_ARM64).configureFramework(buildBinariesTasks)
+                tvosX64(TARGET_NAME_TVOS_X64).configureFramework(buildBinariesTasks, withTest = true)
             }
-            watchosArm32(TARGET_NAME_WATCHOS_ARM32) {
-                binaries {
-                    framework()
-                }
-                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
-            }
-            watchosArm64(TARGET_NAME_WATCHOS_ARM64) {
-                binaries {
-                    framework()
-                }
-            }
-            watchosX86(TARGET_NAME_WATCHOS_SIM) {
-                binaries {
-                    framework()
-                    setupTest(this@watchosX86, this, target)
-                }
-                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
-            }
-            tvosArm64(TARGET_NAME_TVOS_ARM64) {
-                binaries {
-                    framework()
-                }
-                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
-            }
-            tvosX64(TARGET_NAME_TVOS_X64) {
-                binaries {
-                    framework()
-                    setupTest(this@tvosX64, this, target)
-                }
-                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
-            }
-            macosX64(TARGET_NAME_MACOS_X64) {
-                binaries {
-                    framework()
-                }
-                buildBinariesTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
+            if (Target.shouldDefineTarget(target, Target.MACOS)) {
+                macosX64(TARGET_NAME_MACOS_X64).configureFramework(buildBinariesTasks)
             }
         }
         setupBuildAll(target, buildBinariesTasks)
         setupBuildFat(target)
+    }
+
+    private fun KotlinNativeTarget.configureFramework(buildTasks: MutableCollection<String>, withTest: Boolean = false) {
+        binaries {
+            framework()
+            if (withTest) {
+                setupTest(this@configureFramework, this, project)
+            }
+        }
+        buildTasks += compilations.getByName(SourceSet.MAIN_SOURCE_SET_NAME).binariesTaskName
     }
 
     private fun setupTest(
