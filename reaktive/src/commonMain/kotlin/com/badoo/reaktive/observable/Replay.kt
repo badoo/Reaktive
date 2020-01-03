@@ -13,8 +13,8 @@ fun <T> Observable<T>.replay(bufferSize: Int): ConnectableObservable<T> {
         object : DefaultSubject<T>() {
             private val values = SharedQueue<T>()
 
-            override fun onAfterSubscribe(observer: ObservableObserver<T>) {
-                super.onAfterSubscribe(observer)
+            override fun onSubscribed(observer: ObservableObserver<T>) {
+                super.onSubscribed(observer)
 
                 values.forEach(observer::onNext)
             }

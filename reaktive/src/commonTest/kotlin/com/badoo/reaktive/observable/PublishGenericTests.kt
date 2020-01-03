@@ -7,6 +7,7 @@ import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
@@ -81,7 +82,7 @@ interface PublishGenericTests {
     fun unsubscribes_from_upstream_WHEN_disconnected()
 
     @Test
-    fun completes_all_observers_WHEN_disconnected()
+    fun does_not_complete_any_observer_WHEN_disconnected()
 
     @Test
     fun does_not_complete_new_observers_WHEN_reconnected_and_disconnected_from_old_again()
@@ -287,15 +288,14 @@ class PublishGenericTestsImpl(
         assertFalse(upstream.hasSubscribers)
     }
 
-    @Test
-    override fun completes_all_observers_WHEN_disconnected() {
+    override fun does_not_complete_any_observer_WHEN_disconnected() {
         val observer1 = publish.test()
         val observer2 = publish.test()
 
         publish.connectAndGetDisposable().dispose()
 
-        observer1.assertComplete()
-        observer2.assertComplete()
+        observer1.assertNotComplete()
+        observer2.assertNotComplete()
     }
 
     @Test

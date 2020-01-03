@@ -29,6 +29,9 @@ internal open class DefaultSubject<T> : Subject<T> {
         serializer.accept(Event.OnError(error))
     }
 
+    protected open fun onSubscribed(observer: ObservableObserver<T>) {
+    }
+
     protected open fun onAfterSubscribe(observer: ObservableObserver<T>) {
     }
 
@@ -61,6 +64,8 @@ internal open class DefaultSubject<T> : Subject<T> {
         if (disposable.isDisposed) {
             return
         }
+
+        onSubscribed(observer)
 
         status.also {
             when (it) {
