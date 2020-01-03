@@ -4,14 +4,14 @@ import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.ThreadLocalStorage
+import com.badoo.reaktive.utils.ThreadLocalDisposableHolder
 import com.badoo.reaktive.utils.handleReaktiveError
 
 fun <T> Observable<T>.threadLocal(): Observable<T> =
     observable {
         val disposables = CompositeDisposable()
         it.setDisposable(disposables)
-        val emitterStorage = ThreadLocalStorage(it)
+        val emitterStorage = ThreadLocalDisposableHolder(it)
         disposables += emitterStorage
 
         subscribe(

@@ -11,6 +11,7 @@ fun <T> TestMaybeObserver<T>.assertSuccess() {
 }
 
 fun <T> TestMaybeObserver<T>.assertSuccess(expectedValue: T) {
+    assertSuccess()
     assertEquals(expectedValue, value, "Maybe success value does not match")
 }
 

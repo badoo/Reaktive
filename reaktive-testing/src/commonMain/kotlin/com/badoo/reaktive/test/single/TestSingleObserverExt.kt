@@ -11,6 +11,7 @@ fun <T> TestSingleObserver<T>.assertSuccess() {
 }
 
 fun <T> TestSingleObserver<T>.assertSuccess(expectedValue: T) {
+    assertSuccess()
     assertEquals(expectedValue, value, "Single success value does not match")
 }
 

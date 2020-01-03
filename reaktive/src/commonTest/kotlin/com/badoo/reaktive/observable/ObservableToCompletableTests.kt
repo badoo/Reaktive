@@ -23,6 +23,10 @@ interface ObservableToCompletableTests : SourceTests {
 class ObservableToCompletableTestsImpl(
     transform: Observable<*>.() -> Completable
 ) : ObservableToCompletableTests, SourceTests by SourceTestsImpl(TestObservable<Nothing>(), { transform().test() }) {
+
+    @Deprecated("Just to fix complilation issues")
+    constructor() : this({ throw UnsupportedOperationException() })
+
     private val upstream = TestObservable<Nothing>()
     private val observer = upstream.transform().test()
 

@@ -52,7 +52,31 @@ implementation 'com.badoo.reaktive:<module-name>-ios64:<latest-version>'
 ```
 iOS sim:
 ```groovy
-implementation 'com.badoo.reaktive:<module-name>-sim:<latest-version>'
+implementation 'com.badoo.reaktive:<module-name>-iossim:<latest-version>'
+```
+macOS x64:
+```groovy
+implementation 'com.badoo.reaktive:<module-name>-macosx64:<latest-version>'
+```
+watchOS ARM32
+```
+implementation 'com.badoo.reaktive:<module-name>-watchosarm32:<latest-version>'
+```
+watchOS ARM64
+```
+implementation 'com.badoo.reaktive:<module-name>-watchosarm64:<latest-version>'
+```
+watchOS sim
+```
+implementation 'com.badoo.reaktive:<module-name>-watchossim:<latest-version>'
+```
+tvOS ARM64
+```
+implementation 'com.badoo.reaktive:<module-name>-tvosarm64:<latest-version>'
+```
+tvOS sim
+```
+implementation 'com.badoo.reaktive:<module-name>-tvossim:<latest-version>'
 ```
 JavaScript:
 ```groovy
@@ -162,5 +186,6 @@ In both cases subscription (`subscribe` call) **must** be performed on the Main 
 * [MPP module](https://github.com/badoo/Reaktive/tree/master/sample-mpp-module)
 * [Android app](https://github.com/badoo/Reaktive/tree/master/sample-android-app)
 * [iOS app](https://github.com/badoo/Reaktive/tree/master/sample-ios-app)
+* [macOS app](https://github.com/badoo/Reaktive/tree/master/sample-macos-app)
 * [JavaScript browser app](https://github.com/badoo/Reaktive/tree/master/sample-js-browser-app)
 * [Linux x64 app](https://github.com/badoo/Reaktive/tree/master/sample-linuxx64-app)
