@@ -66,12 +66,12 @@ object Deps {
 
     object Android {
         const val plugin = "com.android.tools.build:gradle:3.4.1"
-        val support = Support
+        val androidx = Androidx
 
-        object Support {
-            const val appcompatV7 = "com.android.support:appcompat-v7:28.0.0"
-            const val exifinterface = "com.android.support:exifinterface:28.0.0"
-            const val constraintLayout = "com.android.support.constraint:constraint-layout:1.1.3"
+        object Androidx {
+            const val appcompat = "androidx.appcompat:appcompat:1.1.0"
+            const val exifinterface = "androidx.exifinterface:exifinterface:1.1.0"
+            const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
         }
     }
 

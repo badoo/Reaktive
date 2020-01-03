@@ -1,7 +1,7 @@
 package com.badoo.reaktive.sample.android
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.badoo.reaktive.samplemppmodule.binder.KittenBinder
 import com.badoo.reaktive.samplemppmodule.KittenStoreBuilderImpl
 
