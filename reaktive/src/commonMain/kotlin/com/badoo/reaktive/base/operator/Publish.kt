@@ -37,13 +37,14 @@ internal fun <T> Observable<T>.publish(subjectFactory: () -> Subject<T>): Connec
 
         private fun PublishState<T>?.ensureConnected(): PublishState.Connected<T> =
             when (this) {
+                is PublishState.NotConnected -> PublishState.Connected(subject, createDisposable(subject))
+                is PublishState.Connected -> this
+
+                is PublishState.Disconnected,
                 null -> {
                     val subject = subjectFactory()
                     PublishState.Connected(subject, createDisposable(subject))
                 }
-
-                is PublishState.NotConnected -> PublishState.Connected(subject, createDisposable(subject))
-                is PublishState.Connected -> this
             }
 
         private fun createDisposable(subject: Subject<*>): CompositeDisposable {
@@ -51,10 +52,11 @@ internal fun <T> Observable<T>.publish(subjectFactory: () -> Subject<T>): Connec
 
             disposables +=
                 Disposable {
-                    state.update {
-                        it?.takeUnless { it.subject === subject }
+                    state.update { oldState ->
+                        oldState
+                            ?.takeIf { it.subject === subject }
+                            ?.let { PublishState.Disconnected(it.subject) }
                     }
-                    subject.onComplete()
                 }
 
             return disposables
@@ -75,4 +77,5 @@ private sealed class PublishState<T> {
 
     class NotConnected<T>(override val subject: Subject<T>) : PublishState<T>()
     class Connected<T>(override val subject: Subject<T>, val disposables: CompositeDisposable) : PublishState<T>()
+    class Disconnected<T>(override val subject: Subject<T>) : PublishState<T>()
 }
