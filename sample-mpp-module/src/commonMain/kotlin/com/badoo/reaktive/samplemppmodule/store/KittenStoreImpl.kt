@@ -8,14 +8,14 @@ import com.badoo.reaktive.scheduler.computationScheduler
 import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.single.map
 import com.badoo.reaktive.single.observeOn
-import com.badoo.reaktive.subject.behavior.behaviorSubject
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.badoo.reaktive.utils.ensureNeverFrozen
 
 internal class KittenStoreImpl(
     private val loader: KittenLoader
 ) : KittenStore, DisposableScope by DisposableScope() {
 
-    private val _states = behaviorSubject(State()).ensureNeverFrozen().scope()
+    private val _states = BehaviorSubject(State()).ensureNeverFrozen().scope()
     override val states: Observable<State> = _states
     private val state: State get() = _states.value
 
