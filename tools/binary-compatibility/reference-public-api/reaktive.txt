@@ -1067,11 +1067,19 @@ public abstract interface class com/badoo/reaktive/subject/behavior/BehaviorSubj
 	public abstract fun getValue ()Ljava/lang/Object;
 }
 
+public final class com/badoo/reaktive/subject/behavior/BehaviorSubjectBuilderKt {
+	public static final fun BehaviorSubject (Ljava/lang/Object;)Lcom/badoo/reaktive/subject/behavior/BehaviorSubject;
+}
+
 public final class com/badoo/reaktive/subject/behavior/VariousKt {
 	public static final fun behaviorSubject (Ljava/lang/Object;)Lcom/badoo/reaktive/subject/behavior/BehaviorSubject;
 }
 
 public abstract interface class com/badoo/reaktive/subject/publish/PublishSubject : com/badoo/reaktive/subject/Subject {
+}
+
+public final class com/badoo/reaktive/subject/publish/PublishSubjectBuilderKt {
+	public static final fun PublishSubject ()Lcom/badoo/reaktive/subject/publish/PublishSubject;
 }
 
 public final class com/badoo/reaktive/subject/publish/VariousKt {
