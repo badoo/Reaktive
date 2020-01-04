@@ -1078,6 +1078,14 @@ public final class com/badoo/reaktive/subject/publish/VariousKt {
 	public static final fun publishSubject ()Lcom/badoo/reaktive/subject/publish/PublishSubject;
 }
 
+public abstract interface class com/badoo/reaktive/subject/replay/ReplaySubject : com/badoo/reaktive/subject/Subject {
+}
+
+public final class com/badoo/reaktive/subject/replay/ReplaySubjectBuilderKt {
+	public static final fun ReplaySubject (I)Lcom/badoo/reaktive/subject/replay/ReplaySubject;
+	public static synthetic fun ReplaySubject$default (IILjava/lang/Object;)Lcom/badoo/reaktive/subject/replay/ReplaySubject;
+}
+
 public final class com/badoo/reaktive/utils/HandleSourceErrorKt {
 	public static final fun handleReaktiveError (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun handleReaktiveError$default (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
