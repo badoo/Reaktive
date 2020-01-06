@@ -10,8 +10,14 @@ internal open class DefaultSubject<T> : Subject<T> {
 
     private val observers = SharedList<ObservableObserver<T>>()
     private val serializer = serializer(onValue = ::onSerializedValue)
+
     private val _status = AtomicReference<Subject.Status>(Subject.Status.Active)
-    override val status: Subject.Status get() = _status.value
+    override var status: Subject.Status
+        get() = _status.value
+        protected set(value) {
+            _status.value = value
+            onStatusChanged(value)
+        }
 
     override fun subscribe(observer: ObservableObserver<T>) {
         serializer.accept(Event.OnSubscribe(observer))
@@ -29,13 +35,18 @@ internal open class DefaultSubject<T> : Subject<T> {
         serializer.accept(Event.OnError(error))
     }
 
-    protected open fun onSubscribed(observer: ObservableObserver<T>) {
-    }
+    protected open fun onSubscribed(observer: ObservableObserver<T>): Boolean = true
 
     protected open fun onAfterSubscribe(observer: ObservableObserver<T>) {
     }
 
+    protected open fun onAfterUnsubscribe(observer: ObservableObserver<T>) {
+    }
+
     protected open fun onBeforeNext(value: T) {
+    }
+
+    protected open fun onStatusChanged(status: Subject.Status) {
     }
 
     private fun onSerializedValue(value: Any?): Boolean {
@@ -65,7 +76,9 @@ internal open class DefaultSubject<T> : Subject<T> {
             return
         }
 
-        onSubscribed(observer)
+        if (!onSubscribed(observer)) {
+            return
+        }
 
         status.also {
             when (it) {
@@ -91,6 +104,7 @@ internal open class DefaultSubject<T> : Subject<T> {
 
     private fun onSerializedUnsubscribe(observer: ObservableObserver<T>) {
         observers -= observer
+        onAfterUnsubscribe(observer)
     }
 
     private fun onSerializedNext(value: T) {
@@ -102,14 +116,14 @@ internal open class DefaultSubject<T> : Subject<T> {
 
     private fun onSerializedComplete() {
         if (isActive) {
-            _status.value = Subject.Status.Completed
+            status = Subject.Status.Completed
             observers.forEach(ObservableObserver<*>::onComplete)
         }
     }
 
     private fun onSerializedError(error: Throwable) {
         if (isActive) {
-            _status.value = Subject.Status.Error(error)
+            status = Subject.Status.Error(error)
             observers.forEach { it.onError(error) }
         }
     }

@@ -11,10 +11,10 @@ fun <T> ReplaySubject(bufferSize: Int = Int.MAX_VALUE): ReplaySubject<T> {
     return object : DefaultSubject<T>(), ReplaySubject<T> {
         private val buffer = SharedQueue<T>()
 
-        override fun onSubscribed(observer: ObservableObserver<T>) {
-            super.onSubscribed(observer)
-
+        override fun onSubscribed(observer: ObservableObserver<T>): Boolean {
             buffer.forEach(observer::onNext)
+
+            return true
         }
 
         override fun onBeforeNext(value: T) {
