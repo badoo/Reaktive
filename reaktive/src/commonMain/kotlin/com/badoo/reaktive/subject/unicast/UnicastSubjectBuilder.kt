@@ -18,12 +18,12 @@ fun <T> UnicastSubject(bufferSize: Int = Int.MAX_VALUE, onTerminate: () -> Unit 
         override fun onSubscribed(observer: ObservableObserver<T>): Boolean {
             val isFirstObserver = hasSubscribers.compareAndSet(false, true)
 
-            if (!isFirstObserver) {
-                observer.onError(IllegalStateException("Only a single observer allowed for UnicastSubject"))
-            } else {
+            if (isFirstObserver) {
                 queue
                     .getAndSet(null)
                     ?.forEach(observer::onNext)
+            } else {
+                observer.onError(IllegalStateException("Only a single observer allowed for UnicastSubject"))
             }
 
             return isFirstObserver
