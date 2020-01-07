@@ -1060,6 +1060,7 @@ public final class com/badoo/reaktive/subject/Subject$Status$Error : com/badoo/r
 public final class com/badoo/reaktive/subject/SubjectExtKt {
 	public static final fun getObserver (Lcom/badoo/reaktive/subject/Subject;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/ObservableObserver;
 	public static synthetic fun getObserver$default (Lcom/badoo/reaktive/subject/Subject;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/observable/ObservableObserver;
+	public static final fun isActive (Lcom/badoo/reaktive/subject/Subject$Status;)Z
 	public static final fun isActive (Lcom/badoo/reaktive/subject/Subject;)Z
 }
 
@@ -1092,6 +1093,14 @@ public abstract interface class com/badoo/reaktive/subject/replay/ReplaySubject 
 public final class com/badoo/reaktive/subject/replay/ReplaySubjectBuilderKt {
 	public static final fun ReplaySubject (I)Lcom/badoo/reaktive/subject/replay/ReplaySubject;
 	public static synthetic fun ReplaySubject$default (IILjava/lang/Object;)Lcom/badoo/reaktive/subject/replay/ReplaySubject;
+}
+
+public abstract interface class com/badoo/reaktive/subject/unicast/UnicastSubject : com/badoo/reaktive/subject/Subject {
+}
+
+public final class com/badoo/reaktive/subject/unicast/UnicastSubjectBuilderKt {
+	public static final fun UnicastSubject (ILkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/subject/unicast/UnicastSubject;
+	public static synthetic fun UnicastSubject$default (ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/badoo/reaktive/subject/unicast/UnicastSubject;
 }
 
 public final class com/badoo/reaktive/utils/HandleSourceErrorKt {
