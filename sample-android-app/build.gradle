@@ -20,35 +20,6 @@ dependencies {
     implementation Deps.android.androidx.appcompat
     implementation Deps.android.androidx.constraintLayout
     implementation Deps.android.androidx.exifinterface
-    implementation Deps.rxjava2
-    implementation project(':reaktive')
-    implementation project(':reaktive-testing')
-    implementation project(':rxjava2-interop')
-    implementation project(':sample-mpp-module')
-    implementation Deps.picasso
-}
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-
-android {
-    buildToolsVersion '29.0.2'
-    compileSdkVersion 29
-
-    defaultConfig {
-        applicationId 'com.badoo.reaktive.sample.android'
-        minSdkVersion 15
-        targetSdkVersion 29
-        versionCode 1
-        versionName '1.0'
-    }
-}
-
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation Deps.kotlin.stdlib.jdk7
-    implementation Deps.android.androidx.appcompat
-    implementation Deps.android.androidx.constraintLayout
-    implementation Deps.android.androidx.exifinterface
     implementation project(':reaktive')
     implementation project(':reaktive-testing')
     implementation project(':rxjava2-interop')
