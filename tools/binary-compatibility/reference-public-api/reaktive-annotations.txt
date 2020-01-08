@@ -13,6 +13,9 @@ public abstract interface annotation class com/badoo/reaktive/annotations/Events
 public abstract interface annotation class com/badoo/reaktive/annotations/EventsOnUnspecifiedScheduler : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class com/badoo/reaktive/annotations/ExperimentalReaktiveApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class com/badoo/reaktive/annotations/UseReturnValue : java/lang/annotation/Annotation {
 }
 
