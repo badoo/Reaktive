@@ -1,32 +1,12 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.operator.publish
-import com.badoo.reaktive.subject.DefaultSubject
-import com.badoo.reaktive.utils.queue.SharedQueue
+import com.badoo.reaktive.subject.replay.ReplaySubject
 
 fun <T> Observable<T>.replay(): ConnectableObservable<T> = replay(bufferSize = Int.MAX_VALUE)
 
 fun <T> Observable<T>.replay(bufferSize: Int): ConnectableObservable<T> {
     require(bufferSize > 0) { "Buffer size must be a positive value" }
 
-    return publish {
-        object : DefaultSubject<T>() {
-            private val values = SharedQueue<T>()
-
-            override fun onSubscribed(observer: ObservableObserver<T>) {
-                super.onSubscribed(observer)
-
-                values.forEach(observer::onNext)
-            }
-
-            override fun onBeforeNext(value: T) {
-                super.onBeforeNext(value)
-
-                if (values.size >= bufferSize) {
-                    values.poll()
-                }
-                values.offer(value)
-            }
-        }
-    }
+    return publish { ReplaySubject(bufferSize = bufferSize) }
 }

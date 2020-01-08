@@ -11,9 +11,9 @@ import com.badoo.reaktive.utils.atomic.removeAt
 import com.badoo.reaktive.utils.atomic.set
 import com.badoo.reaktive.utils.atomic.size
 
-internal class CopyOnWriteList<T>(initalList: List<T> = emptyList()) : MutableList<T> {
+internal class CopyOnWriteList<T>(initialList: List<T> = emptyList()) : MutableList<T> {
 
-    private val delegate = AtomicList(initalList)
+    private val delegate = AtomicList(initialList)
 
     override val size: Int get() = delegate.size
 

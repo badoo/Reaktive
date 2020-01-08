@@ -123,7 +123,7 @@ kotlin {
 * True multithreading for Kotlin/Native (there are some [limitations](https://kotlinlang.org/docs/reference/native/concurrency.html#object-transfer-and-freezing))
 * Thread local subscriptions without freezing for Kotlin/Native
 * Supported sources: Observable, Maybe, Single, Completable
-* Subjects: PublishSubject, BehaviorSubject
+* Subjects: PublishSubject, BehaviorSubject, ReplaySubject, UnicastSubject
 * Interoperability with Kotlin Coroutines: conversions between coroutines (including Flow) and Reaktive
 * Interoperability with RxJava2 and RxJava3: conversion of sources between Reaktive and RxJava, ability to reuse RxJava's schedulers
 
