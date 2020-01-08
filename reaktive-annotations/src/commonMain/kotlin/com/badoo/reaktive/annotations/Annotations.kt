@@ -41,7 +41,3 @@ annotation class EventsOnComputationScheduler
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 annotation class EventsOnIoScheduler
-
-@Experimental(Experimental.Level.WARNING)
-@Retention(AnnotationRetention.BINARY)
-annotation class ExperimentalReaktiveApi

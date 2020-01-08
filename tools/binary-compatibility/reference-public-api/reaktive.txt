@@ -1,3 +1,6 @@
+public abstract interface annotation class com/badoo/reaktive/annotations/ExperimentalReaktiveApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface class com/badoo/reaktive/base/CompleteCallback {
 	public abstract fun onComplete ()V
 }
