@@ -15,4 +15,6 @@ fun <T> Subject<T>.getObserver(onSubscribe: ((Disposable) -> Unit)? = null): Obs
         }
     }
 
-val Subject<*>.isActive: Boolean get() = status is Subject.Status.Active
+val Subject.Status.isActive: Boolean get() = this is Subject.Status.Active
+
+val Subject<*>.isActive: Boolean get() = status.isActive
