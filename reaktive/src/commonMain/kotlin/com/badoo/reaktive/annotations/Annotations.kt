@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName")
+
 package com.badoo.reaktive.annotations
 
 @Experimental(Experimental.Level.WARNING)
