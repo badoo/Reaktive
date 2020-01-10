@@ -190,6 +190,10 @@ public final class com/badoo/reaktive/test/scheduler/TestScheduler$Timer {
 	public final fun removeOnChangeListener (Lkotlin/jvm/functions/Function0;)V
 }
 
+public final class com/badoo/reaktive/test/scheduler/TestSchedulerExtKt {
+	public static final fun assertAllExecutorsDisposed (Lcom/badoo/reaktive/test/scheduler/TestScheduler;)V
+}
+
 public abstract interface class com/badoo/reaktive/test/single/DefaultSingleObserver : com/badoo/reaktive/single/SingleObserver {
 	public abstract fun onError (Ljava/lang/Throwable;)V
 	public abstract fun onSubscribe (Lcom/badoo/reaktive/disposable/Disposable;)V

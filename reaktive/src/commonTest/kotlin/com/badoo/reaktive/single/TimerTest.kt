@@ -5,6 +5,7 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.scheduler.TestScheduler
+import com.badoo.reaktive.test.scheduler.assertAllExecutorsDisposed
 import com.badoo.reaktive.test.single.assertNotSuccess
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
@@ -67,7 +68,7 @@ class TimerTest {
     @Test
     fun disposes_executor_WHEN_timeout_reached() {
         timer.advanceBy(1000L)
-        assertTrue(scheduler.executors.all(Scheduler.Executor::isDisposed))
+        scheduler.assertAllExecutorsDisposed()
     }
 
     @Test
@@ -86,7 +87,7 @@ class TimerTest {
     @Test
     fun disposes_executor_AFTER_dispose() {
         observer.dispose()
-        assertTrue(scheduler.executors.all(Scheduler.Executor::isDisposed))
+        scheduler.assertAllExecutorsDisposed()
     }
 
     @Test
