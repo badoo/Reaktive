@@ -10,6 +10,7 @@ import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
+import com.badoo.reaktive.test.scheduler.assertAllExecutorsDisposed
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -122,7 +123,7 @@ class IntervalTest {
     @Test
     fun disposes_executor_AFTER_dispose() {
         observer.dispose()
-        assertTrue(scheduler.executors.all(Scheduler.Executor::isDisposed))
+        scheduler.assertAllExecutorsDisposed()
     }
 
     @Test
