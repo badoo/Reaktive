@@ -21,3 +21,9 @@ if (Target.shouldDefineTarget(this, Target.JS)) {
 if (Target.shouldDefineTarget(this, Target.LINUX)) {
     include(":sample-linuxx64-app")
 }
+if (Target.shouldDefineTarget(this, Target.IOS)) {
+    include(":sample-ios-app")
+}
+if (Target.shouldDefineTarget(this, Target.MACOS)) {
+    include(":sample-macos-app")
+}
