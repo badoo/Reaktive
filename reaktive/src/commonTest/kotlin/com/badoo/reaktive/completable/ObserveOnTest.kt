@@ -8,6 +8,7 @@ import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
+import com.badoo.reaktive.test.scheduler.assertAllExecutorsDisposed
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -58,6 +59,6 @@ class ObserveOnTest
     fun disposes_executor_WHEN_disposed() {
         observer.dispose()
 
-        assertTrue(scheduler.executors.all(TestScheduler.Executor::isDisposed))
+        scheduler.assertAllExecutorsDisposed()
     }
 }

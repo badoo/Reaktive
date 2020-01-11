@@ -106,6 +106,10 @@ public final class com/badoo/reaktive/completable/DelayKt {
 	public static synthetic fun delay$default (Lcom/badoo/reaktive/completable/Completable;JLcom/badoo/reaktive/scheduler/Scheduler;ZILjava/lang/Object;)Lcom/badoo/reaktive/completable/Completable;
 }
 
+public final class com/badoo/reaktive/completable/DelaySubscriptionKt {
+	public static final fun delaySubscription (Lcom/badoo/reaktive/completable/Completable;JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/completable/Completable;
+}
+
 public final class com/badoo/reaktive/completable/DoOnBeforeKt {
 	public static final fun doOnBeforeComplete (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun doOnBeforeDispose (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/completable/Completable;
@@ -270,6 +274,10 @@ public final class com/badoo/reaktive/maybe/ConcatKt {
 public final class com/badoo/reaktive/maybe/DelayKt {
 	public static final fun delay (Lcom/badoo/reaktive/maybe/Maybe;JLcom/badoo/reaktive/scheduler/Scheduler;Z)Lcom/badoo/reaktive/maybe/Maybe;
 	public static synthetic fun delay$default (Lcom/badoo/reaktive/maybe/Maybe;JLcom/badoo/reaktive/scheduler/Scheduler;ZILjava/lang/Object;)Lcom/badoo/reaktive/maybe/Maybe;
+}
+
+public final class com/badoo/reaktive/maybe/DelaySubscriptionKt {
+	public static final fun delaySubscription (Lcom/badoo/reaktive/maybe/Maybe;JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/maybe/Maybe;
 }
 
 public final class com/badoo/reaktive/maybe/DoOnBeforeKt {
@@ -501,6 +509,10 @@ public final class com/badoo/reaktive/observable/DefaultIfEmptyKt {
 public final class com/badoo/reaktive/observable/DelayKt {
 	public static final fun delay (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;Z)Lcom/badoo/reaktive/observable/Observable;
 	public static synthetic fun delay$default (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;ZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/observable/DelaySubscriptionKt {
+	public static final fun delaySubscription (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/DistinctUntilChangedKt {
@@ -875,6 +887,10 @@ public final class com/badoo/reaktive/single/ConcatKt {
 public final class com/badoo/reaktive/single/DelayKt {
 	public static final fun delay (Lcom/badoo/reaktive/single/Single;JLcom/badoo/reaktive/scheduler/Scheduler;Z)Lcom/badoo/reaktive/single/Single;
 	public static synthetic fun delay$default (Lcom/badoo/reaktive/single/Single;JLcom/badoo/reaktive/scheduler/Scheduler;ZILjava/lang/Object;)Lcom/badoo/reaktive/single/Single;
+}
+
+public final class com/badoo/reaktive/single/DelaySubscriptionKt {
+	public static final fun delaySubscription (Lcom/badoo/reaktive/single/Single;JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/single/Single;
 }
 
 public final class com/badoo/reaktive/single/DoOnBeforeKt {

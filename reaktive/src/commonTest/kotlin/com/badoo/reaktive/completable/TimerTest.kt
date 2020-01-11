@@ -8,9 +8,9 @@ import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
+import com.badoo.reaktive.test.scheduler.assertAllExecutorsDisposed
 import kotlin.test.Test
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class TimerTest {
 
@@ -67,7 +67,7 @@ class TimerTest {
     @Test
     fun disposes_executor_WHEN_timeout_reached() {
         timer.advanceBy(1000L)
-        assertTrue(scheduler.executors.all(Scheduler.Executor::isDisposed))
+        scheduler.assertAllExecutorsDisposed()
     }
 
     @Test
@@ -86,7 +86,7 @@ class TimerTest {
     @Test
     fun disposes_executor_AFTER_dispose() {
         observer.dispose()
-        assertTrue(scheduler.executors.all(Scheduler.Executor::isDisposed))
+        scheduler.assertAllExecutorsDisposed()
     }
 
     @Test
