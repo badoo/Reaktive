@@ -17,7 +17,7 @@ enum class Target(
     WATCHOS(linuxHosted = false, macOsHosted = true),
     TVOS(linuxHosted = false, macOsHosted = true),
     MACOS(linuxHosted = false, macOsHosted = true),
-    META(linuxHosted = true, macOsHosted = true);
+    META(linuxHosted = false, macOsHosted = false);
 
     companion object {
         private const val PROPERTY = "target"
@@ -40,6 +40,15 @@ enum class Target(
                 else -> false
             }
             return currentTarget == targetToDefine || currentTarget == META || targetGroupCheck
+        }
+
+        @JvmStatic
+        fun shouldPublishTarget(project: ExtensionAware, targetToPublish: Target): Boolean {
+            val currentTarget = currentTarget(project)
+            if (currentTarget == META) {
+                return targetToPublish == META
+            }
+            return shouldDefineTarget(project, targetToPublish)
         }
 
         private fun ExtensionAware.find(key: String) =
