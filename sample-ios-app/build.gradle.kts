@@ -1,10 +1,16 @@
-package tasks
-
 import org.gradle.api.internal.AbstractTask
-import org.gradle.api.tasks.TaskAction
-import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 
-abstract class BuildIosSampleTask : AbstractTask() {
+open class BuildIosSampleTask : AbstractTask() {
+
+    @InputDirectory
+    val sources: File = project.file("sample-ios-app")
+
+    @InputDirectory
+    lateinit var fatDebug: Provider<File>
+
+    @InputDirectory
+    lateinit var fatRelease: Provider<File>
 
     init {
         group = LifecycleBasePlugin.BUILD_GROUP
@@ -12,16 +18,13 @@ abstract class BuildIosSampleTask : AbstractTask() {
 
     @TaskAction
     open fun buildSample() {
-        val dir = project.file("sample-ios-app")
         project.exec {
-            workingDir = dir
             commandLine(
                 "pod",
                 "deintegrate"
             )
         }
         project.exec {
-            workingDir = dir
             commandLine(
                 "pod",
                 "install",
@@ -29,7 +32,6 @@ abstract class BuildIosSampleTask : AbstractTask() {
             )
         }
         project.exec {
-            workingDir = dir
             commandLine(
                 "xcodebuild",
                 "-workspace",
@@ -41,4 +43,16 @@ abstract class BuildIosSampleTask : AbstractTask() {
             )
         }
     }
+}
+
+tasks.register<BuildIosSampleTask>("build") {
+    val sampleMppModuleTasks = project(":sample-mpp-module").tasks
+    fatDebug =
+        sampleMppModuleTasks
+            .named<FatFrameworkTask>("fatIosDebug")
+            .map { it.fatFrameworkDir }
+    fatRelease =
+        sampleMppModuleTasks
+            .named<FatFrameworkTask>("fatIosRelease")
+            .map { it.fatFrameworkDir }
 }

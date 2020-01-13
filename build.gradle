@@ -233,18 +233,3 @@ private void setupLinuxArm32HfpTarget(Project project) {
 private void setupIosTargets(Project project) {
     project.apply plugin: DarwinPlugin
 }
-
-import tasks.BuildIosSampleTask
-import tasks.BuildMacosSampleTask
-
-if (Target.shouldDefineTarget(project, Target.IOS)) {
-    tasks.register('buildIosSample', BuildIosSampleTask) {
-        dependsOn ':sample-mpp-module:fatIosDebug', ':sample-mpp-module:fatIosRelease'
-    }
-}
-
-if (Target.shouldDefineTarget(project, Target.MACOS)) {
-    tasks.register('buildMacosSample', BuildMacosSampleTask) {
-        dependsOn ':sample-mpp-module:macosX64MainBinaries'
-    }
-}
