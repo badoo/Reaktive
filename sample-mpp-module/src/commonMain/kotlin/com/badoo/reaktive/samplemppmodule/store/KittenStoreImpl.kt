@@ -12,7 +12,7 @@ import com.badoo.reaktive.single.observeOn
 import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.badoo.reaktive.utils.ensureNeverFrozen
 
-@UseExperimental(ExperimentalReaktiveApi::class)
+@ExperimentalReaktiveApi
 internal class KittenStoreImpl(
     private val loader: KittenLoader
 ) : KittenStore, DisposableScope by DisposableScope() {
