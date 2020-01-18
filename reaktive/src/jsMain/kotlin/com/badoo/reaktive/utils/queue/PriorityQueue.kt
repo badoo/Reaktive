@@ -63,7 +63,11 @@ internal actual class PriorityQueue<T> actual constructor(
             override fun hasNext(): Boolean = index < _size
 
             @Suppress("UNCHECKED_CAST")
-            override fun next(): T = requireNotNull(array)[index++] as T
+            override fun next(): T {
+                val arr = array?.takeIf { index < _size } ?: throw NoSuchElementException()
+
+                return arr[index++] as T
+            }
         }
 
     private companion object {
