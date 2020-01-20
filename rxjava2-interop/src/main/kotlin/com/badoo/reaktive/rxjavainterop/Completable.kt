@@ -17,7 +17,7 @@ fun Completable.asRxJava2(): io.reactivex.Completable =
         }
     }
 
-fun <T> io.reactivex.CompletableSource.asReaktive(): Completable =
+fun io.reactivex.CompletableSource.asReaktive(): Completable =
     completableUnsafe { observer ->
         subscribe(observer.asRxJava2())
     }
