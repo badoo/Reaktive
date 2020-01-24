@@ -5,12 +5,12 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.base.assertSubscribed
-import com.badoo.reaktive.test.maybe.TestMaybeObserver
 import com.badoo.reaktive.test.maybe.assertComplete
 import com.badoo.reaktive.test.maybe.assertNotComplete
 import com.badoo.reaktive.test.maybe.assertNotSuccess
 import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -20,10 +20,12 @@ class MaybeByEmitterTest {
 
     private val emitterRef = AtomicReference<MaybeEmitter<Int?>?>(null)
     private val emitter: MaybeEmitter<Int?> get() = requireNotNull(emitterRef.value)
-    private val observer = createMaybeAndSubscribe(emitterRef)
+    private val maybe = createMaybe(emitterRef)
+    private val observer = maybe.test()
 
-    private fun createMaybeAndSubscribe(emitterReference: AtomicReference<MaybeEmitter<Int?>?>): TestMaybeObserver<Int?> =
-        maybe<Int?> { emitterReference.value = it }.test()
+    // To avoid freezing of the test class
+    private fun createMaybe(emitterReference: AtomicReference<MaybeEmitter<Int?>?>): Maybe<Int?> =
+        maybe { emitterReference.value = it }
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
@@ -71,7 +73,7 @@ class MaybeByEmitterTest {
 
     @Test
     fun onSuccess_ignored_AFTER_onComplete_is_signalled() {
-        emitter.onError(Throwable())
+        emitter.onComplete()
         observer.reset()
         emitter.onSuccess(1)
 
@@ -274,4 +276,191 @@ class MaybeByEmitterTest {
 
         assertTrue(emitter.isDisposed)
     }
+
+    @Test
+    fun does_not_success_recursively_WHEN_succeeding() {
+        val isSucceededRecursively = AtomicBoolean()
+        val isSucceeded = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onSuccess = {
+                    if (!isSucceeded.value) {
+                        isSucceeded.value = true
+                        emitter.onSuccess(0)
+                    } else {
+                        isSucceededRecursively.value = true
+                    }
+                }
+            )
+        )
+
+        emitter.onSuccess(0)
+
+        assertFalse(isSucceededRecursively.value)
+    }
+
+    @Test
+    fun does_not_success_recursively_WHEN_completing() {
+        val isSucceededRecursively = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onSuccess = { isSucceededRecursively.value = true },
+                onComplete = { emitter.onSuccess(0) }
+            )
+        )
+
+        emitter.onComplete()
+
+        assertFalse(isSucceededRecursively.value)
+    }
+
+    @Test
+    fun does_not_success_recursively_WHEN_producing_error() {
+        val isSucceededRecursively = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onSuccess = { isSucceededRecursively.value = true },
+                onError = { emitter.onSuccess(0) }
+            )
+        )
+
+        emitter.onError(Exception())
+
+        assertFalse(isSucceededRecursively.value)
+    }
+
+    @Test
+    fun does_not_complete_recursively_WHEN_succeeding() {
+        val isCompletedRecursively = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onSuccess = { emitter.onComplete() },
+                onComplete = { isCompletedRecursively.value = true }
+            )
+        )
+
+        emitter.onSuccess(0)
+
+        assertFalse(isCompletedRecursively.value)
+    }
+
+    @Test
+    fun does_not_complete_recursively_WHEN_completing() {
+        val isCompletedRecursively = AtomicBoolean()
+        val isCompleted = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onComplete = {
+                    if (!isCompleted.value) {
+                        isCompleted.value = true
+                        emitter.onComplete()
+                    } else {
+                        isCompletedRecursively.value = true
+                    }
+                }
+            )
+        )
+
+        emitter.onComplete()
+
+        assertFalse(isCompletedRecursively.value)
+    }
+
+    @Test
+    fun does_not_complete_recursively_WHEN_producing_error() {
+        val isCompletedRecursively = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onComplete = { isCompletedRecursively.value = true },
+                onError = { emitter.onComplete() }
+            )
+        )
+
+        emitter.onError(Exception())
+
+        assertFalse(isCompletedRecursively.value)
+    }
+
+    @Test
+    fun does_not_produce_error_recursively_WHEN_succeeding() {
+        val isErrorRecursively = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onSuccess = { emitter.onError(Exception()) },
+                onError = { isErrorRecursively.value = true }
+            )
+        )
+
+        emitter.onSuccess(0)
+
+        assertFalse(isErrorRecursively.value)
+    }
+
+    @Test
+    fun does_not_produce_error_recursively_WHEN_completing() {
+        val isErrorRecursively = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onComplete = { emitter.onError(Exception()) },
+                onError = { isErrorRecursively.value = true }
+            )
+        )
+
+        emitter.onComplete()
+
+        assertFalse(isErrorRecursively.value)
+    }
+
+    @Test
+    fun does_not_produce_error_recursively_WHEN_producing_error() {
+        val isErrorRecursively = AtomicBoolean()
+        val hasError = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onError = {
+                    if (!hasError.value) {
+                        hasError.value = true
+                        emitter.onError(Exception())
+                    } else {
+                        isErrorRecursively.value = true
+                    }
+                }
+            )
+        )
+
+        emitter.onError(Exception())
+
+        assertFalse(isErrorRecursively.value)
+    }
+
+    private fun observer(
+        onSuccess: (Int?) -> Unit = {},
+        onComplete: () -> Unit = {},
+        onError: (Throwable) -> Unit = {}
+    ): MaybeObserver<Int?> =
+        object : MaybeObserver<Int?> {
+            override fun onSubscribe(disposable: Disposable) {
+            }
+
+            override fun onSuccess(value: Int?) {
+                onSuccess.invoke(value)
+            }
+
+            override fun onComplete() {
+                onComplete.invoke()
+            }
+
+            override fun onError(error: Throwable) {
+                onError.invoke(error)
+            }
+        }
 }
