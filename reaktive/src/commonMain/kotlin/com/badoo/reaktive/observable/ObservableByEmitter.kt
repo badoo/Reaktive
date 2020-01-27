@@ -30,11 +30,8 @@ inline fun <T> observable(crossinline onSubscribe: (emitter: ObservableEmitter<T
 
                 private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
                     if (!isDisposed) {
-                        try {
-                            block()
-                        } finally {
-                            dispose()
-                        }
+                        dispose()
+                        block()
                     }
                 }
             }

@@ -24,11 +24,8 @@ inline fun completable(crossinline onSubscribe: (emitter: CompletableEmitter) ->
 
                 private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
                     if (!isDisposed) {
-                        try {
-                            block()
-                        } finally {
-                            dispose()
-                        }
+                        dispose()
+                        block()
                     }
                 }
             }

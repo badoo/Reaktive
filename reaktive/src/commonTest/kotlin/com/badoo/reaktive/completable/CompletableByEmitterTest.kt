@@ -5,10 +5,10 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.base.assertSubscribed
-import com.badoo.reaktive.test.completable.TestCompletableObserver
 import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -18,10 +18,11 @@ class CompletableByEmitterTest {
 
     private val emitterRef = AtomicReference<CompletableEmitter?>(null)
     private val emitter: CompletableEmitter get() = requireNotNull(emitterRef.value)
-    private val observer = createCompletableAndSubscribe(emitterRef)
+    private val completable = createCompletable(emitterRef)
+    private val observer = completable.test()
 
-    private fun createCompletableAndSubscribe(emitterReference: AtomicReference<CompletableEmitter?>): TestCompletableObserver =
-        completable { emitterReference.value = it }.test()
+    private fun createCompletable(emitterReference: AtomicReference<CompletableEmitter?>): Completable =
+        completable { emitterReference.value = it }
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
@@ -170,4 +171,99 @@ class CompletableByEmitterTest {
 
         assertTrue(emitter.isDisposed)
     }
+
+    @Test
+    fun does_not_complete_recursively_WHEN_completing() {
+        val isCompletedRecursively = AtomicBoolean()
+        val isCompleted = AtomicBoolean()
+
+        completable.subscribe(
+            observer(
+                onComplete = {
+                    if (!isCompleted.value) {
+                        isCompleted.value = true
+                        emitter.onComplete()
+                    } else {
+                        isCompletedRecursively.value = true
+                    }
+                }
+            )
+        )
+
+        emitter.onComplete()
+
+        assertFalse(isCompletedRecursively.value)
+    }
+
+    @Test
+    fun does_not_complete_recursively_WHEN_producing_error() {
+        val isCompletedRecursively = AtomicBoolean()
+
+        completable.subscribe(
+            observer(
+                onComplete = { isCompletedRecursively.value = true },
+                onError = { emitter.onComplete() }
+            )
+        )
+
+        emitter.onError(Exception())
+
+        assertFalse(isCompletedRecursively.value)
+    }
+
+    @Test
+    fun does_not_produce_error_recursively_WHEN_completing() {
+        val isErrorRecursively = AtomicBoolean()
+
+        completable.subscribe(
+            observer(
+                onComplete = { emitter.onError(Exception()) },
+                onError = { isErrorRecursively.value = true }
+            )
+        )
+
+        emitter.onComplete()
+
+        assertFalse(isErrorRecursively.value)
+    }
+
+    @Test
+    fun does_not_produce_error_recursively_WHEN_producing_error() {
+        val isErrorRecursively = AtomicBoolean()
+        val hasError = AtomicBoolean()
+
+        completable.subscribe(
+            observer(
+                onError = {
+                    if (!hasError.value) {
+                        hasError.value = true
+                        emitter.onError(Exception())
+                    } else {
+                        isErrorRecursively.value = true
+                    }
+                }
+            )
+        )
+
+        emitter.onError(Exception())
+
+        assertFalse(isErrorRecursively.value)
+    }
+
+    private fun observer(
+        onComplete: () -> Unit = {},
+        onError: (Throwable) -> Unit = {}
+    ): CompletableObserver =
+        object : CompletableObserver {
+            override fun onSubscribe(disposable: Disposable) {
+            }
+
+            override fun onComplete() {
+                onComplete.invoke()
+            }
+
+            override fun onError(error: Throwable) {
+                onError.invoke(error)
+            }
+        }
 }

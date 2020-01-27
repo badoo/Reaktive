@@ -3,6 +3,7 @@ package com.badoo.reaktive.test.base
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 
 open class TestObserver : Observer, Disposable, ErrorCallback {
@@ -13,6 +14,7 @@ open class TestObserver : Observer, Disposable, ErrorCallback {
     val error: Throwable? get() = _error.value
     val isError: Boolean get() = error != null
     override val isDisposed: Boolean get() = _disposable.value?.isDisposed == true
+    private val isDisposeCalled = AtomicBoolean()
 
     override fun onSubscribe(disposable: Disposable) {
         if (this.disposable != null) {
@@ -23,6 +25,7 @@ open class TestObserver : Observer, Disposable, ErrorCallback {
     }
 
     override fun dispose() {
+        isDisposeCalled.value = true
         disposable?.dispose()
     }
 
@@ -39,6 +42,6 @@ open class TestObserver : Observer, Disposable, ErrorCallback {
     protected open fun checkActive() {
         checkNotNull(disposable) { "Not subscribed" }
         check(error == null) { "Already failed" }
-        check(!isDisposed) { "Already disposed" }
+        check(!isDisposeCalled.value) { "Already disposed" }
     }
 }

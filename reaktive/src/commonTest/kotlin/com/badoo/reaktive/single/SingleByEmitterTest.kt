@@ -1,14 +1,16 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.maybe.maybe
 import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.base.assertSubscribed
-import com.badoo.reaktive.test.single.TestSingleObserver
+import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.single.assertNotSuccess
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -18,10 +20,12 @@ class SingleByEmitterTest {
 
     private val emitterRef = AtomicReference<SingleEmitter<Int?>?>(null)
     private val emitter: SingleEmitter<Int?> get() = requireNotNull(emitterRef.value)
-    private val observer = createSingleAndSubscribe(emitterRef)
+    private val maybe = createSingle(emitterRef)
+    private val observer = maybe.test()
 
-    private fun createSingleAndSubscribe(emitterReference: AtomicReference<SingleEmitter<Int?>?>): TestSingleObserver<Int?> =
-        single<Int?> { emitterReference.value = it }.test()
+    // To avoid freezing of the test class
+    private fun createSingle(emitterReference: AtomicReference<SingleEmitter<Int?>?>): Single<Int?> =
+        single { emitterReference.value = it }
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
@@ -194,4 +198,99 @@ class SingleByEmitterTest {
 
         assertTrue(emitter.isDisposed)
     }
+
+    @Test
+    fun does_not_success_recursively_WHEN_succeeding() {
+        val isSucceededRecursively = AtomicBoolean()
+        val isSucceeded = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onSuccess = {
+                    if (!isSucceeded.value) {
+                        isSucceeded.value = true
+                        emitter.onSuccess(0)
+                    } else {
+                        isSucceededRecursively.value = true
+                    }
+                }
+            )
+        )
+
+        emitter.onSuccess(0)
+
+        assertFalse(isSucceededRecursively.value)
+    }
+
+    @Test
+    fun does_not_success_recursively_WHEN_producing_error() {
+        val isSucceededRecursively = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onSuccess = { isSucceededRecursively.value = true },
+                onError = { emitter.onSuccess(0) }
+            )
+        )
+
+        emitter.onError(Exception())
+
+        assertFalse(isSucceededRecursively.value)
+    }
+
+    @Test
+    fun does_not_produce_error_recursively_WHEN_succeeding() {
+        val isErrorRecursively = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onSuccess = { emitter.onError(Exception()) },
+                onError = { isErrorRecursively.value = true }
+            )
+        )
+
+        emitter.onSuccess(0)
+
+        assertFalse(isErrorRecursively.value)
+    }
+
+    @Test
+    fun does_not_produce_error_recursively_WHEN_producing_error() {
+        val isErrorRecursively = AtomicBoolean()
+        val hasError = AtomicBoolean()
+
+        maybe.subscribe(
+            observer(
+                onError = {
+                    if (!hasError.value) {
+                        hasError.value = true
+                        emitter.onError(Exception())
+                    } else {
+                        isErrorRecursively.value = true
+                    }
+                }
+            )
+        )
+
+        emitter.onError(Exception())
+
+        assertFalse(isErrorRecursively.value)
+    }
+
+    private fun observer(
+        onSuccess: (Int?) -> Unit = {},
+        onError: (Throwable) -> Unit = {}
+    ): SingleObserver<Int?> =
+        object : SingleObserver<Int?> {
+            override fun onSubscribe(disposable: Disposable) {
+            }
+
+            override fun onSuccess(value: Int?) {
+                onSuccess.invoke(value)
+            }
+
+            override fun onError(error: Throwable) {
+                onError.invoke(error)
+            }
+        }
 }
