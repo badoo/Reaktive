@@ -96,6 +96,14 @@ public final class com/badoo/reaktive/completable/CompletableEmitterSerializeKt 
 public abstract interface class com/badoo/reaktive/completable/CompletableObserver : com/badoo/reaktive/base/Observer, com/badoo/reaktive/completable/CompletableCallbacks {
 }
 
+public class com/badoo/reaktive/completable/CompletableWrapper : com/badoo/reaktive/completable/Completable {
+	public fun <init> (Lcom/badoo/reaktive/completable/Completable;)V
+	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
+	public final fun subscribe (Lcom/badoo/reaktive/completable/Completable;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/disposable/Disposable;
+	public fun subscribe (Lcom/badoo/reaktive/completable/CompletableObserver;)V
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/completable/CompletableWrapper;Lcom/badoo/reaktive/completable/Completable;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+}
+
 public final class com/badoo/reaktive/completable/ConcatKt {
 	public static final fun concat (Ljava/lang/Iterable;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun concat ([Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
@@ -181,6 +189,10 @@ public final class com/badoo/reaktive/completable/VariousKt {
 	public static final fun completableOfNever ()Lcom/badoo/reaktive/completable/Completable;
 	public static final fun completableUnsafe (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun toCompletableOfError (Ljava/lang/Throwable;)Lcom/badoo/reaktive/completable/Completable;
+}
+
+public final class com/badoo/reaktive/completable/WrapperKt {
+	public static final fun wrap (Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/CompletableWrapper;
 }
 
 public class com/badoo/reaktive/disposable/CompositeDisposable : com/badoo/reaktive/disposable/Disposable {
@@ -356,6 +368,14 @@ public abstract interface class com/badoo/reaktive/maybe/MaybeEmitter : com/bado
 public abstract interface class com/badoo/reaktive/maybe/MaybeObserver : com/badoo/reaktive/base/Observer, com/badoo/reaktive/maybe/MaybeCallbacks {
 }
 
+public class com/badoo/reaktive/maybe/MaybeWrapper : com/badoo/reaktive/maybe/Maybe {
+	public fun <init> (Lcom/badoo/reaktive/maybe/Maybe;)V
+	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
+	public final fun subscribe (Lcom/badoo/reaktive/maybe/Maybe;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
+	public fun subscribe (Lcom/badoo/reaktive/maybe/MaybeObserver;)V
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/maybe/MaybeWrapper;Lcom/badoo/reaktive/maybe/Maybe;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+}
+
 public final class com/badoo/reaktive/maybe/MergeKt {
 	public static final fun merge (Ljava/lang/Iterable;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun merge ([Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/observable/Observable;
@@ -432,6 +452,10 @@ public final class com/badoo/reaktive/maybe/VariousKt {
 	public static final fun toMaybe (Ljava/lang/Object;)Lcom/badoo/reaktive/maybe/Maybe;
 	public static final fun toMaybeNotNull (Ljava/lang/Object;)Lcom/badoo/reaktive/maybe/Maybe;
 	public static final fun toMaybeOfError (Ljava/lang/Throwable;)Lcom/badoo/reaktive/maybe/Maybe;
+}
+
+public final class com/badoo/reaktive/maybe/WrapperKt {
+	public static final fun wrap (Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/MaybeWrapper;
 }
 
 public final class com/badoo/reaktive/maybe/ZipKt {
@@ -638,6 +662,14 @@ public final class com/badoo/reaktive/observable/ObservableEmitterSerializeKt {
 public abstract interface class com/badoo/reaktive/observable/ObservableObserver : com/badoo/reaktive/base/Observer, com/badoo/reaktive/observable/ObservableCallbacks {
 }
 
+public class com/badoo/reaktive/observable/ObservableWrapper : com/badoo/reaktive/observable/Observable {
+	public fun <init> (Lcom/badoo/reaktive/observable/Observable;)V
+	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
+	public final fun subscribe (Lcom/badoo/reaktive/observable/Observable;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
+	public fun subscribe (Lcom/badoo/reaktive/observable/ObservableObserver;)V
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/observable/ObservableWrapper;Lcom/badoo/reaktive/observable/Observable;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+}
+
 public final class com/badoo/reaktive/observable/ObserveOnKt {
 	public static final fun observeOn (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/observable/Observable;
 }
@@ -802,6 +834,10 @@ public final class com/badoo/reaktive/observable/WithLatestFromKt {
 	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function3;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Ljava/util/Collection;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/observable/WrapperKt {
+	public static final fun wrap (Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/ObservableWrapper;
 }
 
 public final class com/badoo/reaktive/observable/ZipKt {
@@ -1011,6 +1047,14 @@ public abstract interface class com/badoo/reaktive/single/SingleEmitter : com/ba
 public abstract interface class com/badoo/reaktive/single/SingleObserver : com/badoo/reaktive/base/Observer, com/badoo/reaktive/single/SingleCallbacks {
 }
 
+public class com/badoo/reaktive/single/SingleWrapper : com/badoo/reaktive/single/Single {
+	public fun <init> (Lcom/badoo/reaktive/single/Single;)V
+	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
+	public final fun subscribe (Lcom/badoo/reaktive/single/Single;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
+	public fun subscribe (Lcom/badoo/reaktive/single/SingleObserver;)V
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/single/SingleWrapper;Lcom/badoo/reaktive/single/Single;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+}
+
 public final class com/badoo/reaktive/single/SubscribeKt {
 	public static final fun subscribe (Lcom/badoo/reaktive/single/Single;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
 	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/single/Single;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
@@ -1042,6 +1086,10 @@ public final class com/badoo/reaktive/single/VariousKt {
 	public static final fun singleUnsafe (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
 	public static final fun toSingle (Ljava/lang/Object;)Lcom/badoo/reaktive/single/Single;
 	public static final fun toSingleOfError (Ljava/lang/Throwable;)Lcom/badoo/reaktive/single/Single;
+}
+
+public final class com/badoo/reaktive/single/WrapperKt {
+	public static final fun wrap (Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/single/SingleWrapper;
 }
 
 public final class com/badoo/reaktive/single/ZipKt {
