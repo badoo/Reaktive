@@ -14,7 +14,7 @@ import com.badoo.reaktive.maybe.subscribe as subscribeRx
 open class MaybeWrapper<out T>(inner: Maybe<T>) : Maybe<T> by inner {
 
     @UseReturnValue
-    fun <T> Maybe<T>.subscribe(
+    fun subscribe(
         isThreadLocal: Boolean = false,
         onSubscribe: ((Disposable) -> Unit)? = null,
         onError: ((Throwable) -> Unit)? = null,

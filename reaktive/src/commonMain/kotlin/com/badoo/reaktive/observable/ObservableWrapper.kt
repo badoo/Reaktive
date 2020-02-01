@@ -14,7 +14,7 @@ import com.badoo.reaktive.observable.subscribe as subscribeRx
 open class ObservableWrapper<out T>(inner: Observable<T>) : Observable<T> by inner {
 
     @UseReturnValue
-    fun <T> Observable<T>.subscribe(
+    fun subscribe(
         isThreadLocal: Boolean = false,
         onSubscribe: ((Disposable) -> Unit)? = null,
         onError: ((Throwable) -> Unit)? = null,

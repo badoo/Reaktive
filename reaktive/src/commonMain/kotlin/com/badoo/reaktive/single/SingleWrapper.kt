@@ -14,7 +14,7 @@ import com.badoo.reaktive.single.subscribe as subscribeRx
 open class SingleWrapper<out T>(inner: Single<T>) : Single<T> by inner {
 
     @UseReturnValue
-    fun <T> Single<T>.subscribe(
+    fun subscribe(
         isThreadLocal: Boolean = false,
         onSubscribe: ((Disposable) -> Unit)? = null,
         onError: ((Throwable) -> Unit)? = null,

@@ -14,7 +14,7 @@ import com.badoo.reaktive.completable.subscribe as subscribeRx
 open class CompletableWrapper(inner: Completable) : Completable by inner {
 
     @UseReturnValue
-    fun Completable.subscribe(
+    fun subscribe(
         isThreadLocal: Boolean = false,
         onSubscribe: ((Disposable) -> Unit)? = null,
         onError: ((Throwable) -> Unit)? = null,
