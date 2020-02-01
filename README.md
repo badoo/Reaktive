@@ -241,7 +241,7 @@ class MyActivity : AppCompatActivity(), DisposableScope by DisposableScope() {
 
 ### Sharing Reaktive streams with iOS Swift
 Unlike coroutines Reaktive streams can be directly used from Swift. But since generics for interfaces 
-are [https://kotlinlang.org/docs/reference/native/objc_interop.html#generics](not exported to Swift), 
+are [not exported to Swift](https://kotlinlang.org/docs/reference/native/objc_interop.html#generics), 
 Reaktive provides a workaround.
 
 You can wrap any Reaktive stream into a `Wrapper` class:
@@ -258,7 +258,7 @@ class SharedDataSource {
 }
 ```
 
-Now if you [https://kotlinlang.org/docs/reference/native/objc_interop.html#to-use](enable Objective-C generics) 
+Now if you [enable Objective-C generics](https://kotlinlang.org/docs/reference/native/objc_interop.html#to-use) 
 you will be able to use it from Swift:
 ```swift
 let dataSource = SharedDataSource()
