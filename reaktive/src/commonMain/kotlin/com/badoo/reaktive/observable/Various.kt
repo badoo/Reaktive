@@ -90,3 +90,14 @@ fun <T> observableFromFunction(func: () -> T): Observable<T> =
         emitter.onNext(func())
         emitter.onComplete()
     }
+
+fun <T> observableDeferred(supplier: () -> Observable<T>): Observable<T> =
+    observable { emitter ->
+        supplier().subscribe(
+            object : ObservableObserver<T>, ObservableCallbacks<T> by emitter {
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                }
+            }
+        )
+    }

@@ -41,3 +41,14 @@ fun completableFromFunction(func: () -> Unit): Completable =
         func()
         emitter.onComplete()
     }
+
+fun completableDeferred(supplier: () -> Completable): Completable =
+    completable { emitter ->
+        supplier().subscribe(
+            object : CompletableObserver, CompletableCallbacks by emitter {
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                }
+            }
+        )
+    }

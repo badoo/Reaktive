@@ -44,3 +44,14 @@ fun <T> singleFromFunction(func: () -> T): Single<T> =
     }
 
 fun <T> (() -> T).asSingle(): Single<T> = singleFromFunction(this)
+
+fun <T> singleDeferred(supplier: () -> Single<T>): Single<T> =
+    single { emitter ->
+        supplier().subscribe(
+            object : SingleObserver<T>, SingleCallbacks<T> by emitter {
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                }
+            }
+        )
+    }
