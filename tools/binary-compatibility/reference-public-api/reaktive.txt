@@ -276,6 +276,10 @@ public final class com/badoo/reaktive/maybe/ConcatKt {
 	public static final fun concat ([Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/observable/Observable;
 }
 
+public final class com/badoo/reaktive/maybe/DefaultIfEmptyKt {
+	public static final fun defaultIfEmpty (Lcom/badoo/reaktive/maybe/Maybe;Ljava/lang/Object;)Lcom/badoo/reaktive/single/Single;
+}
+
 public final class com/badoo/reaktive/maybe/DelayKt {
 	public static final fun delay (Lcom/badoo/reaktive/maybe/Maybe;JLcom/badoo/reaktive/scheduler/Scheduler;Z)Lcom/badoo/reaktive/maybe/Maybe;
 	public static synthetic fun delay$default (Lcom/badoo/reaktive/maybe/Maybe;JLcom/badoo/reaktive/scheduler/Scheduler;ZILjava/lang/Object;)Lcom/badoo/reaktive/maybe/Maybe;
