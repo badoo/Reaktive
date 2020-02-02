@@ -68,14 +68,3 @@ fun <T> maybeFromFunction(func: () -> T): Maybe<T> =
     maybe { emitter ->
         emitter.onSuccess(func())
     }
-
-fun <T> maybeDeferred(supplier: () -> Maybe<T>): Maybe<T> =
-    maybe { emitter ->
-        supplier().subscribe(
-            object : MaybeObserver<T>, MaybeCallbacks<T> by emitter {
-                override fun onSubscribe(disposable: Disposable) {
-                    emitter.setDisposable(disposable)
-                }
-            }
-        )
-    }
