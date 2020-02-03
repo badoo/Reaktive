@@ -292,6 +292,10 @@ public final class com/badoo/reaktive/maybe/ConcatKt {
 	public static final fun concat ([Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/observable/Observable;
 }
 
+public final class com/badoo/reaktive/maybe/DefaultIfEmptyKt {
+	public static final fun defaultIfEmpty (Lcom/badoo/reaktive/maybe/Maybe;Ljava/lang/Object;)Lcom/badoo/reaktive/single/Single;
+}
+
 public final class com/badoo/reaktive/maybe/DeferKt {
 	public static final fun maybeDefer (Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/maybe/Maybe;
 }
