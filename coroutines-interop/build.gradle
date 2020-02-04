@@ -22,6 +22,12 @@ kotlin {
             }
         }
 
+        jvmCommonTest {
+            dependencies {
+                implementation Deps.kotlinx.coroutines.test
+            }
+        }
+
         jvmMain {
             dependencies {
                 implementation Deps.kotlinx.coroutines.core
