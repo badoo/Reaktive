@@ -100,6 +100,10 @@ abstract class DarwinPlugin : Plugin<Project> {
     private fun setupBuildFat(target: Project) {
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
             targets.withType(KotlinNativeTarget::class.java).configureEach {
+                if (konanTarget == KonanTarget.MACOS_X64) {
+                    // macOS does not support fat framework
+                    return@configureEach
+                }
                 binaries.withType(Framework::class.java).configureEach {
                     val framework = this
                     val binaryBaseName = baseName.takeIf { it != target.name } ?: ""
