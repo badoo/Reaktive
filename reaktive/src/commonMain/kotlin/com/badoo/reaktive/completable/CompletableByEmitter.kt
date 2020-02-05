@@ -1,40 +1,6 @@
 package com.badoo.reaktive.completable
 
-import com.badoo.reaktive.base.tryCatch
-import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
-
-inline fun completable(crossinline onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable =
-    completableUnsafe { observer ->
-        val emitter =
-            object : DisposableWrapper(), CompletableEmitter {
-                override fun setDisposable(disposable: Disposable?) {
-                    set(disposable)
-                }
-
-                override fun onComplete() {
-                    doIfNotDisposedAndDispose(block = observer::onComplete)
-                }
-
-                override fun onError(error: Throwable) {
-                    doIfNotDisposedAndDispose {
-                        observer.onError(error)
-                    }
-                }
-
-                private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
-                    if (!isDisposed) {
-                        val disposable: Disposable? = replace(null)
-                        try {
-                            dispose()
-                            block()
-                        } finally {
-                            disposable?.dispose()
-                        }
-                    }
-                }
-            }
-
-        observer.onSubscribe(emitter)
-        emitter.tryCatch { onSubscribe(emitter) }
-    }
+// Separate implementations are because JS tests are randomly failing with ReferenceError if the function is inlined.
+// So do not inline for JS at the moment.
+// TODO: recheck later
+expect fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable
