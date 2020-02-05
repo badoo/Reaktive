@@ -30,8 +30,13 @@ inline fun <T> maybe(crossinline onSubscribe: (emitter: MaybeEmitter<T>) -> Unit
 
                 private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
                     if (!isDisposed) {
-                        dispose()
-                        block()
+                        val disposable: Disposable? = replace(null)
+                        try {
+                            dispose()
+                            block()
+                        } finally {
+                            disposable?.dispose()
+                        }
                     }
                 }
             }

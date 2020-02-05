@@ -26,8 +26,13 @@ inline fun <T> single(crossinline onSubscribe: (emitter: SingleEmitter<T>) -> Un
 
                 private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
                     if (!isDisposed) {
-                        dispose()
-                        block()
+                        val disposable: Disposable? = replace(null)
+                        try {
+                            dispose()
+                            block()
+                        } finally {
+                            disposable?.dispose()
+                        }
                     }
                 }
             }

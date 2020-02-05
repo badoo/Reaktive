@@ -12,7 +12,10 @@ import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -146,14 +149,14 @@ class ObservableByEmitterTest {
     }
 
     @Test
-    fun disposable_disposed_AFTER_onComplete_signalled() {
+    fun disposable_disposed_WHEN_onComplete_signalled() {
         emitter.onComplete()
 
         observer.assertDisposed()
     }
 
     @Test
-    fun disposable_disposed_AFTER_onError_signalled() {
+    fun disposable_disposed_WHEN_onError_signalled() {
         emitter.onError(Throwable())
 
         observer.assertDisposed()
@@ -200,25 +203,26 @@ class ObservableByEmitterTest {
     }
 
     @Test
-    fun assigned_disposable_is_disposed_WHEN_onComplete_is_signalled() {
-        val disposable = Disposable()
-        emitter.setDisposable(disposable)
+    fun assigned_disposable_is_disposed_AFTER_onComplete_is_signalled() {
+        val events = atomicList<String>()
+        observable.subscribe(observer(onComplete = { events += "onComplete" }))
+        emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onComplete()
 
-        assertTrue(disposable.isDisposed)
+        assertEquals(listOf("onComplete", "dispose"), events.value)
     }
 
     @Test
-    fun assigned_disposable_is_disposed_WHEN_onError_is_signalled() {
-        val disposable = Disposable()
-        emitter.setDisposable(disposable)
+    fun assigned_disposable_is_disposed_AFTER_onError_is_signalled() {
+        val events = atomicList<String>()
+        observable.subscribe(observer(onError = { events += "onError" }))
+        emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onError(Throwable())
 
-        assertTrue(disposable.isDisposed)
+        assertEquals(listOf("onError", "dispose"), events.value)
     }
-
 
     @Test
     fun isDisposed_is_false_WHEN_created() {
