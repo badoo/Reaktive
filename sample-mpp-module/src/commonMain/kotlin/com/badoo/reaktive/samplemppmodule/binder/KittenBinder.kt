@@ -1,6 +1,5 @@
 package com.badoo.reaktive.samplemppmodule.binder
 
-
 import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
 import com.badoo.reaktive.disposable.scope.DisposableScope
 import com.badoo.reaktive.disposable.scope.disposableScope

@@ -31,10 +31,33 @@ actual open class DisposableWrapper actual constructor() : Disposable {
      * Also disposes any replaced [Disposable].
      */
     actual fun set(disposable: Disposable?) {
-        synchronized(this) {
-            if (_isDisposed) disposable else swapDisposable(disposable)
-        }
+        replace(disposable)
             ?.dispose()
+    }
+
+    /**
+     * Atomically either replaces any existing [Disposable]
+     * with the specified one or disposes it if wrapper is already disposed.
+     * Does not dispose any replaced [Disposable].
+     *
+     * @param disposable a new [Disposable], will be disposed if wrapper is already dispose
+     * @return replaced [Disposable] if any
+     */
+    actual fun replace(disposable: Disposable?): Disposable? {
+        var disposableToDispose: Disposable? = null
+        var oldDisposable: Disposable? = null
+
+        synchronized(this) {
+            if (_isDisposed) {
+                disposableToDispose = disposable
+            } else {
+                oldDisposable = swapDisposable(disposable)
+            }
+        }
+
+        disposableToDispose?.dispose()
+
+        return oldDisposable
     }
 
     private fun swapDisposable(new: Disposable?): Disposable? =

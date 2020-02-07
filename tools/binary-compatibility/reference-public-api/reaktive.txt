@@ -231,6 +231,7 @@ public class com/badoo/reaktive/disposable/DisposableWrapper : com/badoo/reaktiv
 	public fun <init> ()V
 	public fun dispose ()V
 	public fun isDisposed ()Z
+	public final fun replace (Lcom/badoo/reaktive/disposable/Disposable;)Lcom/badoo/reaktive/disposable/Disposable;
 	public final fun set (Lcom/badoo/reaktive/disposable/Disposable;)V
 }
 
