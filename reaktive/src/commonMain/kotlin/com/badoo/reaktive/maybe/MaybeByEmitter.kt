@@ -1,41 +1,7 @@
 package com.badoo.reaktive.maybe
 
-import com.badoo.reaktive.base.tryCatch
-import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
-
-inline fun <T> maybe(crossinline onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T> =
-    maybeUnsafe { observer ->
-        val emitter =
-            object : DisposableWrapper(), MaybeEmitter<T> {
-                override fun setDisposable(disposable: Disposable?) {
-                    set(disposable)
-                }
-
-                override fun onSuccess(value: T) {
-                    doIfNotDisposedAndDispose {
-                        observer.onSuccess(value)
-                    }
-                }
-
-                override fun onComplete() {
-                    doIfNotDisposedAndDispose(observer::onComplete)
-                }
-
-                override fun onError(error: Throwable) {
-                    doIfNotDisposedAndDispose {
-                        observer.onError(error)
-                    }
-                }
-
-                private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
-                    if (!isDisposed) {
-                        dispose()
-                        block()
-                    }
-                }
-            }
-
-        observer.onSubscribe(emitter)
-        emitter.tryCatch { onSubscribe(emitter) }
-    }
+// Separate implementations are because JS tests are randomly failing with ReferenceError if the function is inlined.
+// So do not inline for JS at the moment.
+@Suppress("ForbiddenComment")
+// TODO: recheck later
+expect fun <T> maybe(onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T>

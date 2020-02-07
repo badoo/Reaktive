@@ -1,37 +1,7 @@
 package com.badoo.reaktive.single
 
-import com.badoo.reaktive.base.tryCatch
-import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
-
-inline fun <T> single(crossinline onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
-    singleUnsafe { observer ->
-        val emitter =
-            object : DisposableWrapper(), SingleEmitter<T> {
-                override fun setDisposable(disposable: Disposable?) {
-                    set(disposable)
-                }
-
-                override fun onSuccess(value: T) {
-                    doIfNotDisposedAndDispose {
-                        observer.onSuccess(value)
-                    }
-                }
-
-                override fun onError(error: Throwable) {
-                    doIfNotDisposedAndDispose {
-                        observer.onError(error)
-                    }
-                }
-
-                private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
-                    if (!isDisposed) {
-                        dispose()
-                        block()
-                    }
-                }
-            }
-
-        observer.onSubscribe(emitter)
-        emitter.tryCatch { onSubscribe(emitter) }
-    }
+// Separate implementations are because JS tests are randomly failing with ReferenceError if the function is inlined.
+// So do not inline for JS at the moment.
+@Suppress("ForbiddenComment")
+// TODO: recheck later
+expect fun <T> single(onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T>

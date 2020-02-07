@@ -18,6 +18,7 @@ actual open class DisposableWrapper actual constructor() : Disposable {
      */
     actual override fun dispose() {
         setHolder(null)
+            ?.dispose()
     }
 
     /**
@@ -26,23 +27,35 @@ actual open class DisposableWrapper actual constructor() : Disposable {
      * Also disposes any replaced [Disposable].
      */
     actual fun set(disposable: Disposable?) {
-        setHolder(Holder(disposable))
+        replace(disposable)
+            ?.dispose()
     }
 
-    private fun setHolder(holder: Holder?) {
+    /**
+     * Atomically either replaces any existing [Disposable]
+     * with the specified one or disposes it if wrapper is already disposed.
+     * Does not dispose any replaced [Disposable].
+     *
+     * @param disposable a new [Disposable], will be disposed if wrapper is already dispose
+     * @return replaced [Disposable] if any
+     */
+    actual fun replace(disposable: Disposable?): Disposable? =
+        setHolder(Holder(disposable))
+
+    private fun setHolder(holder: Holder?): Disposable? =
         ref
             .getAndUpdate { oldHolder ->
                 if (oldHolder == null) {
                     holder?.dispose()
+                    null
+                } else {
+                    holder
                 }
-
-                holder
             }
-            ?.dispose()
-    }
+            ?.disposable
 
     private class Holder(
-        private val disposable: Disposable?
+        val disposable: Disposable?
     ) {
         fun dispose() {
             disposable?.dispose()

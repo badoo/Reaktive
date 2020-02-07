@@ -1,18 +1,19 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.maybe.maybe
 import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.base.assertSubscribed
-import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.single.assertNotSuccess
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -20,8 +21,8 @@ class SingleByEmitterTest {
 
     private val emitterRef = AtomicReference<SingleEmitter<Int?>?>(null)
     private val emitter: SingleEmitter<Int?> get() = requireNotNull(emitterRef.value)
-    private val maybe = createSingle(emitterRef)
-    private val observer = maybe.test()
+    private val single = createSingle(emitterRef)
+    private val observer = single.test()
 
     // To avoid freezing of the test class
     private fun createSingle(emitterReference: AtomicReference<SingleEmitter<Int?>?>): Single<Int?> =
@@ -101,14 +102,14 @@ class SingleByEmitterTest {
     }
 
     @Test
-    fun disposable_disposed_AFTER_onSuccess_is_signalled() {
+    fun disposable_disposed_WHEN_onSuccess_is_signalled() {
         emitter.onSuccess(0)
 
         observer.assertDisposed()
     }
 
     @Test
-    fun disposable_disposed_AFTER_onError_signalled() {
+    fun disposable_disposed_WHEN_onError_signalled() {
         emitter.onError(Throwable())
 
         observer.assertDisposed()
@@ -155,22 +156,24 @@ class SingleByEmitterTest {
 
     @Test
     fun assigned_disposable_is_disposed_WHEN_onSuccess_is_signalled() {
-        val disposable = Disposable()
-        emitter.setDisposable(disposable)
+        val events = atomicList<String>()
+        single.subscribe(observer(onSuccess = { events += "onSuccess" }))
+        emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onSuccess(0)
 
-        assertTrue(disposable.isDisposed)
+        assertEquals(listOf("onSuccess", "dispose"), events.value)
     }
 
     @Test
     fun assigned_disposable_is_disposed_WHEN_onError_is_signalled() {
-        val disposable = Disposable()
-        emitter.setDisposable(disposable)
+        val events = atomicList<String>()
+        single.subscribe(observer(onError = { events += "onError" }))
+        emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onError(Throwable())
 
-        assertTrue(disposable.isDisposed)
+        assertEquals(listOf("onError", "dispose"), events.value)
     }
 
     @Test
@@ -204,7 +207,7 @@ class SingleByEmitterTest {
         val isSucceededRecursively = AtomicBoolean()
         val isSucceeded = AtomicBoolean()
 
-        maybe.subscribe(
+        single.subscribe(
             observer(
                 onSuccess = {
                     if (!isSucceeded.value) {
@@ -226,7 +229,7 @@ class SingleByEmitterTest {
     fun does_not_success_recursively_WHEN_producing_error() {
         val isSucceededRecursively = AtomicBoolean()
 
-        maybe.subscribe(
+        single.subscribe(
             observer(
                 onSuccess = { isSucceededRecursively.value = true },
                 onError = { emitter.onSuccess(0) }
@@ -242,7 +245,7 @@ class SingleByEmitterTest {
     fun does_not_produce_error_recursively_WHEN_succeeding() {
         val isErrorRecursively = AtomicBoolean()
 
-        maybe.subscribe(
+        single.subscribe(
             observer(
                 onSuccess = { emitter.onError(Exception()) },
                 onError = { isErrorRecursively.value = true }
@@ -259,7 +262,7 @@ class SingleByEmitterTest {
         val isErrorRecursively = AtomicBoolean()
         val hasError = AtomicBoolean()
 
-        maybe.subscribe(
+        single.subscribe(
             observer(
                 onError = {
                     if (!hasError.value) {
