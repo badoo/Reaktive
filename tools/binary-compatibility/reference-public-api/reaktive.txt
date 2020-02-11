@@ -915,6 +915,13 @@ public final class com/badoo/reaktive/scheduler/Scheduler$Executor$DefaultImpls 
 	public static synthetic fun submitRepeating$default (Lcom/badoo/reaktive/scheduler/Scheduler$Executor;JJLkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }
 
+public final class com/badoo/reaktive/scheduler/SchedulerExtKt {
+	public static final fun submit (Lcom/badoo/reaktive/scheduler/Scheduler;JLkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun submit$default (Lcom/badoo/reaktive/scheduler/Scheduler;JLkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static final fun submitRepeating (Lcom/badoo/reaktive/scheduler/Scheduler;JJLkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun submitRepeating$default (Lcom/badoo/reaktive/scheduler/Scheduler;JJLkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+}
+
 public final class com/badoo/reaktive/scheduler/SchedulersKt {
 	public static final fun getComputationScheduler ()Lcom/badoo/reaktive/scheduler/Scheduler;
 	public static final fun getIoScheduler ()Lcom/badoo/reaktive/scheduler/Scheduler;
