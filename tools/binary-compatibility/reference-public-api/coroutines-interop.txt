@@ -40,6 +40,15 @@ public final class com/badoo/reaktive/coroutinesinterop/ObservableAsFlowKt {
 	public static final fun asFlow (Lcom/badoo/reaktive/observable/Observable;)Lkotlinx/coroutines/flow/Flow;
 }
 
+public final class com/badoo/reaktive/coroutinesinterop/SchedulerAsCorotuineDispatcherKt {
+	public static final fun asCoroutineDispatcher (Lcom/badoo/reaktive/scheduler/Scheduler;)Lkotlinx/coroutines/CoroutineDispatcher;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/SchedulerCoroutineDispatcher : kotlinx/coroutines/CoroutineDispatcher {
+	public fun <init> (Lcom/badoo/reaktive/scheduler/Scheduler;)V
+	public fun dispatch (Lkotlin/coroutines/CoroutineContext;Ljava/lang/Runnable;)V
+}
+
 public final class com/badoo/reaktive/coroutinesinterop/SingleFromCoroutineKt {
 	public static final fun asSingle (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
 	public static final fun asSingle (Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/single/Single;
