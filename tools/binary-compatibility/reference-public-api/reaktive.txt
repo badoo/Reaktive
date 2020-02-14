@@ -573,6 +573,16 @@ public final class com/badoo/reaktive/observable/DistinctUntilChangedKt {
 	public static synthetic fun distinctUntilChanged$default (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
 
+public final class com/badoo/reaktive/observable/DoOnAfterKt {
+	public static final fun doOnAfterComplete (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun doOnAfterDispose (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun doOnAfterError (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun doOnAfterFinally (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun doOnAfterNext (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun doOnAfterSubscribe (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun doOnAfterTerminate (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/observable/Observable;
+}
+
 public final class com/badoo/reaktive/observable/DoOnBeforeKt {
 	public static final fun doOnBeforeComplete (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun doOnBeforeDispose (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/observable/Observable;
