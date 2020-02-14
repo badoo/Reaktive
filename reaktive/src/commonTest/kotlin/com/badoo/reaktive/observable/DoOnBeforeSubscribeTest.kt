@@ -84,7 +84,7 @@ class DoOnBeforeSubscribeTest
     }
 
     @Test
-    fun does_not_call_action_WHEN_emitted_value() {
+    fun does_not_call_action_WHEN_upstream_emitted_value() {
         val isCalled = AtomicBoolean()
         val upstream = TestObservable<Int>()
 
@@ -101,7 +101,7 @@ class DoOnBeforeSubscribeTest
     }
 
     @Test
-    fun does_not_call_action_WHEN_completed() {
+    fun does_not_call_action_WHEN_upstream_completed() {
         val isCalled = AtomicBoolean()
         val upstream = TestObservable<Nothing>()
 
@@ -119,7 +119,7 @@ class DoOnBeforeSubscribeTest
 
 
     @Test
-    fun does_not_call_action_WHEN_produced_error() {
+    fun does_not_call_action_WHEN_upstream_produced_error() {
         val isCalled = AtomicBoolean()
         val upstream = TestObservable<Nothing>()
 
