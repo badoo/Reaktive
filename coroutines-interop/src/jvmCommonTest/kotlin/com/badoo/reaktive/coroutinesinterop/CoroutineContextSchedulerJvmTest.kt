@@ -10,7 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @UseExperimental(ExperimentalCoroutinesApi::class)
-class CoroutineContextSchedulerTest {
+class CoroutineContextSchedulerJvmTest {
 
     private val dispatcher = TestCoroutineDispatcher()
     private val clock = TestClock()
