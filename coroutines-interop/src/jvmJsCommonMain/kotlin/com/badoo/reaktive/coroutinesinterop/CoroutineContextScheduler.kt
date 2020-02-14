@@ -49,7 +49,7 @@ internal class CoroutineContextScheduler(
                     try {
                         val iterator = receiveChannel.iterator()
                         while (!receiveChannel.isClosedForReceive && iterator.hasNext()) {
-                            execute(iterator.next())
+                            execute(this, iterator.next())
                         }
                     } finally {
                         receiveChannel.cancel()
@@ -95,9 +95,9 @@ internal class CoroutineContextScheduler(
             }
         }
 
-        private suspend fun CoroutineScope.execute(task: Task) {
+        private suspend fun execute(scope: CoroutineScope, task: Task) {
             if (clock.uptimeMillis < task.startAtMillis) {
-                launch {
+                scope.launch {
                     delayUntilStart(task.startAtMillis)
                     repeatTask(task.periodMillis, task.task)
                 }
