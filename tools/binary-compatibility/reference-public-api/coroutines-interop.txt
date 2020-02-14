@@ -30,12 +30,9 @@ public final class com/badoo/reaktive/coroutinesinterop/SchedulerAsCorotuineDisp
 	public static final fun asCoroutineDispatcher (Lcom/badoo/reaktive/scheduler/Scheduler;)Lkotlinx/coroutines/CoroutineDispatcher;
 }
 
-public final class com/badoo/reaktive/coroutinesinterop/SchedulerCoroutineDispatcher : kotlinx/coroutines/CoroutineDispatcher, kotlinx/coroutines/Delay {
+public final class com/badoo/reaktive/coroutinesinterop/SchedulerCoroutineDispatcher : kotlinx/coroutines/CoroutineDispatcher {
 	public fun <init> (Lcom/badoo/reaktive/scheduler/Scheduler;)V
-	public fun delay (JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun dispatch (Lkotlin/coroutines/CoroutineContext;Ljava/lang/Runnable;)V
-	public fun invokeOnTimeout (JLjava/lang/Runnable;)Lkotlinx/coroutines/DisposableHandle;
-	public fun scheduleResumeAfterDelay (JLkotlinx/coroutines/CancellableContinuation;)V
 }
 
 public final class com/badoo/reaktive/coroutinesinterop/SingleFromCoroutineKt {
