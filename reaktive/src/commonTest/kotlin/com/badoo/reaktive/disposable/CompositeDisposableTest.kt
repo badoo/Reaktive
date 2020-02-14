@@ -1,6 +1,9 @@
 package com.badoo.reaktive.disposable
 
+import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -18,14 +21,18 @@ class CompositeDisposableTest {
     }
 
     @Test
-    fun disposes_all_disposables_WHEN_disposed() {
-        composite += disposable1
-        composite += disposable2
+    fun disposes_all_disposables_in_order_WHEN_disposed() {
+        val events = atomicList<Int>()
+        val disposables =
+            List(100) { index ->
+                Disposable { events += index }
+            }
+
+        disposables.forEach { composite += it }
 
         composite.dispose()
 
-        assertTrue(disposable1.isDisposed)
-        assertTrue(disposable2.isDisposed)
+        assertEquals(List(100) { it }, events.value)
     }
 
     @Test

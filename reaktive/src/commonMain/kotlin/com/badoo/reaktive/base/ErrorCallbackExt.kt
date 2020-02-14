@@ -26,3 +26,14 @@ inline fun ErrorCallback.tryCatch(
         handleReaktiveError(errorTransformer(e), ::onError)
     }
 }
+
+internal inline fun tryCatchAndHandle(
+    errorTransformer: (Throwable) -> Throwable = { it },
+    block: () -> Unit
+) {
+    try {
+        block()
+    } catch (e: Throwable) {
+        handleReaktiveError(errorTransformer(e))
+    }
+}
