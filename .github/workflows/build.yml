@@ -17,6 +17,13 @@ jobs:
         run: sudo apt-get update
       - name: Install dependencies
         run: sudo apt-get install libcurl4-openssl-dev libgtk-3-dev nodejs chromium-browser
+      - name: Set up cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: common-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            common-gradle-
       - name: Build JVM, Android, JS, Linux
         run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build rxjava2-interop:build rxjava3-interop:build coroutines-interop:build :sample-android-app:assembleDebug :sample-js-browser-app:assemble :sample-linuxx64-app:linkDebugExecutableLinux -Ptarget=all_linux_hosted
   macos-build:
@@ -29,6 +36,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Set up cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: macos-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            macos-gradle-
       - name: Build macOS
         run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build sample-macos-app:build -Ptarget=macos
   watchos-build:
@@ -41,6 +55,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Set up cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: watchos-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            watchos-gradle-
       - name: Build watchOS
         run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build -Ptarget=watchos
   tvos-build:
@@ -53,6 +74,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Set up cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: tvos-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            tvos-gradle-
       - name: Build tvOS
         run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build -Ptarget=tvos
   ios-build:
@@ -65,6 +93,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Set up cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ios-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ios-gradle-
       - name: Build iOS
         run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build sample-ios-app:build -Ptarget=ios
   ubuntu-check-compatibility:
@@ -77,5 +112,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Set up cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: binary-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            binary-gradle-
       - name: Run binary compatibility test suite
         run: ./gradlew :tools:binary-compatibility:test -Pbinary-compatibility-override=false -Ptarget=jvm
