@@ -6,6 +6,9 @@
 
 Kotlin multiplatform implementation of Reactive Extensions.
 
+Should you have any questions or feedback welcome to the **Kotlin Slack channel**: 
+[#reaktive](https://kotlinlang.slack.com/archives/CU05HB31A)
+
 ### Setup
 Recommended minimum Gradle version is 5.3. Please read first the documentation about
 [metadata publishing mode](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#experimental-metadata-publishing-mode).

@@ -8,8 +8,22 @@ public final class com/badoo/reaktive/coroutinesinterop/CoroutineContextAsDispos
 	public static final fun asDisposable (Lkotlin/coroutines/CoroutineContext;)Lcom/badoo/reaktive/disposable/Disposable;
 }
 
+public final class com/badoo/reaktive/coroutinesinterop/CoroutineContextAsSchedulerKt {
+	public static final fun asScheduler (Lkotlin/coroutines/CoroutineContext;)Lcom/badoo/reaktive/scheduler/Scheduler;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/CoroutineContextScheduler : com/badoo/reaktive/scheduler/Scheduler {
+	public fun <init> (Lkotlin/coroutines/CoroutineContext;Lcom/badoo/reaktive/utils/clock/Clock;)V
+	public fun destroy ()V
+	public fun newExecutor ()Lcom/badoo/reaktive/scheduler/Scheduler$Executor;
+}
+
 public final class com/badoo/reaktive/coroutinesinterop/FlowAsObservableKt {
 	public static final fun asObservable (Lkotlinx/coroutines/flow/Flow;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/JobAsDisposableKt {
+	public static final fun asDisposable (Lkotlinx/coroutines/Job;)Lcom/badoo/reaktive/disposable/Disposable;
 }
 
 public final class com/badoo/reaktive/coroutinesinterop/LaunchCoroutineKt {
@@ -24,6 +38,15 @@ public final class com/badoo/reaktive/coroutinesinterop/MaybeFromCoroutineKt {
 
 public final class com/badoo/reaktive/coroutinesinterop/ObservableAsFlowKt {
 	public static final fun asFlow (Lcom/badoo/reaktive/observable/Observable;)Lkotlinx/coroutines/flow/Flow;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/SchedulerAsCorotuineDispatcherKt {
+	public static final fun asCoroutineDispatcher (Lcom/badoo/reaktive/scheduler/Scheduler;)Lkotlinx/coroutines/CoroutineDispatcher;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/SchedulerCoroutineDispatcher : kotlinx/coroutines/CoroutineDispatcher {
+	public fun <init> (Lcom/badoo/reaktive/scheduler/Scheduler;)V
+	public fun dispatch (Lkotlin/coroutines/CoroutineContext;Ljava/lang/Runnable;)V
 }
 
 public final class com/badoo/reaktive/coroutinesinterop/SingleFromCoroutineKt {
