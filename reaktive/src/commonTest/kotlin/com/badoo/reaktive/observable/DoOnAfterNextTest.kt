@@ -12,17 +12,17 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-class DoOnBeforeNextTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeNext {} }) {
+class DoOnAfterNextTest
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnAfterNext {} }) {
 
     private val upstream = TestObservable<Int>()
 
     @Test
-    fun calls_action_before_emitting() {
+    fun calls_action_after_emitting() {
         val callOrder = SharedList<String>()
 
         upstream
-            .doOnBeforeNext { value ->
+            .doOnAfterNext { value ->
                 callOrder += "action $value"
             }
             .subscribe(
@@ -36,7 +36,7 @@ class DoOnBeforeNextTest
         upstream.onNext(0)
         upstream.onNext(1)
 
-        assertEquals(listOf("action 0", "onNext 0", "action 1", "onNext 1"), callOrder)
+        assertEquals(listOf("onNext 0", "action 0", "onNext 1", "action 1"), callOrder)
     }
 
     @Test
@@ -44,7 +44,7 @@ class DoOnBeforeNextTest
         val isCalled = AtomicBoolean()
 
         upstream
-            .doOnBeforeNext {
+            .doOnAfterNext {
                 isCalled.value = true
             }
             .test()
@@ -59,7 +59,7 @@ class DoOnBeforeNextTest
         val isCalled = AtomicBoolean()
 
         upstream
-            .doOnBeforeNext {
+            .doOnAfterNext {
                 isCalled.value = true
             }
             .test()
@@ -75,7 +75,7 @@ class DoOnBeforeNextTest
 
         val observer =
             upstream
-                .doOnBeforeNext { throw error }
+                .doOnAfterNext { throw error }
                 .test()
 
         upstream.onNext(0)
@@ -89,7 +89,7 @@ class DoOnBeforeNextTest
 
         val upstream = TestObservableRelay<Int>()
         upstream
-            .doOnBeforeNext {
+            .doOnAfterNext {
                 count.addAndGet(1)
                 throw Exception()
             }

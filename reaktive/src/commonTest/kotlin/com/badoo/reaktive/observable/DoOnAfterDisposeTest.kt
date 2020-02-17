@@ -15,8 +15,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class DoOnBeforeDisposeTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeDispose {} }) {
+class DoOnAfterDisposeTest
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnAfterDispose {} }) {
 
     private val upstream = TestObservable<Int>()
 
@@ -26,7 +26,7 @@ class DoOnBeforeDisposeTest
     }
 
     @Test
-    fun calls_action_before_disposing_upstream() {
+    fun calls_action_after_disposing_upstream() {
         val callOrder = SharedList<String>()
 
         observableUnsafe<Nothing> { observer ->
@@ -36,25 +36,25 @@ class DoOnBeforeDisposeTest
                 }
             )
         }
-            .doOnBeforeDispose {
+            .doOnAfterDispose {
                 callOrder += "action"
             }
             .test()
             .dispose()
 
-        assertEquals(listOf("action", "dispose"), callOrder)
+        assertEquals(listOf("dispose", "action"), callOrder)
     }
 
     @Test
-    fun calls_action_WHEN_disposed_before_upstream_onSubscribe() {
+    fun does_not_calls_action_WHEN_disposed_before_upstream_onSubscribe() {
         val isCalled = AtomicBoolean()
 
         observableUnsafe<Nothing> {}
-            .doOnBeforeDispose { isCalled.value = true }
+            .doOnAfterDispose { isCalled.value = true }
             .test()
             .dispose()
 
-        assertTrue(isCalled.value)
+        assertFalse(isCalled.value)
     }
 
     @Test
@@ -62,7 +62,7 @@ class DoOnBeforeDisposeTest
         val isCalled = AtomicBoolean()
 
         upstream
-            .doOnBeforeDispose {
+            .doOnAfterDispose {
                 isCalled.value = true
             }
             .test()
@@ -77,7 +77,7 @@ class DoOnBeforeDisposeTest
         val isCalled = AtomicBoolean()
 
         upstream
-            .doOnBeforeDispose {
+            .doOnAfterDispose {
                 isCalled.value = true
             }
             .test()
@@ -92,7 +92,7 @@ class DoOnBeforeDisposeTest
         val isCalled = AtomicBoolean()
 
         upstream
-            .doOnBeforeDispose {
+            .doOnAfterDispose {
                 isCalled.value = true
             }
             .test()
@@ -109,7 +109,7 @@ class DoOnBeforeDisposeTest
 
         val observer =
             upstream
-                .doOnBeforeDispose { throw error }
+                .doOnAfterDispose { throw error }
                 .test()
 
         observer.dispose()
@@ -124,7 +124,7 @@ class DoOnBeforeDisposeTest
 
         val observer =
             upstream
-                .doOnBeforeDispose { throw error }
+                .doOnAfterDispose { throw error }
                 .test()
 
         observer.dispose()

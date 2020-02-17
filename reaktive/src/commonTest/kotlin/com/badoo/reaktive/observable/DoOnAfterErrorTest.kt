@@ -1,6 +1,7 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.exceptions.CompositeException
+import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
@@ -12,18 +13,18 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class DoOnBeforeErrorTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeError {} }) {
+class DoOnAfterErrorTest
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnAfterError {} }) {
 
     private val upstream = TestObservable<Int>()
 
     @Test
-    fun calls_action_before_failing() {
+    fun calls_action_after_failing() {
         val callOrder = SharedList<Pair<String, Throwable>>()
         val exception = Throwable()
 
         upstream
-            .doOnBeforeError { error ->
+            .doOnAfterError { error ->
                 callOrder += "action" to error
             }
             .subscribe(
@@ -36,7 +37,7 @@ class DoOnBeforeErrorTest
 
         upstream.onError(exception)
 
-        assertEquals(listOf("action" to exception, "onError" to exception), callOrder)
+        assertEquals(listOf("onError" to exception, "action" to exception), callOrder)
     }
 
     @Test
@@ -44,7 +45,7 @@ class DoOnBeforeErrorTest
         val isCalled = AtomicBoolean()
 
         upstream
-            .doOnBeforeError {
+            .doOnAfterError {
                 isCalled.value = true
             }
             .test()
@@ -59,7 +60,7 @@ class DoOnBeforeErrorTest
         val isCalled = AtomicBoolean()
 
         upstream
-            .doOnBeforeError {
+            .doOnAfterError {
                 isCalled.value = true
             }
             .test()
@@ -70,18 +71,18 @@ class DoOnBeforeErrorTest
     }
 
     @Test
-    fun produces_CompositeException_WHEN_upstream_produced_error_and_exception_in_lambda() {
+    fun calls_uncaught_exception_handler_with_CompositeException_WHEN_upstream_produced_error_and_exception_in_lambda() {
+        val caughtException = mockUncaughtExceptionHandler()
         val error1 = Exception()
         val error2 = Exception()
 
-        val observer =
-            upstream
-                .doOnBeforeError { throw error2 }
-                .test()
+        upstream
+            .doOnAfterError { throw error2 }
+            .test()
 
         upstream.onError(error1)
 
-        val error: Throwable? = observer.error
+        val error: Throwable? = caughtException.value
         assertTrue(error is CompositeException)
         assertSame(error1, error.cause1)
         assertSame(error2, error.cause2)

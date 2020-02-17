@@ -11,15 +11,15 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-class DoOnBeforeSubscribeTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeSubscribe {} }) {
+class DoOnAfterSubscribeTest
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnAfterSubscribe {} }) {
 
     @Test
-    fun calls_action_before_downstream_onSubscribe_WHEN_action_does_not_throw_exception() {
+    fun calls_action_after_downstream_onSubscribe_WHEN_action_does_not_throw_exception() {
         val callOrder = SharedList<String>()
 
         observableUnsafe<Nothing> {}
-            .doOnBeforeSubscribe {
+            .doOnAfterSubscribe {
                 callOrder += "action"
             }
             .subscribe(
@@ -30,7 +30,7 @@ class DoOnBeforeSubscribeTest
                 }
             )
 
-        assertEquals(listOf("action", "onSubscribe"), callOrder)
+        assertEquals(listOf("onSubscribe", "action"), callOrder)
     }
 
     @Test
@@ -39,7 +39,7 @@ class DoOnBeforeSubscribeTest
         val exception = Exception()
 
         observableUnsafe<Nothing> {}
-            .doOnBeforeSubscribe {
+            .doOnAfterSubscribe {
                 throw exception
             }
             .subscribe(
@@ -61,7 +61,7 @@ class DoOnBeforeSubscribeTest
     fun disposes_downstream_disposable_WHEN_action_throws_exception() {
         val observer =
             observableUnsafe<Nothing> {}
-                .doOnBeforeSubscribe { throw Exception() }
+                .doOnAfterSubscribe { throw Exception() }
                 .test()
 
         observer.assertDisposed()
@@ -75,7 +75,7 @@ class DoOnBeforeSubscribeTest
             isCalled.value = false
             observer.onSubscribe(Disposable())
         }
-            .doOnBeforeSubscribe {
+            .doOnAfterSubscribe {
                 isCalled.value = true
             }
             .test()
@@ -89,7 +89,7 @@ class DoOnBeforeSubscribeTest
         val upstream = TestObservable<Int>()
 
         upstream
-            .doOnBeforeSubscribe {
+            .doOnAfterSubscribe {
                 isCalled.value = true
             }
             .test()
@@ -106,7 +106,7 @@ class DoOnBeforeSubscribeTest
         val upstream = TestObservable<Nothing>()
 
         upstream
-            .doOnBeforeSubscribe {
+            .doOnAfterSubscribe {
                 isCalled.value = true
             }
             .test()
@@ -124,7 +124,7 @@ class DoOnBeforeSubscribeTest
         val upstream = TestObservable<Nothing>()
 
         upstream
-            .doOnBeforeSubscribe {
+            .doOnAfterSubscribe {
                 isCalled.value = true
             }
             .test()

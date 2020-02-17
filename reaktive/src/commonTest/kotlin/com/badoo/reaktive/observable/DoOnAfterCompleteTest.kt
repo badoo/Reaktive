@@ -1,6 +1,6 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
@@ -9,18 +9,19 @@ import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertSame
 
-class DoOnBeforeCompleteTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeComplete {} }) {
+class DoOnAfterCompleteTest
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnAfterComplete {} }) {
 
     private val upstream = TestObservable<Int>()
 
     @Test
-    fun calls_action_before_completion() {
+    fun calls_action_after_completion() {
         val callOrder = SharedList<String>()
 
         upstream
-            .doOnBeforeComplete {
+            .doOnAfterComplete {
                 callOrder += "action"
             }
             .subscribe(
@@ -33,7 +34,7 @@ class DoOnBeforeCompleteTest
 
         upstream.onComplete()
 
-        assertEquals(listOf("action", "onComplete"), callOrder)
+        assertEquals(listOf("onComplete", "action"), callOrder)
     }
 
     @Test
@@ -41,7 +42,7 @@ class DoOnBeforeCompleteTest
         val isCalled = AtomicBoolean()
 
         upstream
-            .doOnBeforeComplete {
+            .doOnAfterComplete {
                 isCalled.value = true
             }
             .test()
@@ -56,7 +57,7 @@ class DoOnBeforeCompleteTest
         val isCalled = AtomicBoolean()
 
         upstream
-            .doOnBeforeComplete {
+            .doOnAfterComplete {
                 isCalled.value = true
             }
             .test()
@@ -67,16 +68,16 @@ class DoOnBeforeCompleteTest
     }
 
     @Test
-    fun produces_error_WHEN_upstream_completed_and_exception_in_lambda() {
+    fun calls_uncaught_exception_handler_WHEN_upstream_completed_and_exception_in_lambda() {
+        val caughtException = mockUncaughtExceptionHandler()
         val error = Exception()
 
-        val observer =
-            upstream
-                .doOnBeforeComplete { throw error }
-                .test()
+        upstream
+            .doOnAfterComplete { throw error }
+            .test()
 
         upstream.onComplete()
 
-        observer.assertError(error)
+        assertSame(error, caughtException.value)
     }
 }

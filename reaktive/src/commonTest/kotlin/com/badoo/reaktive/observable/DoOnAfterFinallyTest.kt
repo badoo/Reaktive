@@ -19,8 +19,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class DoOnBeforeFinallyTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeFinally {} }) {
+class DoOnAfterFinallyTest
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnAfterFinally {} }) {
 
     private val upstream = TestObservable<Int>()
 
@@ -30,11 +30,11 @@ class DoOnBeforeFinallyTest
     }
 
     @Test
-    fun calls_action_before_completion() {
+    fun calls_action_after_completion() {
         val callOrder = SharedList<String>()
 
         upstream
-            .doOnBeforeFinally {
+            .doOnAfterFinally {
                 callOrder += "action"
             }
             .subscribe(
@@ -47,16 +47,16 @@ class DoOnBeforeFinallyTest
 
         upstream.onComplete()
 
-        assertEquals(listOf("action", "onComplete"), callOrder)
+        assertEquals(listOf("onComplete", "action"), callOrder)
     }
 
     @Test
-    fun calls_action_before_failing() {
+    fun calls_action_after_failing() {
         val callOrder = SharedList<String>()
         val exception = Exception()
 
         upstream
-            .doOnBeforeFinally {
+            .doOnAfterFinally {
                 callOrder += "action"
             }
             .subscribe(
@@ -69,11 +69,11 @@ class DoOnBeforeFinallyTest
 
         upstream.onError(exception)
 
-        assertEquals(listOf("action", "onError"), callOrder)
+        assertEquals(listOf("onError", "action"), callOrder)
     }
 
     @Test
-    fun calls_action_before_disposing_upstream() {
+    fun calls_action_after_disposing_upstream() {
         val callOrder = SharedList<String>()
 
         observableUnsafe<Unit> { observer ->
@@ -83,25 +83,25 @@ class DoOnBeforeFinallyTest
                 }
             )
         }
-            .doOnBeforeFinally {
+            .doOnAfterFinally {
                 callOrder += "action"
             }
             .test()
             .dispose()
 
-        assertEquals(listOf("action", "dispose"), callOrder)
+        assertEquals(listOf("dispose", "action"), callOrder)
     }
 
     @Test
-    fun calls_action_WHEN_disposed_before_upstream_onSubscribe() {
+    fun does_not_call_action_WHEN_disposed_before_upstream_onSubscribe() {
         val isCalled = AtomicBoolean()
 
         observableUnsafe<Nothing> {}
-            .doOnBeforeFinally { isCalled.value = true }
+            .doOnAfterFinally { isCalled.value = true }
             .test()
             .dispose()
 
-        assertTrue(isCalled.value)
+        assertFalse(isCalled.value)
     }
 
     @Test
@@ -109,7 +109,7 @@ class DoOnBeforeFinallyTest
         val count = AtomicInt()
 
         upstream
-            .doOnBeforeFinally {
+            .doOnAfterFinally {
                 count.addAndGet(1)
             }
             .test()
@@ -125,7 +125,7 @@ class DoOnBeforeFinallyTest
         val count = AtomicInt()
 
         upstream
-            .doOnBeforeFinally {
+            .doOnAfterFinally {
                 count.addAndGet(1)
             }
             .test()
@@ -142,7 +142,7 @@ class DoOnBeforeFinallyTest
 
         val observer =
             upstream
-                .doOnBeforeFinally {
+                .doOnAfterFinally {
                     count.addAndGet(1)
                 }
                 .test()
@@ -159,7 +159,7 @@ class DoOnBeforeFinallyTest
 
         val observer =
             upstream
-                .doOnBeforeFinally {
+                .doOnAfterFinally {
                     count.addAndGet(1)
                 }
                 .test()
@@ -175,7 +175,7 @@ class DoOnBeforeFinallyTest
         val isCalled = AtomicBoolean()
 
         upstream
-            .doOnBeforeFinally {
+            .doOnAfterFinally {
                 isCalled.value = true
             }
             .test()
@@ -186,17 +186,17 @@ class DoOnBeforeFinallyTest
     }
 
     @Test
-    fun produces_error_WHEN_upstream_completed_and_exception_in_lambda() {
+    fun calls_uncaught_exception_handler_WHEN_upstream_completed_and_exception_in_lambda() {
+        val caughtException = mockUncaughtExceptionHandler()
         val error = Exception()
 
-        val observer =
-            upstream
-                .doOnBeforeFinally { throw error }
-                .test()
+        upstream
+            .doOnAfterFinally { throw error }
+            .test()
 
         upstream.onComplete()
 
-        observer.assertError(error)
+        assertSame(error, caughtException.value)
     }
 
     @Test
@@ -206,7 +206,7 @@ class DoOnBeforeFinallyTest
 
         val observer =
             upstream
-                .doOnBeforeFinally { throw error }
+                .doOnAfterFinally { throw error }
                 .test()
 
         observer.dispose()
@@ -221,7 +221,7 @@ class DoOnBeforeFinallyTest
 
         val observer =
             upstream
-                .doOnBeforeFinally { throw error }
+                .doOnAfterFinally { throw error }
                 .test()
 
         observer.dispose()
@@ -230,18 +230,18 @@ class DoOnBeforeFinallyTest
     }
 
     @Test
-    fun produces_CompositeException_WHEN_upstream_produced_error_and_exception_in_lambda() {
+    fun calls_uncaught_exception_handler_with_CompositeException_WHEN_upstream_produced_error_and_exception_in_lambda() {
+        val caughtException = mockUncaughtExceptionHandler()
         val error1 = Exception()
         val error2 = Exception()
 
-        val observer =
-            upstream
-                .doOnBeforeFinally { throw error2 }
-                .test()
+        upstream
+            .doOnAfterFinally { throw error2 }
+            .test()
 
         upstream.onError(error1)
 
-        val error: Throwable? = observer.error
+        val error: Throwable? = caughtException.value
         assertTrue(error is CompositeException)
         assertSame(error1, error.cause1)
         assertSame(error2, error.cause2)
