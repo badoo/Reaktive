@@ -122,11 +122,17 @@ kotlin {
 
 ### Features:
 * Multiplatform: JVM, Android, iOS, macOS, watchOS, tvOS, JavaScript, Linux X64, Linux ARM 32 hfp
-* Schedulers support: computation, IO, trampoline, main
+* Schedulers support: 
+  * `computationScheduler` - fixed thread pool equal to a number of cores
+  * `ioScheduler` - unbound thread pool with caching policy
+  * `newThreadScheduler` - creates a new thread for each unit of work
+  * `singleScheduler` - executes tasks on a single shared background thread
+  * `trampolineScheduler` - queues tasks and executes them on one of the participating threads
+  * `mainScheduler` - executes tasks on main thread
 * True multithreading for Kotlin/Native (there are some [limitations](https://kotlinlang.org/docs/reference/native/concurrency.html#object-transfer-and-freezing))
 * Thread local subscriptions without freezing for Kotlin/Native
-* Supported sources: Observable, Maybe, Single, Completable
-* Subjects: PublishSubject, BehaviorSubject, ReplaySubject, UnicastSubject
+* Supported sources: `Observable`, `Maybe`, `Single`, `Completable`
+* Subjects: `PublishSubject`, `BehaviorSubject`, `ReplaySubject`, `UnicastSubject`
 * Interoperability with Kotlin Coroutines: conversions between coroutines (including Flow) and Reaktive
 * Interoperability with RxJava2 and RxJava3: conversion of sources between Reaktive and RxJava, ability to reuse RxJava's schedulers
 
