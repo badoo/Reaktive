@@ -191,6 +191,46 @@ observable<Any> { emitter ->
 
 In both cases subscription (`subscribe` call) **must** be performed on the Main thread.
 
+#### Coroutines interop
+Another important thing to keep in mind is the interop with coroutines provided by the `coroutines-interop` module.
+This also has a few important limitations:
+- Neither `Job` nor `CoroutineContext` can be frozen (until release of the [multithreaded coroutines](https://github.com/Kotlin/kotlinx.coroutines/pull/1648))
+- Because of the first limitation all `xxxFromCoroutine {}` builders in Kotlin/Native are executed inside a `runBlocking` block and should be subscribed on a background `Scheduler`
+- Ktor does not work well in multithreaded environment in Kotlin/Native (it may crash), so please don't mix Ktor and `coroutines-interop`
+- Converters `Scheduler.asCoroutineDispatcher()` and `CoroutineContext.asScheduler()` are available only in JVM and JS
+
+Consider the following example for `corutines-interop`:
+```kotlin
+singleFromCoroutine {
+    /*
+     * This block will be executed inside `runBlocking` in Kotlin/Native.
+     * Please avoid using Ktor here, it may crash.
+     */
+}
+    .subscribeOn(ioScheduler)
+    .observeOn(mainScheduler)
+    .subscribe { /* Get the result here */ }
+```
+
+We recommend to avoid using Ktor in Kotlin/Native until multithreaded coroutines, but if you really need consider the following function:
+```kotlin
+fun <T> singleFromCoroutineUnsafe(mainContext: CoroutineContext, block: suspend CoroutineScope.() -> T): Single<T> =
+    single { emitter ->
+        GlobalScope
+            .launch(mainContext) {
+                try {
+                    emitter.onSuccess(block())
+                } catch (e: Throwable) {
+                    emitter.onError(e)
+                }
+            }
+            .asDisposable()
+            .also(emitter::setDisposable)
+    }
+```
+
+Now you can use this function together with Ktor but make sure you are doing this always on Main thread, neither `subscribeOn` nor `observeOn` nor any other thread switch are allowed.
+
 ### Subscription management with DisposableScope
 
 Reaktive provides an easy way to manage subscriptions: [DisposableScope](https://github.com/badoo/Reaktive/blob/master/reaktive/src/commonMain/kotlin/com/badoo/reaktive/disposable/scope/DisposableScope.kt).
