@@ -212,7 +212,7 @@ singleFromCoroutine {
     .subscribe { /* Get the result here */ }
 ```
 
-We recommend to avoid using Ktor in Kotlin/Native until multithreaded coroutines, but if you really need consider the following function:
+We recommend to avoid using Ktor in Kotlin/Native multithreaded environment until multithreaded coroutines, but if you really need consider the following function:
 ```kotlin
 fun <T> singleFromCoroutineUnsafe(mainContext: CoroutineContext, block: suspend CoroutineScope.() -> T): Single<T> =
     single { emitter ->
