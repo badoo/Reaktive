@@ -172,6 +172,23 @@ class DoOnAfterFinallyTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOnAf
     }
 
     @Test
+    fun does_not_call_action_second_time_WHEN_upstream_succeeded_and_downstream_disposed() {
+        val count = AtomicInt()
+
+        val observer =
+            upstream
+                .doOnAfterFinally {
+                    count.addAndGet(1)
+                }
+                .test()
+
+        upstream.onSuccess(0)
+        observer.dispose()
+
+        assertEquals(1, count.value)
+    }
+
+    @Test
     fun does_not_call_action_second_time_WHEN_upstream_completed_and_downstream_disposed() {
         val count = AtomicInt()
 
