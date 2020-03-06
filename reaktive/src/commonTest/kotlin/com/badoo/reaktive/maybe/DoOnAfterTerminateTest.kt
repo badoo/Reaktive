@@ -77,6 +77,20 @@ class DoOnAfterTerminateTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOn
     }
 
     @Test
+    fun calls_uncaught_exception_handler_WHEN_upstream_succeeded_and_exception_in_lambda() {
+        val caughtException = mockUncaughtExceptionHandler()
+        val error = Exception()
+
+        upstream
+            .doOnAfterTerminate { throw error }
+            .test()
+
+        upstream.onSuccess(0)
+
+        assertSame(error, caughtException.value)
+    }
+
+    @Test
     fun calls_uncaught_exception_handler_WHEN_upstream_completed_and_exception_in_lambda() {
         val caughtException = mockUncaughtExceptionHandler()
         val error = Exception()
