@@ -28,7 +28,7 @@ class BlockingGetTest {
 
     @Test
     fun throws_exception_WHEN_upstream_produced_error() {
-        val upstream = singleOfError<Nothing>(Exception("Error")).subscribeOn(computationScheduler)
+        val upstream = singleOfError<Int>(Exception("Error")).subscribeOn(computationScheduler)
 
         assertFailsWith<Exception>("Error") {
             upstream.blockingGet()

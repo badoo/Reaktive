@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 class CoroutineContextSchedulerJvmTest {
 
     private val dispatcher = TestCoroutineDispatcher()
