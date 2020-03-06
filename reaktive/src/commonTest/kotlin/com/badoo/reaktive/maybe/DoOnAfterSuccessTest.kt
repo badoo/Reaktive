@@ -56,7 +56,7 @@ class DoOnAfterSuccessTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOnAf
         val isCalled = AtomicBoolean()
 
         upstream
-            .doOnAfterComplete {
+            .doOnAfterSuccess {
                 isCalled.value = true
             }
             .test()
@@ -67,15 +67,15 @@ class DoOnAfterSuccessTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOnAf
     }
 
     @Test
-    fun calls_uncaught_exception_handler_WHEN_upstream_completed_and_exception_in_lambda() {
+    fun calls_uncaught_exception_handler_WHEN_upstream_succeeded_and_exception_in_lambda() {
         val caughtException = mockUncaughtExceptionHandler()
         val error = Exception()
 
         upstream
-            .doOnAfterComplete { throw error }
+            .doOnAfterSuccess { throw error }
             .test()
 
-        upstream.onComplete()
+        upstream.onSuccess(0)
 
         assertSame(error, caughtException.value)
     }
