@@ -7,7 +7,7 @@ import com.badoo.reaktive.observable.map
 import com.badoo.reaktive.samplemppmodule.store.KittenStoreBuilder
 import com.badoo.reaktive.samplemppmodule.view.KittenView
 
-@UseExperimental(ExperimentalReaktiveApi::class)
+@OptIn(ExperimentalReaktiveApi::class)
 class KittenBinder(
     storeBuilder: KittenStoreBuilder
 ) {

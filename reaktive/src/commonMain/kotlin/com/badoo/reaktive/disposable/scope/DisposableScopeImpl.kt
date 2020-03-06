@@ -13,7 +13,7 @@ import com.badoo.reaktive.observable.subscribe
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.subscribe
 
-@UseExperimental(ExperimentalReaktiveApi::class)
+@OptIn(ExperimentalReaktiveApi::class)
 internal class DisposableScopeImpl : DisposableScope, CompositeDisposable() {
 
     override fun <T : Disposable> T.scope(): T {
