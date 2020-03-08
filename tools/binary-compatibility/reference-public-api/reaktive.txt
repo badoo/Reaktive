@@ -986,6 +986,15 @@ public final class com/badoo/reaktive/single/DelaySubscriptionKt {
 	public static final fun delaySubscription (Lcom/badoo/reaktive/single/Single;JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/single/Single;
 }
 
+public final class com/badoo/reaktive/single/DoOnAfterKt {
+	public static final fun doOnAfterDispose (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/single/Single;
+	public static final fun doOnAfterError (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
+	public static final fun doOnAfterFinally (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/single/Single;
+	public static final fun doOnAfterSubscribe (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
+	public static final fun doOnAfterSuccess (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
+	public static final fun doOnAfterTerminate (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/single/Single;
+}
+
 public final class com/badoo/reaktive/single/DoOnBeforeKt {
 	public static final fun doOnBeforeDispose (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/single/Single;
 	public static final fun doOnBeforeError (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
