@@ -1,7 +1,7 @@
 object Deps {
 
-    private const val kotlinVersion = "1.3.61"
-    private const val coroutinesVersion = "1.3.3"
+    private const val kotlinVersion = "1.3.70"
+    private const val coroutinesVersion = "1.3.4"
     private const val detektVersion = "1.2.2"
     private const val asmVersion = "6.0"
 
