@@ -319,6 +319,16 @@ public final class com/badoo/reaktive/maybe/DelaySubscriptionKt {
 	public static final fun delaySubscription (Lcom/badoo/reaktive/maybe/Maybe;JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/maybe/Maybe;
 }
 
+public final class com/badoo/reaktive/maybe/DoOnAfterKt {
+	public static final fun doOnAfterComplete (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun doOnAfterDispose (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun doOnAfterError (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun doOnAfterFinally (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun doOnAfterSubscribe (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun doOnAfterSuccess (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun doOnAfterTerminate (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/maybe/Maybe;
+}
+
 public final class com/badoo/reaktive/maybe/DoOnBeforeKt {
 	public static final fun doOnBeforeComplete (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/maybe/Maybe;
 	public static final fun doOnBeforeDispose (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/maybe/Maybe;
