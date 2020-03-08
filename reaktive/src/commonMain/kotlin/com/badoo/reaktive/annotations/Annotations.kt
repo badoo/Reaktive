@@ -2,6 +2,6 @@
 
 package com.badoo.reaktive.annotations
 
-@Experimental(Experimental.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Retention(AnnotationRetention.BINARY)
 annotation class ExperimentalReaktiveApi

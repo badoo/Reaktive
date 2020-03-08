@@ -126,6 +126,15 @@ public final class com/badoo/reaktive/completable/DelaySubscriptionKt {
 	public static final fun delaySubscription (Lcom/badoo/reaktive/completable/Completable;JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/completable/Completable;
 }
 
+public final class com/badoo/reaktive/completable/DoOnAfterKt {
+	public static final fun doOnAfterComplete (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun doOnAfterDispose (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun doOnAfterError (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun doOnAfterFinally (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun doOnAfterSubscribe (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun doOnAfterTerminate (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/completable/Completable;
+}
+
 public final class com/badoo/reaktive/completable/DoOnBeforeKt {
 	public static final fun doOnBeforeComplete (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun doOnBeforeDispose (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/completable/Completable;
