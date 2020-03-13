@@ -5,57 +5,72 @@ import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.observable.observableUnsafe
 
-fun <T> Observable<T>.asRxJava2Source(): io.reactivex.ObservableSource<T> =
+fun <T> Observable<T>.asRxJava2ObservableSource(): io.reactivex.ObservableSource<T> =
     io.reactivex.ObservableSource { observer ->
-        subscribe(observer.asReaktive())
+        subscribe(observer.asReaktiveObservableObserver())
     }
 
-fun <T> Observable<T>.asRxJava2(): io.reactivex.Observable<T> =
+@Deprecated(message = "Use asRxJava2ObservableSource", replaceWith = ReplaceWith("asRxJava2ObservableSource()"))
+fun <T> Observable<T>.asRxJava2Source(): io.reactivex.ObservableSource<T> = asRxJava2ObservableSource()
+
+fun <T> Observable<T>.asRxJava2Observable(): io.reactivex.Observable<T> =
     object : io.reactivex.Observable<T>() {
         override fun subscribeActual(observer: io.reactivex.Observer<in T>) {
-            this@asRxJava2.subscribe(observer.asReaktive())
+            this@asRxJava2Observable.subscribe(observer.asReaktiveObservableObserver())
         }
     }
 
-fun <T> io.reactivex.ObservableSource<out T>.asReaktive(): Observable<T> =
+@Deprecated(message = "Use asRxJava2Observable", replaceWith = ReplaceWith("asRxJava2Observable()"))
+fun <T> Observable<T>.asRxJava2(): io.reactivex.Observable<T> = asRxJava2Observable()
+
+fun <T> io.reactivex.ObservableSource<out T>.asReaktiveObservable(): Observable<T> =
     observableUnsafe { observer ->
-        subscribe(observer.asRxJava2())
+        subscribe(observer.asRxJava2Observer())
     }
 
-fun <T> io.reactivex.Observer<in T>.asReaktive(): ObservableObserver<T> =
+@Deprecated(message = "Use asReaktiveObservable", replaceWith = ReplaceWith("asReaktiveObservable()"))
+fun <T> io.reactivex.ObservableSource<out T>.asReaktive(): Observable<T> = asReaktiveObservable()
+
+fun <T> io.reactivex.Observer<in T>.asReaktiveObservableObserver(): ObservableObserver<T> =
     object : ObservableObserver<T> {
         override fun onSubscribe(disposable: Disposable) {
-            this@asReaktive.onSubscribe(disposable.asRxJava2())
+            this@asReaktiveObservableObserver.onSubscribe(disposable.asRxJava2Disposable())
         }
 
         override fun onNext(value: T) {
-            this@asReaktive.onNext(value)
+            this@asReaktiveObservableObserver.onNext(value)
         }
 
         override fun onComplete() {
-            this@asReaktive.onComplete()
+            this@asReaktiveObservableObserver.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@asReaktive.onError(error)
+            this@asReaktiveObservableObserver.onError(error)
         }
     }
 
-fun <T> ObservableObserver<T>.asRxJava2(): io.reactivex.Observer<T> =
+@Deprecated(message = "Use asReaktiveObservableObserver", replaceWith = ReplaceWith("asReaktiveObservableObserver()"))
+fun <T> io.reactivex.Observer<in T>.asReaktive(): ObservableObserver<T> = asReaktiveObservableObserver()
+
+fun <T> ObservableObserver<T>.asRxJava2Observer(): io.reactivex.Observer<T> =
     object : io.reactivex.Observer<T> {
         override fun onSubscribe(disposable: io.reactivex.disposables.Disposable) {
-            this@asRxJava2.onSubscribe(disposable.asReaktive())
+            this@asRxJava2Observer.onSubscribe(disposable.asReaktiveDisposable())
         }
 
         override fun onNext(value: T) {
-            this@asRxJava2.onNext(value)
+            this@asRxJava2Observer.onNext(value)
         }
 
         override fun onComplete() {
-            this@asRxJava2.onComplete()
+            this@asRxJava2Observer.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@asRxJava2.onError(error)
+            this@asRxJava2Observer.onError(error)
         }
     }
+
+@Deprecated(message = "Use asRxJava2Observer", replaceWith = ReplaceWith("asRxJava2Observer()"))
+fun <T> ObservableObserver<T>.asRxJava2(): io.reactivex.Observer<T> = asRxJava2Observer()

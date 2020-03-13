@@ -5,57 +5,72 @@ import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.MaybeObserver
 import com.badoo.reaktive.maybe.maybeUnsafe
 
-fun <T> Maybe<T>.asRxJava2Source(): io.reactivex.MaybeSource<T> =
+fun <T> Maybe<T>.asRxJava2MaybeSource(): io.reactivex.MaybeSource<T> =
     io.reactivex.MaybeSource { observer ->
-        subscribe(observer.asReaktive())
+        subscribe(observer.asReaktiveMaybeObserver())
     }
 
-fun <T> Maybe<T>.asRxJava2(): io.reactivex.Maybe<T> =
+@Deprecated(message = "Use asRxJava2MaybeSource", replaceWith = ReplaceWith("asRxJava2MaybeSource()"))
+fun <T> Maybe<T>.asRxJava2Source(): io.reactivex.MaybeSource<T> = asRxJava2MaybeSource()
+
+fun <T> Maybe<T>.asRxJava2Maybe(): io.reactivex.Maybe<T> =
     object : io.reactivex.Maybe<T>() {
         override fun subscribeActual(observer: io.reactivex.MaybeObserver<in T>) {
-            this@asRxJava2.subscribe(observer.asReaktive())
+            this@asRxJava2Maybe.subscribe(observer.asReaktiveMaybeObserver())
         }
     }
 
-fun <T> io.reactivex.MaybeSource<out T>.asReaktive(): Maybe<T> =
+@Deprecated(message = "Use asRxJava2Maybe", replaceWith = ReplaceWith("asRxJava2Maybe()"))
+fun <T> Maybe<T>.asRxJava2(): io.reactivex.Maybe<T> = asRxJava2Maybe()
+
+fun <T> io.reactivex.MaybeSource<out T>.asReaktiveMaybe(): Maybe<T> =
     maybeUnsafe { observer ->
-        subscribe(observer.asRxJava2())
+        subscribe(observer.asRxJava2MaybeObserver())
     }
 
-fun <T> io.reactivex.MaybeObserver<in T>.asReaktive(): MaybeObserver<T> =
+@Deprecated(message = "Use asReaktiveMaybe", replaceWith = ReplaceWith("asReaktiveMaybe()"))
+fun <T> io.reactivex.MaybeSource<out T>.asReaktive(): Maybe<T> = asReaktiveMaybe()
+
+fun <T> io.reactivex.MaybeObserver<in T>.asReaktiveMaybeObserver(): MaybeObserver<T> =
     object : MaybeObserver<T> {
         override fun onSubscribe(disposable: Disposable) {
-            this@asReaktive.onSubscribe(disposable.asRxJava2())
+            this@asReaktiveMaybeObserver.onSubscribe(disposable.asRxJava2Disposable())
         }
 
         override fun onSuccess(value: T) {
-            this@asReaktive.onSuccess(value)
+            this@asReaktiveMaybeObserver.onSuccess(value)
         }
 
         override fun onComplete() {
-            this@asReaktive.onComplete()
+            this@asReaktiveMaybeObserver.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@asReaktive.onError(error)
+            this@asReaktiveMaybeObserver.onError(error)
         }
     }
 
-fun <T> MaybeObserver<T>.asRxJava2(): io.reactivex.MaybeObserver<T> =
+@Deprecated(message = "Use asReaktiveMaybeObserver", replaceWith = ReplaceWith("asReaktiveMaybeObserver()"))
+fun <T> io.reactivex.MaybeObserver<in T>.asReaktive(): MaybeObserver<T> = asReaktiveMaybeObserver()
+
+fun <T> MaybeObserver<T>.asRxJava2MaybeObserver(): io.reactivex.MaybeObserver<T> =
     object : io.reactivex.MaybeObserver<T> {
         override fun onSubscribe(disposable: io.reactivex.disposables.Disposable) {
-            this@asRxJava2.onSubscribe(disposable.asReaktive())
+            this@asRxJava2MaybeObserver.onSubscribe(disposable.asReaktiveDisposable())
         }
 
         override fun onSuccess(value: T) {
-            this@asRxJava2.onSuccess(value)
+            this@asRxJava2MaybeObserver.onSuccess(value)
         }
 
         override fun onComplete() {
-            this@asRxJava2.onComplete()
+            this@asRxJava2MaybeObserver.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@asRxJava2.onError(error)
+            this@asRxJava2MaybeObserver.onError(error)
         }
     }
+
+@Deprecated(message = "Use asRxJava2MaybeObserver", replaceWith = ReplaceWith("asRxJava2MaybeObserver()"))
+fun <T> MaybeObserver<T>.asRxJava2(): io.reactivex.MaybeObserver<T> = asRxJava2MaybeObserver()
