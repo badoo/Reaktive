@@ -64,8 +64,13 @@ internal fun <T> Observable<T>.publish(subjectFactory: () -> Subject<T>): Connec
 
         override fun subscribe(observer: ObservableObserver<T>) {
             state
-                .updateAndGet {
-                    it ?: PublishState.NotConnected(subject = subjectFactory())
+                .updateAndGet<PublishState<T>?, PublishState<T>> {
+                    when (it) {
+                        is PublishState.NotConnected,
+                        is PublishState.Connected -> it
+                        is PublishState.Disconnected,
+                        null -> PublishState.NotConnected(subject = subjectFactory())
+                    }
                 }
                 .subject
                 .subscribe(observer)
