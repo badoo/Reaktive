@@ -28,16 +28,16 @@ class ReplayTest : PublishGenericTests by PublishGenericTestsImpl({ replay() }) 
     }
 
     @Test
-    fun emits_last_bufferSize_values_since_connection_in_the_same_order_to_the_first_subscriber_after_disconnect() {
+    fun does_not_emit_any_values_to_the_first_subscriber_after_disconnect() {
         val replay = upstream.replay(bufferSize = 3)
         lateinit var disposable: Disposable
         replay.connect { disposable = it }
-        upstream.onNext(-1, 0, null, 1)
+        upstream.onNext(-0, null, 1)
         disposable.dispose()
 
         val observer = replay.test()
 
-        observer.assertValues(0, null, 1)
+        observer.assertNoValues()
     }
 
     @Test
@@ -54,18 +54,18 @@ class ReplayTest : PublishGenericTests by PublishGenericTestsImpl({ replay() }) 
     }
 
     @Test
-    fun emits_last_bufferSize_values_since_connection_in_the_same_order_to_the_second_subscriber_after_disconnect() {
+    fun does_not_emits_any_values_to_the_second_subscriber_after_disconnect() {
         val replay = upstream.replay(bufferSize = 5)
         lateinit var disposable: Disposable
         replay.connect { disposable = it }
-        upstream.onNext(-1, 0, null, 1)
+        upstream.onNext(0, null, 1)
         replay.test()
         upstream.onNext(null, 2)
         disposable.dispose()
 
         val observer = replay.test()
 
-        observer.assertValues(0, null, 1, null, 2)
+        observer.assertNoValues()
     }
 
     @Test
@@ -107,7 +107,7 @@ class ReplayTest : PublishGenericTests by PublishGenericTestsImpl({ replay() }) 
     }
 
     @Test
-    fun emits_last_bufferSize_values_in_the_same_order_WHEN_disconnected_and_upstream_completed_and_new_subscriber() {
+    fun does_not_produce_any_values_WHEN_disconnected_and_upstream_completed_and_new_subscriber() {
         val replay = upstream.replay(bufferSize = 5)
         lateinit var disposable: Disposable
         replay.connect { disposable = it }
@@ -117,12 +117,12 @@ class ReplayTest : PublishGenericTests by PublishGenericTestsImpl({ replay() }) 
 
         val observer = replay.test()
 
-        observer.assertValues(0, null, 1, null, 2)
+        observer.assertNoValues()
     }
 
     @Test
-    fun emits_last_bufferSize_values_in_the_same_order_WHEN_upstream_completed_and_disconnected_and_new_subscriber() {
-        val replay = upstream.replay(bufferSize = 5)
+    fun does_not_emit_any_values_WHEN_upstream_completed_and_disconnected_and_new_subscriber() {
+        val replay = upstream.replay(bufferSize = 6)
         lateinit var disposable: Disposable
         replay.connect { disposable = it }
         upstream.onNext(-1, 0, null, 1, null, 2)
@@ -131,7 +131,7 @@ class ReplayTest : PublishGenericTests by PublishGenericTestsImpl({ replay() }) 
 
         val observer = replay.test()
 
-        observer.assertValues(0, null, 1, null, 2)
+        observer.assertNoValues()
     }
 
     @Test
@@ -147,7 +147,7 @@ class ReplayTest : PublishGenericTests by PublishGenericTestsImpl({ replay() }) 
     }
 
     @Test
-    fun completes_WHEN_upstream_completed_and_disconnected_and_new_subscriber() {
+    fun does_not_complete_WHEN_upstream_completed_and_disconnected_and_new_subscriber() {
         val replay = upstream.replay(bufferSize = 5)
         lateinit var disposable: Disposable
         replay.connect { disposable = it }
@@ -157,7 +157,7 @@ class ReplayTest : PublishGenericTests by PublishGenericTestsImpl({ replay() }) 
 
         val observer = replay.test()
 
-        observer.assertComplete()
+        observer.assertNotComplete()
     }
 
     @Test
@@ -187,22 +187,22 @@ class ReplayTest : PublishGenericTests by PublishGenericTestsImpl({ replay() }) 
     }
 
     @Test
-    fun emits_last_bufferSize_values_in_the_same_order_WHEN_disconnected_and_upstream_produced_error_and_new_subscriber() {
-        val replay = upstream.replay(bufferSize = 5)
+    fun does_not_emit_any_values_WHEN_disconnected_and_upstream_produced_error_and_new_subscriber() {
+        val replay = upstream.replay(bufferSize = 3)
         lateinit var disposable: Disposable
         replay.connect { disposable = it }
-        upstream.onNext(-1, 0, null, 1, null, 2)
+        upstream.onNext(-0, null, 1)
         disposable.dispose()
         upstream.onError(Throwable())
 
         val observer = replay.test()
 
-        observer.assertValues(0, null, 1, null, 2)
+        observer.assertNoValues()
     }
 
     @Test
-    fun emits_last_bufferSize_values_in_the_same_order_WHEN_upstream_produced_error_and_disconnected_and_new_subscriber() {
-        val replay = upstream.replay(bufferSize = 5)
+    fun does_not_emit_any_values_WHEN_upstream_produced_error_and_disconnected_and_new_subscriber() {
+        val replay = upstream.replay(bufferSize = 6)
         lateinit var disposable: Disposable
         replay.connect { disposable = it }
         upstream.onNext(-1, 0, null, 1, null, 2)
@@ -211,7 +211,7 @@ class ReplayTest : PublishGenericTests by PublishGenericTestsImpl({ replay() }) 
 
         val observer = replay.test()
 
-        observer.assertValues(0, null, 1, null, 2)
+        observer.assertNoValues()
     }
 
     @Test
@@ -228,7 +228,7 @@ class ReplayTest : PublishGenericTests by PublishGenericTestsImpl({ replay() }) 
     }
 
     @Test
-    fun produces_error_WHEN_upstream_produced_error_and_disconnected_and_new_subscriber() {
+    fun does_not_produce_error_WHEN_upstream_produced_error_and_disconnected_and_new_subscriber() {
         val replay = upstream.replay(bufferSize = 5)
         lateinit var disposable: Disposable
         replay.connect { disposable = it }
@@ -239,7 +239,7 @@ class ReplayTest : PublishGenericTests by PublishGenericTestsImpl({ replay() }) 
 
         val observer = replay.test()
 
-        observer.assertError(error)
+        observer.assertNotError()
     }
 
     @Test
