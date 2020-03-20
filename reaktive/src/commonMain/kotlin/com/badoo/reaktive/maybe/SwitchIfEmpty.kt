@@ -6,7 +6,9 @@ import com.badoo.reaktive.base.SuccessCallback
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.single.Single
-import com.badoo.reaktive.single.asMaybe
+import com.badoo.reaktive.single.SingleCallbacks
+import com.badoo.reaktive.single.SingleObserver
+import com.badoo.reaktive.single.single
 
 fun <T> Maybe<T>.switchIfEmpty(other: Maybe<T>): Maybe<T> =
     maybe { emitter ->
@@ -27,5 +29,19 @@ fun <T> Maybe<T>.switchIfEmpty(other: Maybe<T>): Maybe<T> =
     }
 
 fun <T> Maybe<T>.switchIfEmpty(other: Single<T>): Single<T> =
-    switchIfEmpty(other.asMaybe())
-        .asSingleOrError()
+    single { emitter ->
+        subscribe(
+            object : MaybeObserver<T>, SuccessCallback<T> by emitter, ErrorCallback by emitter {
+                override fun onSubscribe(disposable: Disposable) {
+                    emitter.setDisposable(disposable)
+                }
+
+                override fun onComplete() {
+                    other.subscribeSafe(
+                        object : SingleObserver<T>, Observer by this, SingleCallbacks<T> by emitter {
+                        }
+                    )
+                }
+            }
+        )
+    }
