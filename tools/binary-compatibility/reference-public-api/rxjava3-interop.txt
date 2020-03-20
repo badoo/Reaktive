@@ -1,41 +1,64 @@
 public final class com/badoo/reaktive/rxjavainterop/CompletableKt {
 	public static final fun asReaktive (Lio/reactivex/rxjava3/core/CompletableObserver;)Lcom/badoo/reaktive/completable/CompletableObserver;
 	public static final fun asReaktive (Lio/reactivex/rxjava3/core/CompletableSource;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun asReaktiveCompletable (Lio/reactivex/rxjava3/core/CompletableSource;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun asReaktiveCompletableObserver (Lio/reactivex/rxjava3/core/CompletableObserver;)Lcom/badoo/reaktive/completable/CompletableObserver;
 	public static final fun asRxJava3 (Lcom/badoo/reaktive/completable/Completable;)Lio/reactivex/rxjava3/core/Completable;
 	public static final fun asRxJava3 (Lcom/badoo/reaktive/completable/CompletableObserver;)Lio/reactivex/rxjava3/core/CompletableObserver;
+	public static final fun asRxJava3Completable (Lcom/badoo/reaktive/completable/Completable;)Lio/reactivex/rxjava3/core/Completable;
+	public static final fun asRxJava3CompletableObserver (Lcom/badoo/reaktive/completable/CompletableObserver;)Lio/reactivex/rxjava3/core/CompletableObserver;
+	public static final fun asRxJava3CompletableSource (Lcom/badoo/reaktive/completable/Completable;)Lio/reactivex/rxjava3/core/CompletableSource;
 	public static final fun asRxJava3Source (Lcom/badoo/reaktive/completable/Completable;)Lio/reactivex/rxjava3/core/CompletableSource;
 }
 
 public final class com/badoo/reaktive/rxjavainterop/DisposableKt {
 	public static final fun asReaktive (Lio/reactivex/rxjava3/disposables/Disposable;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static final fun asReaktiveDisposable (Lio/reactivex/rxjava3/disposables/Disposable;)Lcom/badoo/reaktive/disposable/Disposable;
 	public static final fun asRxJava3 (Lcom/badoo/reaktive/disposable/Disposable;)Lio/reactivex/rxjava3/disposables/Disposable;
+	public static final fun asRxJava3Disposable (Lcom/badoo/reaktive/disposable/Disposable;)Lio/reactivex/rxjava3/disposables/Disposable;
 }
 
 public final class com/badoo/reaktive/rxjavainterop/MaybeKt {
 	public static final fun asReaktive (Lio/reactivex/rxjava3/core/MaybeObserver;)Lcom/badoo/reaktive/maybe/MaybeObserver;
 	public static final fun asReaktive (Lio/reactivex/rxjava3/core/MaybeSource;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun asReaktiveMaybe (Lio/reactivex/rxjava3/core/MaybeSource;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun asReaktiveMaybeObserver (Lio/reactivex/rxjava3/core/MaybeObserver;)Lcom/badoo/reaktive/maybe/MaybeObserver;
 	public static final fun asRxJava3 (Lcom/badoo/reaktive/maybe/Maybe;)Lio/reactivex/rxjava3/core/Maybe;
 	public static final fun asRxJava3 (Lcom/badoo/reaktive/maybe/MaybeObserver;)Lio/reactivex/rxjava3/core/MaybeObserver;
+	public static final fun asRxJava3Maybe (Lcom/badoo/reaktive/maybe/Maybe;)Lio/reactivex/rxjava3/core/Maybe;
+	public static final fun asRxJava3MaybeObserver (Lcom/badoo/reaktive/maybe/MaybeObserver;)Lio/reactivex/rxjava3/core/MaybeObserver;
+	public static final fun asRxJava3MaybeSource (Lcom/badoo/reaktive/maybe/Maybe;)Lio/reactivex/rxjava3/core/MaybeSource;
 	public static final fun asRxJava3Source (Lcom/badoo/reaktive/maybe/Maybe;)Lio/reactivex/rxjava3/core/MaybeSource;
 }
 
 public final class com/badoo/reaktive/rxjavainterop/ObservableKt {
 	public static final fun asReaktive (Lio/reactivex/rxjava3/core/ObservableSource;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun asReaktive (Lio/reactivex/rxjava3/core/Observer;)Lcom/badoo/reaktive/observable/ObservableObserver;
+	public static final fun asReaktiveObservable (Lio/reactivex/rxjava3/core/ObservableSource;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun asReaktiveObservableObserver (Lio/reactivex/rxjava3/core/Observer;)Lcom/badoo/reaktive/observable/ObservableObserver;
 	public static final fun asRxJava3 (Lcom/badoo/reaktive/observable/Observable;)Lio/reactivex/rxjava3/core/Observable;
 	public static final fun asRxJava3 (Lcom/badoo/reaktive/observable/ObservableObserver;)Lio/reactivex/rxjava3/core/Observer;
+	public static final fun asRxJava3Observable (Lcom/badoo/reaktive/observable/Observable;)Lio/reactivex/rxjava3/core/Observable;
+	public static final fun asRxJava3ObservableSource (Lcom/badoo/reaktive/observable/Observable;)Lio/reactivex/rxjava3/core/ObservableSource;
+	public static final fun asRxJava3Observer (Lcom/badoo/reaktive/observable/ObservableObserver;)Lio/reactivex/rxjava3/core/Observer;
 	public static final fun asRxJava3Source (Lcom/badoo/reaktive/observable/Observable;)Lio/reactivex/rxjava3/core/ObservableSource;
 }
 
 public final class com/badoo/reaktive/rxjavainterop/SchedulerKt {
 	public static final fun asReaktive (Lio/reactivex/rxjava3/core/Scheduler;)Lcom/badoo/reaktive/scheduler/Scheduler;
+	public static final fun asReaktiveScheduler (Lio/reactivex/rxjava3/core/Scheduler;)Lcom/badoo/reaktive/scheduler/Scheduler;
 }
 
 public final class com/badoo/reaktive/rxjavainterop/SingleKt {
 	public static final fun asReaktive (Lio/reactivex/rxjava3/core/SingleObserver;)Lcom/badoo/reaktive/single/SingleObserver;
 	public static final fun asReaktive (Lio/reactivex/rxjava3/core/SingleSource;)Lcom/badoo/reaktive/single/Single;
+	public static final fun asReaktiveSingle (Lio/reactivex/rxjava3/core/SingleSource;)Lcom/badoo/reaktive/single/Single;
+	public static final fun asReaktiveSingleObserver (Lio/reactivex/rxjava3/core/SingleObserver;)Lcom/badoo/reaktive/single/SingleObserver;
 	public static final fun asRxJava3 (Lcom/badoo/reaktive/single/Single;)Lio/reactivex/rxjava3/core/Single;
 	public static final fun asRxJava3 (Lcom/badoo/reaktive/single/SingleObserver;)Lio/reactivex/rxjava3/core/SingleObserver;
+	public static final fun asRxJava3Single (Lcom/badoo/reaktive/single/Single;)Lio/reactivex/rxjava3/core/Single;
+	public static final fun asRxJava3SingleObserver (Lcom/badoo/reaktive/single/SingleObserver;)Lio/reactivex/rxjava3/core/SingleObserver;
+	public static final fun asRxJava3SingleSource (Lcom/badoo/reaktive/single/Single;)Lio/reactivex/rxjava3/core/SingleSource;
 	public static final fun asRxJava3Source (Lcom/badoo/reaktive/single/Single;)Lio/reactivex/rxjava3/core/SingleSource;
 }
 
