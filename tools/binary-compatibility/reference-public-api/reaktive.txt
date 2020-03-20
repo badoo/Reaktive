@@ -517,6 +517,11 @@ public final class com/badoo/reaktive/observable/AutoConnectKt {
 	public static synthetic fun autoConnect$default (Lcom/badoo/reaktive/observable/ConnectableObservable;IILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
 
+public final class com/badoo/reaktive/observable/BufferCountSkipKt {
+	public static final fun buffer (Lcom/badoo/reaktive/observable/Observable;II)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun buffer$default (Lcom/badoo/reaktive/observable/Observable;IIILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+}
+
 public final class com/badoo/reaktive/observable/CollectKt {
 	public static final fun collect (Lcom/badoo/reaktive/observable/Observable;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/single/Single;
 }
