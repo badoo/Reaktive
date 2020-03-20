@@ -5,57 +5,72 @@ import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.MaybeObserver
 import com.badoo.reaktive.maybe.maybeUnsafe
 
-fun <T> Maybe<T>.asRxJava3Source(): io.reactivex.rxjava3.core.MaybeSource<T> =
+fun <T> Maybe<T>.asRxJava3MaybeSource(): io.reactivex.rxjava3.core.MaybeSource<T> =
     io.reactivex.rxjava3.core.MaybeSource { observer ->
-        subscribe(observer.asReaktive())
+        subscribe(observer.asReaktiveMaybeObserver())
     }
 
-fun <T> Maybe<T>.asRxJava3(): io.reactivex.rxjava3.core.Maybe<T> =
+@Deprecated(message = "Use asRxJava3MaybeSource", replaceWith = ReplaceWith("asRxJava3MaybeSource()"))
+fun <T> Maybe<T>.asRxJava3Source(): io.reactivex.rxjava3.core.MaybeSource<T> = asRxJava3MaybeSource()
+
+fun <T> Maybe<T>.asRxJava3Maybe(): io.reactivex.rxjava3.core.Maybe<T> =
     object : io.reactivex.rxjava3.core.Maybe<T>() {
         override fun subscribeActual(observer: io.reactivex.rxjava3.core.MaybeObserver<in T>) {
-            this@asRxJava3.subscribe(observer.asReaktive())
+            this@asRxJava3Maybe.subscribe(observer.asReaktiveMaybeObserver())
         }
     }
 
-fun <T> io.reactivex.rxjava3.core.MaybeSource<out T>.asReaktive(): Maybe<T> =
+@Deprecated(message = "Use asRxJava3Maybe", replaceWith = ReplaceWith("asRxJava3Maybe()"))
+fun <T> Maybe<T>.asRxJava3(): io.reactivex.rxjava3.core.Maybe<T> = asRxJava3Maybe()
+
+fun <T> io.reactivex.rxjava3.core.MaybeSource<out T>.asReaktiveMaybe(): Maybe<T> =
     maybeUnsafe { observer ->
-        subscribe(observer.asRxJava3())
+        subscribe(observer.asRxJava3MaybeObserver())
     }
 
-fun <T> io.reactivex.rxjava3.core.MaybeObserver<in T>.asReaktive(): MaybeObserver<T> =
+@Deprecated(message = "Use asReaktiveMaybe", replaceWith = ReplaceWith("asReaktiveMaybe()"))
+fun <T> io.reactivex.rxjava3.core.MaybeSource<out T>.asReaktive(): Maybe<T> = asReaktiveMaybe()
+
+fun <T> io.reactivex.rxjava3.core.MaybeObserver<in T>.asReaktiveMaybeObserver(): MaybeObserver<T> =
     object : MaybeObserver<T> {
         override fun onSubscribe(disposable: Disposable) {
-            this@asReaktive.onSubscribe(disposable.asRxJava3())
+            this@asReaktiveMaybeObserver.onSubscribe(disposable.asRxJava3Disposable())
         }
 
         override fun onSuccess(value: T) {
-            this@asReaktive.onSuccess(value)
+            this@asReaktiveMaybeObserver.onSuccess(value)
         }
 
         override fun onComplete() {
-            this@asReaktive.onComplete()
+            this@asReaktiveMaybeObserver.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@asReaktive.onError(error)
+            this@asReaktiveMaybeObserver.onError(error)
         }
     }
 
-fun <T> MaybeObserver<T>.asRxJava3(): io.reactivex.rxjava3.core.MaybeObserver<T> =
+@Deprecated(message = "Use asReaktiveMaybeObserver", replaceWith = ReplaceWith("asReaktiveMaybeObserver()"))
+fun <T> io.reactivex.rxjava3.core.MaybeObserver<in T>.asReaktive(): MaybeObserver<T> = asReaktiveMaybeObserver()
+
+fun <T> MaybeObserver<T>.asRxJava3MaybeObserver(): io.reactivex.rxjava3.core.MaybeObserver<T> =
     object : io.reactivex.rxjava3.core.MaybeObserver<T> {
         override fun onSubscribe(disposable: io.reactivex.rxjava3.disposables.Disposable) {
-            this@asRxJava3.onSubscribe(disposable.asReaktive())
+            this@asRxJava3MaybeObserver.onSubscribe(disposable.asReaktiveDisposable())
         }
 
         override fun onSuccess(value: T) {
-            this@asRxJava3.onSuccess(value)
+            this@asRxJava3MaybeObserver.onSuccess(value)
         }
 
         override fun onComplete() {
-            this@asRxJava3.onComplete()
+            this@asRxJava3MaybeObserver.onComplete()
         }
 
         override fun onError(error: Throwable) {
-            this@asRxJava3.onError(error)
+            this@asRxJava3MaybeObserver.onError(error)
         }
     }
+
+@Deprecated(message = "Use asRxJava3MaybeObserver", replaceWith = ReplaceWith("asRxJava3MaybeObserver()"))
+fun <T> MaybeObserver<T>.asRxJava3(): io.reactivex.rxjava3.core.MaybeObserver<T> = asRxJava3MaybeObserver()

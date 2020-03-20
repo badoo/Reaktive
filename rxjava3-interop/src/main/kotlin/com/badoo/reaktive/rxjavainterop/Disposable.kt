@@ -2,20 +2,26 @@ package com.badoo.reaktive.rxjavainterop
 
 import com.badoo.reaktive.disposable.Disposable
 
-fun Disposable.asRxJava3(): io.reactivex.rxjava3.disposables.Disposable =
+fun Disposable.asRxJava3Disposable(): io.reactivex.rxjava3.disposables.Disposable =
     object : io.reactivex.rxjava3.disposables.Disposable {
-        override fun isDisposed(): Boolean = this@asRxJava3.isDisposed
+        override fun isDisposed(): Boolean = this@asRxJava3Disposable.isDisposed
 
         override fun dispose() {
-            this@asRxJava3.dispose()
+            this@asRxJava3Disposable.dispose()
         }
     }
 
-fun io.reactivex.rxjava3.disposables.Disposable.asReaktive(): Disposable =
+@Deprecated(message = "Use asRxJava3Disposable", replaceWith = ReplaceWith("asRxJava3Disposable()"))
+fun Disposable.asRxJava3(): io.reactivex.rxjava3.disposables.Disposable = asRxJava3Disposable()
+
+fun io.reactivex.rxjava3.disposables.Disposable.asReaktiveDisposable(): Disposable =
     object : Disposable {
-        override val isDisposed: Boolean get() = this@asReaktive.isDisposed
+        override val isDisposed: Boolean get() = this@asReaktiveDisposable.isDisposed
 
         override fun dispose() {
-            this@asReaktive.dispose()
+            this@asReaktiveDisposable.dispose()
         }
     }
+
+@Deprecated(message = "Use asReaktiveDisposable", replaceWith = ReplaceWith("asReaktiveDisposable()"))
+fun io.reactivex.rxjava3.disposables.Disposable.asReaktive(): Disposable = asReaktiveDisposable()
