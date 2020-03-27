@@ -13,8 +13,9 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class DoOnAfterErrorTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnAfterError {} }) {
+class DoOnAfterErrorTest :
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnAfterError {} }),
+    ObservableToObservableForwardTests by ObservableToObservableForwardTestsImpl({ doOnAfterError {} }) {
 
     private val upstream = TestObservable<Int>()
 

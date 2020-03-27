@@ -19,8 +19,9 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class DoOnBeforeFinallyTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeFinally {} }) {
+class DoOnBeforeFinallyTest :
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeFinally {} }),
+    ObservableToObservableForwardTests by ObservableToObservableForwardTestsImpl({ doOnBeforeFinally {} }) {
 
     private val upstream = TestObservable<Int>()
 

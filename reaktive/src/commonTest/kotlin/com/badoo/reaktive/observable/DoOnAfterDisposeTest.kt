@@ -13,10 +13,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
-class DoOnAfterDisposeTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnAfterDispose {} }) {
+class DoOnAfterDisposeTest :
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnAfterDispose {} }),
+    ObservableToObservableForwardTests by ObservableToObservableForwardTestsImpl({ doOnAfterDispose {} }) {
 
     private val upstream = TestObservable<Int>()
 

@@ -12,7 +12,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class DelaySubscriptionTest :
-    ObservableToObservableTests by ObservableToObservableTestsImpl({ delaySubscription(0L, TestScheduler()) }) {
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ delaySubscription(0L, TestScheduler()) }),
+    ObservableToObservableForwardTests by ObservableToObservableForwardTestsImpl({ delaySubscription(0L, TestScheduler()) }) {
 
     private val upstream = TestObservable<Int?>()
     private val scheduler = TestScheduler()

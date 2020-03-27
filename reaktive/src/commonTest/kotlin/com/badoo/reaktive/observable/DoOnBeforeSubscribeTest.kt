@@ -11,8 +11,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-class DoOnBeforeSubscribeTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeSubscribe {} }) {
+class DoOnBeforeSubscribeTest :
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeSubscribe {} }),
+    ObservableToObservableForwardTests by ObservableToObservableForwardTestsImpl({ doOnBeforeSubscribe {} }) {
 
     @Test
     fun calls_action_before_downstream_onSubscribe_WHEN_action_does_not_throw_exception() {
