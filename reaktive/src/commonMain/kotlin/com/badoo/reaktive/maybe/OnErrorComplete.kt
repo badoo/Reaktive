@@ -1,12 +1,13 @@
-package com.badoo.reaktive.completable
+package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.CompleteCallback
+import com.badoo.reaktive.base.SuccessCallback
 import com.badoo.reaktive.disposable.Disposable
 
-fun Completable.onErrorComplete(): Completable =
-    completable { emitter ->
+fun <T> Maybe<T>.onErrorComplete(): Maybe<T> =
+    maybe { emitter ->
         subscribe(
-            object : CompletableObserver, CompleteCallback by emitter {
+            object : MaybeObserver<T>, SuccessCallback<T> by emitter, CompleteCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
                 }

@@ -1,12 +1,13 @@
-package com.badoo.reaktive.completable
+package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.CompleteCallback
+import com.badoo.reaktive.base.ValueCallback
 import com.badoo.reaktive.disposable.Disposable
 
-fun Completable.onErrorComplete(): Completable =
-    completable { emitter ->
+fun <T> Observable<T>.onErrorComplete(): Observable<T> =
+    observable { emitter ->
         subscribe(
-            object : CompletableObserver, CompleteCallback by emitter {
+            object : ObservableObserver<T>, ValueCallback<T> by emitter, CompleteCallback by emitter {
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
                 }
