@@ -13,8 +13,9 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class DoOnBeforeTerminateTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeTerminate {} }) {
+class DoOnBeforeTerminateTest :
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeTerminate {} }),
+    ObservableToObservableForwardTests by ObservableToObservableForwardTestsImpl({ doOnBeforeTerminate {} }) {
 
     private val upstream = TestObservable<Int>()
     private val callOrder = SharedList<String>()

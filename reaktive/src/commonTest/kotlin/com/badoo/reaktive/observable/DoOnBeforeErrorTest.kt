@@ -12,8 +12,9 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class DoOnBeforeErrorTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeError {} }) {
+class DoOnBeforeErrorTest :
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ doOnBeforeError {} }),
+    ObservableToObservableForwardTests by ObservableToObservableForwardTestsImpl({ doOnBeforeError {} }) {
 
     private val upstream = TestObservable<Int>()
 
