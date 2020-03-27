@@ -425,6 +425,10 @@ public final class com/badoo/reaktive/maybe/ObserveOnKt {
 	public static final fun observeOn (Lcom/badoo/reaktive/maybe/Maybe;Lcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/maybe/Maybe;
 }
 
+public final class com/badoo/reaktive/maybe/OnErrorCompleteKt {
+	public static final fun onErrorComplete (Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
+}
+
 public final class com/badoo/reaktive/maybe/OnErrorResumeNextKt {
 	public static final fun onErrorResumeNext (Lcom/badoo/reaktive/maybe/Maybe;Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
 	public static final fun onErrorResumeNext (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
@@ -727,6 +731,10 @@ public final class com/badoo/reaktive/observable/ObservableWrapperKt {
 
 public final class com/badoo/reaktive/observable/ObserveOnKt {
 	public static final fun observeOn (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/observable/OnErrorCompleteKt {
+	public static final fun onErrorComplete (Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/OnErrorResumeNextKt {
