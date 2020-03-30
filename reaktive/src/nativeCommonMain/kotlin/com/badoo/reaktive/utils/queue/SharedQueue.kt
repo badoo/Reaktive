@@ -3,7 +3,7 @@ package com.badoo.reaktive.utils.queue
 import com.badoo.reaktive.utils.MutableFreezableHelper
 
 @Suppress("EmptyDefaultConstructor")
-internal actual class SharedQueue<T> actual constructor() : Queue<T> {
+actual class SharedQueue<T> actual constructor() : Queue<T> {
 
     private val helper =
         MutableFreezableHelper(

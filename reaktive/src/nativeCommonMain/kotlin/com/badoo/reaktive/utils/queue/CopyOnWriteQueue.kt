@@ -8,7 +8,7 @@ import com.badoo.reaktive.utils.atomic.iterator
 import com.badoo.reaktive.utils.atomic.plusAssign
 import com.badoo.reaktive.utils.atomic.size
 
-internal class CopyOnWriteQueue<T>(initialList: List<T> = emptyList()) : Queue<T> {
+class CopyOnWriteQueue<T>(initialList: List<T> = emptyList()) : Queue<T> {
 
     private val delegate = AtomicList(initialList)
     override val peek: T? get() = delegate.firstOrNull()
