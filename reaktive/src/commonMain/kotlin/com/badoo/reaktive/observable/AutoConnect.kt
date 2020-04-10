@@ -4,7 +4,10 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
 fun <T> ConnectableObservable<T>.autoConnect(subscriberCount: Int = 1): Observable<T> {
-    require(subscriberCount > 0)
+    if (subscriberCount <= 0) {
+        connect()
+        return this
+    }
 
     val subscribeCount = AtomicInt()
 
