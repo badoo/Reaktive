@@ -17,13 +17,23 @@ import kotlin.test.assertTrue
 class AutoConnectTest {
 
     @Test
-    fun does_not_connect_WHEN_not_subscribed() {
+    fun does_not_connect_WHEN_subscriber_count_1_and_not_subscribed() {
         val isConnected = AtomicBoolean()
         val upstream = testUpstream(connect = { isConnected.value = true })
 
         upstream.autoConnect(subscriberCount = 1)
 
         assertFalse(isConnected.value)
+    }
+
+    @Test
+    fun connects_to_upstream_synchronously_WHEN_subscriber_count_0() {
+        val isConnected = AtomicBoolean()
+        val upstream = testUpstream(connect = { isConnected.value = true })
+
+        upstream.autoConnect(subscriberCount = 0)
+
+        assertTrue(isConnected.value)
     }
 
     @Test
@@ -71,6 +81,17 @@ class AutoConnectTest {
         autoConnect.test()
 
         assertFalse(isConnected.value)
+    }
+
+    @Test
+    fun does_not_disconnect_from_upstream_WHEN_subscriberCount_is_0_and_unsubscribed() {
+        val disposable = Disposable()
+        val upstream = testUpstream(connect = { it?.invoke(disposable) })
+        val observer = upstream.autoConnect(subscriberCount = 0).test()
+
+        observer.dispose()
+
+        assertFalse(disposable.isDisposed)
     }
 
     @Test
