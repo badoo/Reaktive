@@ -29,7 +29,7 @@ fun io.reactivex.rxjava3.core.CompletableSource.asReaktiveCompletable(): Complet
     }
 
 @Deprecated(message = "Use asReaktiveCompletable", replaceWith = ReplaceWith("asReaktiveCompletable()"))
-fun <T> io.reactivex.rxjava3.core.CompletableSource.asReaktive(): Completable = asReaktiveCompletable()
+fun io.reactivex.rxjava3.core.CompletableSource.asReaktive(): Completable = asReaktiveCompletable()
 
 fun io.reactivex.rxjava3.core.CompletableObserver.asReaktiveCompletableObserver(): CompletableObserver =
     object : CompletableObserver {
