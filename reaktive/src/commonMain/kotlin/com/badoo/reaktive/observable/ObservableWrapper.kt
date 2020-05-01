@@ -11,7 +11,7 @@ import com.badoo.reaktive.observable.subscribe as subscribeRx
  * for more information.
  * You can also extend the wrapper class if you need to expose any additional operators.
  */
-open class ObservableWrapper<out T>(inner: Observable<T>) : Observable<T> by inner {
+open class ObservableWrapper<out T : Any>(inner: Observable<T>) : Observable<T> by inner {
 
     @UseReturnValue
     fun subscribe(
@@ -66,4 +66,4 @@ open class ObservableWrapper<out T>(inner: Observable<T>) : Observable<T> by inn
         )
 }
 
-fun <T> Observable<T>.wrap(): ObservableWrapper<T> = ObservableWrapper(this)
+fun <T : Any> Observable<T>.wrap(): ObservableWrapper<T> = ObservableWrapper(this)
