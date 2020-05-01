@@ -26,6 +26,28 @@ open class CompletableWrapper(inner: Completable) : Completable by inner {
             onError = onError,
             onComplete = onComplete
         )
+
+    @UseReturnValue
+    fun subscribe(
+        isThreadLocal: Boolean = false,
+        onComplete: () -> Unit
+    ): Disposable =
+        subscribeRx(
+            isThreadLocal = isThreadLocal,
+            onComplete = onComplete
+        )
+
+    @UseReturnValue
+    fun subscribe(
+        isThreadLocal: Boolean = false,
+        onError: (Throwable) -> Unit,
+        onComplete: () -> Unit
+    ): Disposable =
+        subscribeRx(
+            isThreadLocal = isThreadLocal,
+            onError = onError,
+            onComplete = onComplete
+        )
 }
 
 fun Completable.wrap(): CompletableWrapper = CompletableWrapper(this)

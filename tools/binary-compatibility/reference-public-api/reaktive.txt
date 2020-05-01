@@ -100,7 +100,11 @@ public class com/badoo/reaktive/completable/CompletableWrapper : com/badoo/reakt
 	public fun <init> (Lcom/badoo/reaktive/completable/Completable;)V
 	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
 	public fun subscribe (Lcom/badoo/reaktive/completable/CompletableObserver;)V
+	public final fun subscribe (ZLkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/disposable/Disposable;
+	public final fun subscribe (ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/disposable/Disposable;
 	public final fun subscribe (ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/completable/CompletableWrapper;ZLkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/completable/CompletableWrapper;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
 	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/completable/CompletableWrapper;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
 }
 
@@ -404,7 +408,13 @@ public class com/badoo/reaktive/maybe/MaybeWrapper : com/badoo/reaktive/maybe/Ma
 	public fun <init> (Lcom/badoo/reaktive/maybe/Maybe;)V
 	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
 	public fun subscribe (Lcom/badoo/reaktive/maybe/MaybeObserver;)V
+	public final fun subscribe (ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
+	public final fun subscribe (ZLkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
+	public final fun subscribe (ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
 	public final fun subscribe (ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/maybe/MaybeWrapper;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/maybe/MaybeWrapper;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/maybe/MaybeWrapper;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
 	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/maybe/MaybeWrapper;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
 }
 
@@ -721,7 +731,13 @@ public class com/badoo/reaktive/observable/ObservableWrapper : com/badoo/reaktiv
 	public fun <init> (Lcom/badoo/reaktive/observable/Observable;)V
 	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
 	public fun subscribe (Lcom/badoo/reaktive/observable/ObservableObserver;)V
+	public final fun subscribe (ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
+	public final fun subscribe (ZLkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
+	public final fun subscribe (ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
 	public final fun subscribe (ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/observable/ObservableWrapper;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/observable/ObservableWrapper;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/observable/ObservableWrapper;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
 	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/observable/ObservableWrapper;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
 }
 
@@ -1130,7 +1146,11 @@ public class com/badoo/reaktive/single/SingleWrapper : com/badoo/reaktive/single
 	public fun <init> (Lcom/badoo/reaktive/single/Single;)V
 	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
 	public fun subscribe (Lcom/badoo/reaktive/single/SingleObserver;)V
+	public final fun subscribe (ZLkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
+	public final fun subscribe (ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
 	public final fun subscribe (ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/single/SingleWrapper;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/single/SingleWrapper;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
 	public static synthetic fun subscribe$default (Lcom/badoo/reaktive/single/SingleWrapper;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/disposable/Disposable;
 }
 
