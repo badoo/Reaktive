@@ -98,6 +98,7 @@ public abstract interface class com/badoo/reaktive/completable/CompletableObserv
 
 public class com/badoo/reaktive/completable/CompletableWrapper : com/badoo/reaktive/completable/Completable {
 	public fun <init> (Lcom/badoo/reaktive/completable/Completable;)V
+	public final fun subscribe ()Lcom/badoo/reaktive/disposable/Disposable;
 	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
 	public fun subscribe (Lcom/badoo/reaktive/completable/CompletableObserver;)V
 	public final fun subscribe (ZLkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/disposable/Disposable;
@@ -406,6 +407,7 @@ public abstract interface class com/badoo/reaktive/maybe/MaybeObserver : com/bad
 
 public class com/badoo/reaktive/maybe/MaybeWrapper : com/badoo/reaktive/maybe/Maybe {
 	public fun <init> (Lcom/badoo/reaktive/maybe/Maybe;)V
+	public final fun subscribe ()Lcom/badoo/reaktive/disposable/Disposable;
 	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
 	public fun subscribe (Lcom/badoo/reaktive/maybe/MaybeObserver;)V
 	public final fun subscribe (ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
@@ -729,6 +731,7 @@ public abstract interface class com/badoo/reaktive/observable/ObservableObserver
 
 public class com/badoo/reaktive/observable/ObservableWrapper : com/badoo/reaktive/observable/Observable {
 	public fun <init> (Lcom/badoo/reaktive/observable/Observable;)V
+	public final fun subscribe ()Lcom/badoo/reaktive/disposable/Disposable;
 	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
 	public fun subscribe (Lcom/badoo/reaktive/observable/ObservableObserver;)V
 	public final fun subscribe (ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
@@ -1144,6 +1147,7 @@ public abstract interface class com/badoo/reaktive/single/SingleObserver : com/b
 
 public class com/badoo/reaktive/single/SingleWrapper : com/badoo/reaktive/single/Single {
 	public fun <init> (Lcom/badoo/reaktive/single/Single;)V
+	public final fun subscribe ()Lcom/badoo/reaktive/disposable/Disposable;
 	public synthetic fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
 	public fun subscribe (Lcom/badoo/reaktive/single/SingleObserver;)V
 	public final fun subscribe (ZLkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;

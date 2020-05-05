@@ -30,6 +30,9 @@ open class MaybeWrapper<out T : Any>(inner: Maybe<T>) : Maybe<T> by inner {
         )
 
     @UseReturnValue
+    fun subscribe(): Disposable = subscribeRx()
+
+    @UseReturnValue
     fun subscribe(
         isThreadLocal: Boolean = false,
         onSuccess: (T) -> Unit

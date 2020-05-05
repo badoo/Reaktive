@@ -30,6 +30,9 @@ open class ObservableWrapper<out T : Any>(inner: Observable<T>) : Observable<T> 
         )
 
     @UseReturnValue
+    fun subscribe(): Disposable = subscribeRx()
+
+    @UseReturnValue
     fun subscribe(
         isThreadLocal: Boolean = false,
         onNext: (T) -> Unit

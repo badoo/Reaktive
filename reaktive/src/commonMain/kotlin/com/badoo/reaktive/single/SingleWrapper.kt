@@ -28,6 +28,9 @@ open class SingleWrapper<out T : Any>(inner: Single<T>) : Single<T> by inner {
         )
 
     @UseReturnValue
+    fun subscribe(): Disposable = subscribeRx()
+
+    @UseReturnValue
     fun subscribe(
         isThreadLocal: Boolean = false,
         onSuccess: (T) -> Unit

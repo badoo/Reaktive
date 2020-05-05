@@ -28,6 +28,9 @@ open class CompletableWrapper(inner: Completable) : Completable by inner {
         )
 
     @UseReturnValue
+    fun subscribe(): Disposable = subscribeRx()
+
+    @UseReturnValue
     fun subscribe(
         isThreadLocal: Boolean = false,
         onComplete: () -> Unit
