@@ -11,7 +11,7 @@ import com.badoo.reaktive.observable.subscribe as subscribeRx
  * for more information.
  * You can also extend the wrapper class if you need to expose any additional operators.
  */
-open class ObservableWrapper<out T>(inner: Observable<T>) : Observable<T> by inner {
+open class ObservableWrapper<out T : Any>(inner: Observable<T>) : Observable<T> by inner {
 
     @UseReturnValue
     fun subscribe(
@@ -28,6 +28,45 @@ open class ObservableWrapper<out T>(inner: Observable<T>) : Observable<T> by inn
             onComplete = onComplete,
             onNext = onNext
         )
+
+    @UseReturnValue
+    fun subscribe(): Disposable = subscribeRx()
+
+    @UseReturnValue
+    fun subscribe(
+        isThreadLocal: Boolean = false,
+        onNext: (T) -> Unit
+    ): Disposable =
+        subscribeRx(
+            isThreadLocal = isThreadLocal,
+            onNext = onNext
+        )
+
+    @UseReturnValue
+    fun subscribe(
+        isThreadLocal: Boolean = false,
+        onComplete: () -> Unit,
+        onNext: (T) -> Unit
+    ): Disposable =
+        subscribeRx(
+            isThreadLocal = isThreadLocal,
+            onComplete = onComplete,
+            onNext = onNext
+        )
+
+    @UseReturnValue
+    fun subscribe(
+        isThreadLocal: Boolean = false,
+        onError: (Throwable) -> Unit,
+        onComplete: () -> Unit,
+        onNext: (T) -> Unit
+    ): Disposable =
+        subscribeRx(
+            isThreadLocal = isThreadLocal,
+            onError = onError,
+            onComplete = onComplete,
+            onNext = onNext
+        )
 }
 
-fun <T> Observable<T>.wrap(): ObservableWrapper<T> = ObservableWrapper(this)
+fun <T : Any> Observable<T>.wrap(): ObservableWrapper<T> = ObservableWrapper(this)

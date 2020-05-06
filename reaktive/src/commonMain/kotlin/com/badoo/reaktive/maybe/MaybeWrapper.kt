@@ -11,7 +11,7 @@ import com.badoo.reaktive.maybe.subscribe as subscribeRx
  * for more information.
  * You can also extend the wrapper class if you need to expose any additional operators.
  */
-open class MaybeWrapper<out T>(inner: Maybe<T>) : Maybe<T> by inner {
+open class MaybeWrapper<out T : Any>(inner: Maybe<T>) : Maybe<T> by inner {
 
     @UseReturnValue
     fun subscribe(
@@ -28,6 +28,45 @@ open class MaybeWrapper<out T>(inner: Maybe<T>) : Maybe<T> by inner {
             onComplete = onComplete,
             onSuccess = onSuccess
         )
+
+    @UseReturnValue
+    fun subscribe(): Disposable = subscribeRx()
+
+    @UseReturnValue
+    fun subscribe(
+        isThreadLocal: Boolean = false,
+        onSuccess: (T) -> Unit
+    ): Disposable =
+        subscribeRx(
+            isThreadLocal = isThreadLocal,
+            onSuccess = onSuccess
+        )
+
+    @UseReturnValue
+    fun subscribe(
+        isThreadLocal: Boolean = false,
+        onComplete: () -> Unit,
+        onSuccess: (T) -> Unit
+    ): Disposable =
+        subscribeRx(
+            isThreadLocal = isThreadLocal,
+            onComplete = onComplete,
+            onSuccess = onSuccess
+        )
+
+    @UseReturnValue
+    fun subscribe(
+        isThreadLocal: Boolean = false,
+        onError: (Throwable) -> Unit,
+        onComplete: () -> Unit,
+        onSuccess: (T) -> Unit
+    ): Disposable =
+        subscribeRx(
+            isThreadLocal = isThreadLocal,
+            onError = onError,
+            onComplete = onComplete,
+            onSuccess = onSuccess
+        )
 }
 
-fun <T> Maybe<T>.wrap(): MaybeWrapper<T> = MaybeWrapper(this)
+fun <T : Any> Maybe<T>.wrap(): MaybeWrapper<T> = MaybeWrapper(this)

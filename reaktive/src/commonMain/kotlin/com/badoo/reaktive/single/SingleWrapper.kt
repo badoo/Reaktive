@@ -11,7 +11,7 @@ import com.badoo.reaktive.single.subscribe as subscribeRx
  * for more information.
  * You can also extend the wrapper class if you need to expose any additional operators.
  */
-open class SingleWrapper<out T>(inner: Single<T>) : Single<T> by inner {
+open class SingleWrapper<out T : Any>(inner: Single<T>) : Single<T> by inner {
 
     @UseReturnValue
     fun subscribe(
@@ -26,6 +26,31 @@ open class SingleWrapper<out T>(inner: Single<T>) : Single<T> by inner {
             onError = onError,
             onSuccess = onSuccess
         )
+
+    @UseReturnValue
+    fun subscribe(): Disposable = subscribeRx()
+
+    @UseReturnValue
+    fun subscribe(
+        isThreadLocal: Boolean = false,
+        onSuccess: (T) -> Unit
+    ): Disposable =
+        subscribeRx(
+            isThreadLocal = isThreadLocal,
+            onSuccess = onSuccess
+        )
+
+    @UseReturnValue
+    fun subscribe(
+        isThreadLocal: Boolean = false,
+        onError: (Throwable) -> Unit,
+        onSuccess: (T) -> Unit
+    ): Disposable =
+        subscribeRx(
+            isThreadLocal = isThreadLocal,
+            onError = onError,
+            onSuccess = onSuccess
+        )
 }
 
-fun <T> Single<T>.wrap(): SingleWrapper<T> = SingleWrapper(this)
+fun <T : Any> Single<T>.wrap(): SingleWrapper<T> = SingleWrapper(this)
