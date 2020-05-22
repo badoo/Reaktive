@@ -1249,8 +1249,14 @@ public final class com/badoo/reaktive/subject/SubjectExtKt {
 	public static final fun isActive (Lcom/badoo/reaktive/subject/Subject;)Z
 }
 
-public abstract interface class com/badoo/reaktive/subject/behavior/BehaviorSubject : com/badoo/reaktive/subject/Subject {
+public abstract interface class com/badoo/reaktive/subject/behavior/BehaviorObservable : com/badoo/reaktive/observable/Observable {
 	public abstract fun getValue ()Ljava/lang/Object;
+}
+
+public abstract interface class com/badoo/reaktive/subject/behavior/BehaviorRelay : com/badoo/reaktive/subject/Relay, com/badoo/reaktive/subject/behavior/BehaviorObservable {
+}
+
+public abstract interface class com/badoo/reaktive/subject/behavior/BehaviorSubject : com/badoo/reaktive/subject/Subject, com/badoo/reaktive/subject/behavior/BehaviorRelay {
 }
 
 public final class com/badoo/reaktive/subject/behavior/BehaviorSubjectBuilderKt {
