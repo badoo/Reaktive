@@ -3,6 +3,7 @@
 [![Download](https://api.bintray.com/packages/badoo/maven/reaktive/images/download.svg)](https://bintray.com/badoo/maven/reaktive/_latestVersion)
 [![Build Status](https://github.com/badoo/Reaktive/workflows/Build/badge.svg?branch=master)](https://github.com/badoo/Reaktive/actions)
 [![License](https://img.shields.io/badge/License-Apache/2.0-blue.svg)](https://github.com/badoo/Reaktive/blob/master/LICENSE)
+[![kotlinlang|reaktive](https://img.shields.io/badge/kotlinlang-reaktive-blue?logo=slack)](https://kotlinlang.slack.com/archives/CU05HB31A)
 
 Kotlin multiplatform implementation of Reactive Extensions.
 
