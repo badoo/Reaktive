@@ -5,16 +5,16 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.ObjectReference
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 fun <T> Iterable<Observable<T>>.amb(): Observable<T> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val markerDisposable = Disposable()
-        disposables += markerDisposable
+        val hasWinner = AtomicBoolean()
 
         forEach {
-            it.subscribe(AmbObserver(disposables, markerDisposable, emitter))
+            it.subscribe(AmbObserver(disposables, hasWinner, emitter))
         }
     }
 
@@ -22,7 +22,7 @@ fun <T> amb(vararg sources: Observable<T>): Observable<T> = sources.toList().amb
 
 private class AmbObserver<in T>(
     private val disposables: CompositeDisposable,
-    private val markerDisposable: Disposable,
+    private val hasWinner: AtomicBoolean,
     private val emitter: ObservableEmitter<T>
 ) : ObjectReference<Disposable?>(null), ObservableObserver<T> {
     override fun onSubscribe(disposable: Disposable) {
@@ -47,8 +47,8 @@ private class AmbObserver<in T>(
         if (disposable == null) {
             // This Observable is already a winner
             block()
-        } else if (disposables.remove(markerDisposable)) {
-            // Only one Observable can win the race because CompositeDisposable.remove is atomic
+        } else if (hasWinner.compareAndSet(false, true)) {
+            // Only one Observable can win the race
             this.value = null
             disposables -= disposable
             disposables.dispose()
