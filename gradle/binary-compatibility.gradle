@@ -34,7 +34,14 @@ apiValidation {
 subprojects { project ->
     if (apiValidation.ignoredProjects.contains(project.name)) return
     project.afterEvaluate {
-        def apiCheck = project.tasks.named('apiCheck')
-        project.tasks.named('check') { it.dependsOn.remove(apiCheck) }
+        try {
+            def apiCheck = project.tasks.named('apiCheck')
+            project.tasks.named('check') { it.dependsOn.remove(apiCheck) }
+        } catch (UnknownTaskException exception) {
+            if (Target.currentTarget(project) == Target.JVM) {
+                // JVM target is only used for binary compatibility runs
+                throw exception
+            }
+        }
     }
 }
