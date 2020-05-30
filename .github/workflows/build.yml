@@ -123,4 +123,4 @@ jobs:
           restore-keys: |
             binary-gradle-
       - name: Run binary compatibility test suite
-        run: ./gradlew :tools:binary-compatibility:test -Pbinary-compatibility-override=false -Ptarget=jvm
+        run: ./gradlew apiCheck -Ptarget=jvm

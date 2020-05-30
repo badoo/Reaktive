@@ -13,7 +13,6 @@ if (Target.shouldDefineTarget(this, Target.JVM)) {
     include(":rxjava3-interop")
     include(":sample-android-app")
     include(":benchmarks:jmh")
-    include(":tools:binary-compatibility")
 }
 if (Target.shouldDefineTarget(this, Target.JS)) {
     include(":sample-js-browser-app")
