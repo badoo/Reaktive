@@ -11,19 +11,19 @@ apply plugin: kotlinx.validation.BinaryCompatibilityValidatorPlugin
 
 apiValidation {
     ignoredProjects += 'sample-mpp-module'
-    if (Target.shouldDefineTarget(this, Target.JVM)) {
+    if (Target.shouldDefineTarget(project, Target.JVM)) {
         ignoredProjects += ['sample-android-app', 'benchmarks', 'jmh']
     }
-    if (Target.shouldDefineTarget(this, Target.JS)) {
+    if (Target.shouldDefineTarget(project, Target.JS)) {
         ignoredProjects += 'sample-js-browser-app'
     }
-    if (Target.shouldDefineTarget(this, Target.LINUX)) {
+    if (Target.shouldDefineTarget(project, Target.LINUX)) {
         ignoredProjects += 'sample-linuxx64-app'
     }
-    if (Target.shouldDefineTarget(this, Target.IOS)) {
+    if (Target.shouldDefineTarget(project, Target.IOS)) {
         ignoredProjects += 'sample-ios-app'
     }
-    if (Target.shouldDefineTarget(this, Target.MACOS)) {
+    if (Target.shouldDefineTarget(project, Target.MACOS)) {
         ignoredProjects += 'sample-macos-app'
     }
 }
