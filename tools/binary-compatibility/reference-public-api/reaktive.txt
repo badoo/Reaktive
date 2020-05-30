@@ -56,6 +56,11 @@ public final class com/badoo/reaktive/base/exceptions/TimeoutException : java/la
 	public fun <init> ()V
 }
 
+public final class com/badoo/reaktive/completable/AmbKt {
+	public static final fun amb (Ljava/lang/Iterable;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun amb ([Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
+}
+
 public final class com/badoo/reaktive/completable/AndThenKt {
 	public static final fun andThen (Lcom/badoo/reaktive/completable/Completable;Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun andThen (Lcom/badoo/reaktive/completable/Completable;Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
@@ -277,6 +282,11 @@ public final class com/badoo/reaktive/disposable/scope/DisposableScopeBuilderKt 
 
 public final class com/badoo/reaktive/disposable/scope/DisposableScopeExtKt {
 	public static final fun doOnDispose (Lcom/badoo/reaktive/disposable/scope/DisposableScope;Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class com/badoo/reaktive/maybe/AmbKt {
+	public static final fun amb (Ljava/lang/Iterable;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun amb ([Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
 }
 
 public final class com/badoo/reaktive/maybe/AsCompletableKt {
@@ -522,6 +532,11 @@ public final class com/badoo/reaktive/maybe/ZipKt {
 
 public final class com/badoo/reaktive/maybe/ZipWithKt {
 	public static final fun zipWith (Lcom/badoo/reaktive/maybe/Maybe;Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/maybe/Maybe;
+}
+
+public final class com/badoo/reaktive/observable/AmbKt {
+	public static final fun amb (Ljava/lang/Iterable;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun amb ([Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/AsCompletableKt {
@@ -992,6 +1007,11 @@ public final class com/badoo/reaktive/scheduler/SchedulersKt {
 	public static final fun getTrampolineScheduler ()Lcom/badoo/reaktive/scheduler/Scheduler;
 	public static final fun overrideSchedulers (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
 	public static synthetic fun overrideSchedulers$default (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+}
+
+public final class com/badoo/reaktive/single/AmbKt {
+	public static final fun amb (Ljava/lang/Iterable;)Lcom/badoo/reaktive/single/Single;
+	public static final fun amb ([Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/single/Single;
 }
 
 public final class com/badoo/reaktive/single/AsCompletableKt {
