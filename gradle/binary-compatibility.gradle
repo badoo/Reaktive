@@ -10,16 +10,22 @@ buildscript {
 apply plugin: kotlinx.validation.BinaryCompatibilityValidatorPlugin
 
 apiValidation {
-    ignoredProjects += [
-            'benchmarks',
-            'jmh',
-            'sample-android-app',
-            'sample-mpp-module',
-            'sample-js-browser-app',
-            'sample-linuxx64-app',
-            'sample-ios-app',
-            'sample-macos-app'
-    ]
+    ignoredProjects += 'sample-mpp-module'
+    if (Target.shouldDefineTarget(this, Target.JVM)) {
+        ignoredProjects += ['sample-android-app', 'benchmarks', 'jmh']
+    }
+    if (Target.shouldDefineTarget(this, Target.JS)) {
+        ignoredProjects += 'sample-js-browser-app'
+    }
+    if (Target.shouldDefineTarget(this, Target.LINUX)) {
+        ignoredProjects += 'sample-linuxx64-app'
+    }
+    if (Target.shouldDefineTarget(this, Target.IOS)) {
+        ignoredProjects += 'sample-ios-app'
+    }
+    if (Target.shouldDefineTarget(this, Target.MACOS)) {
+        ignoredProjects += 'sample-macos-app'
+    }
 }
 
 // Remove direct dependency of check on apiCheck, we will check in separate run
