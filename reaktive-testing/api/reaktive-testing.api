@@ -172,22 +172,9 @@ public final class com/badoo/reaktive/test/scheduler/TestScheduler : com/badoo/r
 	public final fun process ()V
 }
 
-public final class com/badoo/reaktive/test/scheduler/TestScheduler$Executor : com/badoo/reaktive/scheduler/Scheduler$Executor {
-	public fun <init> (Lcom/badoo/reaktive/test/scheduler/TestScheduler$Timer;Z)V
-	public fun cancel ()V
-	public fun dispose ()V
-	public fun isDisposed ()Z
-	public final fun process ()V
-	public fun submit (JLkotlin/jvm/functions/Function0;)V
-	public fun submitRepeating (JJLkotlin/jvm/functions/Function0;)V
-}
-
-public final class com/badoo/reaktive/test/scheduler/TestScheduler$Timer {
-	public fun <init> ()V
-	public final fun addOnChangeListener (Lkotlin/jvm/functions/Function0;)V
-	public final fun advanceBy (J)V
-	public final fun getMillis ()J
-	public final fun removeOnChangeListener (Lkotlin/jvm/functions/Function0;)V
+public abstract interface class com/badoo/reaktive/test/scheduler/TestScheduler$Timer {
+	public abstract fun advanceBy (J)V
+	public abstract fun getMillis ()J
 }
 
 public final class com/badoo/reaktive/test/scheduler/TestSchedulerExtKt {
