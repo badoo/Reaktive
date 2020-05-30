@@ -10,6 +10,8 @@ allprojects {
     }
 }
 
+apply from: 'gradle/binary-compatibility.gradle'
+
 void setupMultiplatformLibrary(Project project) {
     project.apply plugin: 'org.jetbrains.kotlin.multiplatform'
     project.apply plugin: 'maven-publish'

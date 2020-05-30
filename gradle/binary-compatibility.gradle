@@ -1,0 +1,47 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath Deps.kotlinx.compatibility
+    }
+}
+
+apply plugin: kotlinx.validation.BinaryCompatibilityValidatorPlugin
+
+apiValidation {
+    ignoredProjects += 'sample-mpp-module'
+    if (Target.shouldDefineTarget(project, Target.JVM)) {
+        ignoredProjects += ['sample-android-app', 'benchmarks', 'jmh']
+    }
+    if (Target.shouldDefineTarget(project, Target.JS)) {
+        ignoredProjects += 'sample-js-browser-app'
+    }
+    if (Target.shouldDefineTarget(project, Target.LINUX)) {
+        ignoredProjects += 'sample-linuxx64-app'
+    }
+    if (Target.shouldDefineTarget(project, Target.IOS)) {
+        ignoredProjects += 'sample-ios-app'
+    }
+    if (Target.shouldDefineTarget(project, Target.MACOS)) {
+        ignoredProjects += 'sample-macos-app'
+    }
+}
+
+// Remove direct dependency of check on apiCheck, we will check in separate run
+// https://github.com/Kotlin/binary-compatibility-validator/blob/master/src/main/kotlin/BinaryCompatibilityValidatorPlugin.kt#L146
+
+subprojects { project ->
+    if (apiValidation.ignoredProjects.contains(project.name)) return
+    project.afterEvaluate {
+        try {
+            def apiCheck = project.tasks.named('apiCheck')
+            project.tasks.named('check') { it.dependsOn.remove(apiCheck) }
+        } catch (UnknownTaskException exception) {
+            if (Target.currentTarget(project) == Target.JVM) {
+                // JVM target is only used for binary compatibility runs
+                throw exception
+            }
+        }
+    }
+}
