@@ -1,7 +1,5 @@
 package com.badoo.reaktive.disposable.scope
 
-import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
-import com.badoo.reaktive.base.CompleteCallback
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.completable.subscribe
 import com.badoo.reaktive.disposable.CompositeDisposable
@@ -13,7 +11,6 @@ import com.badoo.reaktive.observable.subscribe
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.subscribe
 
-@OptIn(ExperimentalReaktiveApi::class)
 internal class DisposableScopeImpl : DisposableScope, CompositeDisposable() {
 
     override fun <T : Disposable> T.scope(): T {
@@ -23,8 +20,8 @@ internal class DisposableScopeImpl : DisposableScope, CompositeDisposable() {
         return this
     }
 
-    override fun <T : CompleteCallback> T.scope(): T {
-        Disposable(::onComplete).scope()
+    override fun <T> T.scope(dispose: (T) -> Unit): T {
+        Disposable { dispose(this) }.scope()
 
         return this
     }

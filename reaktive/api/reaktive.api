@@ -260,8 +260,8 @@ public final class com/badoo/reaktive/disposable/VariousJvm {
 }
 
 public abstract interface class com/badoo/reaktive/disposable/scope/DisposableScope : com/badoo/reaktive/disposable/Disposable {
-	public abstract fun scope (Lcom/badoo/reaktive/base/CompleteCallback;)Lcom/badoo/reaktive/base/CompleteCallback;
 	public abstract fun scope (Lcom/badoo/reaktive/disposable/Disposable;)Lcom/badoo/reaktive/disposable/Disposable;
+	public abstract fun scope (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public abstract fun subscribeScoped (Lcom/badoo/reaktive/completable/Completable;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/disposable/Disposable;
 	public abstract fun subscribeScoped (Lcom/badoo/reaktive/maybe/Maybe;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;
 	public abstract fun subscribeScoped (Lcom/badoo/reaktive/observable/Observable;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/disposable/Disposable;

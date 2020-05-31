@@ -1,6 +1,6 @@
 package com.badoo.reaktive.samplemppmodule.store
 
-import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
+import com.badoo.reaktive.base.CompleteCallback
 import com.badoo.reaktive.disposable.scope.DisposableScope
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.samplemppmodule.store.KittenStore.Intent
@@ -12,12 +12,11 @@ import com.badoo.reaktive.single.observeOn
 import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.badoo.reaktive.utils.ensureNeverFrozen
 
-@OptIn(ExperimentalReaktiveApi::class)
 internal class KittenStoreImpl(
     private val loader: KittenLoader
 ) : KittenStore, DisposableScope by DisposableScope() {
 
-    private val _states = BehaviorSubject(State()).ensureNeverFrozen().scope()
+    private val _states = BehaviorSubject(State()).ensureNeverFrozen().scope(CompleteCallback::onComplete)
     override val states: Observable<State> = _states
     private val state: State get() = _states.value
 
