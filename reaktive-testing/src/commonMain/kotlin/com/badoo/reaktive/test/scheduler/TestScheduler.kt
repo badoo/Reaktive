@@ -1,6 +1,7 @@
 package com.badoo.reaktive.test.scheduler
 
 import com.badoo.reaktive.scheduler.Scheduler
+import com.badoo.reaktive.scheduler.Scheduler.Executor
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
@@ -12,16 +13,19 @@ class TestScheduler(
     private val isManualProcessing: Boolean = false
 ) : Scheduler {
 
-    val timer = Timer()
+    private val _timer = TimerImpl()
+    val timer: Timer = _timer
     private val _executors = AtomicReference<List<Executor>>(emptyList())
     val executors: List<Executor> get() = _executors.value
+    private val tasks = AtomicReference<List<Task>>(emptyList())
+    private var isProcessing = AtomicBoolean()
 
     init {
         freeze()
     }
 
-    override fun newExecutor(): Scheduler.Executor {
-        val executor = Executor(timer, isManualProcessing)
+    override fun newExecutor(): Executor {
+        val executor = ExecutorImpl()
         _executors.update { it + executor }
 
         return executor
@@ -30,109 +34,121 @@ class TestScheduler(
     override fun destroy() {
         _executors
             .getAndUpdate { emptyList() }
-            .forEach(Scheduler.Executor::dispose)
+            .forEach(Executor::dispose)
     }
 
     fun process() {
-        _executors
-            .value
-            .forEach(Executor::process)
-    }
-
-    class Timer {
-        private val timeMillis = AtomicLong()
-        private val listeners: AtomicReference<Set<() -> Unit>> = AtomicReference(emptySet())
-        val millis: Long get() = timeMillis.value
-
-        fun addOnChangeListener(listener: () -> Unit) {
-            listeners.update { it + listener }
-        }
-
-        fun removeOnChangeListener(listener: () -> Unit) {
-            listeners.update { it - listener }
-        }
-
-        fun advanceBy(millis: Long) {
-            timeMillis.addAndGet(millis)
-            listeners.value.forEach { it() }
+        if (isProcessing.compareAndSet(false, true)) {
+            try {
+                processActual()
+            } finally {
+                isProcessing.value = false
+            }
         }
     }
 
-    class Executor(
-        private val timer: Timer,
-        private val isManualProcessing: Boolean
-    ) : Scheduler.Executor {
+    private fun processActual() {
+        while (true) {
+            val task = tasks.value.firstOrNull()?.takeIf { it.startMillis <= _timer.targetMillis } ?: break
+            updateTasks {
+                removeAt(0)
+                if (task.periodMillis >= 0L) {
+                    add(task.copy(startMillis = task.startMillis + task.periodMillis))
+                    sort()
+                }
+            }
 
-        private val tasks = AtomicReference<List<Task>>(emptyList())
+            _timer.millis = task.startMillis
+
+            if (!task.executor.isDisposed) {
+                task.task()
+            }
+        }
+
+        _timer.millis = _timer.targetMillis
+    }
+
+    private fun processIfNeeded() {
+        if (!isManualProcessing) {
+            process()
+        }
+    }
+
+    private inline fun updateTasks(block: MutableList<Task>.() -> Unit) {
+        tasks.update {
+            it.toMutableList().also(block)
+        }
+    }
+
+    interface Timer {
+        val millis: Long
+
+        fun advanceBy(millis: Long)
+    }
+
+    private inner class TimerImpl : Timer {
+        private val _millis = AtomicLong()
+        override var millis: Long
+            get() = _millis.value
+            set(value) {
+                _millis.value = value
+            }
+
+        private val _requestedMillis = AtomicLong()
+        val targetMillis: Long get() = _requestedMillis.value
+
+        override fun advanceBy(millis: Long) {
+            require(millis >= 0L) { "Millis must not be negative" }
+
+            _requestedMillis.addAndGet(millis)
+            processIfNeeded()
+        }
+    }
+
+    private inner class ExecutorImpl : Executor {
         private val _isDisposed = AtomicBoolean()
         override val isDisposed: Boolean get() = _isDisposed.value
-        private val timerListener = ::processIfNeeded
-
-        init {
-            timer.addOnChangeListener(timerListener)
-        }
 
         override fun submit(delayMillis: Long, task: () -> Unit) {
-            addTask(delayMillis, null, task)
+            addTask(startDelayMillis = delayMillis, task = task)
+            processIfNeeded()
         }
 
         override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
-            addTask(startDelayMillis, periodMillis, task)
+            addTask(startDelayMillis = startDelayMillis, periodMillis = periodMillis, task = task)
+            processIfNeeded()
+        }
+
+        private fun addTask(startDelayMillis: Long, periodMillis: Long = -1L, task: () -> Unit) {
+            updateTasks {
+                add(
+                    Task(
+                        startMillis = timer.millis + startDelayMillis,
+                        periodMillis = periodMillis,
+                        executor = this@ExecutorImpl,
+                        task = task
+                    )
+                )
+                sort()
+            }
         }
 
         override fun cancel() {
-            tasks.update { emptyList() }
+            updateTasks {
+                removeAll { it.executor === this@ExecutorImpl }
+            }
         }
 
         override fun dispose() {
             _isDisposed.value = true
-            timer.removeOnChangeListener(timerListener)
             cancel()
-        }
-
-        fun process() {
-            val timeMillis = timer.millis
-            val tasksToStart = ArrayList<() -> Unit>()
-            val queue = tasks.value.toMutableList()
-
-            while (queue.isNotEmpty() && (queue.first().startMillis <= timeMillis)) {
-                val task = queue.removeAt(0)
-                tasksToStart += task.task
-                if (task.periodMillis != null) {
-                    queue += task.copy(startMillis = task.startMillis + task.periodMillis)
-                    queue.sort()
-                }
-            }
-
-            tasks.value = queue
-
-            tasksToStart.forEach { it() }
-        }
-
-        private fun processIfNeeded() {
-            if (!isManualProcessing) {
-                process()
-            }
-        }
-
-        private fun addTask(startDelayMillis: Long, periodMillis: Long?, task: () -> Unit) {
-            tasks.update {
-                it.plus(
-                    Task(
-                        startMillis = timer.millis + startDelayMillis,
-                        periodMillis = periodMillis,
-                        task = task
-                    )
-                ).sorted()
-            }
-
-            processIfNeeded()
         }
     }
 
     private data class Task(
         val startMillis: Long,
-        val periodMillis: Long?,
+        val periodMillis: Long,
+        val executor: Executor,
         val task: () -> Unit
     ) : Comparable<Task> {
         private val sequenceNumber = sequencer.addAndGet(1L)
