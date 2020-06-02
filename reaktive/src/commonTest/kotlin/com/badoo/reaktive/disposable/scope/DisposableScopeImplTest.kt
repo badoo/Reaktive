@@ -1,6 +1,5 @@
 package com.badoo.reaktive.disposable.scope
 
-import com.badoo.reaktive.base.CompleteCallback
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
@@ -26,20 +25,15 @@ class DisposableScopeImplTest {
     }
 
     @Test
-    fun completes_scoped_CompleteCallback_WHEN_disposed() {
-        val completeCallback =
-            object : CompleteCallback {
-                var isComplete: Boolean = false
+    fun disposes_scoped_object_WHEN_disposed() {
+        var isDisposed = false
 
-                override fun onComplete() {
-                    isComplete = true
-                }
-            }
-
-        scope.run { completeCallback.scope() }
+        scope.run {
+            Unit.scope { isDisposed = true }
+        }
         scope.dispose()
 
-        assertTrue(completeCallback.isComplete)
+        assertTrue(isDisposed)
     }
 
     @Test
