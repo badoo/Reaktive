@@ -1,28 +1,14 @@
-enableFeaturePreview("GRADLE_METADATA")
-
-logger.warn("Current environment: ${Target.currentTarget(this)}")
-
+include(":utils")
 include(":reaktive")
 include(":reaktive-testing")
 include(":reaktive-annotations")
-include(":utils")
 include(":coroutines-interop")
+include(":rxjava2-interop")
+include(":rxjava3-interop")
+include(":benchmarks:jmh")
 include(":sample-mpp-module")
-if (Target.shouldDefineTarget(this, Target.JVM)) {
-    include(":rxjava2-interop")
-    include(":rxjava3-interop")
-    include(":sample-android-app")
-    include(":benchmarks:jmh")
-}
-if (Target.shouldDefineTarget(this, Target.JS)) {
-    include(":sample-js-browser-app")
-}
-if (Target.shouldDefineTarget(this, Target.LINUX)) {
-    include(":sample-linuxx64-app")
-}
-if (Target.shouldDefineTarget(this, Target.IOS)) {
-    include(":sample-ios-app")
-}
-if (Target.shouldDefineTarget(this, Target.MACOS)) {
-    include(":sample-macos-app")
-}
+include(":sample-android-app")
+include(":sample-js-browser-app")
+include(":sample-linuxx64-app")
+include(":sample-ios-app")
+include(":sample-macos-app")

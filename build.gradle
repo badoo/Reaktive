@@ -10,6 +10,7 @@ allprojects {
     }
 }
 
+logger.warn("Current environment: ${Target.currentTarget(project)}")
 apply from: 'gradle/binary-compatibility.gradle'
 
 void setupMultiplatformLibrary(Project project) {

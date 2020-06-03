@@ -1,126 +1,44 @@
 name: Build
 
 on:
-    push:
-        branches:
-            - master
-    pull_request:
+  push:
+    branches:
+      - master
+  pull_request:
 jobs:
-  ubuntu-build:
-    name: Build on Ubuntu
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      matrix:
+        os: [macOS-latest, ubuntu-latest]
+    runs-on: ${{matrix.os}}
+    name: Build on ${{matrix.os}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Install Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: Update dependencies
-        run: sudo apt-get update
       - name: Install dependencies
-        run: sudo apt-get install libcurl4-openssl-dev libgtk-3-dev nodejs chromium-browser
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libgtk-3-dev nodejs chromium-browser
       - name: Set up cache
         uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
-          key: common-gradle-${{ hashFiles('**/*.gradle') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
-            common-gradle-
-      - name: Build JVM, Android, JS, Linux
-        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build rxjava2-interop:build rxjava3-interop:build coroutines-interop:build :sample-android-app:assembleDebug :sample-js-browser-app:assemble :sample-linuxx64-app:linkDebugExecutableLinux -Ptarget=all_linux_hosted
-  macos-build:
-    name: Build macOS
-    runs-on: macOS-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: Set up cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: macos-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            macos-gradle-
+            ${{ runner.os }}-gradle-
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Build Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: ./gradlew build
       - name: Build macOS
-        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build sample-macos-app:build -Ptarget=macos
-  watchos-build:
-    name: Build watchOS
-    runs-on: macOS-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install Java
-        uses: actions/setup-java@v1
+        if: matrix.os == 'macOS-latest'
+        run: ./gradlew :reaktive-annotations:build :utils:build :reaktive-testing:build :reaktive:build :coroutines-interop:build :sample-mpp-module:build :sample-ios-app:build :sample-macos-app:build -Ptarget=all_macos_hosted
+      - name: Bundle the build report
+        if: failure()
+        run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
+      - name: Upload the build report
+        if: failure()
+        uses: actions/upload-artifact@master
         with:
-          java-version: 1.8
-      - name: Set up cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: watchos-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            watchos-gradle-
-      - name: Build watchOS
-        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build -Ptarget=watchos
-  tvos-build:
-    name: Build tvOS
-    runs-on: macOS-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: Set up cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: tvos-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            tvos-gradle-
-      - name: Build tvOS
-        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build -Ptarget=tvos
-  ios-build:
-    name: Build iOS
-    runs-on: macOS-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: Set up cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ios-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            ios-gradle-
-      - name: Build iOS
-        run: ./gradlew reaktive-annotations:build utils:build reaktive:build reaktive-test:build coroutines-interop:build sample-ios-app:build -Ptarget=ios
-  ubuntu-check-compatibility:
-    name: Binary compatibility
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: Set up cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: binary-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            binary-gradle-
-      - name: Run binary compatibility test suite
-        run: ./gradlew apiCheck -Ptarget=jvm
+          name: error-report
+          path: build-reports.zip
