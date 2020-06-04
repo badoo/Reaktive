@@ -6,10 +6,11 @@ import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.freeze
+import com.badoo.reaktive.utils.isFrozen
 
 class TestObservableObserver<T>(autoFreeze: Boolean = true) : TestObserver(), ObservableObserver<T> {
 
-    private val _values = AtomicReference<List<T>>(emptyList())
+    private val _values = AtomicReference<MutableList<T>>(ArrayList())
     val values: List<T> get() = _values.value
     private val _isComplete = AtomicBoolean()
     val isComplete: Boolean get() = _isComplete.value
@@ -23,7 +24,16 @@ class TestObservableObserver<T>(autoFreeze: Boolean = true) : TestObserver(), Ob
     override fun onNext(value: T) {
         checkActive()
 
-        _values.update { it + value }
+        if (_values.isFrozen) {
+            _values.update { oldList ->
+                ArrayList<T>(oldList.size + 1).apply {
+                    addAll(oldList)
+                    add(value)
+                }
+            }
+        } else {
+            _values.value.add(value)
+        }
     }
 
     override fun onComplete() {
@@ -35,7 +45,7 @@ class TestObservableObserver<T>(autoFreeze: Boolean = true) : TestObserver(), Ob
     override fun reset() {
         super.reset()
 
-        _values.update { emptyList() }
+        _values.update { ArrayList() }
         _isComplete.value = false
     }
 
