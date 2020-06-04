@@ -1,3 +1,4 @@
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.internal.AbstractTask
 
 open class BuildMacosSampleTask : AbstractTask() {
@@ -6,13 +7,14 @@ open class BuildMacosSampleTask : AbstractTask() {
     val sources: File = project.file("sample-macos-app")
 
     @InputDirectory
-    lateinit var releaseFramework: Provider<File>
+    val releaseFramework: Property<File> = project.objects.property()
 
     @InputDirectory
-    lateinit var debugFramework: Provider<File>
+    val debugFramework: Property<File> = project.objects.property()
 
     init {
         group = LifecycleBasePlugin.BUILD_GROUP
+        onlyIf { Os.isFamily(Os.FAMILY_MAC) }
     }
 
     @TaskAction
@@ -32,6 +34,6 @@ open class BuildMacosSampleTask : AbstractTask() {
 tasks.register<BuildMacosSampleTask>("build") {
     val binariesTasks = project(":sample-mpp-module").tasks.named("macosX64MainBinaries")
     // macosX64MainBinaries does not define any outputs, hardcode them
-    releaseFramework = binariesTasks.map { it.project.file("build/bin/macosX64/releaseFramework") }
-    debugFramework = binariesTasks.map { it.project.file("build/bin/macosX64/debugFramework") }
+    releaseFramework.set(binariesTasks.map { it.project.file("build/bin/macosX64/releaseFramework") })
+    debugFramework.set(binariesTasks.map { it.project.file("build/bin/macosX64/debugFramework") })
 }

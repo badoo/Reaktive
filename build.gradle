@@ -10,7 +10,11 @@ allprojects {
     }
 }
 
-apply from: 'gradle/binary-compatibility.gradle'
+logger.warn("Current environment: ${Target.currentTarget(project)}")
+
+if (Target.shouldDefineTarget(project, Target.ALL_LINUX_HOSTED)) {
+    apply from: 'gradle/binary-compatibility.gradle'
+}
 
 void setupMultiplatformLibrary(Project project) {
     project.apply plugin: 'org.jetbrains.kotlin.multiplatform'
