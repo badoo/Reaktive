@@ -29,10 +29,10 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
       - name: Build Linux
         if: matrix.os == 'ubuntu-latest'
-        run: ./gradlew build -Ptarget=all_linux_hosted
+        run: ./gradlew build -Ptarget=all_linux_hosted --no-parallel
       - name: Build macOS
         if: matrix.os == 'macOS-latest'
-        run: ./gradlew :reaktive-annotations:build :utils:build :reaktive-testing:build :reaktive:build :coroutines-interop:build :sample-mpp-module:build :sample-ios-app:build :sample-macos-app:build -Ptarget=all_macos_hosted
+        run: ./gradlew :reaktive-annotations:build :utils:build :reaktive-testing:build :reaktive:build :coroutines-interop:build :sample-mpp-module:build :sample-ios-app:build :sample-macos-app:build -Ptarget=all_macos_hosted --no-parallel
       - name: Bundle the build report
         if: failure()
         run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
