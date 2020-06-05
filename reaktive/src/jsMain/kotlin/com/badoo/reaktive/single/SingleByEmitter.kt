@@ -4,6 +4,7 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
+// Don't inline at the moment for JS, we had random crashes in JS
 actual fun <T> single(onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
     singleUnsafe { observer ->
         val emitter =

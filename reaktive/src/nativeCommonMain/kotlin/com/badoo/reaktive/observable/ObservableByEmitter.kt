@@ -4,13 +4,18 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
-// Don't inline at the moment for JS, we had random crashes in JS
-actual fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observable<T> =
+// Separate implementation prevents unnecessary freezing: https://github.com/badoo/Reaktive/issues/472
+actual inline fun <T> observable(crossinline onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observable<T> =
     observableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         val emitter =
-            object : DisposableWrapper(), ObservableEmitter<T> {
+            object : ObservableEmitter<T> {
+                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
+
                 override fun setDisposable(disposable: Disposable?) {
-                    set(disposable)
+                    disposableWrapper.set(disposable)
                 }
 
                 override fun onNext(value: T) {
@@ -31,9 +36,9 @@ actual fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit):
 
                 private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
                     if (!isDisposed) {
-                        val disposable: Disposable? = replace(null)
+                        val disposable: Disposable? = disposableWrapper.replace(null)
                         try {
-                            dispose()
+                            disposableWrapper.dispose()
                             block()
                         } finally {
                             disposable?.dispose()
@@ -42,6 +47,5 @@ actual fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit):
                 }
             }
 
-        observer.onSubscribe(emitter)
         emitter.tryCatch { onSubscribe(emitter) }
     }

@@ -4,13 +4,18 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 
-// Don't inline at the moment for JS, we had random crashes in JS
-actual fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable =
+// Separate implementation prevents unnecessary freezing: https://github.com/badoo/Reaktive/issues/472
+actual inline fun completable(crossinline onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable =
     completableUnsafe { observer ->
+        val disposableWrapper = DisposableWrapper()
+        observer.onSubscribe(disposableWrapper)
+
         val emitter =
-            object : DisposableWrapper(), CompletableEmitter {
+            object : CompletableEmitter {
+                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
+
                 override fun setDisposable(disposable: Disposable?) {
-                    set(disposable)
+                    disposableWrapper.set(disposable)
                 }
 
                 override fun onComplete() {
@@ -25,9 +30,9 @@ actual fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Comp
 
                 private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
                     if (!isDisposed) {
-                        val disposable: Disposable? = replace(null)
+                        val disposable: Disposable? = disposableWrapper.replace(null)
                         try {
-                            dispose()
+                            disposableWrapper.dispose()
                             block()
                         } finally {
                             disposable?.dispose()
@@ -36,6 +41,5 @@ actual fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Comp
                 }
             }
 
-        observer.onSubscribe(emitter)
         emitter.tryCatch { onSubscribe(emitter) }
     }
