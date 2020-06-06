@@ -1,8 +1,6 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-import org.gradle.api.internal.AbstractTask
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 
-open class BuildIosSampleTask : AbstractTask() {
+open class BuildIosSampleTask : DefaultTask() {
 
     @InputDirectory
     val sources: File = project.file("sample-ios-app")
@@ -15,7 +13,6 @@ open class BuildIosSampleTask : AbstractTask() {
 
     init {
         group = LifecycleBasePlugin.BUILD_GROUP
-        onlyIf { Os.isFamily(Os.FAMILY_MAC) }
     }
 
     @TaskAction
@@ -47,16 +44,18 @@ open class BuildIosSampleTask : AbstractTask() {
     }
 }
 
-tasks.register<BuildIosSampleTask>("build") {
-    val sampleMppModuleTasks = project(":sample-mpp-module").tasks
-    releaseFramework.set(
-        sampleMppModuleTasks
-            .named<FatFrameworkTask>("fatIosRelease")
-            .map { it.fatFrameworkDir }
-    )
-    debugFramework.set(
-        sampleMppModuleTasks
-            .named<FatFrameworkTask>("fatIosDebug")
-            .map { it.fatFrameworkDir }
-    )
+if (Target.shouldDefineTarget(project, Target.IOS)) {
+    tasks.register<BuildIosSampleTask>("build") {
+        val sampleMppModuleTasks = project(":sample-mpp-module").tasks
+        releaseFramework.set(
+            sampleMppModuleTasks
+                .named<FatFrameworkTask>("fatIosRelease")
+                .map { it.fatFrameworkDir }
+        )
+        debugFramework.set(
+            sampleMppModuleTasks
+                .named<FatFrameworkTask>("fatIosDebug")
+                .map { it.fatFrameworkDir }
+        )
+    }
 }
