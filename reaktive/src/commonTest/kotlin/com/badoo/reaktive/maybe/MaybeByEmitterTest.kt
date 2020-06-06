@@ -14,6 +14,8 @@ import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.plusAssign
+import com.badoo.reaktive.utils.ensureNeverFrozen
+import com.badoo.reaktive.utils.freeze
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -446,6 +448,30 @@ class MaybeByEmitterTest {
         emitter.onError(Exception())
 
         assertFalse(isErrorRecursively.value)
+    }
+
+    @Test
+    fun does_not_freeze_observer_WHEN_disposable_is_frozen() {
+        maybe.subscribe(
+            object : MaybeObserver<Int?> {
+                init {
+                    ensureNeverFrozen()
+                }
+
+                override fun onSubscribe(disposable: Disposable) {
+                    disposable.freeze()
+                }
+
+                override fun onSuccess(value: Int?) {
+                }
+
+                override fun onComplete() {
+                }
+
+                override fun onError(error: Throwable) {
+                }
+            }
+        )
     }
 
     private fun observer(
