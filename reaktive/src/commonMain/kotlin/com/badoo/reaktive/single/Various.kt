@@ -1,6 +1,7 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
+import kotlin.native.concurrent.SharedImmutable
 
 inline fun <T> singleUnsafe(crossinline onSubscribe: (observer: SingleObserver<T>) -> Unit): Single<T> =
     object : Single<T> {
@@ -21,10 +22,13 @@ fun <T> singleOf(value: T): Single<T> =
 
 fun <T> T.toSingle(): Single<T> = singleOf(this)
 
-fun <T> singleOfNever(): Single<T> =
-    singleUnsafe { observer ->
+@SharedImmutable
+private val singleOfNever =
+    singleUnsafe<Nothing> { observer ->
         observer.onSubscribe(Disposable())
     }
+
+fun <T> singleOfNever(): Single<T> = singleOfNever
 
 fun <T> singleOfError(error: Throwable): Single<T> =
     singleUnsafe { observer ->
