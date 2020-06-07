@@ -181,6 +181,10 @@ public final class com/badoo/reaktive/completable/RepeatUntilKt {
 	public static final fun repeatUntil (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/completable/Completable;
 }
 
+public final class com/badoo/reaktive/completable/RepeatWhenKt {
+	public static final fun repeatWhen (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
+}
+
 public final class com/badoo/reaktive/completable/RetryKt {
 	public static final fun retry (Lcom/badoo/reaktive/completable/Completable;I)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun retry (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/completable/Completable;
@@ -468,6 +472,10 @@ public final class com/badoo/reaktive/maybe/RepeatKt {
 
 public final class com/badoo/reaktive/maybe/RepeatUntilKt {
 	public static final fun repeatUntil (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/maybe/RepeatWhenKt {
+	public static final fun repeatWhen (Lcom/badoo/reaktive/maybe/Maybe;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/maybe/RetryKt {
@@ -802,6 +810,10 @@ public final class com/badoo/reaktive/observable/RepeatKt {
 
 public final class com/badoo/reaktive/observable/RepeatUntilKt {
 	public static final fun repeatUntil (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/observable/RepeatWhenKt {
+	public static final fun repeatWhen (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/ReplayKt {
@@ -1141,6 +1153,10 @@ public final class com/badoo/reaktive/single/RepeatKt {
 
 public final class com/badoo/reaktive/single/RepeatUntilKt {
 	public static final fun repeatUntil (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/single/RepeatWhenKt {
+	public static final fun repeatWhen (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/single/RetryKt {
