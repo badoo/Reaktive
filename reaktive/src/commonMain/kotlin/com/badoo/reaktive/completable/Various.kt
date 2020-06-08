@@ -1,6 +1,7 @@
 package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.disposable.Disposable
+import kotlin.native.concurrent.SharedImmutable
 
 inline fun completableUnsafe(crossinline onSubscribe: (observer: CompletableObserver) -> Unit): Completable =
     object : Completable {
@@ -21,7 +22,8 @@ fun completableOfError(error: Throwable): Completable =
 
 fun Throwable.toCompletableOfError(): Completable = completableOfError(this)
 
-fun completableOfEmpty(): Completable =
+@SharedImmutable
+private val completableOfEmpty =
     completableUnsafe { observer ->
         val disposable = Disposable()
         observer.onSubscribe(disposable)
@@ -31,10 +33,15 @@ fun completableOfEmpty(): Completable =
         }
     }
 
-fun completableOfNever(): Completable =
+fun completableOfEmpty(): Completable = completableOfEmpty
+
+@SharedImmutable
+private val completableOfNever =
     completableUnsafe { observer ->
         observer.onSubscribe(Disposable())
     }
+
+fun completableOfNever(): Completable = completableOfNever
 
 fun completableFromFunction(func: () -> Unit): Completable =
     completable { emitter ->

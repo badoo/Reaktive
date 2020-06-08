@@ -1,6 +1,7 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
+import kotlin.native.concurrent.SharedImmutable
 
 inline fun <T> observableUnsafe(crossinline onSubscribe: (observer: ObservableObserver<T>) -> Unit): Observable<T> =
     object : Observable<T> {
@@ -70,8 +71,9 @@ fun <T> observableOfError(error: Throwable): Observable<T> =
 
 fun <T> Throwable.toObservableOfError(): Observable<T> = observableOfError(this)
 
-fun <T> observableOfEmpty(): Observable<T> =
-    observableUnsafe { observer ->
+@SharedImmutable
+private val observableOfEmpty =
+    observableUnsafe<Nothing> { observer ->
         val disposable = Disposable()
         observer.onSubscribe(disposable)
 
@@ -80,10 +82,15 @@ fun <T> observableOfEmpty(): Observable<T> =
         }
     }
 
-fun <T> observableOfNever(): Observable<T> =
-    observableUnsafe { observer ->
+fun <T> observableOfEmpty(): Observable<T> = observableOfEmpty
+
+@SharedImmutable
+private val observableOfNever =
+    observableUnsafe<Nothing> { observer ->
         observer.onSubscribe(Disposable())
     }
+
+fun <T> observableOfNever(): Observable<T> = observableOfNever
 
 fun <T> observableFromFunction(func: () -> T): Observable<T> =
     observable { emitter ->
