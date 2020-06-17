@@ -3,7 +3,7 @@ package com.badoo.reaktive.scheduler
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
-import kotlin.browser.window
+import com.badoo.reaktive.utils.Timers
 
 internal class MainScheduler : Scheduler {
 
@@ -19,30 +19,30 @@ internal class MainScheduler : Scheduler {
 
         private var _isDisposed = false
 
-        private val timeoutIds = mutableListOf<Int>()
-        private val intervalIds = mutableListOf<Int>()
+        private val timeoutIds = mutableListOf<Long>()
+        private val intervalIds = mutableListOf<Long>()
 
         init {
             disposables += this
         }
 
         override fun submit(delayMillis: Long, task: () -> Unit) {
-            timeoutIds += window.setTimeout(task, delayMillis.toInt())
+            timeoutIds += Timers.setTimeout(delayMillis, task).toLong()
         }
 
         override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
             if (startDelayMillis != 0L) {
-                timeoutIds += window.setTimeout({
-                    intervalIds += window.setInterval(task, periodMillis.toInt())
-                }, startDelayMillis.toInt())
+                timeoutIds += Timers.setTimeout(startDelayMillis, {
+                    intervalIds += Timers.setInterval(periodMillis, task).toLong()
+                }).toLong()
             } else {
-                intervalIds += window.setInterval(task, periodMillis.toInt())
+                intervalIds += Timers.setInterval(periodMillis, task).toLong()
             }
         }
 
         override fun cancel() {
-            timeoutIds.forEach(window::clearTimeout)
-            intervalIds.forEach(window::clearInterval)
+            timeoutIds.forEach(Timers::clearTimeout)
+            intervalIds.forEach(Timers::clearInterval)
         }
 
         override val isDisposed: Boolean
