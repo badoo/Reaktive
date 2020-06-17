@@ -3,7 +3,10 @@ package com.badoo.reaktive.scheduler
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.Timers
+import com.badoo.reaktive.utils.clearInterval
+import com.badoo.reaktive.utils.clearTimeout
+import com.badoo.reaktive.utils.setInterval
+import com.badoo.reaktive.utils.setTimeout
 
 internal class MainScheduler : Scheduler {
 
@@ -19,30 +22,30 @@ internal class MainScheduler : Scheduler {
 
         private var _isDisposed = false
 
-        private val timeoutIds = mutableListOf<Long>()
-        private val intervalIds = mutableListOf<Long>()
+        private val timeoutIds = mutableListOf<Int>()
+        private val intervalIds = mutableListOf<Int>()
 
         init {
             disposables += this
         }
 
         override fun submit(delayMillis: Long, task: () -> Unit) {
-            timeoutIds += Timers.setTimeout(delayMillis, task).toLong()
+            timeoutIds += setTimeout(task, delayMillis.toInt())
         }
 
         override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
             if (startDelayMillis != 0L) {
-                timeoutIds += Timers.setTimeout(startDelayMillis, {
-                    intervalIds += Timers.setInterval(periodMillis, task).toLong()
-                }).toLong()
+                timeoutIds += setTimeout({
+                    intervalIds += setInterval(task, periodMillis.toInt())
+                }, startDelayMillis.toInt())
             } else {
-                intervalIds += Timers.setInterval(periodMillis, task).toLong()
+                intervalIds += setInterval(task, periodMillis.toInt())
             }
         }
 
         override fun cancel() {
-            timeoutIds.forEach(Timers::clearTimeout)
-            intervalIds.forEach(Timers::clearInterval)
+            timeoutIds.forEach(::clearTimeout)
+            intervalIds.forEach(::clearInterval)
         }
 
         override val isDisposed: Boolean

@@ -2,41 +2,39 @@ package com.badoo.reaktive.utils
 
 import kotlin.browser.window
 
-external fun setTimeout(handler: dynamic, timeout: Int = definedExternally, vararg arguments: Any?): Int
-external fun setInterval(handler: dynamic, timeout: Int = definedExternally, vararg arguments: Any?): Int
-external fun clearTimeout(handle: Int = definedExternally)
-external fun clearInterval(handle: Int = definedExternally)
+import com.badoo.reaktive.utils.timer.external.setTimeout as setTimeoutExternal
+import com.badoo.reaktive.utils.timer.external.setInterval as setIntervalExternal
+import com.badoo.reaktive.utils.timer.external.clearTimeout as clearTimeoutExternal
+import com.badoo.reaktive.utils.timer.external.clearInterval as clearIntervalExternal
 
-object Timers {
-    fun setTimeout(delayMillis: Long, task: () -> Unit, vararg arguments: Any?): Int {
-        return try {
-            window.setTimeout(task, delayMillis.toInt(), arguments)
-        } catch (ex: dynamic) {
-            setTimeout(task, delayMillis.toInt(), arguments)
-        }
+fun setTimeout(task: () -> Unit, delayMillis: Int): Int {
+    return try {
+        window.setTimeout(task, delayMillis)
+    } catch (ex: dynamic) {
+        setTimeoutExternal(task, delayMillis)
     }
+}
 
-    fun setInterval(delayMillis: Long, task: () -> Unit, vararg arguments: Any?): Int {
-        return try {
-            window.setInterval(task, delayMillis.toInt(), arguments)
-        } catch (ex: dynamic) {
-            setInterval(task, delayMillis.toInt(), arguments)
-        }
+fun setInterval(task: () -> Unit, delayMillis: Int): Int {
+    return try {
+        window.setInterval(task, delayMillis)
+    } catch (ex: dynamic) {
+        setIntervalExternal(task, delayMillis)
     }
+}
 
-    fun clearTimeout(interval: Long) {
-        try {
-            window.clearTimeout(interval.toInt())
-        } catch (ex: dynamic) {
-            clearTimeout(interval.toInt())
-        }
+fun clearTimeout(interval: Int) {
+    try {
+        window.clearTimeout(interval)
+    } catch (ex: dynamic) {
+        clearTimeoutExternal(interval)
     }
+}
 
-    fun clearInterval(interval: Long) {
-        try {
-            window.clearInterval(interval.toInt())
-        } catch (ex: dynamic) {
-            clearInterval(interval.toInt())
-        }
+fun clearInterval(interval: Int) {
+    try {
+        window.clearInterval(interval)
+    } catch (ex: dynamic) {
+        clearIntervalExternal(interval)
     }
 }
