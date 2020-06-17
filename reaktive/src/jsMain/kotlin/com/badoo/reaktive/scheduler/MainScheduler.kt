@@ -3,10 +3,10 @@ package com.badoo.reaktive.scheduler
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.clearInterval
-import com.badoo.reaktive.utils.clearTimeout
-import com.badoo.reaktive.utils.setInterval
-import com.badoo.reaktive.utils.setTimeout
+import com.badoo.reaktive.timer.clearInterval
+import com.badoo.reaktive.timer.clearTimeout
+import com.badoo.reaktive.timer.setInterval
+import com.badoo.reaktive.timer.setTimeout
 
 internal class MainScheduler : Scheduler {
 
