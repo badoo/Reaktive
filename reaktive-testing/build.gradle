@@ -1,5 +1,11 @@
-setupMultiplatformLibrary(project)
-setupAllTargetsWithDefaultSourceSets(project)
+plugins {
+    id 'mpp-configuration'
+    id 'publish'
+}
+
+configuration {
+    enableLinuxArm32Hfp()
+}
 
 kotlin {
     sourceSets {
@@ -24,5 +30,3 @@ kotlin {
         }
     }
 }
-
-apply plugin: PublishPlugin

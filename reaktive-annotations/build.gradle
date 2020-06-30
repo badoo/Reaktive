@@ -1,4 +1,8 @@
-setupMultiplatformLibrary(project)
-setupAllTargetsWithDefaultSourceSets(project)
+plugins {
+    id 'mpp-configuration'
+    id 'publish'
+}
 
-apply plugin: PublishPlugin
+configuration {
+    enableLinuxArm32Hfp()
+}

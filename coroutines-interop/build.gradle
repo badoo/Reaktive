@@ -1,5 +1,6 @@
-setupMultiplatformLibrary(project)
-setupAllTargetsWithDefaultSourceSets(project: project, isLinuxArm32HfpEnabled: false)
+plugins {
+    id 'mpp-configuration'
+}
 
 kotlin {
     targets {

@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
     id 'maven-publish'
+    id 'publish'
 }
 
 group = reaktive_group_id
@@ -20,5 +21,4 @@ dependencies {
     implementation Deps.rxjava3
 }
 
-apply plugin: PublishPlugin
 apply plugin: DetektPlugin

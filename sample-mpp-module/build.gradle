@@ -1,9 +1,13 @@
 /*
  * In order to build this module for LinuxX64 you should install libcurl4-openssl-dev package in your system
  */
+plugins {
+    id 'mpp-configuration'
+}
 
-setupMultiplatformLibrary(project)
-setupAllTargetsWithDefaultSourceSets(project)
+configuration {
+    enableLinuxArm32Hfp()
+}
 
 kotlin {
     targets {
