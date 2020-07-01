@@ -3,6 +3,10 @@ buildscript {
     ext.reaktive_group_id = 'com.badoo.reaktive'
 }
 
+plugins {
+    id 'binary-compatibility-setup'
+}
+
 allprojects {
     repositories {
         google()
@@ -11,7 +15,3 @@ allprojects {
 }
 
 logger.warn("Current environment: ${Target.currentTarget(project)}")
-
-if (Target.shouldDefineTarget(project, Target.ALL_LINUX_HOSTED)) {
-    apply from: 'gradle/binary-compatibility.gradle'
-}

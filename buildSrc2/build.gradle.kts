@@ -16,6 +16,7 @@ dependencies {
     implementation(Deps.bintray)
     implementation(Deps.detekt.plugin)
     implementation(Deps.shadow)
+    implementation(Deps.kotlinx.compatibility)
 }
 
 kotlin {
@@ -31,5 +32,9 @@ gradlePlugin {
     plugins.register("publish") {
         id = "publish"
         implementationClass = "PublishPlugin"
+    }
+    plugins.register("binary-compatibility-setup") {
+        id = "binary-compatibility-setup"
+        implementationClass = "com.badoo.reaktive.configuration.BinaryCompatibilityPlugin"
     }
 }
