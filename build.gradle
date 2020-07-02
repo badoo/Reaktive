@@ -4,7 +4,7 @@ buildscript {
 }
 
 plugins {
-    id 'binary-compatibility-setup'
+    id 'binary-compatibility-configuration'
 }
 
 allprojects {
@@ -13,5 +13,3 @@ allprojects {
         jcenter()
     }
 }
-
-logger.warn("Current environment: ${Target.currentTarget(project)}")

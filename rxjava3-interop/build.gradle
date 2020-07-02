@@ -1,7 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
-    id 'maven-publish'
-    id 'publish'
+    id 'publish-configuration'
+    id 'detekt-configuration'
 }
 
 group = reaktive_group_id
@@ -20,5 +20,3 @@ dependencies {
     implementation project(':reaktive')
     implementation Deps.rxjava3
 }
-
-apply plugin: DetektPlugin

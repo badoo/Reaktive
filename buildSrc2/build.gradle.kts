@@ -27,14 +27,18 @@ kotlin {
 gradlePlugin {
     plugins.register("mpp-configuration") {
         id = "mpp-configuration"
-        implementationClass = "com.badoo.reaktive.configuration.ConfigurationPlugin"
+        implementationClass = "com.badoo.reaktive.configuration.MppConfigurationPlugin"
     }
-    plugins.register("publish") {
-        id = "publish"
-        implementationClass = "PublishPlugin"
+    plugins.register("publish-configuration") {
+        id = "publish-configuration"
+        implementationClass = "com.badoo.reaktive.publish.PublishConfigurationPlugin"
     }
-    plugins.register("binary-compatibility-setup") {
-        id = "binary-compatibility-setup"
-        implementationClass = "com.badoo.reaktive.configuration.BinaryCompatibilityPlugin"
+    plugins.register("binary-compatibility-configuration") {
+        id = "binary-compatibility-configuration"
+        implementationClass = "com.badoo.reaktive.compatibility.BinaryCompatibilityConfigurationPlugin"
+    }
+    plugins.register("detekt-configuration") {
+        id = "detekt-configuration"
+        implementationClass = "com.badoo.reaktive.detekt.DetektConfigurationPlugin"
     }
 }

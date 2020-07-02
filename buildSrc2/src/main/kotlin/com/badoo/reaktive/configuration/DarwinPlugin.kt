@@ -1,3 +1,6 @@
+package com.badoo.reaktive.configuration
+
+import Target
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
@@ -10,7 +13,7 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 @Suppress("UnstableApiUsage")
-abstract class DarwinPlugin : Plugin<Project> {
+class DarwinPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         configureDarwinCompilation(target)

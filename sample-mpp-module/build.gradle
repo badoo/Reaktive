@@ -3,6 +3,7 @@
  */
 plugins {
     id 'mpp-configuration'
+    id 'detekt-configuration'
 }
 
 configuration {

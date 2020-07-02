@@ -1,6 +1,7 @@
 plugins {
     id 'mpp-configuration'
-    id 'publish'
+    id 'publish-configuration'
+    id 'detekt-configuration'
 }
 
 configuration {

@@ -1,3 +1,8 @@
+package com.badoo.reaktive.publish
+
+import Target
+import com.badoo.reaktive.configuration.DarwinPlugin
+import com.badoo.reaktive.configuration.JsPlugin
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayPlugin
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
@@ -13,9 +18,10 @@ import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 
-abstract class PublishPlugin : Plugin<Project> {
+class PublishConfigurationPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
+        target.apply(plugin = "maven-publish")
         val taskConfigurationMap = createConfigurationMap(target)
         createFilteredPublishToMavenLocalTask(target)
         setupLocalPublishing(target, taskConfigurationMap)

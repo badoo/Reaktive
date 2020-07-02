@@ -3,7 +3,7 @@ package com.badoo.reaktive.configuration
 import org.gradle.api.Project
 import javax.inject.Inject
 
-open class ConfigurationExtension @Inject constructor(
+open class MppConfigurationExtension @Inject constructor(
     private val project: Project
 ) {
     var isLinuxArm32HfpEnabled: Boolean = false
@@ -11,7 +11,7 @@ open class ConfigurationExtension @Inject constructor(
 
     fun enableLinuxArm32Hfp() {
         if (isLinuxArm32HfpEnabled) return
-        project.plugins.findPlugin(ConfigurationPlugin::class.java)?.setupLinuxArm32HfpTarget(project)
+        project.plugins.findPlugin(MppConfigurationPlugin::class.java)?.setupLinuxArm32HfpTarget(project)
         isLinuxArm32HfpEnabled = true
     }
 }

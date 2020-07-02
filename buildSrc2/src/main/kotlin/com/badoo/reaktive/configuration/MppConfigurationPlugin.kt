@@ -1,9 +1,6 @@
 package com.badoo.reaktive.configuration
 
-import DarwinPlugin
 import Deps
-import DetektPlugin
-import JsPlugin
 import Target
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.Action
@@ -13,17 +10,16 @@ import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-class ConfigurationPlugin : Plugin<Project> {
+class MppConfigurationPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
-        target.extensions.create("configuration", ConfigurationExtension::class.java, target)
+        target.extensions.create("configuration", MppConfigurationExtension::class.java, target)
         setupMultiplatformLibrary(target)
         setupAllTargetsWithDefaultSourceSets(target)
     }
 
     private fun setupMultiplatformLibrary(target: Project) {
         target.apply(plugin = "org.jetbrains.kotlin.multiplatform")
-        target.apply(plugin = "maven-publish")
-        target.apply<DetektPlugin>()
         target.group = target.findProperty("reaktive_group_id") as Any
         target.version = target.findProperty("reaktive_version") as Any
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {

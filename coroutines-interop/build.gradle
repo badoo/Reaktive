@@ -1,5 +1,7 @@
 plugins {
     id 'mpp-configuration'
+    id 'publish-configuration'
+    id 'detekt-configuration'
 }
 
 kotlin {
@@ -54,5 +56,3 @@ kotlin {
         }
     }
 }
-
-apply plugin: PublishPlugin
