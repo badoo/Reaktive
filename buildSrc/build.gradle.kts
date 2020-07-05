@@ -1,4 +1,5 @@
 plugins {
+    kotlin("jvm") version ("1.4-M2")
     `kotlin-dsl`
 }
 
@@ -6,10 +7,12 @@ repositories {
     google()
     jcenter()
     gradlePluginPortal()
+    maven("https://dl.bintray.com/kotlin/kotlin-eap")
 }
 
 dependencies {
     implementation(Deps.kotlin.plugin)
+    implementation(Deps.kotlin.compilerEmbeddable)
     implementation(Deps.android.plugin)
     implementation(Deps.jmh.plugin)
     implementation(Deps.bintray)
