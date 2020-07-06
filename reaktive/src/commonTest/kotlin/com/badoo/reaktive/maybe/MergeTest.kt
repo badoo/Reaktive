@@ -156,4 +156,11 @@ class MergeTest : MaybeToObservableTests by MaybeToObservableTestsImpl({ merge(t
         assertFalse(upstream1.hasSubscribers)
         assertFalse(upstream2.hasSubscribers)
     }
+
+    @Test
+    fun completed_WHEN_sources_are_empty() {
+        val observer = emptyList<Maybe<Any>>().merge().test()
+
+        observer.assertComplete()
+    }
 }

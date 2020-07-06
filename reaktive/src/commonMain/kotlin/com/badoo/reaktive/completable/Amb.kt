@@ -3,8 +3,13 @@ package com.badoo.reaktive.completable
 import com.badoo.reaktive.base.CompositeDisposableObserver
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
-fun Iterable<Completable>.amb(): Completable =
+fun Collection<Completable>.amb(): Completable =
     completable { emitter ->
+        if (isEmpty()) {
+            emitter.onComplete()
+            return@completable
+        }
+
         val disposableObserver =
             object : CompositeDisposableObserver(), CompletableObserver {
                 private val isFinished = AtomicBoolean()

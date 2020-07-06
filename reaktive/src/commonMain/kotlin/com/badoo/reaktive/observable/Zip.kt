@@ -14,6 +14,11 @@ import com.badoo.reaktive.utils.serializer.serializer
 @Suppress("ComplexMethod")
 fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
+        if (isEmpty()) {
+            emitter.onComplete()
+            return@observable
+        }
+
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
 
@@ -110,7 +115,7 @@ private sealed class ZipEvent<out T> {
 
 fun <T, R> zip(vararg sources: Observable<T>, mapper: (List<T>) -> R): Observable<R> =
     sources
-        .toList()
+        .asList()
         .zip(mapper)
 
 fun <T1, T2, R> zip(

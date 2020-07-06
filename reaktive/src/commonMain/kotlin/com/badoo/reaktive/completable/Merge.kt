@@ -8,8 +8,13 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
-fun Iterable<Completable>.merge(): Completable =
+fun Collection<Completable>.merge(): Completable =
     completable { emitter ->
+        if (isEmpty()) {
+            emitter.onComplete()
+            return@completable
+        }
+
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val serializedEmitter = emitter.serialize()
@@ -41,5 +46,5 @@ fun Iterable<Completable>.merge(): Completable =
 
 fun merge(vararg sources: Completable): Completable =
     sources
-        .asIterable()
+        .asList()
         .merge()

@@ -5,7 +5,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
-fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
+fun <T> Collection<Observable<T>>.concat(): Observable<T> =
     observableUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
         observer.onSubscribe(disposableWrapper)
@@ -39,5 +39,5 @@ fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
 
 fun <T> concat(vararg sources: Observable<T>): Observable<T> =
     sources
-        .asIterable()
+        .asList()
         .concat()

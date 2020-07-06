@@ -73,4 +73,10 @@ class MergeTests : CompletableToCompletableTests by CompletableToCompletableTest
         assertFalse(upstream2.hasSubscribers)
     }
 
+    @Test
+    fun completed_WHEN_sources_are_empty() {
+        val observer = emptyList<Completable>().merge().test()
+
+        observer.assertComplete()
+    }
 }

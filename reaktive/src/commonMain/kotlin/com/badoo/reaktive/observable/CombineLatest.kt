@@ -12,6 +12,11 @@ import com.badoo.reaktive.utils.serializer.serializer
 
 fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
+        if (isEmpty()) {
+            emitter.onComplete()
+            return@observable
+        }
+
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val values = SharedList<Any?>(size) { Uninitialized }
@@ -90,7 +95,7 @@ private sealed class CombineLatestEvent<out T> {
 
 fun <T, R> combineLatest(vararg sources: Observable<T>, mapper: (List<T>) -> R): Observable<R> =
     sources
-        .toList()
+        .asList()
         .combineLatest(mapper)
 
 fun <T1, T2, R> combineLatest(
