@@ -1,8 +1,8 @@
 package com.badoo.reaktive.configuration
 
-import Deps
 import Target
 import com.android.build.gradle.BaseExtension
+import com.badoo.reaktive.dependencies.Deps
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project

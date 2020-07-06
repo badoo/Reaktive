@@ -1,6 +1,6 @@
 package com.badoo.reaktive.detekt
 
-import Deps
+import com.badoo.reaktive.dependencies.Deps
 import io.gitlab.arturbosch.detekt.CONFIGURATION_DETEKT_PLUGINS
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Plugin

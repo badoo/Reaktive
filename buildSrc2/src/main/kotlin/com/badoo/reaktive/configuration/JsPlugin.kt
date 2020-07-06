@@ -1,8 +1,8 @@
 package com.badoo.reaktive.configuration
 
-import Deps
 import Target
 import com.android.utils.appendCapitalized
+import com.badoo.reaktive.dependencies.Deps
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet

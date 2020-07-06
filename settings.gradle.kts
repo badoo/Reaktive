@@ -6,6 +6,7 @@ pluginManagement {
     }
 }
 
+includeBuild("dependencies")
 includeBuild("buildSrc2")
 
 include(":utils")
