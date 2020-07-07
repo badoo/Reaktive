@@ -7,7 +7,7 @@ pluginManagement {
 }
 
 includeBuild("includedBuild/dependencies")
-includeBuild("includedBuild/buildSrc2")
+includeBuild("includedBuild/gradleConfiguration")
 
 include(":utils")
 include(":reaktive")
