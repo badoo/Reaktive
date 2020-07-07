@@ -6,8 +6,8 @@ pluginManagement {
     }
 }
 
-includeBuild("dependencies")
-includeBuild("buildSrc2")
+includeBuild("includedBuild/dependencies")
+includeBuild("includedBuild/buildSrc2")
 
 include(":utils")
 include(":reaktive")
