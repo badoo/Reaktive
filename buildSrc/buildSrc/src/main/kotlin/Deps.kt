@@ -1,7 +1,7 @@
 object Deps {
 
-    private const val kotlinVersion = "1.3.72"
-    private const val coroutinesVersion = "1.3.4"
+    private const val kotlinVersion = "1.4-M3"
+    private const val coroutinesVersion = "1.3.7-1.4-M3"
     private const val detektVersion = "1.9.1"
     private const val asmVersion = "6.0"
 
@@ -21,6 +21,7 @@ object Deps {
         val stdlib = Stdlib()
         val test = Test
         val plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        val compilerEmbeddable = "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"
 
         class Stdlib(
             private val name: String = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"

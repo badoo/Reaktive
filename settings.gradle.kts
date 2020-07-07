@@ -1,3 +1,11 @@
+pluginManagement {
+    repositories {
+        jcenter()
+        gradlePluginPortal()
+        maven("https://dl.bintray.com/kotlin/kotlin-eap")
+    }
+}
+
 include(":utils")
 include(":reaktive")
 include(":reaktive-testing")
