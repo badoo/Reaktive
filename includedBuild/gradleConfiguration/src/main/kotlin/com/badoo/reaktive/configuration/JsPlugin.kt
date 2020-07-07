@@ -1,6 +1,5 @@
 package com.badoo.reaktive.configuration
 
-import Target
 import com.android.utils.appendCapitalized
 import com.badoo.reaktive.dependencies.Deps
 import org.gradle.api.Plugin

@@ -1,6 +1,6 @@
 package com.badoo.reaktive.compatibility
 
-import Target
+import com.badoo.reaktive.configuration.Target
 import kotlinx.validation.ApiValidationExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project

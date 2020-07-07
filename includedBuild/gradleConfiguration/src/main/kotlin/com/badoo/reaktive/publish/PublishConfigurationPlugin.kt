@@ -1,8 +1,8 @@
 package com.badoo.reaktive.publish
 
-import Target
 import com.badoo.reaktive.configuration.DarwinPlugin
 import com.badoo.reaktive.configuration.JsPlugin
+import com.badoo.reaktive.configuration.Target
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayPlugin
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask

@@ -1,3 +1,5 @@
+import com.badoo.reaktive.configuration.Target
+
 /*
  * In order to build this module for LinuxX64 you should install libcurl4-openssl-dev package in your system
  */
