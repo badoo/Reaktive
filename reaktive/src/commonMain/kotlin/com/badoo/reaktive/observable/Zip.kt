@@ -11,7 +11,7 @@ import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.replace
 import com.badoo.reaktive.utils.serializer.serializer
 
-@Suppress("ComplexMethod")
+@Suppress("ComplexMethod", "LongMethod")
 fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
         if (isEmpty()) {
