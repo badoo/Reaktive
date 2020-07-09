@@ -81,6 +81,10 @@ public final class com/badoo/reaktive/completable/AsSingleKt {
 	public static final fun asSingle (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/single/Single;
 }
 
+public final class com/badoo/reaktive/completable/BlockingAwaitKt {
+	public static final fun blockingAwait (Lcom/badoo/reaktive/completable/Completable;)V
+}
+
 public abstract interface class com/badoo/reaktive/completable/Completable : com/badoo/reaktive/base/Source {
 }
 
