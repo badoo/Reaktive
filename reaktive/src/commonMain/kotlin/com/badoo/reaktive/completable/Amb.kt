@@ -3,9 +3,11 @@ package com.badoo.reaktive.completable
 import com.badoo.reaktive.base.CompositeDisposableObserver
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
-fun Collection<Completable>.amb(): Completable =
+fun Iterable<Completable>.amb(): Completable =
     completable { emitter ->
-        if (isEmpty()) {
+        val sources = toList()
+
+        if (sources.isEmpty()) {
             emitter.onComplete()
             return@completable
         }
@@ -31,7 +33,7 @@ fun Collection<Completable>.amb(): Completable =
 
         emitter.setDisposable(disposableObserver)
 
-        forEach { it.subscribe(disposableObserver) }
+        sources.forEach { it.subscribe(disposableObserver) }
     }
 
 fun amb(vararg sources: Completable): Completable = sources.asList().amb()

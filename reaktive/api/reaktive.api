@@ -57,7 +57,7 @@ public final class com/badoo/reaktive/base/exceptions/TimeoutException : java/la
 }
 
 public final class com/badoo/reaktive/completable/AmbKt {
-	public static final fun amb (Ljava/util/Collection;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun amb (Ljava/lang/Iterable;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun amb ([Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
 }
 
@@ -123,7 +123,7 @@ public final class com/badoo/reaktive/completable/CompletableWrapperKt {
 }
 
 public final class com/badoo/reaktive/completable/ConcatKt {
-	public static final fun concat (Ljava/util/Collection;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun concat (Ljava/lang/Iterable;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun concat ([Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
 }
 
@@ -159,7 +159,7 @@ public final class com/badoo/reaktive/completable/DoOnBeforeKt {
 }
 
 public final class com/badoo/reaktive/completable/MergeKt {
-	public static final fun merge (Ljava/util/Collection;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun merge (Ljava/lang/Iterable;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun merge ([Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
 }
 
@@ -293,7 +293,7 @@ public final class com/badoo/reaktive/disposable/scope/DisposableScopeExtKt {
 }
 
 public final class com/badoo/reaktive/maybe/AmbKt {
-	public static final fun amb (Ljava/util/Collection;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun amb (Ljava/lang/Iterable;)Lcom/badoo/reaktive/maybe/Maybe;
 	public static final fun amb ([Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
 }
 
@@ -443,7 +443,7 @@ public final class com/badoo/reaktive/maybe/MaybeWrapperKt {
 }
 
 public final class com/badoo/reaktive/maybe/MergeKt {
-	public static final fun merge (Ljava/util/Collection;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun merge (Ljava/lang/Iterable;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun merge ([Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/observable/Observable;
 }
 
@@ -547,7 +547,7 @@ public final class com/badoo/reaktive/maybe/ZipWithKt {
 }
 
 public final class com/badoo/reaktive/observable/AmbKt {
-	public static final fun amb (Ljava/util/Collection;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun amb (Ljava/lang/Iterable;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun amb ([Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
 }
 
@@ -579,12 +579,12 @@ public final class com/badoo/reaktive/observable/CombineLatestKt {
 	public static final fun combineLatest (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function4;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun combineLatest (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function3;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun combineLatest (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
-	public static final fun combineLatest (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun combineLatest (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun combineLatest ([Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/ConcatKt {
-	public static final fun concat (Ljava/util/Collection;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun concat (Ljava/lang/Iterable;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun concat ([Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
 }
 
@@ -946,7 +946,7 @@ public final class com/badoo/reaktive/observable/WithLatestFromKt {
 	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function4;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function3;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
-	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Ljava/util/Collection;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/ZipKt {
@@ -959,7 +959,7 @@ public final class com/badoo/reaktive/observable/ZipKt {
 	public static final fun zip (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function4;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun zip (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function3;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun zip (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
-	public static final fun zip (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun zip (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun zip ([Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 }
 
@@ -1026,7 +1026,7 @@ public final class com/badoo/reaktive/scheduler/SchedulersKt {
 }
 
 public final class com/badoo/reaktive/single/AmbKt {
-	public static final fun amb (Ljava/util/Collection;)Lcom/badoo/reaktive/single/Single;
+	public static final fun amb (Ljava/lang/Iterable;)Lcom/badoo/reaktive/single/Single;
 	public static final fun amb ([Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/single/Single;
 }
 

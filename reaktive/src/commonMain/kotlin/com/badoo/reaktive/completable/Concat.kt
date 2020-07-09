@@ -4,7 +4,7 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
-fun Collection<Completable>.concat(): Completable =
+fun Iterable<Completable>.concat(): Completable =
     completable { emitter ->
         val sources = toList()
 

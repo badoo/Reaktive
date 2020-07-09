@@ -11,9 +11,11 @@ import com.badoo.reaktive.observable.serialize
 import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
-fun <T> Collection<Maybe<T>>.merge(): Observable<T> =
+fun <T> Iterable<Maybe<T>>.merge(): Observable<T> =
     observable { emitter ->
-        if (isEmpty()) {
+        val sources = toList()
+
+        if (sources.isEmpty()) {
             emitter.onComplete()
             return@observable
         }
@@ -21,9 +23,9 @@ fun <T> Collection<Maybe<T>>.merge(): Observable<T> =
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val serializedEmitter = emitter.serialize()
-        val activeSourceCount = AtomicInt(1)
+        val activeSourceCount = AtomicInt(0)
 
-        forEach { upstream ->
+        sources.forEach { upstream ->
             activeSourceCount.addAndGet(1)
             upstream.subscribe(
                 object : ObjectReference<Disposable?>(null), MaybeObserver<T>, ErrorCallback by serializedEmitter {
@@ -45,10 +47,6 @@ fun <T> Collection<Maybe<T>>.merge(): Observable<T> =
                     }
                 }
             )
-        }
-
-        if (activeSourceCount.addAndGet(-1) == 0) {
-            emitter.onComplete()
         }
     }
 

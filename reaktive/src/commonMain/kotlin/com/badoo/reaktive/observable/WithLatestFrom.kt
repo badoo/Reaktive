@@ -12,15 +12,17 @@ import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.replace
 
 fun <T, U, R> Observable<T>.withLatestFrom(
-    others: Collection<Observable<U>>,
+    others: Iterable<Observable<U>>,
     mapper: (value: T, others: List<U>) -> R
 ): Observable<R> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val otherValues = atomicList<Any?>(List(others.size) { Uninitialized })
 
-        others.forEachIndexed { index, source ->
+        val otherSources = others.toList()
+        val otherValues = atomicList<Any?>(List(otherSources.size) { Uninitialized })
+
+        otherSources.forEachIndexed { index, source ->
             source.subscribe(
                 object : ObservableObserver<U>, ErrorCallback by emitter {
                     override fun onSubscribe(disposable: Disposable) {

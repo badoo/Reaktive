@@ -22,7 +22,7 @@ class CombineLatestTest {
     private val observer = createAndSubscribe(sources = listOf(relay1, relay2, relay3), mapper = mapper)
 
     private fun createAndSubscribe(
-        sources: Collection<Observable<String?>>,
+        sources: Iterable<Observable<String?>>,
         mapper: AtomicReference<(List<String?>) -> String?>
     ): TestObservableObserver<String?> =
         sources

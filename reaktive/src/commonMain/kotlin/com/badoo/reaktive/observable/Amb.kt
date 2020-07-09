@@ -7,9 +7,11 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
-fun <T> Collection<Observable<T>>.amb(): Observable<T> =
+fun <T> Iterable<Observable<T>>.amb(): Observable<T> =
     observable { emitter ->
-        if (isEmpty()) {
+        val sources = toList()
+
+        if (sources.isEmpty()) {
             emitter.onComplete()
             return@observable
         }
@@ -18,7 +20,7 @@ fun <T> Collection<Observable<T>>.amb(): Observable<T> =
         emitter.setDisposable(disposables)
         val hasWinner = AtomicBoolean()
 
-        forEach {
+        sources.forEach {
             it.subscribe(AmbObserver(disposables, hasWinner, emitter))
         }
     }

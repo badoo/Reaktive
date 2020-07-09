@@ -3,9 +3,11 @@ package com.badoo.reaktive.single
 import com.badoo.reaktive.base.CompositeDisposableObserver
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
-fun <T> Collection<Single<T>>.amb(): Single<T> =
+fun <T> Iterable<Single<T>>.amb(): Single<T> =
     com.badoo.reaktive.single.single { emitter ->
-        if (isEmpty()) {
+        val sources = toList()
+
+        if (sources.isEmpty()) {
             emitter.onError(NoSuchElementException())
             return@single
         }
@@ -31,7 +33,7 @@ fun <T> Collection<Single<T>>.amb(): Single<T> =
 
         emitter.setDisposable(disposableObserver)
 
-        forEach { it.subscribe(disposableObserver) }
+        sources.forEach { it.subscribe(disposableObserver) }
     }
 
 fun <T> amb(vararg sources: Single<T>): Single<T> = sources.asList().amb()

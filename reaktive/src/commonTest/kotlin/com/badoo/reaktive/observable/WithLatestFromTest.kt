@@ -16,7 +16,7 @@ class WithLatestFromTest {
 
     private val observer = createAndSubscribe(listOf(other1, other2, other3))
 
-    private fun createAndSubscribe(otherSources: Collection<Observable<Int>>) =
+    private fun createAndSubscribe(otherSources: Iterable<Observable<Int>>) =
         source
             .withLatestFrom(otherSources) { value, others -> listOf(value) + others }
             .test()

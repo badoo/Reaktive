@@ -3,9 +3,11 @@ package com.badoo.reaktive.maybe
 import com.badoo.reaktive.base.CompositeDisposableObserver
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
-fun <T> Collection<Maybe<T>>.amb(): Maybe<T> =
+fun <T> Iterable<Maybe<T>>.amb(): Maybe<T> =
     maybe { emitter ->
-        if (isEmpty()) {
+        val sources = toList()
+
+        if (sources.isEmpty()) {
             emitter.onComplete()
             return@maybe
         }
@@ -35,7 +37,7 @@ fun <T> Collection<Maybe<T>>.amb(): Maybe<T> =
 
         emitter.setDisposable(disposableObserver)
 
-        forEach { it.subscribe(disposableObserver) }
+        sources.forEach { it.subscribe(disposableObserver) }
     }
 
 fun <T> amb(vararg sources: Maybe<T>): Maybe<T> = sources.asList().amb()

@@ -12,9 +12,11 @@ import com.badoo.reaktive.utils.replace
 import com.badoo.reaktive.utils.serializer.serializer
 
 @Suppress("ComplexMethod", "LongMethod")
-fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
+fun <T, R> Iterable<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
-        if (isEmpty()) {
+        val sources = toList()
+
+        if (sources.isEmpty()) {
             emitter.onComplete()
             return@observable
         }
@@ -22,8 +24,8 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
 
-        val values = SharedList<SharedList<T>>(size) { SharedList() }
-        val completed = AtomicList(List(size) { false })
+        val values = SharedList<SharedList<T>>(sources.size) { SharedList() }
+        val completed = AtomicList(List(sources.size) { false })
 
         val serializer =
             serializer<ZipEvent<T>> { event ->
@@ -83,7 +85,7 @@ fun <T, R> Collection<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> 
                 }
             }
 
-        forEachIndexed { index, source ->
+        sources.forEachIndexed { index, source ->
             source.subscribe(
                 object : ObservableObserver<T> {
                     override fun onSubscribe(disposable: Disposable) {

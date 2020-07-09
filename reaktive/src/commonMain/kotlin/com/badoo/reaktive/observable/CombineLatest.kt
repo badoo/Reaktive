@@ -10,17 +10,19 @@ import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.serializer.serializer
 
-fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Observable<R> =
+fun <T, R> Iterable<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
-        if (isEmpty()) {
+        val sources = toList()
+
+        if (sources.isEmpty()) {
             emitter.onComplete()
             return@observable
         }
 
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val values = SharedList<Any?>(size) { Uninitialized }
-        val activeSourceCount = AtomicInt(size)
+        val values = SharedList<Any?>(sources.size) { Uninitialized }
+        val activeSourceCount = AtomicInt(sources.size)
 
         val serializer =
             serializer<CombineLatestEvent<T>> { event ->
@@ -63,7 +65,7 @@ fun <T, R> Collection<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Obse
                 }
             }
 
-        forEachIndexed { index, source ->
+        sources.forEachIndexed { index, source ->
             source.subscribe(
                 object : ObservableObserver<T> {
                     override fun onSubscribe(disposable: Disposable) {
