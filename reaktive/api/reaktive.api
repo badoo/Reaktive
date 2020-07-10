@@ -18,6 +18,10 @@ public abstract interface class com/badoo/reaktive/base/Emitter {
 	public abstract fun setDisposable (Lcom/badoo/reaktive/disposable/Disposable;)V
 }
 
+public final class com/badoo/reaktive/base/EmitterExtKt {
+	public static final fun setCancellable (Lcom/badoo/reaktive/base/Emitter;Lkotlin/jvm/functions/Function0;)V
+}
+
 public abstract interface class com/badoo/reaktive/base/ErrorCallback {
 	public abstract fun onError (Ljava/lang/Throwable;)V
 }

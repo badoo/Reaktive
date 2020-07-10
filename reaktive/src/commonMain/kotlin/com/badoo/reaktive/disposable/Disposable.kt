@@ -1,7 +1,11 @@
 package com.badoo.reaktive.disposable
 
 /**
- * Represents a disposable resource
+ * Represents a disposable resource.
+ *
+ * The following factory functions are available:
+ * - `Disposable()`
+ * - `Disposable(onDispose: {})`.
  */
 interface Disposable {
 
