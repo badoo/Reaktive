@@ -1,5 +1,6 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.maybe.TestMaybe
@@ -166,7 +167,13 @@ class MergeTest : MaybeToObservableTests by MaybeToObservableTestsImpl({ merge(t
 
     @Test
     fun does_not_complete_WHEN_one_upstream_completed_while_subscribing_to_others() {
-        val observer = merge(maybeOfEmpty<Any>(), TestMaybe()).test()
+        val observer = merge(
+            maybeUnsafe<Any> { observer ->
+                observer.onSubscribe(Disposable())
+                observer.onComplete()
+            },
+            TestMaybe()
+        ).test()
 
         observer.assertNotComplete()
     }

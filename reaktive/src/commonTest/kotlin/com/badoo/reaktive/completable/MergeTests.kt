@@ -1,5 +1,6 @@
 package com.badoo.reaktive.completable
 
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
@@ -82,7 +83,13 @@ class MergeTests : CompletableToCompletableTests by CompletableToCompletableTest
 
     @Test
     fun does_not_complete_WHEN_one_upstream_completed_while_subscribing_to_others() {
-        val observer = merge(completableOfEmpty(), TestCompletable()).test()
+        val observer = merge(
+            completableUnsafe { observer ->
+                observer.onSubscribe(Disposable())
+                observer.onComplete()
+            },
+            TestCompletable()
+        ).test()
 
         observer.assertNotComplete()
     }
