@@ -163,4 +163,11 @@ class MergeTest : MaybeToObservableTests by MaybeToObservableTestsImpl({ merge(t
 
         observer.assertComplete()
     }
+
+    @Test
+    fun does_not_complete_WHEN_one_upstream_completed_while_subscribing_to_others() {
+        val observer = merge(maybeOfEmpty<Any>(), TestMaybe()).test()
+
+        observer.assertNotComplete()
+    }
 }

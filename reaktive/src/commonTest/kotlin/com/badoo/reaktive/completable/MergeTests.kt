@@ -79,4 +79,11 @@ class MergeTests : CompletableToCompletableTests by CompletableToCompletableTest
 
         observer.assertComplete()
     }
+
+    @Test
+    fun does_not_complete_WHEN_one_upstream_completed_while_subscribing_to_others() {
+        val observer = merge(completableOfEmpty(), TestCompletable()).test()
+
+        observer.assertNotComplete()
+    }
 }

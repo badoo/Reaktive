@@ -10,19 +10,12 @@ import com.badoo.reaktive.utils.atomic.AtomicInt
 
 fun Iterable<Completable>.merge(): Completable =
     completable { emitter ->
-        val sources = toList()
-
-        if (sources.isEmpty()) {
-            emitter.onComplete()
-            return@completable
-        }
-
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val serializedEmitter = emitter.serialize()
-        val activeSourceCount = AtomicInt(0)
+        val activeSourceCount = AtomicInt(1)
 
-        sources.forEach { upstream ->
+        forEach { upstream ->
             activeSourceCount.addAndGet(1)
             upstream.subscribe(
                 object : ObjectReference<Disposable?>(null), CompletableObserver, ErrorCallback by serializedEmitter {
@@ -39,6 +32,10 @@ fun Iterable<Completable>.merge(): Completable =
                     }
                 }
             )
+        }
+
+        if (activeSourceCount.addAndGet(-1) == 0) {
+            emitter.onComplete()
         }
     }
 
