@@ -1,6 +1,6 @@
 package com.badoo.reaktive.samplemppmodule
 
-import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.base.setCancellable
 import com.badoo.reaktive.samplemppmodule.store.KittenLoader
 import com.badoo.reaktive.samplemppmodule.store.KittenLoader.Result
 import com.badoo.reaktive.single.Single
@@ -33,7 +33,7 @@ internal class KittenLoaderImpl : KittenLoader {
 
             val task = NSURLSession.sharedSession.dataTaskWithURL(NSURL(string = Config.KITTEN_URL), callback.freeze())
             task.resume()
-            emitter.setDisposable(Disposable(task::cancel))
+            emitter.setCancellable(task::cancel)
         }
             .map(Result::Success)
             .onErrorReturnValue(Result.Error)
