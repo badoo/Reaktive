@@ -1,5 +1,10 @@
-setupMultiplatformLibrary(project)
-setupAllTargetsWithDefaultSourceSets(project: project, isLinuxArm32HfpEnabled: false)
+import com.badoo.reaktive.dependencies.Deps
+
+plugins {
+    id 'mpp-configuration'
+    id 'publish-configuration'
+    id 'detekt-configuration'
+}
 
 kotlin {
     targets {
@@ -53,5 +58,3 @@ kotlin {
         }
     }
 }
-
-apply plugin: PublishPlugin

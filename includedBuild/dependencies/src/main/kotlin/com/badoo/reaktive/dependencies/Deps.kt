@@ -1,3 +1,5 @@
+package com.badoo.reaktive.dependencies
+
 object Deps {
 
     private const val kotlinVersion = "1.3.72"

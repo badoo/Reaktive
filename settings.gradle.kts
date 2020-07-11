@@ -1,3 +1,14 @@
+pluginManagement {
+    repositories {
+        google()
+        jcenter()
+        gradlePluginPortal()
+    }
+}
+
+includeBuild("includedBuild/dependencies")
+includeBuild("includedBuild/gradleConfiguration")
+
 include(":utils")
 include(":reaktive")
 include(":reaktive-testing")
