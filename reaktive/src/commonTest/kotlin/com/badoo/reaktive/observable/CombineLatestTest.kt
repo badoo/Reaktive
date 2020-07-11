@@ -19,10 +19,13 @@ class CombineLatestTest {
     private val relay2 = TestObservableRelay<String?>()
     private val relay3 = TestObservableRelay<String?>()
     private val mapper = AtomicReference<(List<String?>) -> String?> { it.joinToString(separator = ",") }
-    private val observer = createAndSubscribe(mapper)
+    private val observer = createAndSubscribe(sources = listOf(relay1, relay2, relay3), mapper = mapper)
 
-    private fun createAndSubscribe(mapper: AtomicReference<(List<String?>) -> String?>): TestObservableObserver<String?> =
-        listOf<Observable<String?>>(relay1, relay2, relay3)
+    private fun createAndSubscribe(
+        sources: Iterable<Observable<String?>>,
+        mapper: AtomicReference<(List<String?>) -> String?>
+    ): TestObservableObserver<String?> =
+        sources
             .combineLatest { mapper.value(it) }
             .test()
 
@@ -151,4 +154,12 @@ class CombineLatestTest {
 
         observer.assertNoValues()
     }
+
+    @Test
+    fun completed_WHEN_sources_are_empty() {
+        val observer = createAndSubscribe(sources = emptyList(), mapper = mapper)
+
+        observer.assertComplete()
+    }
+
 }

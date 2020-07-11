@@ -35,5 +35,5 @@ fun Iterable<Completable>.concat(): Completable =
 
 fun concat(vararg sources: Completable): Completable =
     sources
-        .asIterable()
+        .asList()
         .concat()

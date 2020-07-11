@@ -49,5 +49,5 @@ fun <T> Iterable<Maybe<T>>.merge(): Observable<T> =
 
 fun <T> merge(vararg sources: Maybe<T>): Observable<T> =
     sources
-        .asIterable()
+        .asList()
         .merge()
