@@ -5,6 +5,13 @@ import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 fun <T> Iterable<Single<T>>.amb(): Single<T> =
     com.badoo.reaktive.single.single { emitter ->
+        val sources = toList()
+
+        if (sources.isEmpty()) {
+            emitter.onError(NoSuchElementException())
+            return@single
+        }
+
         val disposableObserver =
             object : CompositeDisposableObserver(), SingleObserver<T> {
                 private val isFinished = AtomicBoolean()
@@ -26,7 +33,7 @@ fun <T> Iterable<Single<T>>.amb(): Single<T> =
 
         emitter.setDisposable(disposableObserver)
 
-        forEach { it.subscribe(disposableObserver) }
+        sources.forEach { it.subscribe(disposableObserver) }
     }
 
-fun <T> amb(vararg sources: Single<T>): Single<T> = sources.toList().amb()
+fun <T> amb(vararg sources: Single<T>): Single<T> = sources.asList().amb()

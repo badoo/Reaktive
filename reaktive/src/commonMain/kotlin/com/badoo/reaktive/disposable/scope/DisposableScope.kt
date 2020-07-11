@@ -8,6 +8,10 @@ import com.badoo.reaktive.single.Single
 
 /**
  * Represents a scope of [Disposable]s. All scoped [Disposable]s are disposed when the [DisposableScope] is disposed.
+ *
+ * The following factory functions are available:
+ * - `DisposableScope()`
+ * - [disposableScope(block: DisposableScope.{})][disposableScope]
  */
 interface DisposableScope : Disposable {
 
