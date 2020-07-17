@@ -168,8 +168,10 @@ public final class com/badoo/reaktive/test/scheduler/TestScheduler : com/badoo/r
 	public fun destroy ()V
 	public final fun getExecutors ()Ljava/util/List;
 	public final fun getTimer ()Lcom/badoo/reaktive/test/scheduler/TestScheduler$Timer;
+	public final fun isManualProcessing ()Z
 	public fun newExecutor ()Lcom/badoo/reaktive/scheduler/Scheduler$Executor;
 	public final fun process ()V
+	public final fun setManualProcessing (Z)V
 }
 
 public abstract interface class com/badoo/reaktive/test/scheduler/TestScheduler$Timer {
