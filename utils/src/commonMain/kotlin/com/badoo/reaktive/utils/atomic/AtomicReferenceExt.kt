@@ -27,8 +27,8 @@ inline fun <T> AtomicReference<T>.update(update: (T) -> T) {
     getAndUpdate(update)
 }
 
-operator fun <R, T> AtomicReference<T>.getValue(thisRef: R, property: KProperty<*>): T = value
+operator fun <T> AtomicReference<T>.getValue(thisRef: Any?, property: KProperty<*>): T = value
 
-operator fun <R, T> AtomicReference<T>.setValue(thisRef: R, property: KProperty<*>, value: T) {
+operator fun <T> AtomicReference<T>.setValue(thisRef: Any?, property: KProperty<*>, value: T) {
     this.value = value
 }
