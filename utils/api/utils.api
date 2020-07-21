@@ -60,6 +60,7 @@ public final class com/badoo/reaktive/utils/atomic/AtomicInt {
 public final class com/badoo/reaktive/utils/atomic/AtomicIntExtKt {
 	public static final fun getValue (Lcom/badoo/reaktive/utils/atomic/AtomicInt;Ljava/lang/Object;Lkotlin/reflect/KProperty;)I
 	public static final fun setValue (Lcom/badoo/reaktive/utils/atomic/AtomicInt;Ljava/lang/Object;Lkotlin/reflect/KProperty;I)V
+	public static final fun updateAndGet (Lcom/badoo/reaktive/utils/atomic/AtomicInt;Lkotlin/jvm/functions/Function1;)I
 }
 
 public final class com/badoo/reaktive/utils/atomic/AtomicLong {
