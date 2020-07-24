@@ -13,7 +13,12 @@ internal class RefCounter(
         count.updateAndGet { if (it > 0) it + 1 else 0 } > 0
 
     fun release() {
-        val newCount = count.updateAndGet { if (it > 0) it - 1 else throw IllegalStateException("RefCounter is already destroyed") }
+        val newCount =
+            count.updateAndGet {
+                check(it > 0) { "RefCounter is already destroyed" }
+                it - 1
+            }
+
         if (newCount == 0) {
             destroy()
         }
