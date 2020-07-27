@@ -15,7 +15,7 @@ internal actual class BufferedExecutor<in T> actual constructor(
 ) : Disposable {
 
     private val lock = Lock()
-    private val refCounter = RefCounter(lock::destroy)
+    private val refCounter = RefCounter(lock::destroy) // Guards the Lock and prevents its usage when destroyed
     private val queue: Queue<T> = LinkedFreezableQueue()
     private val isDraining = AtomicBoolean()
     private val drainFunction = ::drain
