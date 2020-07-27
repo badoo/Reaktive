@@ -13,11 +13,11 @@ fun <T> Observable<T>.observeOn(scheduler: Scheduler): Observable<T> =
         emitter.setDisposable(disposables)
         val executor = scheduler.newExecutor()
         disposables += executor
+        val bufferedExecutor = BufferedExecutor(executor, emitter::onNext)
+        disposables += bufferedExecutor
 
         subscribe(
             object : ObservableObserver<T> {
-                private val bufferedExecutor = BufferedExecutor(executor, emitter::onNext)
-
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable
                 }
