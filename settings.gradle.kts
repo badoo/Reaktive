@@ -23,3 +23,7 @@ include(":sample-js-browser-app")
 include(":sample-linuxx64-app")
 include(":sample-ios-app")
 include(":sample-macos-app")
+
+if (System.getProperty("check_publication")?.toBoolean() == true) {
+    include(":tools:check-publication")
+}
