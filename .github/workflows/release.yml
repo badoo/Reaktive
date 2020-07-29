@@ -53,7 +53,7 @@ jobs:
   macos-host-check:
     name: Check on macOS
     runs-on: macOS-latest
-    needs: macos-host-publish
+    needs: [linux-host-publish, macos-host-publish]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
