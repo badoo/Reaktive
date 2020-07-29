@@ -24,6 +24,6 @@ include(":sample-linuxx64-app")
 include(":sample-ios-app")
 include(":sample-macos-app")
 
-if (System.getProperty("check_publication")?.toBoolean() == true) {
+if (startParameter.projectProperties.containsKey("check_publication")) {
     include(":tools:check-publication")
 }
