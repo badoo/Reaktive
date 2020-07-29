@@ -49,7 +49,7 @@ jobs:
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Check JVM, Android, JS, Linux
-        run: ./gradlew :tools:check-publication:build -Ptarget=all_linux_hosted -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }} -Dcheck_publication=true
+        run: ./gradlew :tools:check-publication:build -Ptarget=all_linux_hosted -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }} -Pcheck_publication
   macos-host-check:
     name: Check on macOS
     runs-on: macOS-latest
@@ -62,4 +62,4 @@ jobs:
         with:
           java-version: 1.8
       - name: Check iOS
-        run: ./gradlew :tools:check-publication:build -Ptarget=all_macos_hosted -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }} -Dcheck_publication=true
+        run: ./gradlew :tools:check-publication:build -Ptarget=all_macos_hosted -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }} -Pcheck_publication
