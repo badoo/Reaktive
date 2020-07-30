@@ -23,3 +23,7 @@ include(":sample-js-browser-app")
 include(":sample-linuxx64-app")
 include(":sample-ios-app")
 include(":sample-macos-app")
+
+if (startParameter.projectProperties.containsKey("check_publication")) {
+    include(":tools:check-publication")
+}
