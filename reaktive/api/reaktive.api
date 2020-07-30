@@ -946,6 +946,27 @@ public final class com/badoo/reaktive/observable/VariousKt {
 	public static final fun toObservableOfError (Ljava/lang/Throwable;)Lcom/badoo/reaktive/observable/Observable;
 }
 
+public final class com/badoo/reaktive/observable/WindowBoundary {
+	public fun <init> ()V
+	public fun <init> (Lcom/badoo/reaktive/completable/Completable;JZ)V
+	public synthetic fun <init> (Lcom/badoo/reaktive/completable/Completable;JZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getClosingSignal ()Lcom/badoo/reaktive/completable/Completable;
+	public final fun getLimit ()J
+	public final fun getRestartOnLimit ()Z
+}
+
+public final class com/badoo/reaktive/observable/WindowByBoundaryKt {
+	public static final fun window (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Z)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;ZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/observable/WindowExtKt {
+	public static final fun window (Lcom/badoo/reaktive/observable/Observable;JJLcom/badoo/reaktive/scheduler/Scheduler;JZ)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun window (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;JZ)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;JJLcom/badoo/reaktive/scheduler/Scheduler;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+}
+
 public final class com/badoo/reaktive/observable/WithLatestFromKt {
 	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function4;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function3;)Lcom/badoo/reaktive/observable/Observable;
