@@ -39,5 +39,5 @@ fun <T> Iterable<Observable<T>>.concat(): Observable<T> =
 
 fun <T> concat(vararg sources: Observable<T>): Observable<T> =
     sources
-        .asIterable()
+        .asList()
         .concat()

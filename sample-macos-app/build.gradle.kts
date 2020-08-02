@@ -1,3 +1,5 @@
+import com.badoo.reaktive.configuration.Target
+
 open class BuildMacosSampleTask : DefaultTask() {
 
     @InputDirectory

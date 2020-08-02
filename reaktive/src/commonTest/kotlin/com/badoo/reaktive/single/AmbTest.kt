@@ -89,4 +89,11 @@ class AmbTest {
 
         amb.assertNotError()
     }
+
+    @Test
+    fun error_WHEN_sources_are_empty() {
+        val observer = emptyList<Single<Any>>().amb().test()
+
+        observer.assertError { it is NoSuchElementException }
+    }
 }

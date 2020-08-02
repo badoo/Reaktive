@@ -72,4 +72,10 @@ class ConcatTests : CompletableToCompletableTests by CompletableToCompletableTes
         assertFalse(upstream2.hasSubscribers)
     }
 
+    @Test
+    fun completed_WHEN_sources_are_empty() {
+        val observer = emptyList<Completable>().concat().test()
+
+        observer.assertComplete()
+    }
 }

@@ -1,3 +1,5 @@
+import com.badoo.reaktive.dependencies.Deps
+
 plugins {
     id 'com.github.johnrengelman.shadow'
     id 'org.jetbrains.kotlin.jvm'

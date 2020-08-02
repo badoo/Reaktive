@@ -119,4 +119,11 @@ class AmbTest {
 
         amb.assertNotError()
     }
+
+    @Test
+    fun completed_WHEN_sources_are_empty() {
+        val observer = emptyList<Maybe<Any>>().amb().test()
+
+        observer.assertComplete()
+    }
 }

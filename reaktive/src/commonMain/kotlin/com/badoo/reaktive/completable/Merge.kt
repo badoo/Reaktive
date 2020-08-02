@@ -41,5 +41,5 @@ fun Iterable<Completable>.merge(): Completable =
 
 fun merge(vararg sources: Completable): Completable =
     sources
-        .asIterable()
+        .asList()
         .merge()
