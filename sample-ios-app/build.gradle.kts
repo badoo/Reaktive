@@ -1,3 +1,4 @@
+import com.badoo.reaktive.configuration.Target
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 
 open class BuildIosSampleTask : DefaultTask() {

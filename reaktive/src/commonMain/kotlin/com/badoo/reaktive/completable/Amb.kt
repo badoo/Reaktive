@@ -5,6 +5,13 @@ import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 fun Iterable<Completable>.amb(): Completable =
     completable { emitter ->
+        val sources = toList()
+
+        if (sources.isEmpty()) {
+            emitter.onComplete()
+            return@completable
+        }
+
         val disposableObserver =
             object : CompositeDisposableObserver(), CompletableObserver {
                 private val isFinished = AtomicBoolean()
@@ -26,7 +33,7 @@ fun Iterable<Completable>.amb(): Completable =
 
         emitter.setDisposable(disposableObserver)
 
-        forEach { it.subscribe(disposableObserver) }
+        sources.forEach { it.subscribe(disposableObserver) }
     }
 
 fun amb(vararg sources: Completable): Completable = sources.asList().amb()

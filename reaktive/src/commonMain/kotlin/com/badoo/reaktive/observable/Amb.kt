@@ -9,16 +9,23 @@ import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 fun <T> Iterable<Observable<T>>.amb(): Observable<T> =
     observable { emitter ->
+        val sources = toList()
+
+        if (sources.isEmpty()) {
+            emitter.onComplete()
+            return@observable
+        }
+
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
         val hasWinner = AtomicBoolean()
 
-        forEach {
+        sources.forEach {
             it.subscribe(AmbObserver(disposables, hasWinner, emitter))
         }
     }
 
-fun <T> amb(vararg sources: Observable<T>): Observable<T> = sources.toList().amb()
+fun <T> amb(vararg sources: Observable<T>): Observable<T> = sources.asList().amb()
 
 private class AmbObserver<in T>(
     private val disposables: CompositeDisposable,

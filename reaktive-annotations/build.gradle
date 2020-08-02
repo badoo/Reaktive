@@ -1,4 +1,9 @@
-setupMultiplatformLibrary(project)
-setupAllTargetsWithDefaultSourceSets(project)
+plugins {
+    id 'mpp-configuration'
+    id 'publish-configuration'
+    id 'detekt-configuration'
+}
 
-apply plugin: PublishPlugin
+configuration {
+    enableLinuxArm32Hfp()
+}

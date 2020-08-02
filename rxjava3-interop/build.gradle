@@ -1,6 +1,9 @@
+import com.badoo.reaktive.dependencies.Deps
+
 plugins {
     id 'org.jetbrains.kotlin.jvm'
-    id 'maven-publish'
+    id 'publish-configuration'
+    id 'detekt-configuration'
 }
 
 group = reaktive_group_id
@@ -19,6 +22,3 @@ dependencies {
     implementation project(':reaktive')
     implementation Deps.rxjava3
 }
-
-apply plugin: PublishPlugin
-apply plugin: DetektPlugin

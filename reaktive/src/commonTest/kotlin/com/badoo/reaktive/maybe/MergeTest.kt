@@ -1,5 +1,6 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.maybe.TestMaybe
@@ -155,5 +156,25 @@ class MergeTest : MaybeToObservableTests by MaybeToObservableTestsImpl({ merge(t
 
         assertFalse(upstream1.hasSubscribers)
         assertFalse(upstream2.hasSubscribers)
+    }
+
+    @Test
+    fun completed_WHEN_sources_are_empty() {
+        val observer = emptyList<Maybe<Any>>().merge().test()
+
+        observer.assertComplete()
+    }
+
+    @Test
+    fun does_not_complete_WHEN_one_upstream_completed_while_subscribing_to_others() {
+        val observer = merge(
+            maybeUnsafe<Any> { observer ->
+                observer.onSubscribe(Disposable())
+                observer.onComplete()
+            },
+            TestMaybe()
+        ).test()
+
+        observer.assertNotComplete()
     }
 }

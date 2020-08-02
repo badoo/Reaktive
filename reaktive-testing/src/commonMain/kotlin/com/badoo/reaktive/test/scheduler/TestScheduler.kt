@@ -10,8 +10,18 @@ import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.freeze
 
 class TestScheduler(
-    private val isManualProcessing: Boolean = false
+    isManualProcessing: Boolean = false
 ) : Scheduler {
+
+    private val _isManualProcessing = AtomicBoolean(isManualProcessing)
+    var isManualProcessing: Boolean
+        get() = _isManualProcessing.value
+        set(value) {
+            _isManualProcessing.value = value
+            if (!value) {
+                process()
+            }
+        }
 
     private val _timer = TimerImpl()
     val timer: Timer = _timer
@@ -69,7 +79,7 @@ class TestScheduler(
     }
 
     private fun processIfNeeded() {
-        if (!isManualProcessing) {
+        if (!_isManualProcessing.value) {
             process()
         }
     }

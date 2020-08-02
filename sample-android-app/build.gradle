@@ -1,5 +1,9 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+import com.badoo.reaktive.dependencies.Deps
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
 
 android {
     buildToolsVersion '29.0.2'

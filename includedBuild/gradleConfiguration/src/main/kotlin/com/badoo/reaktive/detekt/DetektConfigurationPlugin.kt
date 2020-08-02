@@ -1,10 +1,12 @@
+package com.badoo.reaktive.detekt
+
+import com.badoo.reaktive.dependencies.Deps
 import io.gitlab.arturbosch.detekt.CONFIGURATION_DETEKT_PLUGINS
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-abstract class DetektPlugin : Plugin<Project> {
-
+class DetektConfigurationPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.plugins.apply("io.gitlab.arturbosch.detekt")
         target.extensions.configure(DetektExtension::class.java) {

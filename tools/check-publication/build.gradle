@@ -1,0 +1,35 @@
+plugins {
+    id 'mpp-configuration'
+}
+
+repositories {
+    maven {
+        url 'https://dl.bintray.com/badoo/maven'
+
+        credentials {
+            setUsername(getProperty("bintray_user"))
+            setPassword(getProperty("bintray_key"))
+        }
+    }
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "com.badoo.reaktive:reaktive:$reaktive_version"
+                implementation "com.badoo.reaktive:reaktive-annotations:$reaktive_version"
+                implementation "com.badoo.reaktive:reaktive-testing:$reaktive_version"
+                implementation "com.badoo.reaktive:utils:$reaktive_version"
+                implementation "com.badoo.reaktive:coroutines-interop:$reaktive_version"
+            }
+        }
+
+        jvmCommonMain {
+            dependencies {
+                implementation "com.badoo.reaktive:rxjava2-interop:$reaktive_version"
+                implementation "com.badoo.reaktive:rxjava3-interop:$reaktive_version"
+            }
+        }
+    }
+}

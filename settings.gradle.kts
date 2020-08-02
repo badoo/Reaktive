@@ -1,10 +1,14 @@
 pluginManagement {
     repositories {
+        google()
         jcenter()
         gradlePluginPortal()
         maven("https://dl.bintray.com/kotlin/kotlin-eap")
     }
 }
+
+includeBuild("includedBuild/dependencies")
+includeBuild("includedBuild/gradleConfiguration")
 
 include(":utils")
 include(":reaktive")
@@ -20,3 +24,7 @@ include(":sample-js-browser-app")
 include(":sample-linuxx64-app")
 include(":sample-ios-app")
 include(":sample-macos-app")
+
+if (startParameter.projectProperties.containsKey("check_publication")) {
+    include(":tools:check-publication")
+}

@@ -1,3 +1,5 @@
+package com.badoo.reaktive.configuration
+
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.extra
 

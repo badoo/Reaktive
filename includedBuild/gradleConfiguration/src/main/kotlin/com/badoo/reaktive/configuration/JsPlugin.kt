@@ -1,4 +1,7 @@
+package com.badoo.reaktive.configuration
+
 import com.android.utils.appendCapitalized
+import com.badoo.reaktive.dependencies.Deps
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
@@ -7,7 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 @Suppress("UnstableApiUsage")
-abstract class JsPlugin : Plugin<Project> {
+class JsPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         configureJsCompilation(target)

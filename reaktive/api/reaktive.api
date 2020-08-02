@@ -18,6 +18,10 @@ public abstract interface class com/badoo/reaktive/base/Emitter {
 	public abstract fun setDisposable (Lcom/badoo/reaktive/disposable/Disposable;)V
 }
 
+public final class com/badoo/reaktive/base/EmitterExtKt {
+	public static final fun setCancellable (Lcom/badoo/reaktive/base/Emitter;Lkotlin/jvm/functions/Function0;)V
+}
+
 public abstract interface class com/badoo/reaktive/base/ErrorCallback {
 	public abstract fun onError (Ljava/lang/Throwable;)V
 }
@@ -579,7 +583,7 @@ public final class com/badoo/reaktive/observable/CombineLatestKt {
 	public static final fun combineLatest (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function4;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun combineLatest (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function3;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun combineLatest (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
-	public static final fun combineLatest (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun combineLatest (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun combineLatest ([Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 }
 
@@ -946,7 +950,7 @@ public final class com/badoo/reaktive/observable/WithLatestFromKt {
 	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function4;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function3;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
-	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Ljava/util/Collection;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun withLatestFrom (Lcom/badoo/reaktive/observable/Observable;Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/ZipKt {
@@ -959,7 +963,7 @@ public final class com/badoo/reaktive/observable/ZipKt {
 	public static final fun zip (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function4;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun zip (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function3;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun zip (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
-	public static final fun zip (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun zip (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun zip ([Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 }
 

@@ -9,7 +9,7 @@ internal actual class SharedQueue<T> actual constructor() : Queue<T> {
         MutableFreezableHelper(
             mutableFactory = ::ArrayQueue,
             freezableFactory = { mutable: ArrayQueue<T>? ->
-                CopyOnWriteQueue(mutable?.toList() ?: emptyList())
+                LinkedFreezableQueue(mutable?.toList() ?: emptyList())
             }
         )
 

@@ -3,7 +3,15 @@ package com.badoo.reaktive.scheduler
 import com.badoo.reaktive.disposable.Disposable
 
 /**
- * Base interface for schedulers
+ * Base interface for schedulers.
+ *
+ * The following schedulers are provided by the library:
+ * - [mainScheduler]
+ * - [computationScheduler]
+ * - [ioScheduler]
+ * - [trampolineScheduler]
+ * - [singleScheduler]
+ * - [newThreadScheduler]
  */
 interface Scheduler {
 

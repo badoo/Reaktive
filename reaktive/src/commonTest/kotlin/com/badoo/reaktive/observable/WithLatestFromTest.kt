@@ -14,9 +14,11 @@ class WithLatestFromTest {
     private val other2 = TestObservable<Int>()
     private val other3 = TestObservable<Int>()
 
-    private val observer =
+    private val observer = createAndSubscribe(listOf(other1, other2, other3))
+
+    private fun createAndSubscribe(otherSources: Iterable<Observable<Int>>) =
         source
-            .withLatestFrom(listOf(other1, other2, other3)) { value, others -> listOf(value) + others }
+            .withLatestFrom(otherSources) { value, others -> listOf(value) + others }
             .test()
 
     @Test
@@ -89,4 +91,16 @@ class WithLatestFromTest {
 
         observer.assertValues(listOf(7, 5, 2, 6), listOf(9, 8, 2, 6), listOf(12, 8, 11, 10))
     }
+
+    @Test
+    fun correctly_emits_complex_series_WHEN_others_are_empty() {
+        val observer = createAndSubscribe(otherSources = emptyList())
+
+        source.onNext(1)
+        source.onNext(2)
+        source.onNext(3)
+
+        observer.assertValues(listOf(1), listOf(2), listOf(3))
+    }
+
 }
