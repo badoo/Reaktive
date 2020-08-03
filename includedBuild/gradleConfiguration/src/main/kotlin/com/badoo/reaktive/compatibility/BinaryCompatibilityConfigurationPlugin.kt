@@ -13,7 +13,7 @@ class BinaryCompatibilityConfigurationPlugin : Plugin<Project> {
             target.apply(plugin = "binary-compatibility-validator")
             target.extensions.configure(ApiValidationExtension::class) {
                 ignoredProjects.addAll(
-                    listOf(
+                    listOfNotNull(
                         "benchmarks",
                         "jmh",
                         "sample-mpp-module",
@@ -21,7 +21,8 @@ class BinaryCompatibilityConfigurationPlugin : Plugin<Project> {
                         "sample-js-browser-app",
                         "sample-linuxx64-app",
                         "sample-ios-app",
-                        "sample-macos-app"
+                        "sample-macos-app",
+                        "check_publication".takeIf { target.hasProperty("check-publication") }
                     )
                 )
             }
