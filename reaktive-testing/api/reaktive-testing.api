@@ -25,8 +25,10 @@ public final class com/badoo/reaktive/test/base/TestObserverExtKt {
 public class com/badoo/reaktive/test/base/TestSource : com/badoo/reaktive/base/ErrorCallback, com/badoo/reaktive/base/Source {
 	public fun <init> ()V
 	public final fun getObservers ()Ljava/util/List;
+	public final fun getSubscriptionCount ()I
 	public fun onError (Ljava/lang/Throwable;)V
 	protected final fun onEvent (Lkotlin/jvm/functions/Function1;)V
+	public fun reset ()V
 	public fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
 }
 
