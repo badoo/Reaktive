@@ -48,6 +48,10 @@ public final class com/badoo/reaktive/test/completable/DefaultCompletableObserve
 	public static fun onSubscribe (Lcom/badoo/reaktive/test/completable/DefaultCompletableObserver;Lcom/badoo/reaktive/disposable/Disposable;)V
 }
 
+public final class com/badoo/reaktive/test/completable/TestAwaitKt {
+	public static final fun testAwait (Lcom/badoo/reaktive/completable/Completable;)V
+}
+
 public final class com/badoo/reaktive/test/completable/TestCompletable : com/badoo/reaktive/test/base/TestSource, com/badoo/reaktive/completable/Completable, com/badoo/reaktive/completable/CompletableCallbacks {
 	public fun <init> ()V
 	public fun <init> (Z)V
