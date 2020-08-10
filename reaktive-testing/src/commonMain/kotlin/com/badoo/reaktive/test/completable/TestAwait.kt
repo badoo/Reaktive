@@ -7,7 +7,7 @@ import com.badoo.reaktive.completable.blockingAwait
  * This method is used when you need to wait for an asynchronous operation to finish
  * and you can't use or don't want to use the [TestScheduler][com.badoo.reaktive.test.scheduler.TestScheduler].
  *
- * It is JavaScript friendly, it returns `Promise` which is when returned from a test method
+ * It is JavaScript friendly, it returns `Promise` which, when returned from a test method,
  * causes the test to wait for completion. In all other targets [Completable.blockingAwait()][blockingAwait] is used.
  *
  * Example:
