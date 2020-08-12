@@ -197,6 +197,11 @@ public final class com/badoo/reaktive/test/single/DefaultSingleObserver$DefaultI
 	public static fun onSuccess (Lcom/badoo/reaktive/test/single/DefaultSingleObserver;Ljava/lang/Object;)V
 }
 
+public final class com/badoo/reaktive/test/single/TestAwaitKt {
+	public static final fun testAwait (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun testAwait$default (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
 public final class com/badoo/reaktive/test/single/TestSingle : com/badoo/reaktive/test/base/TestSource, com/badoo/reaktive/single/Single, com/badoo/reaktive/single/SingleCallbacks {
 	public fun <init> ()V
 	public fun <init> (Z)V
