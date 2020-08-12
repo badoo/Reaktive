@@ -25,8 +25,10 @@ public final class com/badoo/reaktive/test/base/TestObserverExtKt {
 public class com/badoo/reaktive/test/base/TestSource : com/badoo/reaktive/base/ErrorCallback, com/badoo/reaktive/base/Source {
 	public fun <init> ()V
 	public final fun getObservers ()Ljava/util/List;
+	public final fun getSubscriptionCount ()I
 	public fun onError (Ljava/lang/Throwable;)V
 	protected final fun onEvent (Lkotlin/jvm/functions/Function1;)V
+	public fun reset ()V
 	public fun subscribe (Lcom/badoo/reaktive/base/Observer;)V
 }
 
@@ -193,6 +195,11 @@ public final class com/badoo/reaktive/test/single/DefaultSingleObserver$DefaultI
 	public static fun onError (Lcom/badoo/reaktive/test/single/DefaultSingleObserver;Ljava/lang/Throwable;)V
 	public static fun onSubscribe (Lcom/badoo/reaktive/test/single/DefaultSingleObserver;Lcom/badoo/reaktive/disposable/Disposable;)V
 	public static fun onSuccess (Lcom/badoo/reaktive/test/single/DefaultSingleObserver;Ljava/lang/Object;)V
+}
+
+public final class com/badoo/reaktive/test/single/TestAwaitKt {
+	public static final fun testAwait (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun testAwait$default (Lcom/badoo/reaktive/single/Single;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public final class com/badoo/reaktive/test/single/TestSingle : com/badoo/reaktive/test/base/TestSource, com/badoo/reaktive/single/Single, com/badoo/reaktive/single/SingleCallbacks {
