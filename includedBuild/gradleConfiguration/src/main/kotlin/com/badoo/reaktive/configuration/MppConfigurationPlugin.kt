@@ -23,7 +23,6 @@ class MppConfigurationPlugin : Plugin<Project> {
         target.version = target.findProperty("reaktive_version") as Any
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
             sourceSets {
-                maybeCreate("commonMain").dependencies { implementation(Deps.kotlin.stdlib.common) }
                 maybeCreate("commonTest").dependencies {
                     implementation(Deps.kotlin.test.common)
                     implementation(Deps.kotlin.test.annotationsCommon)
@@ -141,7 +140,6 @@ class MppConfigurationPlugin : Plugin<Project> {
                 publishLibraryVariants("release", "debug")
             }
             sourceSets {
-                maybeCreate("androidMain").dependencies { implementation(Deps.kotlin.stdlib) }
                 maybeCreate("androidTest").dependencies { implementation(Deps.kotlin.test.junit) }
             }
         }
@@ -152,7 +150,6 @@ class MppConfigurationPlugin : Plugin<Project> {
         project.kotlin {
             jvm()
             sourceSets {
-                maybeCreate("jvmMain").dependencies { implementation(Deps.kotlin.stdlib) }
                 maybeCreate("jvmTest").dependencies { implementation(Deps.kotlin.test.junit) }
             }
         }

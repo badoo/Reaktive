@@ -35,11 +35,6 @@ class JsPlugin : Plugin<Project> {
                     }
                 }
             }
-            sourceSets.getByName(TARGET_NAME_JS.appendCapitalized(SourceSet.MAIN_SOURCE_SET_NAME)) {
-                dependencies {
-                    implementation(Deps.kotlin.stdlib.js)
-                }
-            }
             sourceSets.getByName(TARGET_NAME_JS.appendCapitalized(SourceSet.TEST_SOURCE_SET_NAME)) {
                 dependencies {
                     implementation(Deps.kotlin.test.js)

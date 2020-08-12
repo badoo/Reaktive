@@ -30,7 +30,6 @@ object Deps {
         ) : CharSequence by name {
             val jdk7 = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
             val js = "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
-            val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
 
             override fun toString(): String = name
         }
@@ -45,27 +44,11 @@ object Deps {
 
     object Kotlinx {
         val coroutines = Coroutines
-        val metadata = Metadata
         val compatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.2.3"
 
         object Coroutines {
-            val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
             val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
-            val core = Core()
-
-            class Core(
-                private val name: String = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
-            ) : CharSequence by name {
-                val common = "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutinesVersion"
-                val native = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$coroutinesVersion"
-                val js = "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$coroutinesVersion"
-
-                override fun toString() = name
-            }
-        }
-
-        object Metadata {
-            const val jvm = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0"
+            val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
         }
     }
 
