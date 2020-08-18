@@ -22,7 +22,7 @@ class BinaryCompatibilityConfigurationPlugin : Plugin<Project> {
                         "sample-linuxx64-app",
                         "sample-ios-app",
                         "sample-macos-app",
-                        "check_publication".takeIf { target.hasProperty("check-publication") }
+                        "check-publication".takeIf { target.hasProperty("check_publication") }
                     )
                 )
             }
