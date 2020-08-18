@@ -15,7 +15,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation Deps.kotlinx.coroutines.core.common
+                implementation Deps.kotlinx.coroutines.core
                 implementation project(':reaktive')
                 implementation project(':utils')
             }
@@ -30,30 +30,6 @@ kotlin {
         jvmCommonTest {
             dependencies {
                 implementation Deps.kotlinx.coroutines.test
-            }
-        }
-
-        jvmMain {
-            dependencies {
-                implementation Deps.kotlinx.coroutines.core
-            }
-        }
-
-        androidMain {
-            dependencies {
-                implementation Deps.kotlinx.coroutines.android
-            }
-        }
-
-        nativeCommonMain {
-            dependencies {
-                implementation Deps.kotlinx.coroutines.core.native
-            }
-        }
-
-        jsMain {
-            dependencies {
-                implementation Deps.kotlinx.coroutines.core.js
             }
         }
     }
