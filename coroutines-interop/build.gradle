@@ -6,6 +6,15 @@ plugins {
     id 'detekt-configuration'
 }
 
+def ver = "${property("reaktive_version")}-nmtc"
+version = ver
+
+bintray {
+    pkg {
+        version.name = ver
+    }
+}
+
 kotlin {
     targets {
 //        fromPreset(presets.jvm, 'jvmJsCommon')
