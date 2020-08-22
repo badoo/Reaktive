@@ -20,7 +20,7 @@ fun <T> Observable<T>.sample(windowMillis: Long, scheduler: Scheduler): Observab
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable
 
-                    executor.submitRepeating(periodMillis = windowMillis) {
+                    executor.submitRepeating(startDelayMillis = windowMillis, periodMillis = windowMillis) {
                         lastValue
                             .value
                             ?.value
