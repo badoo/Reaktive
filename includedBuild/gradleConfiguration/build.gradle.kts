@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     implementation(Deps.kotlin.plugin)
+    implementation(Deps.kotlin.compilerEmbeddable)
     implementation(Deps.android.plugin)
     implementation(Deps.jmh.plugin)
     implementation(Deps.bintray)

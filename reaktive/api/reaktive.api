@@ -50,7 +50,6 @@ public abstract interface class com/badoo/reaktive/base/ValueCallback {
 }
 
 public final class com/badoo/reaktive/base/exceptions/CompositeException : java/lang/RuntimeException {
-	public static final field Companion Lcom/badoo/reaktive/base/exceptions/CompositeException$Companion;
 	public fun <init> (Ljava/lang/Throwable;Ljava/lang/Throwable;)V
 	public final fun getCause1 ()Ljava/lang/Throwable;
 	public final fun getCause2 ()Ljava/lang/Throwable;
@@ -231,7 +230,6 @@ public final class com/badoo/reaktive/completable/VariousKt {
 }
 
 public class com/badoo/reaktive/disposable/CompositeDisposable : com/badoo/reaktive/disposable/Disposable {
-	public static final field Companion Lcom/badoo/reaktive/disposable/CompositeDisposable$Companion;
 	public fun <init> ()V
 	public final fun add (Lcom/badoo/reaktive/disposable/Disposable;)Z
 	public final fun clear (Z)V
