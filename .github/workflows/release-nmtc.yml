@@ -1,0 +1,35 @@
+name: Release nmtc
+
+on:
+  workflow_dispatch
+
+jobs:
+  linux-host-publish:
+    name: Release on Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Release JVM, Android, JS, Linux
+        run: ./gradlew :coroutines-interop:bintrayUpload -Ptarget=all_linux_hosted -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
+      - name: Release Metadata
+        run: ./gradlew :coroutines-interop:bintrayUpload -Ptarget=meta -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
+  macos-host-publish:
+    name: Release on macOS
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Release iOS, MacOS
+        run: ./gradlew :coroutines-interop:bintrayUpload -Ptarget=all_macos_hosted -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
+
