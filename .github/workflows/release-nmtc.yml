@@ -1,11 +1,7 @@
 name: Release nmtc
 
 on:
-  push:
-    branches:
-      - 'mt-coroutines'
-    tags:
-      - '*'
+  workflow_dispatch
 
 jobs:
   linux-host-publish:
