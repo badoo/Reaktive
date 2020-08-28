@@ -951,6 +951,13 @@ public final class com/badoo/reaktive/observable/WindowByBoundaryKt {
 	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
 
+public final class com/badoo/reaktive/observable/WindowBySignalKt {
+	public static final fun window (Lcom/badoo/reaktive/observable/Observable;JJLcom/badoo/reaktive/scheduler/Scheduler;JZ)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun window (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;JZ)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;JJLcom/badoo/reaktive/scheduler/Scheduler;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+}
+
 public final class com/badoo/reaktive/observable/WindowSizedKt {
 	public static final fun window (Lcom/badoo/reaktive/observable/Observable;JJ)Lcom/badoo/reaktive/observable/Observable;
 	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;JJILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;

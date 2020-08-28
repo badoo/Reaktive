@@ -451,6 +451,29 @@ class WindowByBoundaryTest : ObservableToObservableTests by ObservableToObservab
     }
 
     @Test
+    fun does_not_unsubscribe_from_upstream_WHEN_first_window_disposed() {
+        val observer = window()
+        boundaries.onNext(Unit)
+        val windowObserver = observer.lastValue()
+
+        windowObserver.dispose()
+
+        assertTrue(upstream.hasSubscribers)
+    }
+
+    @Test
+    fun unsubscribes_from_upstream_WHEN_first_window_disposed_and_boundaries_completed() {
+        val observer = window()
+        boundaries.onNext(Unit)
+        val windowObserver = observer.lastValue()
+
+        windowObserver.dispose()
+        boundaries.onComplete()
+
+        assertFalse(upstream.hasSubscribers)
+    }
+
+    @Test
     fun first_window_completes_WHEN_downstream_disposed_and_upstream_completed() {
         val observer = window()
         val windowObserver = observer.lastValue()

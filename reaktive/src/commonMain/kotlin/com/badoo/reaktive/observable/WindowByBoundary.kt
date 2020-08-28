@@ -17,19 +17,22 @@ import com.badoo.reaktive.utils.serializer.serializer
 
 /**
  * Please refer to the corresponding RxJava
- * [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-long-java.util.concurrent.TimeUnit-long-boolean-).
+ * [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-long-boolean-).
  */
 fun <T> Observable<T>.window(
     spanMillis: Long,
     scheduler: Scheduler,
     limit: Long = Long.MAX_VALUE,
     restartOnLimit: Boolean = false
-): Observable<Observable<T>> =
-    window(
+): Observable<Observable<T>> {
+    require(spanMillis > 0) { "spanMillis must by positive" }
+
+    return window(
         boundaries = singleOf(Unit).delay(spanMillis, scheduler).repeat(),
         limit = limit,
         restartOnLimit = restartOnLimit
     )
+}
 
 /**
  * Please refer to the corresponding RxJava
