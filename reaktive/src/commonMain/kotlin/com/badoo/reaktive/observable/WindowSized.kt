@@ -3,14 +3,16 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.setCancellable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.DisposableWrapper
-import com.badoo.reaktive.subject.isActive
 import com.badoo.reaktive.subject.unicast.UnicastSubject
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.queue.SharedQueue
-import com.badoo.reaktive.utils.serializer.Serializer
-import com.badoo.reaktive.utils.serializer.serializer
 
+/**
+ * Please refer to the corresponding RxJava
+ * [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-long-long-).
+ */
 fun <T> Observable<T>.window(
     count: Long,
     skip: Long = count
@@ -19,128 +21,76 @@ fun <T> Observable<T>.window(
     require(skip > 0) { "skip > 0 required but it was $skip" }
 
     return observable { emitter ->
-        WindowSized(
-            upstream = this,
-            count = count,
-            skip = skip,
-            emitter = emitter
-        )
-    }
-}
+        val upstreamDisposableWrapper = DisposableWrapper()
 
-private class WindowSized<T>(
-    upstream: Observable<T>,
-    private val count: Long,
-    private val skip: Long,
-    private val emitter: ObservableEmitter<Observable<T>>
-) {
-    private val windows = SharedQueue<UnicastSubject<T>>()
-    private val serializer = serializer(onValue = ::onEvent)
-    private val upstreamObserver = UpstreamObserver(serializer)
-    private val skippedCount = AtomicLong()
-    private val tailWindowValuesCount = AtomicLong()
+        val windows = SharedQueue<UnicastSubject<T>>()
+        val activeWindowsCount = AtomicInt(1)
 
-    init {
-        emitter.setCancellable { serializer.accept(Event.OnDownstreamDisposed) }
-        upstream.subscribe(upstreamObserver)
-    }
-
-    private fun onEvent(event: Event<T>) = when (event) {
-        is Event.OnNext -> onNext(event.value)
-        is Event.OnComplete -> onComplete()
-        is Event.OnError -> onError(event.error)
-        Event.OnWindowDisposed -> onWindowDisposed()
-        Event.OnDownstreamDisposed -> onDownstreamDisposed()
-    }
-
-    private fun onNext(value: T): Boolean {
-        val window: UnicastSubject<T>?
-        val windowSubscribed: AtomicBoolean?
-        if (skippedCount.value == 0L) {
-            window = UnicastSubject { serializer.accept(Event.OnWindowDisposed) }
-            windowSubscribed = AtomicBoolean(false)
-            windows.offer(window)
-            emitter.onNext(window.doOnAfterSubscribe { windowSubscribed.value = true })
-        } else {
-            window = null
-            windowSubscribed = null
+        emitter.setCancellable {
+            if (activeWindowsCount.addAndGet(-1) == 0) {
+                upstreamDisposableWrapper.dispose()
+            }
         }
 
-        windows.forEach { it.onNext(value) }
+        subscribe(object : ObservableObserver<T>, () -> Unit {
 
-        skippedCount.value = (skippedCount.value + 1) % skip
-        tailWindowValuesCount.addAndGet(1)
+            private val skippedCount = AtomicLong()
+            private val tailWindowValuesCount = AtomicLong()
 
-        if (tailWindowValuesCount.value == count) {
-            requireNotNull(windows.poll()).onComplete()
-            tailWindowValuesCount.addAndGet(-skip)
-        }
+            override fun onSubscribe(disposable: Disposable) {
+                upstreamDisposableWrapper.set(disposable)
+            }
 
-        if (window != null && windowSubscribed != null && windowSubscribed.compareAndSet(false, true)) {
-            window.onComplete()
-        }
+            override fun onNext(value: T) {
+                val skipped = skippedCount.value
 
-        return true
-    }
+                val window: UnicastSubject<T>?
+                val windowSubscribed: AtomicBoolean?
 
-    private fun onComplete(): Boolean {
-        windows.forEach { it.onComplete() }
-        emitter.onComplete()
-        upstreamObserver.dispose()
+                if (skipped == 0L) {
+                    activeWindowsCount.addAndGet(1)
+                    window = UnicastSubject(onTerminate = this)
+                    windowSubscribed = AtomicBoolean(false)
+                    windows.offer(window)
+                    emitter.onNext(window.doOnAfterSubscribe { windowSubscribed.value = true })
+                } else {
+                    window = null
+                    windowSubscribed = null
+                }
 
-        return false
-    }
+                windows.forEach { it.onNext(value) }
 
-    private fun onError(error: Throwable): Boolean {
-        windows.forEach { it.onError(error) }
-        emitter.onError(error)
-        upstreamObserver.dispose()
+                skippedCount.value = (skipped + 1) % skip
 
-        return false
-    }
+                if (tailWindowValuesCount.value + 1 == count) {
+                    requireNotNull(windows.poll()).onComplete()
+                    tailWindowValuesCount.addAndGet(1 - skip)
+                } else {
+                    tailWindowValuesCount.addAndGet(1)
+                }
 
-    private fun onWindowDisposed(): Boolean {
-        if (windows.none(UnicastSubject<T>::isActive) && emitter.isDisposed) {
-            upstreamObserver.dispose()
-        }
+                if (window != null && windowSubscribed != null && windowSubscribed.compareAndSet(false, true)) {
+                    window.onComplete()
+                }
+            }
 
-        return true
-    }
+            override fun invoke() {
+                if (activeWindowsCount.addAndGet(-1) == 0 && emitter.isDisposed) {
+                    upstreamDisposableWrapper.dispose()
+                }
+            }
 
-    private fun onDownstreamDisposed(): Boolean {
-        if (windows.none(UnicastSubject<T>::isActive)) {
-            upstreamObserver.dispose()
-        }
+            override fun onComplete() {
+                windows.forEach { it.onComplete() }
+                emitter.onComplete()
+                upstreamDisposableWrapper.dispose()
+            }
 
-        return true
-    }
-
-    private class UpstreamObserver<T>(
-        private val serializer: Serializer<Event<T>>
-    ) : ObservableObserver<T>, DisposableWrapper() {
-
-        override fun onSubscribe(disposable: Disposable) {
-            set(disposable)
-        }
-
-        override fun onNext(value: T) {
-            serializer.accept(Event.OnNext(value))
-        }
-
-        override fun onComplete() {
-            serializer.accept(Event.OnComplete)
-        }
-
-        override fun onError(error: Throwable) {
-            serializer.accept(Event.OnError(error))
-        }
-    }
-
-    private sealed class Event<out T> {
-        class OnNext<T>(val value: T) : Event<T>()
-        object OnComplete : Event<Nothing>()
-        class OnError(val error: Throwable) : Event<Nothing>()
-        object OnWindowDisposed : Event<Nothing>()
-        object OnDownstreamDisposed : Event<Nothing>()
+            override fun onError(error: Throwable) {
+                windows.forEach { it.onError(error) }
+                emitter.onError(error)
+                upstreamDisposableWrapper.dispose()
+            }
+        })
     }
 }
