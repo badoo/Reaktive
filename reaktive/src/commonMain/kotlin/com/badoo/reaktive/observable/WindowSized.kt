@@ -32,7 +32,13 @@ fun <T> Observable<T>.window(
             }
         }
 
-        subscribe(object : ObservableObserver<T>, () -> Unit {
+        val onTerminate: () -> Unit = {
+            if (activeWindowsCount.addAndGet(-1) == 0 && emitter.isDisposed) {
+                upstreamDisposableWrapper.dispose()
+            }
+        }
+
+        subscribe(object : ObservableObserver<T> {
 
             private val skippedCount = AtomicLong()
             private val tailWindowValuesCount = AtomicLong()
@@ -49,7 +55,7 @@ fun <T> Observable<T>.window(
 
                 if (skipped == 0L) {
                     activeWindowsCount.addAndGet(1)
-                    window = UnicastSubject(onTerminate = this)
+                    window = UnicastSubject(onTerminate = onTerminate)
                     windowSubscribed = AtomicBoolean(false)
                     windows.offer(window)
                     emitter.onNext(window.doOnAfterSubscribe { windowSubscribed.value = true })
@@ -71,12 +77,6 @@ fun <T> Observable<T>.window(
 
                 if (window != null && windowSubscribed != null && windowSubscribed.compareAndSet(false, true)) {
                     window.onComplete()
-                }
-            }
-
-            override fun invoke() {
-                if (activeWindowsCount.addAndGet(-1) == 0 && emitter.isDisposed) {
-                    upstreamDisposableWrapper.dispose()
                 }
             }
 
