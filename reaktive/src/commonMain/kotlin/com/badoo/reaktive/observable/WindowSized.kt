@@ -21,76 +21,95 @@ fun <T> Observable<T>.window(
     require(skip > 0) { "skip > 0 required but it was $skip" }
 
     return observable { emitter ->
-        val upstreamDisposableWrapper = DisposableWrapper()
-
-        val windows = SharedQueue<UnicastSubject<T>>()
         val activeWindowsCount = AtomicInt(1)
+        val upstreamObserver = UpstreamObserver(
+            count = count,
+            skip = skip,
+            activeWindowsCount = activeWindowsCount,
+            emitter = emitter
+        )
 
         emitter.setCancellable {
             if (activeWindowsCount.addAndGet(-1) == 0) {
-                upstreamDisposableWrapper.dispose()
+                upstreamObserver.dispose()
             }
         }
 
-        val onTerminate: () -> Unit = {
-            if (activeWindowsCount.addAndGet(-1) == 0 && emitter.isDisposed) {
-                upstreamDisposableWrapper.dispose()
-            }
+        subscribe(upstreamObserver)
+    }
+}
+
+private class UpstreamObserver<T>(
+    private val count: Long,
+    private val skip: Long,
+    private val activeWindowsCount: AtomicInt,
+    private val emitter: ObservableEmitter<Observable<T>>
+) : DisposableWrapper(), ObservableObserver<T> {
+
+    private val windows = SharedQueue<UnicastSubject<T>>()
+    private val skippedCount = AtomicLong()
+    private val tailWindowValuesCount = AtomicLong()
+
+    private val onWindowTerminate: () -> Unit = {
+        if (activeWindowsCount.addAndGet(-1) == 0 && emitter.isDisposed) {
+            dispose()
+        }
+    }
+
+    override fun onSubscribe(disposable: Disposable) {
+        set(disposable)
+    }
+
+    override fun onNext(value: T) {
+        val skipped = skippedCount.value
+        val windowWrapper: WindowWrapper<T>?
+
+        if (skipped == 0L) {
+            activeWindowsCount.addAndGet(1)
+            val window = UnicastSubject<T>(onTerminate = onWindowTerminate)
+            windowWrapper = WindowWrapper(window)
+            windows.offer(window)
+            emitter.onNext(windowWrapper)
+        } else {
+            windowWrapper = null
         }
 
-        subscribe(object : ObservableObserver<T> {
+        windows.forEach { it.onNext(value) }
 
-            private val skippedCount = AtomicLong()
-            private val tailWindowValuesCount = AtomicLong()
+        skippedCount.value = (skipped + 1) % skip
 
-            override fun onSubscribe(disposable: Disposable) {
-                upstreamDisposableWrapper.set(disposable)
-            }
+        if (tailWindowValuesCount.value + 1 == count) {
+            requireNotNull(windows.poll()).onComplete()
+            tailWindowValuesCount.addAndGet(1 - skip)
+        } else {
+            tailWindowValuesCount.addAndGet(1)
+        }
 
-            override fun onNext(value: T) {
-                val skipped = skippedCount.value
+        if (windowWrapper?.isSubscribed?.value == false) {
+            windowWrapper.window.onComplete()
+        }
+    }
 
-                val window: UnicastSubject<T>?
-                val windowSubscribed: AtomicBoolean?
+    override fun onComplete() {
+        windows.forEach { it.onComplete() }
+        emitter.onComplete()
+        dispose()
+    }
 
-                if (skipped == 0L) {
-                    activeWindowsCount.addAndGet(1)
-                    window = UnicastSubject(onTerminate = onTerminate)
-                    windowSubscribed = AtomicBoolean(false)
-                    windows.offer(window)
-                    emitter.onNext(window.doOnAfterSubscribe { windowSubscribed.value = true })
-                } else {
-                    window = null
-                    windowSubscribed = null
-                }
+    override fun onError(error: Throwable) {
+        windows.forEach { it.onError(error) }
+        emitter.onError(error)
+        dispose()
+    }
+}
 
-                windows.forEach { it.onNext(value) }
+private class WindowWrapper<T>(
+    val window: UnicastSubject<T>
+) : Observable<T> {
+    val isSubscribed = AtomicBoolean()
 
-                skippedCount.value = (skipped + 1) % skip
-
-                if (tailWindowValuesCount.value + 1 == count) {
-                    requireNotNull(windows.poll()).onComplete()
-                    tailWindowValuesCount.addAndGet(1 - skip)
-                } else {
-                    tailWindowValuesCount.addAndGet(1)
-                }
-
-                if (window != null && windowSubscribed != null && windowSubscribed.compareAndSet(false, true)) {
-                    window.onComplete()
-                }
-            }
-
-            override fun onComplete() {
-                windows.forEach { it.onComplete() }
-                emitter.onComplete()
-                upstreamDisposableWrapper.dispose()
-            }
-
-            override fun onError(error: Throwable) {
-                windows.forEach { it.onError(error) }
-                emitter.onError(error)
-                upstreamDisposableWrapper.dispose()
-            }
-        })
+    override fun subscribe(observer: ObservableObserver<T>) {
+        isSubscribed.value = true
+        window.subscribe(observer)
     }
 }
