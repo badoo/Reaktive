@@ -45,11 +45,8 @@ private class UpstreamObserver<T>(
     private val activeWindowsCount: AtomicInt,
     private val emitter: ObservableEmitter<Observable<T>>
 ) : DisposableWrapper(), ObservableObserver<T> {
-
     private val windows = SharedQueue<UnicastSubject<T>>()
-    private val skippedCount = AtomicLong()
-    private val tailWindowValuesCount = AtomicLong()
-
+    private val counter = AtomicLong()
     private val onWindowTerminate: () -> Unit = {
         if (activeWindowsCount.addAndGet(-1) == 0 && emitter.isDisposed) {
             dispose()
@@ -61,10 +58,10 @@ private class UpstreamObserver<T>(
     }
 
     override fun onNext(value: T) {
-        val skipped = skippedCount.value
+        val index = counter.value
         val windowWrapper: WindowWrapper<T>?
 
-        if (skipped == 0L) {
+        if (index % skip == 0L) {
             activeWindowsCount.addAndGet(1)
             val window = UnicastSubject<T>(onTerminate = onWindowTerminate)
             windowWrapper = WindowWrapper(window)
@@ -76,14 +73,12 @@ private class UpstreamObserver<T>(
 
         windows.forEach { it.onNext(value) }
 
-        skippedCount.value = (skipped + 1) % skip
-
-        if (tailWindowValuesCount.value + 1 == count) {
+        val openIndex = index - count + 1
+        if (openIndex >= 0 && openIndex % skip == 0L) {
             requireNotNull(windows.poll()).onComplete()
-            tailWindowValuesCount.addAndGet(1 - skip)
-        } else {
-            tailWindowValuesCount.addAndGet(1)
         }
+
+        counter.value = index + 1
 
         if (windowWrapper?.isSubscribed?.value == false) {
             windowWrapper.window.onComplete()
