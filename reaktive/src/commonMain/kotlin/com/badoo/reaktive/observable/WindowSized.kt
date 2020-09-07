@@ -96,15 +96,15 @@ private class UpstreamObserver<T>(
         emitter.onError(error)
         dispose()
     }
-}
 
-private class WindowWrapper<T>(
-    val window: UnicastSubject<T>
-) : Observable<T> {
-    val isSubscribed = AtomicBoolean()
+    private class WindowWrapper<T>(
+        val window: UnicastSubject<T>
+    ) : Observable<T> {
+        val isSubscribed = AtomicBoolean()
 
-    override fun subscribe(observer: ObservableObserver<T>) {
-        isSubscribed.value = true
-        window.subscribe(observer)
+        override fun subscribe(observer: ObservableObserver<T>) {
+            isSubscribed.value = true
+            window.subscribe(observer)
+        }
     }
 }
