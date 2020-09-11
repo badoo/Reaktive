@@ -26,7 +26,7 @@ fun <T> Observable<T>.window(
             count = count,
             skip = skip,
             activeWindowsCount = activeWindowsCount,
-            emitter = emitter
+            downstream = emitter
         )
 
         emitter.setCancellable {
@@ -43,12 +43,13 @@ private class UpstreamObserver<T>(
     private val count: Long,
     private val skip: Long,
     private val activeWindowsCount: AtomicInt,
-    private val emitter: ObservableEmitter<Observable<T>>
+    private val downstream: ObservableCallbacks<Observable<T>>
 ) : DisposableWrapper(), ObservableObserver<T> {
     private val windows = SharedQueue<UnicastSubject<T>>()
-    private val counter = AtomicLong()
+    private val skippedCount = AtomicLong()
+    private val tailWindowValuesCount = AtomicLong()
     private val onWindowTerminate: () -> Unit = {
-        if (activeWindowsCount.addAndGet(-1) == 0 && emitter.isDisposed) {
+        if (activeWindowsCount.addAndGet(-1) == 0) {
             dispose()
         }
     }
@@ -58,27 +59,29 @@ private class UpstreamObserver<T>(
     }
 
     override fun onNext(value: T) {
-        val index = counter.value
+        val skipped = skippedCount.value
         val windowWrapper: WindowWrapper<T>?
 
-        if (index % skip == 0L) {
+        if (skipped == 0L) {
             activeWindowsCount.addAndGet(1)
             val window = UnicastSubject<T>(onTerminate = onWindowTerminate)
             windowWrapper = WindowWrapper(window)
             windows.offer(window)
-            emitter.onNext(windowWrapper)
+            downstream.onNext(windowWrapper)
         } else {
             windowWrapper = null
         }
 
         windows.forEach { it.onNext(value) }
 
-        val openIndex = index - count + 1
-        if (openIndex >= 0 && openIndex % skip == 0L) {
-            requireNotNull(windows.poll()).onComplete()
-        }
+        skippedCount.value = (skipped + 1) % skip
 
-        counter.value = index + 1
+        if (tailWindowValuesCount.value + 1 == count) {
+            requireNotNull(windows.poll()).onComplete()
+            tailWindowValuesCount.addAndGet(1 - skip)
+        } else {
+            tailWindowValuesCount.addAndGet(1)
+        }
 
         if (windowWrapper?.isSubscribed?.value == false) {
             windowWrapper.window.onComplete()
@@ -87,13 +90,13 @@ private class UpstreamObserver<T>(
 
     override fun onComplete() {
         windows.forEach { it.onComplete() }
-        emitter.onComplete()
+        downstream.onComplete()
         dispose()
     }
 
     override fun onError(error: Throwable) {
         windows.forEach { it.onError(error) }
-        emitter.onError(error)
+        downstream.onError(error)
         dispose()
     }
 
