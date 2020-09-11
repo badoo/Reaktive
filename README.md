@@ -192,13 +192,18 @@ observable<Any> { emitter ->
 
 In both cases subscription (`subscribe` call) **must** be performed on the Main thread.
 
-#### Coroutines interop
-Another important thing to keep in mind is the interop with coroutines provided by the `coroutines-interop` module.
-This also has a few important limitations:
-- Neither `Job` nor `CoroutineContext` can be frozen (until release of the [multithreaded coroutines](https://github.com/Kotlin/kotlinx.coroutines/pull/1648))
-- Because of the first limitation all `xxxFromCoroutine {}` builders in Kotlin/Native are executed inside a `runBlocking` block and should be subscribed on a background `Scheduler`
-- Ktor does not work well in multithreaded environment in Kotlin/Native (it may crash), so please don't mix Ktor and `coroutines-interop`
-- Converters `Scheduler.asCoroutineDispatcher()` and `CoroutineContext.asScheduler()` are available only in JVM and JS
+### Coroutines interop
+
+This functionality is provided by the `coroutines-interop` module which is published in two versions:
+- `coroutines-interop:<version>` is based on stable `kotlinx.coroutines`
+- `coroutines-interop:<version>-nmtc` is based on [work-in-progress](https://github.com/Kotlin/kotlinx.coroutines/pull/1648) multi-threaded `kotlinx.coroutines`
+
+#### Coroutines interop based on stable kotlinx.coroutines
+
+There are few important limitations:
+- Neither `Job` nor `CoroutineContext` can be frozen (until release of the multi-threaded coroutines).
+- Because of the first limitation all `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed inside `runBlocking` block in Kotlin/Native and should be subscribed on a background `Scheduler`.
+- Ktor does not work well in multithreaded environment in Kotlin/Native (it may crash), so please don't mix Ktor and "stable" `coroutines-interop`.
 
 Consider the following example for `corutines-interop`:
 ```kotlin
@@ -231,6 +236,22 @@ fun <T> singleFromCoroutineUnsafe(mainContext: CoroutineContext, block: suspend 
 ```
 
 Now you can use this function together with Ktor but make sure you are doing this always on Main thread, neither `subscribeOn` nor `observeOn` nor any other thread switch are allowed.
+
+#### Coroutines interop based on multi-threaded kotlinx.coroutines
+
+The multi-threaded `kotlinx.coroutines` variant lifts some unpleasant restrictions: 
+- Both `Job` and `CoroutineContext` can be frozen.
+
+So there is one crucial difference:
+- All `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed asynchronously in all targets (including Kotlin/Native), so can be subscribed on any scheduler.
+
+Limitations:
+- Because multi-threaded coroutines are work-in-progress, there are possible [issues](https://github.com/Kotlin/kotlinx.coroutines/blob/native-mt/kotlin-native-sharing.md#known-problems).
+- Ktor can be used out of the box, but still can not be frozen, so main thread only.
+
+##### Coroutines interop general limitations
+
+Converters `Scheduler.asCoroutineDispatcher()` and `CoroutineContext.asScheduler()` are available only in JVM and JS currently.
 
 ### Subscription management with DisposableScope
 
