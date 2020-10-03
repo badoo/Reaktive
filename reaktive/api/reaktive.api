@@ -913,6 +913,13 @@ public final class com/badoo/reaktive/observable/ThrottleKt {
 	public static final fun throttle (Lcom/badoo/reaktive/observable/Observable;J)Lcom/badoo/reaktive/observable/Observable;
 }
 
+public final class com/badoo/reaktive/observable/ThrottleLatestKt {
+	public static final fun throttleLatest (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;Z)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun throttleLatest (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;Z)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun throttleLatest$default (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;ZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun throttleLatest$default (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;ZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+}
+
 public final class com/badoo/reaktive/observable/TimeoutKt {
 	public static final fun timeout (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
 	public static synthetic fun timeout$default (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;Lcom/badoo/reaktive/observable/Observable;ILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
@@ -949,6 +956,18 @@ public final class com/badoo/reaktive/observable/WindowByBoundaryKt {
 	public static final fun window (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;JZ)Lcom/badoo/reaktive/observable/Observable;
 	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/observable/WindowBySignalKt {
+	public static final fun window (Lcom/badoo/reaktive/observable/Observable;JJLcom/badoo/reaktive/scheduler/Scheduler;JZ)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun window (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;JZ)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;JJLcom/badoo/reaktive/scheduler/Scheduler;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/observable/WindowSizedKt {
+	public static final fun window (Lcom/badoo/reaktive/observable/Observable;JJ)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun window$default (Lcom/badoo/reaktive/observable/Observable;JJILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/WithLatestFromKt {
