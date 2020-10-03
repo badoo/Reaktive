@@ -44,8 +44,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Install dependencies
-        run: sudo apt-get install nodejs chromium-browser
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Check JVM, Android, JS, Linux
