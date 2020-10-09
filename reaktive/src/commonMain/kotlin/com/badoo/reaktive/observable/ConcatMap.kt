@@ -2,14 +2,15 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.ValueCallback
-import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.ObjectReference
+import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndUpdate
-import com.badoo.reaktive.utils.atomic.updateAndGet
+import com.badoo.reaktive.utils.queue.SharedQueue
+import com.badoo.reaktive.utils.serializer.Serializer
+import com.badoo.reaktive.utils.serializer.serializer
 
 fun <T, R> Observable<T>.concatMap(mapper: (T) -> Observable<R>): Observable<R> =
     observable { emitter ->
@@ -23,76 +24,94 @@ private class ConcatMapObserver<in T, in R>(
     private val mapper: (T) -> Observable<R>
 ) : CompositeDisposable(), ObservableObserver<T>, ErrorCallback by callbacks {
 
-    private val state = AtomicReference(State<T>())
+    private val actor = serializer(::processEvent)
+    private val innerObserver = InnerObserver(callbacks, actor).addTo(this)
+    private val queue = SharedQueue<T>()
+    private val state = AtomicReference(State.IDLE)
 
     override fun onSubscribe(disposable: Disposable) {
         add(disposable)
     }
 
     override fun onNext(value: T) {
-        val oldState =
-            state.getAndUpdate {
-                it.copy(
-                    queue = if (it.isMappedSourceActive) it.queue + value else it.queue,
-                    isMappedSourceActive = true
-                )
-            }
-
-        if (!oldState.isMappedSourceActive) {
-            mapAndSubscribe(value)
-        }
+        actor.accept(value)
     }
 
     override fun onComplete() {
-        val newState =
-            state.updateAndGet {
-                it.copy(isUpstreamCompleted = true)
+        actor.accept(Event.UPSTREAM_COMPLETED)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun processEvent(event: Any?): Boolean =
+        when (event) {
+            Event.UPSTREAM_COMPLETED -> onUpstreamCompleted()
+            Event.INNER_COMPLETED -> onInnerCompleted()
+            else -> onUpstreamValue(event as T)
+        }
+
+    private fun onUpstreamCompleted(): Boolean {
+        val oldState = state.value
+        state.value = State.UPSTREAM_COMPLETED
+
+        if (oldState == State.IDLE) {
+            callbacks.onComplete()
+            return false
+        }
+
+        return true
+    }
+
+    private fun onInnerCompleted(): Boolean {
+        if (queue.isEmpty) {
+            if (state.value == State.UPSTREAM_COMPLETED) {
+                callbacks.onComplete()
+                return false
             }
 
-        if (newState.isUpstreamCompleted && !newState.isMappedSourceActive) {
-            callbacks.onComplete()
+            state.value = State.IDLE
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            subscribe(queue.poll() as T)
+        }
+
+        return true
+    }
+
+    private fun onUpstreamValue(value: T): Boolean {
+        if (state.value == State.INNER_ACTIVE) {
+            queue.offer(value)
+        } else {
+            state.value = State.INNER_ACTIVE
+            subscribe(value)
+        }
+
+        return true
+    }
+
+    private fun subscribe(value: T) {
+        tryCatch {
+            mapper(value).subscribe(innerObserver)
         }
     }
 
-    private fun mapAndSubscribe(value: T) {
-        callbacks.tryCatch(block = { mapper(value) }) {
-            it.subscribeSafe(InnerObserver())
-        }
-    }
-
-    private data class State<out T>(
-        val queue: List<T> = emptyList(),
-        val isMappedSourceActive: Boolean = false,
-        val isUpstreamCompleted: Boolean = false
-    )
-
-    private inner class InnerObserver :
-        ObjectReference<Disposable?>(null),
-        ObservableObserver<R>,
-        ValueCallback<R> by callbacks,
-        ErrorCallback by callbacks {
-
+    private class InnerObserver<R>(
+        private val callbacks: ObservableCallbacks<R>,
+        private val actor: Serializer<Any?>
+    ) : ObservableObserver<R>, DisposableWrapper(), ValueCallback<R> by callbacks, ErrorCallback by callbacks {
         override fun onSubscribe(disposable: Disposable) {
-            value = disposable
-            add(disposable)
+            set(disposable)
         }
 
         override fun onComplete() {
-            remove(value!!)
-
-            val oldState =
-                state.getAndUpdate {
-                    it.copy(
-                        queue = it.queue.drop(1),
-                        isMappedSourceActive = it.queue.isNotEmpty()
-                    )
-                }
-
-            if (oldState.queue.isNotEmpty()) {
-                mapAndSubscribe(oldState.queue[0])
-            } else if (oldState.isUpstreamCompleted) {
-                callbacks.onComplete()
-            }
+            actor.accept(Event.INNER_COMPLETED)
         }
+    }
+
+    private enum class State {
+        IDLE, INNER_ACTIVE, UPSTREAM_COMPLETED
+    }
+
+    private enum class Event {
+        UPSTREAM_COMPLETED, INNER_COMPLETED
     }
 }
