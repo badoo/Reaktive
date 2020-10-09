@@ -12,14 +12,14 @@ public class com/badoo/reaktive/test/base/TestObserver : com/badoo/reaktive/base
 }
 
 public final class com/badoo/reaktive/test/base/TestObserverExtKt {
-	public static final fun assertDisposed (Lcom/badoo/reaktive/test/base/TestObserver;)V
-	public static final fun assertError (Lcom/badoo/reaktive/test/base/TestObserver;)V
-	public static final fun assertError (Lcom/badoo/reaktive/test/base/TestObserver;Ljava/lang/Throwable;)V
-	public static final fun assertError (Lcom/badoo/reaktive/test/base/TestObserver;Lkotlin/jvm/functions/Function1;)V
-	public static final fun assertNotDisposed (Lcom/badoo/reaktive/test/base/TestObserver;)V
-	public static final fun assertNotError (Lcom/badoo/reaktive/test/base/TestObserver;)V
-	public static final fun assertNotSubscribed (Lcom/badoo/reaktive/test/base/TestObserver;)V
-	public static final fun assertSubscribed (Lcom/badoo/reaktive/test/base/TestObserver;)V
+	public static final fun assertDisposed (Lcom/badoo/reaktive/test/base/TestObserver;)Lcom/badoo/reaktive/test/base/TestObserver;
+	public static final fun assertError (Lcom/badoo/reaktive/test/base/TestObserver;)Lcom/badoo/reaktive/test/base/TestObserver;
+	public static final fun assertError (Lcom/badoo/reaktive/test/base/TestObserver;Ljava/lang/Throwable;)Lcom/badoo/reaktive/test/base/TestObserver;
+	public static final fun assertError (Lcom/badoo/reaktive/test/base/TestObserver;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/test/base/TestObserver;
+	public static final fun assertNotDisposed (Lcom/badoo/reaktive/test/base/TestObserver;)Lcom/badoo/reaktive/test/base/TestObserver;
+	public static final fun assertNotError (Lcom/badoo/reaktive/test/base/TestObserver;)Lcom/badoo/reaktive/test/base/TestObserver;
+	public static final fun assertNotSubscribed (Lcom/badoo/reaktive/test/base/TestObserver;)Lcom/badoo/reaktive/test/base/TestObserver;
+	public static final fun assertSubscribed (Lcom/badoo/reaktive/test/base/TestObserver;)Lcom/badoo/reaktive/test/base/TestObserver;
 }
 
 public class com/badoo/reaktive/test/base/TestSource : com/badoo/reaktive/base/ErrorCallback, com/badoo/reaktive/base/Source {
@@ -65,8 +65,8 @@ public final class com/badoo/reaktive/test/completable/TestCompletableObserver :
 }
 
 public final class com/badoo/reaktive/test/completable/TestCompletableObserverExtKt {
-	public static final fun assertComplete (Lcom/badoo/reaktive/test/completable/TestCompletableObserver;)V
-	public static final fun assertNotComplete (Lcom/badoo/reaktive/test/completable/TestCompletableObserver;)V
+	public static final fun assertComplete (Lcom/badoo/reaktive/test/completable/TestCompletableObserver;)Lcom/badoo/reaktive/test/completable/TestCompletableObserver;
+	public static final fun assertNotComplete (Lcom/badoo/reaktive/test/completable/TestCompletableObserver;)Lcom/badoo/reaktive/test/completable/TestCompletableObserver;
 	public static final fun test (Lcom/badoo/reaktive/completable/Completable;Z)Lcom/badoo/reaktive/test/completable/TestCompletableObserver;
 	public static synthetic fun test$default (Lcom/badoo/reaktive/completable/Completable;ZILjava/lang/Object;)Lcom/badoo/reaktive/test/completable/TestCompletableObserver;
 }
@@ -106,11 +106,11 @@ public final class com/badoo/reaktive/test/maybe/TestMaybeObserver : com/badoo/r
 }
 
 public final class com/badoo/reaktive/test/maybe/TestMaybeObserverExtKt {
-	public static final fun assertComplete (Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;)V
-	public static final fun assertNotComplete (Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;)V
-	public static final fun assertNotSuccess (Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;)V
-	public static final fun assertSuccess (Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;)V
-	public static final fun assertSuccess (Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;Ljava/lang/Object;)V
+	public static final fun assertComplete (Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;)Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;
+	public static final fun assertNotComplete (Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;)Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;
+	public static final fun assertNotSuccess (Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;)Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;
+	public static final fun assertSuccess (Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;)Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;
+	public static final fun assertSuccess (Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;Ljava/lang/Object;)Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;
 	public static final fun test (Lcom/badoo/reaktive/maybe/Maybe;Z)Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;
 	public static synthetic fun test$default (Lcom/badoo/reaktive/maybe/Maybe;ZILjava/lang/Object;)Lcom/badoo/reaktive/test/maybe/TestMaybeObserver;
 }
@@ -153,12 +153,12 @@ public final class com/badoo/reaktive/test/observable/TestObservableObserver : c
 }
 
 public final class com/badoo/reaktive/test/observable/TestObservableObserverExtKt {
-	public static final fun assertComplete (Lcom/badoo/reaktive/test/observable/TestObservableObserver;)V
-	public static final fun assertNoValues (Lcom/badoo/reaktive/test/observable/TestObservableObserver;)V
-	public static final fun assertNotComplete (Lcom/badoo/reaktive/test/observable/TestObservableObserver;)V
-	public static final fun assertValue (Lcom/badoo/reaktive/test/observable/TestObservableObserver;Ljava/lang/Object;)V
-	public static final fun assertValues (Lcom/badoo/reaktive/test/observable/TestObservableObserver;Ljava/util/List;)V
-	public static final fun assertValues (Lcom/badoo/reaktive/test/observable/TestObservableObserver;[Ljava/lang/Object;)V
+	public static final fun assertComplete (Lcom/badoo/reaktive/test/observable/TestObservableObserver;)Lcom/badoo/reaktive/test/observable/TestObservableObserver;
+	public static final fun assertNoValues (Lcom/badoo/reaktive/test/observable/TestObservableObserver;)Lcom/badoo/reaktive/test/observable/TestObservableObserver;
+	public static final fun assertNotComplete (Lcom/badoo/reaktive/test/observable/TestObservableObserver;)Lcom/badoo/reaktive/test/observable/TestObservableObserver;
+	public static final fun assertValue (Lcom/badoo/reaktive/test/observable/TestObservableObserver;Ljava/lang/Object;)Lcom/badoo/reaktive/test/observable/TestObservableObserver;
+	public static final fun assertValues (Lcom/badoo/reaktive/test/observable/TestObservableObserver;Ljava/util/List;)Lcom/badoo/reaktive/test/observable/TestObservableObserver;
+	public static final fun assertValues (Lcom/badoo/reaktive/test/observable/TestObservableObserver;[Ljava/lang/Object;)Lcom/badoo/reaktive/test/observable/TestObservableObserver;
 	public static final fun test (Lcom/badoo/reaktive/observable/Observable;Z)Lcom/badoo/reaktive/test/observable/TestObservableObserver;
 	public static synthetic fun test$default (Lcom/badoo/reaktive/observable/Observable;ZILjava/lang/Object;)Lcom/badoo/reaktive/test/observable/TestObservableObserver;
 }
@@ -182,7 +182,7 @@ public abstract interface class com/badoo/reaktive/test/scheduler/TestScheduler$
 }
 
 public final class com/badoo/reaktive/test/scheduler/TestSchedulerExtKt {
-	public static final fun assertAllExecutorsDisposed (Lcom/badoo/reaktive/test/scheduler/TestScheduler;)V
+	public static final fun assertAllExecutorsDisposed (Lcom/badoo/reaktive/test/scheduler/TestScheduler;)Lcom/badoo/reaktive/test/scheduler/TestScheduler;
 }
 
 public abstract interface class com/badoo/reaktive/test/single/DefaultSingleObserver : com/badoo/reaktive/single/SingleObserver {
@@ -220,9 +220,9 @@ public final class com/badoo/reaktive/test/single/TestSingleObserver : com/badoo
 }
 
 public final class com/badoo/reaktive/test/single/TestSingleObserverExtKt {
-	public static final fun assertNotSuccess (Lcom/badoo/reaktive/test/single/TestSingleObserver;)V
-	public static final fun assertSuccess (Lcom/badoo/reaktive/test/single/TestSingleObserver;)V
-	public static final fun assertSuccess (Lcom/badoo/reaktive/test/single/TestSingleObserver;Ljava/lang/Object;)V
+	public static final fun assertNotSuccess (Lcom/badoo/reaktive/test/single/TestSingleObserver;)Lcom/badoo/reaktive/test/single/TestSingleObserver;
+	public static final fun assertSuccess (Lcom/badoo/reaktive/test/single/TestSingleObserver;)Lcom/badoo/reaktive/test/single/TestSingleObserver;
+	public static final fun assertSuccess (Lcom/badoo/reaktive/test/single/TestSingleObserver;Ljava/lang/Object;)Lcom/badoo/reaktive/test/single/TestSingleObserver;
 	public static final fun test (Lcom/badoo/reaktive/single/Single;Z)Lcom/badoo/reaktive/test/single/TestSingleObserver;
 	public static synthetic fun test$default (Lcom/badoo/reaktive/single/Single;ZILjava/lang/Object;)Lcom/badoo/reaktive/test/single/TestSingleObserver;
 }
