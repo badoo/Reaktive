@@ -5,12 +5,16 @@ import com.badoo.reaktive.utils.freeze
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-fun TestCompletableObserver.assertComplete() {
+fun TestCompletableObserver.assertComplete(): TestCompletableObserver {
     assertTrue(isComplete, "Completable did not complete")
+
+    return this
 }
 
-fun TestCompletableObserver.assertNotComplete() {
+fun TestCompletableObserver.assertNotComplete(): TestCompletableObserver {
     assertFalse(isComplete, "Completable completed")
+
+    return this
 }
 
 fun Completable.test(autoFreeze: Boolean = true): TestCompletableObserver {
