@@ -6,25 +6,35 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-fun <T> TestMaybeObserver<T>.assertSuccess() {
+fun <T> TestMaybeObserver<T>.assertSuccess(): TestMaybeObserver<T> {
     assertTrue(isSuccess, "Maybe did not succeed")
+
+    return this
 }
 
-fun <T> TestMaybeObserver<T>.assertSuccess(expectedValue: T) {
+fun <T> TestMaybeObserver<T>.assertSuccess(expectedValue: T): TestMaybeObserver<T> {
     assertSuccess()
     assertEquals(expectedValue, value, "Maybe success value does not match")
+
+    return this
 }
 
-fun <T> TestMaybeObserver<T>.assertNotSuccess() {
+fun <T> TestMaybeObserver<T>.assertNotSuccess(): TestMaybeObserver<T> {
     assertFalse(isSuccess, "Maybe succeeded")
+
+    return this
 }
 
-fun TestMaybeObserver<*>.assertComplete() {
+fun <T> TestMaybeObserver<T>.assertComplete(): TestMaybeObserver<T> {
     assertTrue(isComplete, "Maybe did not complete")
+
+    return this
 }
 
-fun TestMaybeObserver<*>.assertNotComplete() {
+fun <T> TestMaybeObserver<T>.assertNotComplete(): TestMaybeObserver<T> {
     assertFalse(isComplete, "Maybe completed")
+
+    return this
 }
 
 fun <T> Maybe<T>.test(autoFreeze: Boolean = true): TestMaybeObserver<T> {
