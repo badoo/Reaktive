@@ -1,65 +1,79 @@
 package com.badoo.reaktive.utils.serializer
 
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
+import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.plusSorted
 
+/*
+ * Derived from RxJava SerializedEmitter
+ */
 internal abstract class SerializerImpl<in T>(
     private val comparator: Comparator<in T>? = null
 ) : Serializer<T> {
 
-    private val state = AtomicReference<State<T>?>(State())
+    private val queue = AtomicReference<List<T>>(emptyList())
+    private val isDone = AtomicBoolean()
+    private val counter = AtomicInt()
 
     override fun accept(value: T) {
-        state
-            .getAndUpdate { state ->
-                state?.copy(
-                    queue = state.queue.addAndSort(value, comparator),
-                    isDraining = true
-                )
+        if (isDone.value) {
+            return
+        }
+
+        if (counter.compareAndSet(0, 1)) {
+            if (!onValue(value)) {
+                isDone.value = true
+                return
             }
-            ?.isDraining
-            ?.takeUnless { it }
-            ?.run { drain() }
+
+            if (counter.addAndGet(-1) == 0) {
+                return
+            }
+        } else {
+            queue.update { it.addAndSort(value, comparator) }
+
+            if (counter.addAndGet(1) > 1) {
+                return
+            }
+        }
+
+        drainLoop()
     }
 
     override fun clear() {
-        state.update {
-            it?.copy(queue = emptyList())
-        }
+        queue.value = emptyList()
     }
 
-    private fun drain() {
+    abstract fun onValue(value: T): Boolean
+
+    private fun drainLoop() {
+        var missed = 1
         while (true) {
-            val oldState =
-                state.getAndUpdate {
-                    it?.copy(
-                        queue = it.queue.drop(1),
-                        isDraining = it.queue.isNotEmpty()
-                    )
+            while (true) {
+                val oldQueue = queue.getAndUpdate { it.drop(1) }
+
+                if (oldQueue.isEmpty()) {
+                    break
                 }
 
-            if ((oldState == null) || oldState.queue.isEmpty()) {
-                return
+                if (!onValue(oldQueue[0])) {
+                    isDone.value = true
+                    return
+                }
             }
 
-            if (!onValue(oldState.queue[0])) {
-                state.value = null
-                return
+            missed = counter.addAndGet(-missed)
+            if (missed == 0) {
+                break
             }
         }
     }
-
-    protected abstract fun onValue(value: T): Boolean
 
     private companion object {
         private fun <T> List<T>.addAndSort(item: T, comparator: Comparator<in T>?): List<T> =
             if (comparator == null) plus(item) else plusSorted(item, comparator)
     }
-
-    private data class State<out T>(
-        val queue: List<T> = emptyList(),
-        val isDraining: Boolean = false
-    )
 }
