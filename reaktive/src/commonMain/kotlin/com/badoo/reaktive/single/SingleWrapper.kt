@@ -6,9 +6,6 @@ import com.badoo.reaktive.single.subscribe as subscribeRx
 
 /**
  * Wrappers are normally exposed to Swift.
- * You might want to enable Objective-C generics,
- * please refer to the [documentation][https://kotlinlang.org/docs/reference/native/objc_interop.html#to-use]
- * for more information.
  * You can also extend the wrapper class if you need to expose any additional operators.
  */
 open class SingleWrapper<out T : Any>(inner: Single<T>) : Single<T> by inner {
