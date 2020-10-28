@@ -31,7 +31,7 @@ class ViewController: UIViewController {
     }
     
     private class KittenView: AbstractKittenView {
-        private weak let viewController: ViewController
+        private weak var viewController: ViewController?
         
         init(viewController: ViewController) {
             self.viewController = viewController
@@ -44,7 +44,7 @@ class ViewController: UIViewController {
         }
         
         override func show(model: KittenViewViewModel) {
-            viewController.indicator.isHidden = !model.isLoading
+            viewController?.indicator.isHidden = !model.isLoading
             if (!model.isLoading && model.kittenUrl != nil) {
                 showImage(model: model)
             } else {
@@ -56,26 +56,26 @@ class ViewController: UIViewController {
         }
         
         private func showImage(model: KittenViewViewModel) {
-            viewController.image.isHidden = false
-            viewController.image.image = nil
-            viewController.indicator.isHidden = false
-            viewController.image!.af.setImage(
+            viewController?.image.isHidden = false
+            viewController?.image.image = nil
+            viewController?.indicator.isHidden = false
+            viewController?.image!.af.setImage(
                 withURL: URL(string: model.kittenUrl!)!,
                 completion: { response in
-                    self.viewController.indicator.isHidden = response.data != nil
+                    self.viewController?.indicator.isHidden = response.data != nil
                 }
             )
         }
         
         private func hideImage() {
-            viewController.image.isHidden = true
-            viewController.image.af.cancelImageRequest()
+            viewController?.image.isHidden = true
+            viewController?.image.af.cancelImageRequest()
         }
         
         private func showError() {
             let alertController = UIAlertController(title: "Error", message: "Failed to download kitten", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "OK", style: .default))
-            viewController.present(alertController, animated: true, completion: {
+            viewController?.present(alertController, animated: true, completion: {
                 self.dispatch(event: KittenViewEvent.ErrorShown.init())
             })
         }
