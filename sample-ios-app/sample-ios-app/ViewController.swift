@@ -31,7 +31,7 @@ class ViewController: UIViewController {
     }
     
     private class KittenView: AbstractKittenView {
-        private let viewController: ViewController
+        private weak let viewController: ViewController
         
         init(viewController: ViewController) {
             self.viewController = viewController
