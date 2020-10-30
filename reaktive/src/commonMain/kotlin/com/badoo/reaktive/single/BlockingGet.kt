@@ -6,6 +6,15 @@ import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.lock.synchronized
 import com.badoo.reaktive.utils.lock.withLockAndCondition
 
+/**
+ * Blocks current thread until the current `Single` succeeds with a value (which is returned) or
+ * fails with an exception (which is propagated).
+ *
+ * ⚠️ Please note that this method is not available in JavaScript due to its single threaded nature.
+ * A runtime exception will be thrown when this method is called in JavaScript. If you need this
+ * in JavaScript for testing purposes, then consider using `Single.testAwait()` extension
+ * from the `reaktive-testing` module.
+ */
 fun <T> Single<T>.blockingGet(): T =
     withLockAndCondition { lock, condition ->
         val observer =
