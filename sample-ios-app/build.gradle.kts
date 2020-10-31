@@ -39,7 +39,9 @@ open class BuildIosSampleTask : DefaultTask() {
                 "-scheme",
                 "sample-ios-app",
                 "-sdk",
-                "iphonesimulator"
+                "iphonesimulator",
+                "-arch",
+                "x86_64"
             )
         }
     }
