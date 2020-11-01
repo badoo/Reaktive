@@ -59,7 +59,7 @@ class ViewController: UIViewController {
             viewController.image.isHidden = false
             viewController.image.image = nil
             viewController.indicator.isHidden = false
-            viewController.image!.af_setImage(
+            viewController.image!.af.setImage(
                 withURL: URL(string: model.kittenUrl!)!,
                 completion: { response in
                     self.viewController.indicator.isHidden = response.data != nil
@@ -69,7 +69,7 @@ class ViewController: UIViewController {
         
         private func hideImage() {
             viewController.image.isHidden = true
-            viewController.image.af_cancelImageRequest()
+            viewController.image.af.cancelImageRequest()
         }
         
         private func showError() {
