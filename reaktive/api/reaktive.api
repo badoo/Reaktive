@@ -49,6 +49,10 @@ public abstract interface class com/badoo/reaktive/base/ValueCallback {
 	public abstract fun onNext (Ljava/lang/Object;)V
 }
 
+public final class com/badoo/reaktive/base/ValueCallbackExtKt {
+	public static final fun invoke (Lcom/badoo/reaktive/base/ValueCallback;Ljava/lang/Object;)V
+}
+
 public final class com/badoo/reaktive/base/exceptions/CompositeException : java/lang/RuntimeException {
 	public fun <init> (Ljava/lang/Throwable;Ljava/lang/Throwable;)V
 	public final fun getCause1 ()Ljava/lang/Throwable;
