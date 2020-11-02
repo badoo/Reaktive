@@ -9,12 +9,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var image: UIImageView!
     
     private let kittenBinder = KittenBinder(storeBuilder: KittenStoreBuilderImpl())
-    private var kittenView: KittenView? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        kittenView = KittenView(viewController: self)
-        kittenBinder.onViewCreated(view: kittenView!)
+        kittenBinder.onViewCreated(view: KittenView(viewController: self))
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -24,7 +22,7 @@ class ViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         kittenBinder.onStop()
     }
-    
+
     deinit {
         kittenBinder.onViewDestroyed()
         kittenBinder.onDestroy()
@@ -44,7 +42,7 @@ class ViewController: UIViewController {
         }
         
         override func show(model: KittenViewViewModel) {
-            viewController?.indicator.isHidden = !model.isLoading
+            viewController?.indicator.show(isShow: model.isLoading)
             if (!model.isLoading && model.kittenUrl != nil) {
                 showImage(model: model)
             } else {
@@ -80,5 +78,18 @@ class ViewController: UIViewController {
             })
         }
     }
+}
+
+extension UIActivityIndicatorView {
+
+    func show(isShow: Bool) {
+        self.isHidden = !isShow
+        if (isShow) {
+            self.startAnimating()
+        } else {
+            self.stopAnimating()
+        }
+    }
+
 }
 
