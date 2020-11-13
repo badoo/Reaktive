@@ -36,7 +36,10 @@ jobs:
         with:
           arch: armv7
           distro: ubuntu20.04
-          run: find . -name "test.kexe" -exec {} +
+          run: |
+            ./utils/build/bin/linuxArm32Hfp/debugTest/test.kexe
+            ./reaktive/build/bin/linuxArm32Hfp/debugTest/test.kexe
+            ./reaktive-testing/build/bin/linuxArm32Hfp/debugTest/test.kexe
       - name: Build Linux
         if: matrix.os == 'ubuntu-latest'
         run: ./gradlew build -Ptarget=all_linux_hosted
