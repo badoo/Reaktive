@@ -8,11 +8,13 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-fun TestObserver.assertError() {
+fun <T : TestObserver> T.assertError(): T {
     assertTrue(isError, "Source did not fail")
+
+    return this
 }
 
-fun TestObserver.assertError(expectedError: Throwable) {
+fun <T : TestObserver> T.assertError(expectedError: Throwable): T {
     val error = error
     if (error == null) {
         fail("Source did not fail")
@@ -24,9 +26,11 @@ fun TestObserver.assertError(expectedError: Throwable) {
             throw e
         }
     }
+
+    return this
 }
 
-fun TestObserver.assertError(predicate: (Throwable) -> Boolean) {
+fun <T : TestObserver> T.assertError(predicate: (Throwable) -> Boolean): T {
     val error = error
     if (error == null) {
         fail("Source did not fail")
@@ -38,27 +42,39 @@ fun TestObserver.assertError(predicate: (Throwable) -> Boolean) {
             throw e
         }
     }
+
+    return this
 }
 
-fun TestObserver.assertNotError() {
+fun <T : TestObserver> T.assertNotError(): T {
     error?.also {
         it.printStack()
         fail("Source failed, the actual error is printed above")
     }
+
+    return this
 }
 
-fun TestObserver.assertSubscribed() {
+fun <T : TestObserver> T.assertSubscribed(): T {
     assertNotNull(disposable, "Source is not subscribed")
+
+    return this
 }
 
-fun TestObserver.assertNotSubscribed() {
+fun <T : TestObserver> T.assertNotSubscribed(): T {
     assertNull(disposable, "Source is subscribed")
+
+    return this
 }
 
-fun TestObserver.assertDisposed() {
+fun <T : TestObserver> T.assertDisposed(): T {
     assertTrue(isDisposed, "Source is not disposed")
+
+    return this
 }
 
-fun TestObserver.assertNotDisposed() {
+fun <T : TestObserver> T.assertNotDisposed(): T {
     assertFalse(isDisposed, "Source is disposed")
+
+    return this
 }

@@ -2,8 +2,8 @@ package com.badoo.reaktive.dependencies
 
 object Deps {
 
-    private const val kotlinVersion = "1.4.10"
-    private const val coroutinesVersion = "1.3.9-native-mt"
+    private const val kotlinVersion = "1.4.20"
+    private const val coroutinesVersion = "1.4.2-native-mt"
     private const val detektVersion = "1.9.1"
     private const val asmVersion = "6.0"
 
@@ -14,7 +14,7 @@ object Deps {
     val detekt = Detekt
     val asm = Asm()
     val rxjava2 = "io.reactivex.rxjava2:rxjava:2.2.7"
-    val rxjava3 = "io.reactivex.rxjava3:rxjava:3.0.0-RC3"
+    val rxjava3 = "io.reactivex.rxjava3:rxjava:3.0.7"
     val picasso = "com.squareup.picasso:picasso:2.71828"
     val bintray = "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
     val shadow = "com.github.jengelman.gradle.plugins:shadow:5.1.0"
@@ -70,7 +70,7 @@ object Deps {
     }
 
     object Android {
-        const val plugin = "com.android.tools.build:gradle:3.4.1"
+        const val plugin = "com.android.tools.build:gradle:4.1.0"
         val androidx = Androidx
 
         object Androidx {

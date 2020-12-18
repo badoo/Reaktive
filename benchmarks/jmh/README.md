@@ -7,41 +7,45 @@ If build fails then try `./gradlew --stop` command and then re-run the build
 
 Performance:
 ```
-Benchmark                                          Mode  Cnt     Score    Error  Units
-c.b.r.b.j.concatmap.ConcatMapReaktive.emitter      avgt    8   103.097 ±  4.609  ms/op
-c.b.r.b.j.concatmap.ConcatMapRxJava2.emitter       avgt    8    87.609 ±  2.274  ms/op
-c.b.r.b.j.concatmap.ConcatMapFlow.emitter          avgt    8   106.142 ±  1.771  ms/op
+Benchmark                                           Mode  Cnt   Score   Error  Units
+c.b.r.b.j.concatmap.ConcatMapReaktive.emitter      thrpt   12  10.713 ± 0.166  ops/s
+c.b.r.b.j.concatmap.ConcatMapRxJava2.emitter       thrpt   12   9.859 ± 0.021  ops/s
+c.b.r.b.j.concatmap.ConcatMapFlow.emitter          thrpt   12   6.284 ± 0.075  ops/s
 
-c.b.r.b.j.concatmap.ConcatMapReaktive.iterable     avgt    8    86.155 ±  1.459  ms/op
-c.b.r.b.j.concatmap.ConcatMapRxJava2.iterable      avgt    8   102.483 ±  4.564  ms/op
-c.b.r.b.j.concatmap.ConcatMapFlow.iterable         avgt    8   118.394 ±  2.843  ms/op
+c.b.r.b.j.concatmap.ConcatMapReaktive.iterable     thrpt   12   9.614 ± 0.020  ops/s
+c.b.r.b.j.concatmap.ConcatMapRxJava2.iterable      thrpt   12   8.713 ± 0.008  ops/s
+c.b.r.b.j.concatmap.ConcatMapFlow.iterable         thrpt   12  10.051 ± 0.168  ops/s
 
-c.b.r.b.j.filtermap.FilterMapReaktive.emitter      avgt    8   108.263 ±  3.073  ms/op
-c.b.r.b.j.filtermap.FilterMapRxJava2.emitter       avgt    8    85.092 ±  1.365  ms/op
-c.b.r.b.j.filtermap.FilterMapFlow.emitter          avgt    8   109.349 ±  2.918  ms/op
+c.b.r.b.j.filtermap.FilterMapReaktive.emitter      thrpt   12   9.406 ± 0.009  ops/s
+c.b.r.b.j.filtermap.FilterMapRxJava2.emitter       thrpt   12  10.863 ± 0.015  ops/s
+c.b.r.b.j.filtermap.FilterMapFlow.emitter          thrpt   12   2.626 ± 0.003  ops/s
 
-c.b.r.b.j.filtermap.FilterMapReaktive.iterable     avgt    8   101.609 ±  3.603  ms/op
-c.b.r.b.j.filtermap.FilterMapRxJava2.iterable      avgt    8    98.549 ±  1.870  ms/op
-c.b.r.b.j.filtermap.FilterMapFlow.iterable         avgt    8   122.631 ±  2.853  ms/op
+c.b.r.b.j.filtermap.FilterMapReaktive.iterable     thrpt   12   9.764 ± 0.012  ops/s
+c.b.r.b.j.filtermap.FilterMapRxJava2.iterable      thrpt   12   9.046 ± 0.018  ops/s
+c.b.r.b.j.filtermap.FilterMapFlow.iterable         thrpt   12   3.314 ± 0.010  ops/s
 
-c.b.r.b.j.flatmap.FlatMapReaktive.emitter          avgt    8    95.816 ±  2.847  ms/op
-c.b.r.b.j.flatmap.FlatMapRxJava2.emitter           avgt    8   270.999 ±  8.355  ms/op
-c.b.r.b.j.flatmap.FlatMapFlow.emitter              avgt    8  1847.138 ± 24.037  ms/op
+c.b.r.b.j.flatmap.FlatMapReaktive.emitter          thrpt   12  10.504 ± 0.018  ops/s
+c.b.r.b.j.flatmap.FlatMapRxJava2.emitter           thrpt   12   4.277 ± 0.010  ops/s
+c.b.r.b.j.flatmap.FlatMapFlow.emitter              thrpt   12   0.598 ± 0.002  ops/s
 
-c.b.r.b.j.flatmap.FlatMapReaktive.iterable         avgt    8   119.224 ±  5.981  ms/op
-c.b.r.b.j.flatmap.FlatMapRxJava2.iterable          avgt    8    76.765 ±  1.906  ms/op
-c.b.r.b.j.flatmap.FlatMapFlow.iterable             avgt    8  1874.016 ± 49.353  ms/op
+c.b.r.b.j.flatmap.FlatMapReaktive.iterable         thrpt   12  10.182 ± 0.022  ops/s
+c.b.r.b.j.flatmap.FlatMapRxJava2.iterable          thrpt   12  12.834 ± 0.012  ops/s
+c.b.r.b.j.flatmap.FlatMapFlow.iterable             thrpt   12   0.608 ± 0.002  ops/s
 
-c.b.r.b.j.scrabble.ScrabbleReaktive.play           avgt    8    82.414 ±  3.572  ms/op
-c.b.r.b.j.scrabble.ScrabbleRxJava2Flowable.play    avgt    8   101.706 ±  6.522  ms/op
-c.b.r.b.j.scrabble.ScrabbleRxJava2Observable.play  avgt    8    89.607 ±  5.796  ms/op
-c.b.r.b.j.scrabble.ScrabbleFlow.play               avgt    8    81.062 ±  4.399  ms/op
+c.b.r.b.j.scrabble.ScrabbleReaktive.play           thrpt   12  15.437 ± 0.039  ops/s
+c.b.r.b.j.scrabble.ScrabbleRxJava2Flowable.play    thrpt   12  12.235 ± 0.086  ops/s
+c.b.r.b.j.scrabble.ScrabbleRxJava2Observable.play  thrpt   12  13.916 ± 0.092  ops/s
+c.b.r.b.j.scrabble.ScrabbleFlow.play               thrpt   12  15.411 ± 0.042  ops/s
 ```
+
+<img src="https://raw.githubusercontent.com/badoo/Reaktive/master/assets/benchmarks_performance.png">
 
 Memory consumption:
 ```
-ScrabbleReaktive.play:·gc.alloc.rate.norm                        avgt    8  154974354.398 ±      347.089    B/op
-ScrabbleRxJava2Flowable.play:·gc.alloc.rate.norm                 avgt    8  144411114.635 ±      417.309    B/op
-ScrabbleRxJava2Observable.play:·gc.alloc.rate.norm               avgt    8  134947769.672 ±      379.649    B/op
-ScrabbleFlow.play:·gc.alloc.rate.norm                            avgt    8  262035986.160 ±      346.498    B/op
+ScrabbleReaktive.play:·gc.alloc.rate.norm                        avgt    8  151267014.250 ±      295.145    B/op
+ScrabbleRxJava2Flowable.play:·gc.alloc.rate.norm                 avgt    8  144068457.089 ±      377.571    B/op
+ScrabbleRxJava2Observable.play:·gc.alloc.rate.norm               avgt    8  134947756.262 ±      319.042    B/op
+ScrabbleFlow.play:·gc.alloc.rate.norm                            avgt    8  236901936.161 ±      305.922    B/op
 ```
+
+<img src="https://raw.githubusercontent.com/badoo/Reaktive/master/assets/benchmarks_memory.png">

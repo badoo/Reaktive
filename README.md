@@ -329,8 +329,7 @@ class SharedDataSource {
 }
 ```
 
-Now if you [enable Objective-C generics](https://kotlinlang.org/docs/reference/native/objc_interop.html#to-use) 
-you will be able to use it from Swift:
+Now you will be able to use it from Swift:
 ```swift
 let dataSource = SharedDataSource()
 

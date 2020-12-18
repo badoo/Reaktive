@@ -1,76 +1,82 @@
 package com.badoo.reaktive.utils.serializer
 
+import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.queue.Queue
+import kotlin.jvm.Volatile
 
-internal abstract class SerializerImpl<in T>(queue: Queue<T>) : Serializer<T> {
+/*
+ * Derived from RxJava SerializedEmitter
+ */
+internal abstract class SerializerImpl<in T>(
+    private val queue: Queue<T>
+) : Serializer<T> {
 
-    private var queue: Queue<T>? = queue
-    private val monitor = Any()
-    private var isDraining = false
+    @Volatile
+    private var isDone = false
+    private val counter = AtomicInt()
 
     override fun accept(value: T) {
-        val queueToDrain =
-            synchronized(monitor) {
-                val queue = queue ?: return
-
-                if (isDraining) {
-                    queue.offer(value)
-                    return
-                }
-
-                isDraining = true
-                queue
-            }
-
-        if (!processValue(value)) {
+        if (isDone) {
             return
         }
 
-        queueToDrain.drain()
-    }
+        if (counter.compareAndSet(0, 1)) {
+            if (!onValue(value)) {
+                isDone = true
+                return
+            }
 
-    override fun clear() {
-        synchronized(monitor) {
-            queue?.clear()
-        }
-    }
+            if (counter.addAndGet(-1) == 0) {
+                return
+            }
+        } else {
+            synchronized(queue) {
+                queue.offer(value)
+            }
 
-    private fun Queue<T>.drain() {
-        while (true) {
-            val value =
-                synchronized(monitor) {
-                    if (isEmpty) {
-                        onDrainFinished(false)
-                        return
-                    }
-
-                    @Suppress("UNCHECKED_CAST")
-                    poll() as T
-                }
-
-            if (!processValue(value)) {
+            if (counter.addAndGet(1) > 1) {
                 return
             }
         }
+
+        drainLoop()
     }
 
-    private fun processValue(value: T): Boolean {
-        if (!onValue(value)) {
-            synchronized(monitor) {
-                onDrainFinished(true)
+    override fun clear() {
+        synchronized(queue, queue::clear)
+    }
+
+    abstract fun onValue(value: T): Boolean
+
+    private fun drainLoop() {
+        var missed = 1
+        while (true) {
+            while (true) {
+                var isEmpty = false
+                var value: T? = null
+
+                synchronized(queue) {
+                    isEmpty = queue.isEmpty
+                    if (!isEmpty) {
+                        value = queue.poll()
+                    }
+                }
+
+                if (isEmpty) {
+                    break
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                if (!onValue(value as T)) {
+                    isDone = true
+                    return
+                }
             }
-            return false
-        }
 
-        return true
-    }
-
-    private fun onDrainFinished(terminate: Boolean) {
-        isDraining = false
-        if (terminate) {
-            queue = null
+            missed = counter.addAndGet(-missed)
+            if (missed == 0) {
+                break
+            }
         }
     }
-
-    protected abstract fun onValue(value: T): Boolean
 }
