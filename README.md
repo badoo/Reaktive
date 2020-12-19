@@ -14,12 +14,12 @@ Should you have any questions or feedback welcome to the **Kotlin Slack channel*
 Recommended minimum Gradle version is 5.3. Please read first the documentation about
 [metadata publishing mode](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#experimental-metadata-publishing-mode).
 
-Add Bintray repository into your root build.gradle file:
+Reaktive is published to Bintray, the repository is synchronized with JCenter.
+Make sure you have the JCenter repository specified in your build.gradle:
+
 ```groovy
 repositories {
-    maven {
-        url  "https://dl.bintray.com/badoo/maven"
-    }
+    jcenter()
 }
 ```
 
