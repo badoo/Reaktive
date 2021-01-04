@@ -310,38 +310,9 @@ class MyActivity : AppCompatActivity(), DisposableScope by DisposableScope() {
 }
 ```
 
-### Sharing Reaktive streams with iOS Swift
-Unlike coroutines Reaktive streams can be directly used from Swift. But since generics for interfaces 
-are [not exported to Swift](https://kotlinlang.org/docs/reference/native/objc_interop.html#generics), 
-Reaktive provides a workaround.
+### Reaktive and Swift interoperability
 
-You can wrap any Reaktive stream into a `Wrapper` class:
-```kotlin
-class SharedDataSource {
-    fun load(): SingleWrapper<String> =
-        singleFromFunction { 
-            // A long running operation
-            "A result"
-        }
-            .subscribeOn(ioScheduler)
-            .observeOn(mainScheduler)
-            .wrap()
-}
-```
-
-Now you will be able to use it from Swift:
-```swift
-let dataSource = SharedDataSource()
-
-let disposable = dataSource
-    .load()
-    .subscribe(isThreadLocal: false, onSubscribe: nil, onError: nil) { (value: NSString) in print(value) }
-       
-    // At some point later
-    disposable.dispose()
-```
-
-`Wrappers` are available for `Observable`, `Single`, `Maybe` and `Completable`.  
+Please see the corresponding documentation page: [Reaktive and Swift interoperability](docs/SwiftInterop.md).
 
 ### Samples:
 * [MPP module](https://github.com/badoo/Reaktive/tree/master/sample-mpp-module)
