@@ -4,11 +4,13 @@ import com.badoo.reaktive.disposable.Disposable
 import kotlin.native.concurrent.SharedImmutable
 
 inline fun <T> observableUnsafe(crossinline onSubscribe: (observer: ObservableObserver<T>) -> Unit): Observable<T> =
-    object : Observable<T> {
-        override fun subscribe(observer: ObservableObserver<T>) {
-            onSubscribe(observer)
+    ObservableMiddleware.wrap(
+        object : Observable<T> {
+            override fun subscribe(observer: ObservableObserver<T>) {
+                onSubscribe(observer)
+            }
         }
-    }
+    )
 
 fun <T> observableOf(value: T): Observable<T> =
     observableUnsafe { observer ->
