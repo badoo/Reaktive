@@ -999,6 +999,33 @@ public final class com/badoo/reaktive/observable/ZipWithKt {
 	public static final fun zipWith (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 }
 
+public abstract interface class com/badoo/reaktive/plugin/ReaktivePlugin {
+	public abstract fun onAssembleCompletable (Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
+	public abstract fun onAssembleMaybe (Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
+	public abstract fun onAssembleObservable (Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
+	public abstract fun onAssembleSingle (Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/single/Single;
+}
+
+public final class com/badoo/reaktive/plugin/ReaktivePlugin$DefaultImpls {
+	public static fun onAssembleCompletable (Lcom/badoo/reaktive/plugin/ReaktivePlugin;Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
+	public static fun onAssembleMaybe (Lcom/badoo/reaktive/plugin/ReaktivePlugin;Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static fun onAssembleObservable (Lcom/badoo/reaktive/plugin/ReaktivePlugin;Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
+	public static fun onAssembleSingle (Lcom/badoo/reaktive/plugin/ReaktivePlugin;Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/single/Single;
+}
+
+public final class com/badoo/reaktive/plugin/ReaktivePlugins {
+	public static final field INSTANCE Lcom/badoo/reaktive/plugin/ReaktivePlugins;
+}
+
+public final class com/badoo/reaktive/plugin/ReaktivePluginsExtKt {
+	public static final fun onAssembleCompletable (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun onAssembleMaybe (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun onAssembleObservable (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun onAssembleSingle (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/single/Single;
+	public static final fun register (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/plugin/ReaktivePlugin;)V
+	public static final fun unregister (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/plugin/ReaktivePlugin;)V
+}
+
 public final class com/badoo/reaktive/scheduler/CreateComputationSchedulerKt {
 	public static final fun createComputationScheduler ()Lcom/badoo/reaktive/scheduler/Scheduler;
 }

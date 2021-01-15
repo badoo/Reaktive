@@ -1,14 +1,20 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.plugin.ReaktivePlugins
+import com.badoo.reaktive.plugin.onAssembleMaybe
 import kotlin.native.concurrent.SharedImmutable
 
+@OptIn(ExperimentalReaktiveApi::class)
 inline fun <T> maybeUnsafe(crossinline onSubscribe: (observer: MaybeObserver<T>) -> Unit): Maybe<T> =
-    object : Maybe<T> {
-        override fun subscribe(observer: MaybeObserver<T>) {
-            onSubscribe(observer)
+    ReaktivePlugins.onAssembleMaybe(
+        object : Maybe<T> {
+            override fun subscribe(observer: MaybeObserver<T>) {
+                onSubscribe(observer)
+            }
         }
-    }
+    )
 
 fun <T> maybeOf(value: T): Maybe<T> =
     maybeUnsafe { observer ->
