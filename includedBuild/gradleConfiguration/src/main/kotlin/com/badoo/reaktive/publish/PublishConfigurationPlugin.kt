@@ -36,8 +36,8 @@ class PublishConfigurationPlugin : Plugin<Project> {
                 name = "sonatype"
                 url = URI.create("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
                 credentials {
-                    username = project.property("sonatype.username").toString()
-                    password = project.property("sonatype.password").toString()
+                    username = project.findProperty("sonatype.username").toString()
+                    password = project.findProperty("sonatype.password").toString()
                 }
             }
         }
@@ -63,9 +63,9 @@ class PublishConfigurationPlugin : Plugin<Project> {
 
     private fun setupSign(project: Project) {
         // See PgpSignatoryFactory.PROPERTIES
-        if (project.property("signing.keyId") == null ||
-            project.property("signing.password") == null ||
-            project.property("signing.secretKeyRingFile") == null
+        if (project.findProperty("signing.keyId") == null ||
+            project.findProperty("signing.password") == null ||
+            project.findProperty("signing.secretKeyRingFile") == null
         ) {
             project.logger.warn("No signing config provided, skip signing")
             return
