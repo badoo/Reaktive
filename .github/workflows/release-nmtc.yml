@@ -17,9 +17,21 @@ jobs:
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Release JVM, Android, JS, Linux
-        run: ./gradlew :coroutines-interop:bintrayUpload -Ptarget=all_linux_hosted -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
+        run: ./gradlew :coroutines-interop:bintrayUpload \
+          -Ptarget=all_linux_hosted \
+          -Psigning.keyId=${{ secrets.SIGNING_KEY_ID }} \
+          -Psigning.password=${{ secrets.SIGNING_PASSWORD }} \
+          -Psigning.secretKeyRingFile=TODO_PATH_GOES_HERE \
+          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }} \
+          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
       - name: Release Metadata
-        run: ./gradlew :coroutines-interop:bintrayUpload -Ptarget=meta -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
+        run: ./gradlew :coroutines-interop:bintrayUpload \
+          -Ptarget=meta \
+          -Psigning.keyId=${{ secrets.SIGNING_KEY_ID }} \
+          -Psigning.password=${{ secrets.SIGNING_PASSWORD }} \
+          -Psigning.secretKeyRingFile=TODO_PATH_GOES_HERE \
+          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }} \
+          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
   macos-host-publish:
     name: Release on macOS
     runs-on: macOS-latest
@@ -31,5 +43,10 @@ jobs:
         with:
           java-version: 1.8
       - name: Release iOS, MacOS
-        run: ./gradlew :coroutines-interop:bintrayUpload -Ptarget=all_macos_hosted -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
-
+        run: ./gradlew :coroutines-interop:bintrayUpload \
+          -Ptarget=all_macos_hosted \
+          -Psigning.keyId=${{ secrets.SIGNING_KEY_ID }} \
+          -Psigning.password=${{ secrets.SIGNING_PASSWORD }} \
+          -Psigning.secretKeyRingFile=TODO_PATH_GOES_HERE \
+          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }} \
+          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}

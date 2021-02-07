@@ -45,7 +45,16 @@ jobs:
         run: ./gradlew build -Ptarget=all_linux_hosted
       - name: Build macOS
         if: matrix.os == 'macOS-latest'
-        run: ./gradlew :reaktive-annotations:build :utils:build :reaktive-testing:build :reaktive:build :coroutines-interop:build :sample-mpp-module:build :sample-ios-app:build :sample-macos-app:build -Ptarget=all_macos_hosted
+        run: ./gradlew \
+          :reaktive-annotations:build \
+          :utils:build \
+          :reaktive-testing:build \
+          :reaktive:build \
+          :coroutines-interop:build \
+          :sample-mpp-module:build \
+          :sample-ios-app:build \
+          :sample-macos-app:build \
+          -Ptarget=all_macos_hosted
       - name: Bundle the build report
         if: failure()
         run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
