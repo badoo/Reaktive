@@ -2,13 +2,12 @@ package com.badoo.reaktive.completable
 
 import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.plugin.ReaktivePlugins
 import com.badoo.reaktive.plugin.onAssembleCompletable
 import kotlin.native.concurrent.SharedImmutable
 
 @OptIn(ExperimentalReaktiveApi::class)
 inline fun completableUnsafe(crossinline onSubscribe: (observer: CompletableObserver) -> Unit): Completable =
-    ReaktivePlugins.onAssembleCompletable(
+    onAssembleCompletable(
         object : Completable {
             override fun subscribe(observer: CompletableObserver) {
                 onSubscribe(observer)

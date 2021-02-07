@@ -2,13 +2,12 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.plugin.ReaktivePlugins
 import com.badoo.reaktive.plugin.onAssembleObservable
 import kotlin.native.concurrent.SharedImmutable
 
 @OptIn(ExperimentalReaktiveApi::class)
 inline fun <T> observableUnsafe(crossinline onSubscribe: (observer: ObservableObserver<T>) -> Unit): Observable<T> =
-    ReaktivePlugins.onAssembleObservable(
+    onAssembleObservable(
         object : Observable<T> {
             override fun subscribe(observer: ObservableObserver<T>) {
                 onSubscribe(observer)

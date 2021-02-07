@@ -2,13 +2,12 @@ package com.badoo.reaktive.single
 
 import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.plugin.ReaktivePlugins
 import com.badoo.reaktive.plugin.onAssembleSingle
 import kotlin.native.concurrent.SharedImmutable
 
 @OptIn(ExperimentalReaktiveApi::class)
 inline fun <T> singleUnsafe(crossinline onSubscribe: (observer: SingleObserver<T>) -> Unit): Single<T> =
-    ReaktivePlugins.onAssembleSingle(
+    onAssembleSingle(
         object : Single<T> {
             override fun subscribe(observer: SingleObserver<T>) {
                 onSubscribe(observer)

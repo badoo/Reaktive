@@ -1013,17 +1013,13 @@ public final class com/badoo/reaktive/plugin/ReaktivePlugin$DefaultImpls {
 	public static fun onAssembleSingle (Lcom/badoo/reaktive/plugin/ReaktivePlugin;Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/single/Single;
 }
 
-public final class com/badoo/reaktive/plugin/ReaktivePlugins {
-	public static final field INSTANCE Lcom/badoo/reaktive/plugin/ReaktivePlugins;
-}
-
-public final class com/badoo/reaktive/plugin/ReaktivePluginsExtKt {
-	public static final fun onAssembleCompletable (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
-	public static final fun onAssembleMaybe (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
-	public static final fun onAssembleObservable (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
-	public static final fun onAssembleSingle (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/single/Single;
-	public static final fun register (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/plugin/ReaktivePlugin;)V
-	public static final fun unregister (Lcom/badoo/reaktive/plugin/ReaktivePlugins;Lcom/badoo/reaktive/plugin/ReaktivePlugin;)V
+public final class com/badoo/reaktive/plugin/ReaktivePluginsJvm {
+	public static final fun onAssembleCompletable (Lcom/badoo/reaktive/completable/Completable;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun onAssembleMaybe (Lcom/badoo/reaktive/maybe/Maybe;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun onAssembleObservable (Lcom/badoo/reaktive/observable/Observable;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun onAssembleSingle (Lcom/badoo/reaktive/single/Single;)Lcom/badoo/reaktive/single/Single;
+	public static final fun registerReaktivePlugin (Lcom/badoo/reaktive/plugin/ReaktivePlugin;)V
+	public static final fun unregisterReaktivePlugin (Lcom/badoo/reaktive/plugin/ReaktivePlugin;)V
 }
 
 public final class com/badoo/reaktive/scheduler/CreateComputationSchedulerKt {
