@@ -12,7 +12,6 @@ import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.plugins.PublishingPlugin
-import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
@@ -27,7 +26,7 @@ class PublishConfigurationPlugin : Plugin<Project> {
         disablePublishingTasks(target, taskConfigurationMap)
         createFilteredPublishTasks(target)
         setupPublishing(target)
-        // setupSign(target)
+        setupSign(target)
     }
 
     private fun setupPublishing(project: Project) {
@@ -37,8 +36,8 @@ class PublishConfigurationPlugin : Plugin<Project> {
                 name = "sonatype"
                 url = URI.create("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
                 credentials {
-                    username = "" // TODO
-                    password = "" // TODO
+                    username = project.property("sonatype.username").toString()
+                    password = project.property("sonatype.password").toString()
                 }
             }
         }
@@ -63,6 +62,14 @@ class PublishConfigurationPlugin : Plugin<Project> {
     }
 
     private fun setupSign(project: Project) {
+        // See PgpSignatoryFactory.PROPERTIES
+        if (project.property("signing.keyId") == null ||
+            project.property("signing.password") == null ||
+            project.property("signing.secretKeyRingFile") == null
+        ) {
+            project.logger.warn("No signing config provided, skip signing")
+            return
+        }
         project.plugins.apply(SigningPlugin::class.java)
         project.extensions.getByType(SigningExtension::class.java).apply {
             sign(
