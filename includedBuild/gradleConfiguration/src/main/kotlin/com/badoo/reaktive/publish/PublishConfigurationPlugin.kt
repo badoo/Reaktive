@@ -3,37 +3,95 @@ package com.badoo.reaktive.publish
 import com.badoo.reaktive.configuration.DarwinPlugin
 import com.badoo.reaktive.configuration.JsPlugin
 import com.badoo.reaktive.configuration.Target
-import com.jfrog.bintray.gradle.BintrayExtension
-import com.jfrog.bintray.gradle.BintrayPlugin
-import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.internal.artifact.FileBasedMavenArtifact
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.api.publish.plugins.PublishingPlugin
 import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.withType
+import org.gradle.plugins.signing.SigningExtension
+import org.gradle.plugins.signing.SigningPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
+import java.net.URI
 
 class PublishConfigurationPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        target.apply(plugin = "maven-publish")
+        target.plugins.apply(MavenPublishPlugin::class.java)
         val taskConfigurationMap = createConfigurationMap(target)
-        createFilteredPublishToMavenLocalTask(target)
-        setupLocalPublishing(target, taskConfigurationMap)
-        setupBintrayPublishingInformation(target)
-        setupBintrayPublishing(target, taskConfigurationMap)
+        disablePublishingTasks(target, taskConfigurationMap)
+        createFilteredPublishTasks(target)
+        setupPublishing(target)
+        // setupSign(target)
     }
 
-    private fun createFilteredPublishToMavenLocalTask(target: Project) {
-        // Create empty task with enabled publish tasks only
-        // We can't use regular publishToMavenLocal
-        target.tasks.register(TASK_FILTERED_PUBLISH_TO_MAVEN_LOCAL) {
-            dependsOn(project.tasks.matching { it is AbstractPublishToMaven && it.enabled })
+    private fun setupPublishing(project: Project) {
+        val publishing = project.extensions.getByType(PublishingExtension::class.java)
+        publishing.repositories {
+            maven {
+                name = "sonatype"
+                url = URI.create("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = "" // TODO
+                    password = "" // TODO
+                }
+            }
+        }
+        publishing.publications.withType(MavenPublication::class.java).configureEach {
+            pom {
+                name.set(project.name)
+                description.set(project.description)
+                url.set("https://github.com/badoo/Reaktive")
+                licenses {
+                    license {
+                        name.set("Apache-2.0")
+                        url.set("https://github.com/badoo/Reaktive/blob/master/LICENSE")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:ssh://github.com/badoo/Reaktive.git")
+                    developerConnection.set("scm:git:ssh://github.com/badoo/Reaktive.git")
+                    url.set("https://github.com/badoo/Reaktive")
+                }
+            }
+        }
+    }
+
+    private fun setupSign(project: Project) {
+        project.plugins.apply(SigningPlugin::class.java)
+        project.extensions.getByType(SigningExtension::class.java).apply {
+            sign(
+                project.extensions.getByType(PublishingExtension::class.java).publications
+            )
+        }
+    }
+
+    private fun createFilteredPublishTasks(project: Project) {
+        // Create umbrella task with enabled publish tasks only.
+        // We can't use regular publishToMavenLocal/publishAll
+        // because even if task is disabled all its dependencies will be still executed.
+        project.tasks.register(TASK_FILTERED_PUBLISH_TO_MAVEN_LOCAL) {
+            group = PublishingPlugin.PUBLISH_TASK_GROUP
+            dependsOn(
+                project
+                    .tasks
+                    .withType(PublishToMavenLocal::class.java)
+                    .matching { it.enabled }
+            )
+        }
+        project.tasks.register(TASK_FILTERED_PUBLISH_TO_SONATYPE) {
+            group = PublishingPlugin.PUBLISH_TASK_GROUP
+            dependsOn(
+                project
+                    .tasks
+                    .withType(PublishToMavenRepository::class.java)
+                    .matching { it.enabled && it.repository.name == "sonatype" }
+            )
         }
     }
 
@@ -59,7 +117,7 @@ class PublishConfigurationPlugin : Plugin<Project> {
         )
     }
 
-    private fun setupLocalPublishing(
+    private fun disablePublishingTasks(
         target: Project,
         taskConfigurationMap: Map<String, Boolean>
     ) {
@@ -76,62 +134,8 @@ class PublishConfigurationPlugin : Plugin<Project> {
         }
     }
 
-    private fun setupBintrayPublishingInformation(target: Project) {
-        target.plugins.apply(BintrayPlugin::class)
-        target.extensions.getByType(BintrayExtension::class).apply {
-            user = target.findProperty("bintray_user")?.toString()
-            key = target.findProperty("bintray_key")?.toString()
-            pkg.apply {
-                repo = "maven"
-                name = "reaktive"
-                userOrg = "badoo"
-                vcsUrl = "https://github.com/badoo/Reaktive.git"
-                setLicenses("Apache-2.0")
-                version.name = target.property("reaktive_version")?.toString()
-            }
-        }
-    }
-
-    private fun setupBintrayPublishing(
-        target: Project,
-        taskConfigurationMap: Map<String, Boolean>
-    ) {
-        target.tasks.named(BintrayUploadTask.getTASK_NAME(), BintrayUploadTask::class) {
-            dependsOn(project.tasks.named(TASK_FILTERED_PUBLISH_TO_MAVEN_LOCAL))
-            doFirst {
-                logger.warn("Publication configuration map: $taskConfigurationMap")
-                val publishing = project.extensions.getByType(PublishingExtension::class)
-                // https://github.com/bintray/gradle-bintray-plugin/issues/229
-                publishing.publications
-                    .filterIsInstance<MavenPublication>()
-                    .forEach { publication ->
-                        val moduleFile = project.buildDir
-                            .resolve("publications/${publication.name}/module.json")
-                        if (moduleFile.exists()) {
-                            publication.artifact(object : FileBasedMavenArtifact(moduleFile) {
-                                override fun getDefaultExtension() = "module"
-                            })
-                        }
-                    }
-                // https://github.com/bintray/gradle-bintray-plugin/issues/256
-                val publications = publishing.publications
-                    .filterIsInstance<MavenPublication>()
-                    .filter {
-                        val res = taskConfigurationMap[it.name] == true
-                        logger.warn("Artifact '${it.groupId}:${it.artifactId}:${it.version}' from publication '${it.name}' should be published: $res")
-                        res
-                    }
-                    .map {
-                        logger.warn("Uploading artifact '${it.groupId}:${it.artifactId}:${it.version}' from publication '${it.name}'")
-                        it.name
-                    }
-                    .toTypedArray()
-                setPublications(*publications)
-            }
-        }
-    }
-
     companion object {
-        const val TASK_FILTERED_PUBLISH_TO_MAVEN_LOCAL = "filteredPublishToMavenLocal"
+        const val TASK_FILTERED_PUBLISH_TO_MAVEN_LOCAL = "publishAllFilteredToMavenLocal"
+        const val TASK_FILTERED_PUBLISH_TO_SONATYPE = "publishAllFilteredToSonatype"
     }
 }
