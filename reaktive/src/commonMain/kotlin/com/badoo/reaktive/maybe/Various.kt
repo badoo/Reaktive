@@ -56,7 +56,7 @@ fun <T> maybeOfError(error: Throwable): Maybe<T> =
 fun <T> Throwable.toMaybeOfError(): Maybe<T> = maybeOfError(this)
 
 @SharedImmutable
-private val maybeOfEmpty =
+private val maybeOfEmpty by lazy {
     maybeUnsafe<Nothing> { observer ->
         val disposable = Disposable()
         observer.onSubscribe(disposable)
@@ -65,14 +65,16 @@ private val maybeOfEmpty =
             observer.onComplete()
         }
     }
+}
 
 fun <T> maybeOfEmpty(): Maybe<T> = maybeOfEmpty
 
 @SharedImmutable
-private val maybeOfNever =
+private val maybeOfNever by lazy {
     maybeUnsafe<Nothing> { observer ->
         observer.onSubscribe(Disposable())
     }
+}
 
 fun <T> maybeOfNever(): Maybe<T> = maybeOfNever
 

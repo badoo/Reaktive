@@ -28,10 +28,11 @@ fun <T> singleOf(value: T): Single<T> =
 fun <T> T.toSingle(): Single<T> = singleOf(this)
 
 @SharedImmutable
-private val singleOfNever =
+private val singleOfNever by lazy {
     singleUnsafe<Nothing> { observer ->
         observer.onSubscribe(Disposable())
     }
+}
 
 fun <T> singleOfNever(): Single<T> = singleOfNever
 

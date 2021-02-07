@@ -28,7 +28,7 @@ fun completableOfError(error: Throwable): Completable =
 fun Throwable.toCompletableOfError(): Completable = completableOfError(this)
 
 @SharedImmutable
-private val completableOfEmpty =
+private val completableOfEmpty by lazy {
     completableUnsafe { observer ->
         val disposable = Disposable()
         observer.onSubscribe(disposable)
@@ -37,14 +37,16 @@ private val completableOfEmpty =
             observer.onComplete()
         }
     }
+}
 
 fun completableOfEmpty(): Completable = completableOfEmpty
 
 @SharedImmutable
-private val completableOfNever =
+private val completableOfNever by lazy {
     completableUnsafe { observer ->
         observer.onSubscribe(Disposable())
     }
+}
 
 fun completableOfNever(): Completable = completableOfNever
 

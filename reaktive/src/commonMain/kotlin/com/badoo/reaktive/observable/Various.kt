@@ -77,7 +77,7 @@ fun <T> observableOfError(error: Throwable): Observable<T> =
 fun <T> Throwable.toObservableOfError(): Observable<T> = observableOfError(this)
 
 @SharedImmutable
-private val observableOfEmpty =
+private val observableOfEmpty by lazy {
     observableUnsafe<Nothing> { observer ->
         val disposable = Disposable()
         observer.onSubscribe(disposable)
@@ -86,14 +86,16 @@ private val observableOfEmpty =
             observer.onComplete()
         }
     }
+}
 
 fun <T> observableOfEmpty(): Observable<T> = observableOfEmpty
 
 @SharedImmutable
-private val observableOfNever =
+private val observableOfNever by lazy {
     observableUnsafe<Nothing> { observer ->
         observer.onSubscribe(Disposable())
     }
+}
 
 fun <T> observableOfNever(): Observable<T> = observableOfNever
 
