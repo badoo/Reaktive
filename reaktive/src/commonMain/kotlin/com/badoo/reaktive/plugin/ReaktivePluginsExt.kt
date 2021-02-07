@@ -19,7 +19,12 @@ fun ReaktivePlugins.register(plugin: ReaktivePlugin) {
 
 @ExperimentalReaktiveApi
 fun ReaktivePlugins.unregister(plugin: ReaktivePlugin) {
-    plugins?.remove(plugin)
+    plugins?.also {
+        it.remove(plugin)
+        if (it.isEmpty()) {
+            plugins = null
+        }
+    }
 }
 
 @ExperimentalReaktiveApi
