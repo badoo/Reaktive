@@ -1,14 +1,19 @@
 package com.badoo.reaktive.observable
 
+import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.plugin.onAssembleObservable
 import kotlin.native.concurrent.SharedImmutable
 
+@OptIn(ExperimentalReaktiveApi::class)
 inline fun <T> observableUnsafe(crossinline onSubscribe: (observer: ObservableObserver<T>) -> Unit): Observable<T> =
-    object : Observable<T> {
-        override fun subscribe(observer: ObservableObserver<T>) {
-            onSubscribe(observer)
+    onAssembleObservable(
+        object : Observable<T> {
+            override fun subscribe(observer: ObservableObserver<T>) {
+                onSubscribe(observer)
+            }
         }
-    }
+    )
 
 fun <T> observableOf(value: T): Observable<T> =
     observableUnsafe { observer ->
@@ -72,7 +77,7 @@ fun <T> observableOfError(error: Throwable): Observable<T> =
 fun <T> Throwable.toObservableOfError(): Observable<T> = observableOfError(this)
 
 @SharedImmutable
-private val observableOfEmpty =
+private val observableOfEmpty by lazy {
     observableUnsafe<Nothing> { observer ->
         val disposable = Disposable()
         observer.onSubscribe(disposable)
@@ -81,14 +86,16 @@ private val observableOfEmpty =
             observer.onComplete()
         }
     }
+}
 
 fun <T> observableOfEmpty(): Observable<T> = observableOfEmpty
 
 @SharedImmutable
-private val observableOfNever =
+private val observableOfNever by lazy {
     observableUnsafe<Nothing> { observer ->
         observer.onSubscribe(Disposable())
     }
+}
 
 fun <T> observableOfNever(): Observable<T> = observableOfNever
 

@@ -1,14 +1,19 @@
 package com.badoo.reaktive.single
 
+import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.plugin.onAssembleSingle
 import kotlin.native.concurrent.SharedImmutable
 
+@OptIn(ExperimentalReaktiveApi::class)
 inline fun <T> singleUnsafe(crossinline onSubscribe: (observer: SingleObserver<T>) -> Unit): Single<T> =
-    object : Single<T> {
-        override fun subscribe(observer: SingleObserver<T>) {
-            onSubscribe(observer)
+    onAssembleSingle(
+        object : Single<T> {
+            override fun subscribe(observer: SingleObserver<T>) {
+                onSubscribe(observer)
+            }
         }
-    }
+    )
 
 fun <T> singleOf(value: T): Single<T> =
     singleUnsafe { observer ->
@@ -23,10 +28,11 @@ fun <T> singleOf(value: T): Single<T> =
 fun <T> T.toSingle(): Single<T> = singleOf(this)
 
 @SharedImmutable
-private val singleOfNever =
+private val singleOfNever by lazy {
     singleUnsafe<Nothing> { observer ->
         observer.onSubscribe(Disposable())
     }
+}
 
 fun <T> singleOfNever(): Single<T> = singleOfNever
 

@@ -1,14 +1,19 @@
 package com.badoo.reaktive.maybe
 
+import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.plugin.onAssembleMaybe
 import kotlin.native.concurrent.SharedImmutable
 
+@OptIn(ExperimentalReaktiveApi::class)
 inline fun <T> maybeUnsafe(crossinline onSubscribe: (observer: MaybeObserver<T>) -> Unit): Maybe<T> =
-    object : Maybe<T> {
-        override fun subscribe(observer: MaybeObserver<T>) {
-            onSubscribe(observer)
+    onAssembleMaybe(
+        object : Maybe<T> {
+            override fun subscribe(observer: MaybeObserver<T>) {
+                onSubscribe(observer)
+            }
         }
-    }
+    )
 
 fun <T> maybeOf(value: T): Maybe<T> =
     maybeUnsafe { observer ->
@@ -51,7 +56,7 @@ fun <T> maybeOfError(error: Throwable): Maybe<T> =
 fun <T> Throwable.toMaybeOfError(): Maybe<T> = maybeOfError(this)
 
 @SharedImmutable
-private val maybeOfEmpty =
+private val maybeOfEmpty by lazy {
     maybeUnsafe<Nothing> { observer ->
         val disposable = Disposable()
         observer.onSubscribe(disposable)
@@ -60,14 +65,16 @@ private val maybeOfEmpty =
             observer.onComplete()
         }
     }
+}
 
 fun <T> maybeOfEmpty(): Maybe<T> = maybeOfEmpty
 
 @SharedImmutable
-private val maybeOfNever =
+private val maybeOfNever by lazy {
     maybeUnsafe<Nothing> { observer ->
         observer.onSubscribe(Disposable())
     }
+}
 
 fun <T> maybeOfNever(): Maybe<T> = maybeOfNever
 
