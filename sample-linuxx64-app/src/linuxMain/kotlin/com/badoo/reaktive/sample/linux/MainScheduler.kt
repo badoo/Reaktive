@@ -9,6 +9,7 @@ import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 import com.badoo.reaktive.utils.atomic.update
+import com.badoo.reaktive.utils.freeze
 import kotlinx.cinterop.StableRef
 import kotlinx.cinterop.asStableRef
 import kotlinx.cinterop.reinterpret
@@ -53,7 +54,7 @@ private class ExecutorImpl(
     }
 
     override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
-        val taskRef = StableRef.create(TaskHolder(this, periodMillis, task))
+        val taskRef = StableRef.create(TaskHolder(this, periodMillis, task).freeze())
         taskRefs.update { it + taskRef }
         g_timeout_add(startDelayMillis.toUInt(), staticCFunction(::callbackOneShotTask).reinterpret(), taskRef.asCPointer())
     }
