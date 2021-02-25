@@ -5,6 +5,11 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 
+/**
+ * Delays `onSuccess` or `onError` signals from the current [Single] for the specified time.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#delay-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-boolean-).
+ */
 fun <T> Single<T>.delay(delayMillis: Long, scheduler: Scheduler, delayError: Boolean = false): Single<T> =
     single { emitter ->
         val disposables = CompositeDisposable()
