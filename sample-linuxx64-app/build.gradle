@@ -29,7 +29,8 @@ kotlin {
                             "$it/cairo",
                             "$it/pango-1.0",
                             "$it/gtk-3.0",
-                            "$it/glib-2.0"
+                            "$it/glib-2.0",
+                            "$it/harfbuzz"
                 }
 
                 includeDirs '/opt/local/lib/glib-2.0/include',
