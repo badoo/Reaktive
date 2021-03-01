@@ -5,6 +5,11 @@ import com.badoo.reaktive.base.operator.Retry
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 
+/**
+ * When the [Single] signals `onError`, re-subscribes to the [Single] if the `predicate` returns `true`.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#retry-io.reactivex.functions.BiPredicate-).
+ */
 fun <T> Single<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Single<T> =
     single { emitter ->
         subscribe(
