@@ -12,6 +12,10 @@ import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.handleReaktiveError
 
+/**
+ * Calls the shared `action` for each new observer with the [Disposable] sent to the downstream.
+ * The `action` is called for each new observer **before** its `onSubscribe` callback is called.
+ */
 fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =
     singleUnsafe { observer ->
         val disposableWrapper = DisposableWrapper()
@@ -49,6 +53,10 @@ fun <T> Single<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Single<T> =
         )
     }
 
+/**
+ * Calls the `action` with the emitted value when the [Single] signals `onSuccess`.
+ * The `action` is called **before** the observer is called.
+ */
 fun <T> Single<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Single<T> =
     single { emitter ->
         subscribe(
@@ -68,6 +76,10 @@ fun <T> Single<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Single<T> =
         )
     }
 
+/**
+ * Calls the `action` with the emitted `Throwable` when the [Single] signals `onError`.
+ * The `action` is called **before** the observer is called.
+ */
 fun <T> Single<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Single<T> =
     single { emitter ->
         subscribe(
@@ -85,6 +97,10 @@ fun <T> Single<T>.doOnBeforeError(consumer: (Throwable) -> Unit): Single<T> =
         )
     }
 
+/**
+ * Calls the `action` when the [Single] signals a terminal event: either `onSuccess` or `onError`.
+ * The `action` is called **before** the observer is called.
+ */
 fun <T> Single<T>.doOnBeforeTerminate(action: () -> Unit): Single<T> =
     single { emitter ->
         subscribe(
@@ -108,6 +124,10 @@ fun <T> Single<T>.doOnBeforeTerminate(action: () -> Unit): Single<T> =
         )
     }
 
+/**
+ * Calls the shared `action` when the [Disposable] sent to the observer via `onSubscribe` is disposed.
+ * The `action` is called **before** the upstream is disposed.
+ */
 fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
     singleUnsafe { observer ->
         val disposables = CompositeDisposable()
@@ -148,6 +168,11 @@ fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
         )
     }
 
+/**
+ * Calls the `action` when one of the following events occur:
+ * - The [Single] signals a terminal event: either `onSuccess` or `onError` (the `action` is called **before** the observer is called).
+ * - The [Disposable] sent to the observer via `onSubscribe` is disposed (the `action` is called **before** the upstream is disposed).
+ */
 fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
     singleUnsafe { observer ->
         val disposables = CompositeDisposable()

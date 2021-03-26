@@ -9,9 +9,9 @@ import kotlin.test.assertSame
 class TestAwaitTest {
 
     @Test
-    fun succeeds_WHEN_upstream_succeeded_and_no_assertSuccess() =
+    fun succeeds_WHEN_upstream_succeeded_and_empty_assertSuccess() =
         singleOf(1)
-            .testAwait()
+            .testAwait(assertSuccess = {})
 
     @Test
     fun succeeds_WHEN_upstream_succeeded_and_assertSuccess_did_not_throw() =
@@ -23,6 +23,6 @@ class TestAwaitTest {
         val error = Exception()
 
         return singleOfError<Nothing>(error)
-            .testAwait(assertError = { assertSame(error, it) })
+            .testAwait(assertError = { assertSame(error, it) }, assertSuccess = {})
     }
 }

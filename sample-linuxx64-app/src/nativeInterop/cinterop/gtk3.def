@@ -1,5 +1,5 @@
 package = libgtk3
 headers = gtk/gtk.h gtk/gtkx.h gdk-pixbuf/gdk-pixbuf.h
 headerFilter = gtk/* gdk/* gdk-pixbuf/* gobject/* gio/* glib/*
-compilerOpts = -I/usr/include -I/usr/include/gtk-3.0 -I/usr/include/glib-2.0 -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/x86_64-linux-gnu/ -I/usr/include/gdk-pixbuf-2.0/ -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/local/lib/glib-2.0/include -I/usr/lib64/glib-2.0/include
+compilerOpts = -I/usr/include -I/usr/include/gtk-3.0 -I/usr/include/glib-2.0 -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/x86_64-linux-gnu/ -I/usr/include/gdk-pixbuf-2.0/ -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/local/lib/glib-2.0/include -I/usr/lib64/glib-2.0/include -I/usr/include/harfbuzz
 linkerOpts = -L/usr/lib64 -L/usr/lib/x86_64-linux-gnu -lglib-2.0 -lgdk-3 -lgtk-3 -lgio-2.0 -lgobject-2.0 -lgdk_pixbuf-2.0
