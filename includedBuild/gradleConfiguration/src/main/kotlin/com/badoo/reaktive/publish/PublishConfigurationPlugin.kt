@@ -62,19 +62,25 @@ class PublishConfigurationPlugin : Plugin<Project> {
     }
 
     private fun setupSign(project: Project) {
-        // See PgpSignatoryFactory.PROPERTIES
-        if (project.findProperty("signing.keyId") == null ||
-            project.findProperty("signing.password") == null ||
-            project.findProperty("signing.secretKeyRingFile") == null
-        ) {
+        val inMemoryKey = project.findProperty("signing.key")?.toString()
+        // Constants from PgpSignatoryFactory.PROPERTIES
+        val password = project.findProperty("signing.password")?.toString()
+        val keyFile = project.findProperty("signing.secretKeyRingFile")?.toString()
+        val keyId = project.findProperty("signing.keyId")?.toString()
+
+        if (inMemoryKey == null && keyFile == null) {
             project.logger.warn("No signing config provided, skip signing")
             return
         }
         project.plugins.apply(SigningPlugin::class.java)
         project.extensions.getByType(SigningExtension::class.java).apply {
+            isRequired = true
             sign(
                 project.extensions.getByType(PublishingExtension::class.java).publications
             )
+            if (inMemoryKey != null) {
+                useInMemoryPgpKeys(inMemoryKey, password)
+            }
         }
     }
 
