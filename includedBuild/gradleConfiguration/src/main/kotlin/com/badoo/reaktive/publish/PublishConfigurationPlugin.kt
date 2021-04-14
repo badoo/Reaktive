@@ -12,6 +12,7 @@ import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.plugins.PublishingPlugin
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
@@ -27,6 +28,7 @@ class PublishConfigurationPlugin : Plugin<Project> {
         createFilteredPublishTasks(target)
         setupPublishing(target)
         setupSign(target)
+        createEmptySourcesJar(target)
     }
 
     private fun setupPublishing(project: Project) {
@@ -152,6 +154,18 @@ class PublishConfigurationPlugin : Plugin<Project> {
             }
             enabled = taskConfigurationMap[configuration] == true
         }
+    }
+
+    private fun createEmptySourcesJar(project: Project) {
+        val task = project.tasks.register("javadocJar", Jar::class.java) {
+            archiveClassifier.set("javadoc")
+        }
+        project
+            .extensions
+            .getByType(PublishingExtension::class.java)
+            .publications
+            .withType(MavenPublication::class.java)
+            .configureEach { artifact(task.get()) }
     }
 
     companion object {
