@@ -6,7 +6,7 @@ on:
     types: [ created ]
 
 env:
-  GRADLE_OPTS: "-Dorg.gradle.console=plain -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dorg.gradle.logging.level=info"
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.compiler.execution.strategy=in-process
 
 jobs:
   create-staging-repository:
