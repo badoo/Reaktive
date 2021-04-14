@@ -4,11 +4,16 @@ plugins {
 
 repositories {
     maven {
-        url 'https://dl.bintray.com/badoo/maven'
+        def stagingRepoId = project.findProperty("sonatype.repository")
+        if (stagingRepoId != null) {
+            url "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$stagingRepoId/"
+        } else {
+            url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+        }
 
         credentials {
-            setUsername(getProperty("bintray_user"))
-            setPassword(getProperty("bintray_key"))
+            setUsername(getProperty("sonatype.username"))
+            setPassword(getProperty("sonatype.password"))
         }
     }
 }

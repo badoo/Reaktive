@@ -5,16 +5,24 @@ on:
     branches:
       - master
   pull_request:
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.compiler.execution.strategy=in-process
+
 jobs:
   build:
     strategy:
       matrix:
-        os: [macOS-latest, ubuntu-latest]
+        os: [ macOS-latest, ubuntu-latest ]
     runs-on: ${{matrix.os}}
     name: Build on ${{matrix.os}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
       - name: Install dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libgtk-3-dev nodejs chromium-browser
@@ -27,9 +35,13 @@ jobs:
             ${{ matrix.os }}-gradle-
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
-      - name: Link linuxArm32Hfp
+      - name: Build Linux
         if: matrix.os == 'ubuntu-latest'
-        run: ./gradlew linkDebugTestLinuxArm32Hfp
+        run: >
+          ./gradlew
+          build
+          linkDebugTestLinuxArm32Hfp
+          -Ptarget=all_linux_hosted
       - name: Test linuxArm32Hfp
         if: matrix.os == 'ubuntu-latest'
         uses: uraimo/run-on-arch-action@v2.0.5
@@ -40,12 +52,19 @@ jobs:
             ./utils/build/bin/linuxArm32Hfp/debugTest/test.kexe
             ./reaktive/build/bin/linuxArm32Hfp/debugTest/test.kexe
             ./reaktive-testing/build/bin/linuxArm32Hfp/debugTest/test.kexe
-      - name: Build Linux
-        if: matrix.os == 'ubuntu-latest'
-        run: ./gradlew build -Ptarget=all_linux_hosted
       - name: Build macOS
         if: matrix.os == 'macOS-latest'
-        run: ./gradlew :reaktive-annotations:build :utils:build :reaktive-testing:build :reaktive:build :coroutines-interop:build :sample-mpp-module:build :sample-ios-app:build :sample-macos-app:build -Ptarget=all_macos_hosted
+        run: >
+          ./gradlew
+          :reaktive-annotations:build
+          :utils:build
+          :reaktive-testing:build
+          :reaktive:build
+          :coroutines-interop:build
+          :sample-mpp-module:build
+          :sample-ios-app:build
+          :sample-macos-app:build
+          -Ptarget=all_macos_hosted
       - name: Bundle the build report
         if: failure()
         run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
