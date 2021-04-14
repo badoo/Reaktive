@@ -34,7 +34,14 @@ class PublishConfigurationPlugin : Plugin<Project> {
         publishing.repositories {
             maven {
                 name = "sonatype"
-                url = URI.create("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                val repositoryId = project.findProperty("sonatype.repository")
+                url = URI.create(
+                    if (repositoryId != null) {
+                        "https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/"
+                    } else {
+                        "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                    }
+                )
                 credentials {
                     username = project.findProperty("sonatype.username").toString()
                     password = project.findProperty("sonatype.password").toString()
