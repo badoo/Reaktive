@@ -7,6 +7,11 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.ThreadLocalDisposableHolder
 import com.badoo.reaktive.utils.handleReaktiveError
 
+/**
+ * Prevents the downstream from freezing by saving the [SingleObserver] in a thread local storage.
+ *
+ * Please refer to the corresponding Readme [section](https://github.com/badoo/Reaktive#thread-local-tricks-to-avoid-freezing).
+ */
 fun <T> Single<T>.threadLocal(): Single<T> =
     single {
         val disposables = CompositeDisposable()

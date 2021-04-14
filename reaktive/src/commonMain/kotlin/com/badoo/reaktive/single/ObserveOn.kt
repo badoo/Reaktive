@@ -6,6 +6,11 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.freeze
 
+/**
+ * Signals `onSuccess` and `onError` events of the [Single] on the specified [Scheduler].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#observeOn-io.reactivex.Scheduler-).
+ */
 fun <T> Single<T>.observeOn(scheduler: Scheduler): Single<T> =
     single { emitter ->
         val disposables = CompositeDisposable()

@@ -7,6 +7,13 @@ import com.badoo.reaktive.disposable.DisposableWrapper
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.utils.handleReaktiveError
 
+/**
+ * Subscribes to the [Single] and provides event callbacks.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#subscribe-io.reactivex.functions.Consumer-io.reactivex.functions.Consumer-).
+ *
+ * @param isThreadLocal see [Single.threadLocal]
+ */
 @UseReturnValue
 fun <T> Single<T>.subscribe(
     isThreadLocal: Boolean = false,

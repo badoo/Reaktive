@@ -5,6 +5,11 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observable
 
+/**
+ * Converts this [Single] into an [Observable], which signals either `onNext` with `onComplete` or `onError`.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#toObservable--).
+ */
 fun <T> Single<T>.asObservable(): Observable<T> =
     observable { emitter ->
         subscribe(
