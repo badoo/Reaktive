@@ -5,11 +5,15 @@ on:
     branches:
       - master
   pull_request:
+
+env:
+  GRADLE_OPTS: "-Dorg.gradle.console=plain -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dorg.gradle.logging.level=info"
+
 jobs:
   build:
     strategy:
       matrix:
-        os: [macOS-latest, ubuntu-latest]
+        os: [ macOS-latest, ubuntu-latest ]
     runs-on: ${{matrix.os}}
     name: Build on ${{matrix.os}}
     steps:
@@ -27,9 +31,12 @@ jobs:
             ${{ matrix.os }}-gradle-
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
-      - name: Link linuxArm32Hfp
+      - name: Build Linux
         if: matrix.os == 'ubuntu-latest'
-        run: ./gradlew linkDebugTestLinuxArm32Hfp
+        run: ./gradlew \
+          build \
+          linkDebugTestLinuxArm32Hfp \
+          -Ptarget=all_linux_hosted
       - name: Test linuxArm32Hfp
         if: matrix.os == 'ubuntu-latest'
         uses: uraimo/run-on-arch-action@v2.0.5
@@ -40,9 +47,6 @@ jobs:
             ./utils/build/bin/linuxArm32Hfp/debugTest/test.kexe
             ./reaktive/build/bin/linuxArm32Hfp/debugTest/test.kexe
             ./reaktive-testing/build/bin/linuxArm32Hfp/debugTest/test.kexe
-      - name: Build Linux
-        if: matrix.os == 'ubuntu-latest'
-        run: ./gradlew build -Ptarget=all_linux_hosted
       - name: Build macOS
         if: matrix.os == 'macOS-latest'
         run: ./gradlew \

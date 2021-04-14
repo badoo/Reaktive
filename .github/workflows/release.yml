@@ -5,6 +5,9 @@ on:
   release:
     types: [ created ]
 
+env:
+  GRADLE_OPTS: "-Dorg.gradle.console=plain -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dorg.gradle.logging.level=info"
+
 jobs:
   create-staging-repository:
     runs-on: ubuntu-latest
