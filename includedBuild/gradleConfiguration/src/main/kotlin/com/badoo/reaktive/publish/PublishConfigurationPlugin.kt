@@ -71,7 +71,7 @@ class PublishConfigurationPlugin : Plugin<Project> {
     }
 
     private fun setupSign(project: Project) {
-        val inMemoryKey = project.findProperty("signing.key")?.toString()
+        val inMemoryKey = System.getenv("SIGNING_KEY") ?: project.findProperty("signing.key")?.toString()
         // Constants from PgpSignatoryFactory.PROPERTIES
         val password = project.findProperty("signing.password")?.toString()
         val keyFile = project.findProperty("signing.secretKeyRingFile")?.toString()
