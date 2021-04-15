@@ -21,12 +21,8 @@ dependencies {
     implementation(Deps.detekt.plugin)
     implementation(Deps.shadow)
     implementation(Deps.kotlinx.compatibility)
-    // Does not work in IDEA
-    // implementation("com.badoo.reaktive.dependencies:dependencies:SNAPSHOT")
+    implementation("com.badoo.reaktive.dependencies:dependencies:SNAPSHOT")
 }
-
-// Same as 'implementation("com.badoo.reaktive.dependencies:dependencies:SNAPSHOT")', but will make autocompletion work
-kotlin.sourceSets.getByName("main").kotlin.srcDir("../dependencies/src/main/kotlin")
 
 gradlePlugin {
     plugins.register("mpp-configuration") {

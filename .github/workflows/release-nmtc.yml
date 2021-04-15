@@ -1,12 +1,33 @@
 name: Release nmtc
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.compiler.execution.strategy=in-process
 
 jobs:
+  create-staging-repository:
+    runs-on: ubuntu-latest
+    name: Create staging repository
+    outputs:
+      repository-id: ${{ steps.create.outputs.repository-id }}
+    steps:
+      - id: create
+        name: Create staging repository
+        uses: nexus-actions/create-nexus-staging-repo@v1
+        with:
+          username: ${{ secrets.SONATYPE_USERNAME }}
+          password: ${{ secrets.SONATYPE_PASSWORD }}
+          staging-profile-id: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+          description: Created by $GITHUB_WORKFLOW ($GITHUB_ACTION) for $GITHUB_REPOSITORY
+
   linux-host-publish:
     name: Release on Ubuntu
     runs-on: ubuntu-latest
+    needs: create-staging-repository
+    env:
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -17,12 +38,29 @@ jobs:
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Release JVM, Android, JS, Linux
-        run: ./gradlew :coroutines-interop:bintrayUpload -Ptarget=all_linux_hosted -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
+        run: >
+          ./gradlew
+          publishAllFilteredToSonatype
+          -Ptarget=all_linux_hosted
+          -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
+          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
+          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
+          -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
       - name: Release Metadata
-        run: ./gradlew :coroutines-interop:bintrayUpload -Ptarget=meta -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
+        run: >
+          ./gradlew publishAllFilteredToSonatype
+          -Ptarget=meta
+          -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
+          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
+          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
+          -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
+
   macos-host-publish:
     name: Release on macOS
     runs-on: macOS-latest
+    needs: create-staging-repository
+    env:
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -31,5 +69,31 @@ jobs:
         with:
           java-version: 1.8
       - name: Release iOS, MacOS
-        run: ./gradlew :coroutines-interop:bintrayUpload -Ptarget=all_macos_hosted -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_key=${{ secrets.BINTRAY_KEY }}
+        run: >
+          ./gradlew publishAllFilteredToSonatype
+          -Ptarget=all_macos_hosted
+          -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
+          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
+          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
+          -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
 
+  close-staging-repository:
+    runs-on: ubuntu-latest
+    needs: [ create-staging-repository, macos-host-publish, linux-host-publish ]
+    if: ${{ always() && needs.create-staging-repository.result == 'success' }}
+    steps:
+      - name: Discard
+        if: ${{ needs.linux-host-publish.result != 'success' || needs.macos-host-publish.result != 'success' }}
+        uses: nexus-actions/drop-nexus-staging-repo@main
+        with:
+          username: ${{ secrets.SONATYPE_USERNAME }}
+          password: ${{ secrets.SONATYPE_PASSWORD }}
+          staging_repository_id: ${{ needs.create-staging-repository.outputs.repository-id }}
+      - name: Release
+        if: ${{ needs.linux-host-publish.result == 'success' && needs.macos-host-publish.result == 'success' }}
+        uses: nexus-actions/release-nexus-staging-repo@main
+        with:
+          username: ${{ secrets.SONATYPE_USERNAME }}
+          password: ${{ secrets.SONATYPE_PASSWORD }}
+          staging_repository_id: ${{ needs.create-staging-repository.outputs.repository-id }}
+          close_only: true
