@@ -6,14 +6,7 @@ plugins {
     id 'detekt-configuration'
 }
 
-def ver = "${property("reaktive_version")}-nmtc"
-version = ver
-
-bintray {
-    pkg {
-        version.name = ver
-    }
-}
+version = "${property("reaktive_version")}-nmtc"
 
 kotlin {
     targets {
