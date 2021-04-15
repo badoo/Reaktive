@@ -26,6 +26,8 @@ jobs:
     name: Release on Ubuntu
     runs-on: ubuntu-latest
     needs: create-staging-repository
+    env:
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -40,7 +42,6 @@ jobs:
           ./gradlew
           publishAllFilteredToSonatype
           -Ptarget=all_linux_hosted
-          -Psigning.key=${{ secrets.SIGNING_KEY }}
           -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
           -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
           -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
@@ -49,7 +50,6 @@ jobs:
         run: >
           ./gradlew publishAllFilteredToSonatype
           -Ptarget=meta
-          -Psigning.key=${{ secrets.SIGNING_KEY }}
           -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
           -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
           -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
@@ -59,6 +59,8 @@ jobs:
     name: Release on macOS
     runs-on: macOS-latest
     needs: create-staging-repository
+    env:
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -70,7 +72,6 @@ jobs:
         run: >
           ./gradlew publishAllFilteredToSonatype
           -Ptarget=all_macos_hosted
-          -Psigning.key=${{ secrets.SIGNING_KEY }}
           -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
           -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
           -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
@@ -87,7 +88,7 @@ jobs:
         with:
           username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}
-          staged_repository_id: ${{ needs.create-staging-repository.outputs.repository-id }}
+          staging_repository_id: ${{ needs.create-staging-repository.outputs.repository-id }}
       - name: Release
         if: ${{ needs.linux-host-publish.result == 'success' && needs.macos-host-publish.result == 'success' }}
         uses: nexus-actions/release-nexus-staging-repo@main
