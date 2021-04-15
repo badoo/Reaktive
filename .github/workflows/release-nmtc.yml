@@ -40,7 +40,7 @@ jobs:
       - name: Release JVM, Android, JS, Linux
         run: >
           ./gradlew
-          publishAllFilteredToSonatype
+          :coroutines-interop:publishAllFilteredToSonatype
           -Ptarget=all_linux_hosted
           -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
           -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
@@ -48,7 +48,8 @@ jobs:
           -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
       - name: Release Metadata
         run: >
-          ./gradlew publishAllFilteredToSonatype
+          ./gradlew
+          :coroutines-interop:publishAllFilteredToSonatype
           -Ptarget=meta
           -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
           -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
@@ -70,7 +71,8 @@ jobs:
           java-version: 1.8
       - name: Release iOS, MacOS
         run: >
-          ./gradlew publishAllFilteredToSonatype
+          ./gradlew
+          :coroutines-interop:publishAllFilteredToSonatype
           -Ptarget=all_macos_hosted
           -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
           -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
