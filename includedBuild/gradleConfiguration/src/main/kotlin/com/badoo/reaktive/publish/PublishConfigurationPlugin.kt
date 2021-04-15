@@ -53,14 +53,24 @@ class PublishConfigurationPlugin : Plugin<Project> {
         publishing.publications.withType(MavenPublication::class.java).configureEach {
             pom {
                 name.set(project.name)
-                description.set(project.description)
+                description.set("Kotlin multi-platform implementation of Reactive Extensions")
                 url.set("https://github.com/badoo/Reaktive")
+
                 licenses {
                     license {
                         name.set("Apache-2.0")
                         url.set("https://github.com/badoo/Reaktive/blob/master/LICENSE")
                     }
                 }
+
+                developers {
+                    developer {
+                        id.set("arkivanov")
+                        name.set("Arkadii Ivanov")
+                        email.set("oss.sonatype@team.bumble.com")
+                    }
+                }
+
                 scm {
                     connection.set("scm:git:ssh://github.com/badoo/Reaktive.git")
                     developerConnection.set("scm:git:ssh://github.com/badoo/Reaktive.git")
