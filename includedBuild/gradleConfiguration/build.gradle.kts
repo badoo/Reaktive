@@ -17,7 +17,6 @@ dependencies {
     implementation(Deps.kotlin.compilerEmbeddable)
     implementation(Deps.android.plugin)
     implementation(Deps.jmh.plugin)
-    implementation(Deps.bintray)
     implementation(Deps.detekt.plugin)
     implementation(Deps.shadow)
     implementation(Deps.kotlinx.compatibility)
