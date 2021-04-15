@@ -135,7 +135,7 @@ jobs:
         with:
           username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}
-          staged_repository_id: ${{ needs.create-staging-repository.outputs.repository-id }}
+          staging_repository_id: ${{ needs.create-staging-repository.outputs.repository-id }}
       - name: Release
         if: ${{ needs.linux-host-check.result == 'success' && needs.macos-host-check.result == 'success' }}
         uses: nexus-actions/release-nexus-staging-repo@main
