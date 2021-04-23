@@ -1,23 +1,19 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.exceptions.CompositeException
-import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.ThreadLocalDisposableHolder
 import com.badoo.reaktive.utils.handleReaktiveError
+import com.badoo.reaktive.utils.isolate.IsolatedReference
+import com.badoo.reaktive.utils.isolate.getValue
 
 fun <T> Maybe<T>.threadLocal(): Maybe<T> =
     maybe {
-        val disposables = CompositeDisposable()
-        it.setDisposable(disposables)
-        val emitterStorage = ThreadLocalDisposableHolder(it)
-        disposables += emitterStorage
+        val emitter by IsolatedReference(it)
 
         subscribe(
             object : MaybeObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposables += disposable
+                    getEmitter()?.setDisposable(disposable)
                 }
 
                 override fun onSuccess(value: T) {
@@ -34,7 +30,7 @@ fun <T> Maybe<T>.threadLocal(): Maybe<T> =
 
                 private fun getEmitter(existingError: Throwable? = null): MaybeEmitter<T>? =
                     try {
-                        requireNotNull(emitterStorage.get())
+                        emitter
                     } catch (e: Throwable) {
                         handleReaktiveError(if (existingError == null) e else CompositeException(existingError, e))
                         null

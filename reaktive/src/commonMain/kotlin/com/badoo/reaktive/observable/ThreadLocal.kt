@@ -1,23 +1,19 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.exceptions.CompositeException
-import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.ThreadLocalDisposableHolder
 import com.badoo.reaktive.utils.handleReaktiveError
+import com.badoo.reaktive.utils.isolate.IsolatedReference
+import com.badoo.reaktive.utils.isolate.getValue
 
 fun <T> Observable<T>.threadLocal(): Observable<T> =
     observable {
-        val disposables = CompositeDisposable()
-        it.setDisposable(disposables)
-        val emitterStorage = ThreadLocalDisposableHolder(it)
-        disposables += emitterStorage
+        val emitter by IsolatedReference(it)
 
         subscribe(
             object : ObservableObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposables += disposable
+                    getEmitter()?.setDisposable(disposable)
                 }
 
                 override fun onNext(value: T) {
@@ -34,7 +30,7 @@ fun <T> Observable<T>.threadLocal(): Observable<T> =
 
                 private fun getEmitter(existingError: Throwable? = null): ObservableEmitter<T>? =
                     try {
-                        requireNotNull(emitterStorage.get())
+                        emitter
                     } catch (e: Throwable) {
                         handleReaktiveError(if (existingError == null) e else CompositeException(existingError, e))
                         null
