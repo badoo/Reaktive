@@ -1,10 +1,11 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.exceptions.CompositeException
+import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.handleReaktiveError
 import com.badoo.reaktive.utils.isolate.IsolatedReference
-import com.badoo.reaktive.utils.isolate.getValue
 
 /**
  * Prevents the downstream from freezing by saving the [SingleObserver] in a thread local storage.
@@ -13,12 +14,15 @@ import com.badoo.reaktive.utils.isolate.getValue
  */
 fun <T> Single<T>.threadLocal(): Single<T> =
     single {
-        val emitter by IsolatedReference(it)
+        val disposables = CompositeDisposable()
+        it.setDisposable(disposables)
+        val emitterRef = IsolatedReference(it)
+        disposables += emitterRef
 
         subscribe(
             object : SingleObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
-                    getEmitter()?.setDisposable(disposable)
+                    disposables += disposable
                 }
 
                 override fun onSuccess(value: T) {
@@ -31,7 +35,7 @@ fun <T> Single<T>.threadLocal(): Single<T> =
 
                 private fun getEmitter(existingError: Throwable? = null): SingleEmitter<T>? =
                     try {
-                        emitter
+                        emitterRef.getOrThrow()
                     } catch (e: Throwable) {
                         handleReaktiveError(if (existingError == null) e else CompositeException(existingError, e))
                         null

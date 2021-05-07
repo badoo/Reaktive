@@ -7,9 +7,10 @@ import kotlin.native.IncorrectDereferenceException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class IsolatedReferenceThreadingTest {
+class IsolatedReferenceNativeTest {
 
     @Test
     fun throws_IncorrectDereferenceException_WHEN_value_not_frozen_and_get_value_from_another_thread() {
@@ -18,7 +19,7 @@ class IsolatedReferenceThreadingTest {
         val error =
             doInBackgroundBlocking {
                 try {
-                    ref.value
+                    ref.getOrThrow()
                     null
                 } catch (e: Throwable) {
                     e
@@ -33,7 +34,7 @@ class IsolatedReferenceThreadingTest {
         val data = Data().freeze()
         val ref = IsolatedReference(data)
 
-        val result = doInBackgroundBlocking { ref.value }
+        val result = doInBackgroundBlocking { ref.getOrThrow() }
 
         assertEquals(data, result)
     }
@@ -46,6 +47,15 @@ class IsolatedReferenceThreadingTest {
         ref.freeze()
 
         assertFalse(data.isFrozen)
+    }
+
+    @Test
+    fun returns_null_WHEN_disposed() {
+        val ref = IsolatedReference(Data())
+
+        ref.dispose()
+
+        assertNull(ref.getOrThrow())
     }
 
     private class Data
