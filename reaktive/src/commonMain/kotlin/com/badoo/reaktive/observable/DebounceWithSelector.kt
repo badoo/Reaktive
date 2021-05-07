@@ -7,7 +7,7 @@ import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.completable.CompletableObserver
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
@@ -17,8 +17,8 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
 
-        val innerDisposableWrapper = DisposableWrapper()
-        disposables += innerDisposableWrapper
+        val innerSerialDisposable = SerialDisposable()
+        disposables += innerSerialDisposable
 
         val serializedEmitter = emitter.serialize()
 
@@ -41,20 +41,20 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
                     val newPendingValue = DebouncePendingValue(value)
                     pendingValue.value = newPendingValue
 
-                    val localDisposableWrapper = DisposableWrapper()
+                    val localSerialDisposable = SerialDisposable()
 
                     /*
                      * Dispose any existing inner Completable.
                      * If a previous Completable did not provide its disposable yet
                      * it will be disposed automatically later since
-                     * its localDisposableWrapper is disposed.
+                     * its localSerialDisposable is disposed.
                      */
-                    innerDisposableWrapper.set(localDisposableWrapper)
+                    innerSerialDisposable.set(localSerialDisposable)
 
                     val innerObserver =
                         object : CompletableObserver, ErrorCallback by serializedEmitter {
                             override fun onSubscribe(disposable: Disposable) {
-                                localDisposableWrapper.set(disposable)
+                                localSerialDisposable.set(disposable)
                             }
 
                             override fun onComplete() {

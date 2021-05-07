@@ -3,7 +3,7 @@ package com.badoo.reaktive.completable
 import com.badoo.reaktive.annotations.UseReturnValue
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.utils.handleReaktiveError
 
@@ -14,18 +14,18 @@ fun Completable.subscribe(
     onError: ((Throwable) -> Unit)? = null,
     onComplete: (() -> Unit)? = null
 ): Disposable {
-    val disposableWrapper = DisposableWrapper()
+    val serialDisposable = SerialDisposable()
 
     try {
-        onSubscribe?.invoke(disposableWrapper)
+        onSubscribe?.invoke(serialDisposable)
     } catch (e: Throwable) {
         try {
             handleReaktiveError(e, onError)
         } finally {
-            disposableWrapper.dispose()
+            serialDisposable.dispose()
         }
 
-        return disposableWrapper
+        return serialDisposable
     }
 
     val source = if (isThreadLocal) threadLocal() else this
@@ -33,11 +33,11 @@ fun Completable.subscribe(
     source.subscribeSafe(
         object : CompletableObserver {
             override fun onSubscribe(disposable: Disposable) {
-                disposableWrapper.set(disposable)
+                serialDisposable.set(disposable)
             }
 
             override fun onComplete() {
-                disposableWrapper.doIfNotDisposed(dispose = true) {
+                serialDisposable.doIfNotDisposed(dispose = true) {
                     try {
                         onComplete?.invoke()
                     } catch (e: Throwable) {
@@ -47,12 +47,12 @@ fun Completable.subscribe(
             }
 
             override fun onError(error: Throwable) {
-                disposableWrapper.doIfNotDisposed(dispose = true) {
+                serialDisposable.doIfNotDisposed(dispose = true) {
                     handleReaktiveError(error, onError)
                 }
             }
         }
     )
 
-    return disposableWrapper
+    return serialDisposable
 }

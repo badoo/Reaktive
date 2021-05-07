@@ -7,7 +7,7 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatchAndHandle
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.disposable.plusAssign
 
@@ -17,15 +17,15 @@ import com.badoo.reaktive.disposable.plusAssign
  */
 fun <T> Single<T>.doOnAfterSubscribe(action: (Disposable) -> Unit): Single<T> =
     singleUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
+        val serialDisposable = SerialDisposable()
 
-        observer.onSubscribe(disposableWrapper)
+        observer.onSubscribe(serialDisposable)
 
         try {
-            action(disposableWrapper)
+            action(serialDisposable)
         } catch (e: Throwable) {
             observer.onError(e)
-            disposableWrapper.dispose()
+            serialDisposable.dispose()
 
             return@singleUnsafe
         }
@@ -33,17 +33,17 @@ fun <T> Single<T>.doOnAfterSubscribe(action: (Disposable) -> Unit): Single<T> =
         subscribeSafe(
             object : SingleObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    serialDisposable.set(disposable)
                 }
 
                 override fun onSuccess(value: T) {
-                    disposableWrapper.doIfNotDisposed(dispose = true) {
+                    serialDisposable.doIfNotDisposed(dispose = true) {
                         observer.onSuccess(value)
                     }
                 }
 
                 override fun onError(error: Throwable) {
-                    disposableWrapper.doIfNotDisposed(dispose = true) {
+                    serialDisposable.doIfNotDisposed(dispose = true) {
                         observer.onError(error)
                     }
                 }

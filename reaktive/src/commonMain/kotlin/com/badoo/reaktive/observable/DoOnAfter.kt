@@ -10,21 +10,21 @@ import com.badoo.reaktive.base.tryCatchAndHandle
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.disposable.plusAssign
 
 fun <T> Observable<T>.doOnAfterSubscribe(action: (Disposable) -> Unit): Observable<T> =
     observableUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
+        val serialDisposable = SerialDisposable()
 
-        observer.onSubscribe(disposableWrapper)
+        observer.onSubscribe(serialDisposable)
 
         try {
-            action(disposableWrapper)
+            action(serialDisposable)
         } catch (e: Throwable) {
             observer.onError(e)
-            disposableWrapper.dispose()
+            serialDisposable.dispose()
 
             return@observableUnsafe
         }
@@ -32,15 +32,15 @@ fun <T> Observable<T>.doOnAfterSubscribe(action: (Disposable) -> Unit): Observab
         subscribeSafe(
             object : ObservableObserver<T>, ValueCallback<T> by observer {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    serialDisposable.set(disposable)
                 }
 
                 override fun onComplete() {
-                    disposableWrapper.doIfNotDisposed(dispose = true, block = observer::onComplete)
+                    serialDisposable.doIfNotDisposed(dispose = true, block = observer::onComplete)
                 }
 
                 override fun onError(error: Throwable) {
-                    disposableWrapper.doIfNotDisposed(dispose = true) {
+                    serialDisposable.doIfNotDisposed(dispose = true) {
                         observer.onError(error)
                     }
                 }

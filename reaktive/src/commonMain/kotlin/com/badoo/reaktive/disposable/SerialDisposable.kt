@@ -3,14 +3,13 @@ package com.badoo.reaktive.disposable
 /**
  * Thread-safe container of one [Disposable]
  */
-@Deprecated("Please use SerialDisposable", ReplaceWith("SerialDisposable"))
 @Suppress("EmptyDefaultConstructor")
-expect open class DisposableWrapper() : Disposable {
+expect open class SerialDisposable() : Disposable {
 
     override val isDisposed: Boolean
 
     /**
-     * Disposes this [DisposableWrapper] and a stored [Disposable] if any.
+     * Disposes this [SerialDisposable] and a stored [Disposable] if any.
      * Any future [Disposable] will be immediately disposed.
      */
     override fun dispose()

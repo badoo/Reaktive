@@ -2,7 +2,7 @@ package com.badoo.reaktive.single
 
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 
 // Don't inline at the moment for JS, we had random crashes in JS
 /**
@@ -13,7 +13,7 @@ import com.badoo.reaktive.disposable.DisposableWrapper
 actual fun <T> single(onSubscribe: (emitter: SingleEmitter<T>) -> Unit): Single<T> =
     singleUnsafe { observer ->
         val emitter =
-            object : DisposableWrapper(), SingleEmitter<T> {
+            object : SerialDisposable(), SingleEmitter<T> {
                 override fun setDisposable(disposable: Disposable?) {
                     set(disposable)
                 }

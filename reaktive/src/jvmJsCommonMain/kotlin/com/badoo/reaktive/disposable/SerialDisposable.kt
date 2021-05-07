@@ -1,26 +1,27 @@
 package com.badoo.reaktive.disposable
 
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndSet
-import com.badoo.reaktive.utils.atomic.getAndUpdate
+import kotlin.jvm.Volatile
 
 /**
  * Thread-safe container of one [Disposable]
  */
-@Deprecated("Please use SerialDisposable", ReplaceWith("SerialDisposable"))
 @Suppress("EmptyDefaultConstructor")
-actual open class DisposableWrapper actual constructor() : Disposable {
+actual open class SerialDisposable actual constructor() : Disposable {
 
-    private val ref = AtomicReference<Disposable?>(null)
-    actual override val isDisposed: Boolean get() = ref.value === disposed
+    @Volatile
+    private var _isDisposed: Boolean = false
+    actual override val isDisposed: Boolean get() = _isDisposed
+    private var disposable: Disposable? = null
 
     /**
-     * Disposes this [DisposableWrapper] and a stored [Disposable] if any.
+     * Disposes this [SerialDisposable] and a stored [Disposable] if any.
      * Any future [Disposable] will be immediately disposed.
      */
     actual override fun dispose() {
-        ref
-            .getAndSet(disposed)
+        synchronized(this) {
+            _isDisposed = true
+            swapDisposable(null)
+        }
             ?.dispose()
     }
 
@@ -28,8 +29,6 @@ actual open class DisposableWrapper actual constructor() : Disposable {
      * Atomically either replaces any existing [Disposable]
      * with the specified one or disposes it if wrapper is already disposed.
      * Also disposes any replaced [Disposable].
-     *
-     * @param disposable a new [Disposable], will be disposed if wrapper is already dispose
      */
     actual fun set(disposable: Disposable?) {
         replace(disposable)
@@ -45,18 +44,22 @@ actual open class DisposableWrapper actual constructor() : Disposable {
      * @return replaced [Disposable] if any
      */
     actual fun replace(disposable: Disposable?): Disposable? {
-        val oldDisposable = ref.getAndUpdate { if (it === disposed) it else disposable }
+        var disposableToDispose: Disposable? = null
+        var oldDisposable: Disposable? = null
 
-        if (oldDisposable !== disposed) {
-            return oldDisposable
+        synchronized(this) {
+            if (_isDisposed) {
+                disposableToDispose = disposable
+            } else {
+                oldDisposable = swapDisposable(disposable)
+            }
         }
 
-        disposable?.dispose()
+        disposableToDispose?.dispose()
 
-        return null
+        return oldDisposable
     }
 
-    private companion object {
-        private val disposed = Disposable()
-    }
+    private fun swapDisposable(new: Disposable?): Disposable? =
+        disposable.also { disposable = new }
 }

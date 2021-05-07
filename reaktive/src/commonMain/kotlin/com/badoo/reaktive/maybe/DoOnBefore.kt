@@ -9,45 +9,45 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.handleReaktiveError
 
 fun <T> Maybe<T>.doOnBeforeSubscribe(action: (Disposable) -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
+        val serialDisposable = SerialDisposable()
 
         try {
-            action(disposableWrapper)
+            action(serialDisposable)
         } catch (e: Throwable) {
-            observer.onSubscribe(disposableWrapper)
+            observer.onSubscribe(serialDisposable)
             observer.onError(e)
-            disposableWrapper.dispose()
+            serialDisposable.dispose()
 
             return@maybeUnsafe
         }
 
-        observer.onSubscribe(disposableWrapper)
+        observer.onSubscribe(serialDisposable)
 
         subscribeSafe(
             object : MaybeObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    serialDisposable.set(disposable)
                 }
 
                 override fun onComplete() {
-                    disposableWrapper.doIfNotDisposed(dispose = true, block = observer::onComplete)
+                    serialDisposable.doIfNotDisposed(dispose = true, block = observer::onComplete)
                 }
 
                 override fun onSuccess(value: T) {
-                    disposableWrapper.doIfNotDisposed(dispose = true) {
+                    serialDisposable.doIfNotDisposed(dispose = true) {
                         observer.onSuccess(value)
                     }
                 }
 
                 override fun onError(error: Throwable) {
-                    disposableWrapper.doIfNotDisposed(dispose = true) {
+                    serialDisposable.doIfNotDisposed(dispose = true) {
                         observer.onError(error)
                     }
                 }

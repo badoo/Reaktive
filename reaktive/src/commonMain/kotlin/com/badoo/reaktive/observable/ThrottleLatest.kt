@@ -7,7 +7,7 @@ import com.badoo.reaktive.completable.CompletableObserver
 import com.badoo.reaktive.completable.completableTimer
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.Uninitialized
@@ -131,7 +131,7 @@ private class ThrottleLatest<T>(
 
     private open class AbstractObserver(
         private val actor: Serializer<Any?>
-    ) : Observer, ErrorCallback, DisposableWrapper() {
+    ) : Observer, ErrorCallback, SerialDisposable() {
         override fun onSubscribe(disposable: Disposable) {
             set(disposable)
         }

@@ -5,6 +5,7 @@ import kotlin.jvm.Volatile
 /**
  * Thread-safe container of one [Disposable]
  */
+@Deprecated("Please use SerialDisposable", ReplaceWith("SerialDisposable"))
 @Suppress("EmptyDefaultConstructor")
 actual open class DisposableWrapper actual constructor() : Disposable {
 

@@ -2,21 +2,21 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 
 // Separate implementation prevents unnecessary freezing: https://github.com/badoo/Reaktive/issues/472
 // Not inlined due to https://youtrack.jetbrains.com/issue/KT-44764
 actual fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observable<T> =
     observableUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
-        observer.onSubscribe(disposableWrapper)
+        val serialDisposable = SerialDisposable()
+        observer.onSubscribe(serialDisposable)
 
         val emitter =
             object : ObservableEmitter<T> {
-                override val isDisposed: Boolean get() = disposableWrapper.isDisposed
+                override val isDisposed: Boolean get() = serialDisposable.isDisposed
 
                 override fun setDisposable(disposable: Disposable?) {
-                    disposableWrapper.set(disposable)
+                    serialDisposable.set(disposable)
                 }
 
                 override fun onNext(value: T) {
@@ -37,9 +37,9 @@ actual fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit):
 
                 private inline fun doIfNotDisposedAndDispose(block: () -> Unit) {
                     if (!isDisposed) {
-                        val disposable: Disposable? = disposableWrapper.replace(null)
+                        val disposable: Disposable? = serialDisposable.replace(null)
                         try {
-                            disposableWrapper.dispose()
+                            serialDisposable.dispose()
                             block()
                         } finally {
                             disposable?.dispose()

@@ -2,12 +2,12 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 
 actual inline fun <T> observable(crossinline onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observable<T> =
     observableUnsafe { observer ->
         val emitter =
-            object : DisposableWrapper(), ObservableEmitter<T> {
+            object : SerialDisposable(), ObservableEmitter<T> {
                 override fun setDisposable(disposable: Disposable?) {
                     set(disposable)
                 }
