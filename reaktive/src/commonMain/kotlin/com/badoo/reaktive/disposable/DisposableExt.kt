@@ -1,7 +1,14 @@
 package com.badoo.reaktive.disposable
 
+@Deprecated("Please use SerialDisposable and the corresponding `Disposable.setTo(SerialDisposable)` extension function")
 fun <T : Disposable> T.setTo(disposableWrapper: DisposableWrapper): T {
     disposableWrapper.set(this)
+
+    return this
+}
+
+fun <T : Disposable> T.setTo(serialDisposable: SerialDisposable): T {
+    serialDisposable.set(this)
 
     return this
 }

@@ -8,13 +8,13 @@ import com.badoo.reaktive.utils.atomic.getAndUpdate
  * Thread-safe container of one [Disposable]
  */
 @Suppress("EmptyDefaultConstructor")
-actual open class DisposableWrapper actual constructor() : Disposable {
+actual open class SerialDisposable actual constructor() : Disposable {
 
     private val ref = AtomicReference<Disposable?>(null)
     actual override val isDisposed: Boolean get() = ref.value === disposed
 
     /**
-     * Disposes this [DisposableWrapper] and a stored [Disposable] if any.
+     * Disposes this [SerialDisposable] and a stored [Disposable] if any.
      * Any future [Disposable] will be immediately disposed.
      */
     actual override fun dispose() {

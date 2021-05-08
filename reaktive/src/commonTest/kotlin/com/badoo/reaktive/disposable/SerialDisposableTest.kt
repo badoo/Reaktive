@@ -5,105 +5,105 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class DisposableWrapperTest {
+class SerialDisposableTest {
 
-    private val wrapper = DisposableWrapper()
+    private val serialDisposable = SerialDisposable()
     private val disposable = Disposable()
 
     @Test
     fun does_not_dispose_new_disposable_WHEN_not_disposed() {
-        wrapper.set(disposable)
+        serialDisposable.set(disposable)
 
         assertFalse(disposable.isDisposed)
     }
 
     @Test
     fun disposes_new_disposable_WHEN_disposed() {
-        wrapper.set(disposable)
+        serialDisposable.set(disposable)
 
-        wrapper.dispose()
+        serialDisposable.dispose()
 
         assertTrue(disposable.isDisposed)
     }
 
     @Test
     fun disposes_new_disposable_WHEN_already_disposed() {
-        wrapper.dispose()
+        serialDisposable.dispose()
 
-        wrapper.set(disposable)
+        serialDisposable.set(disposable)
 
         assertTrue(disposable.isDisposed)
     }
 
     @Test
     fun disposes_previous_disposable_WHEN_new_disposable_is_set() {
-        wrapper.set(disposable)
+        serialDisposable.set(disposable)
 
-        wrapper.set(Disposable())
+        serialDisposable.set(Disposable())
 
         assertTrue(disposable.isDisposed)
     }
 
     @Test
     fun does_not_dispose_replacing_disposable_WHEN_not_disposed() {
-        wrapper.replace(disposable)
+        serialDisposable.replace(disposable)
 
         assertFalse(disposable.isDisposed)
     }
 
     @Test
     fun disposes_replacing_disposable_WHEN_disposed() {
-        wrapper.replace(disposable)
+        serialDisposable.replace(disposable)
 
-        wrapper.dispose()
+        serialDisposable.dispose()
 
         assertTrue(disposable.isDisposed)
     }
 
     @Test
     fun disposes_replacing_disposable_WHEN_already_disposed() {
-        wrapper.dispose()
+        serialDisposable.dispose()
 
-        wrapper.replace(disposable)
+        serialDisposable.replace(disposable)
 
         assertTrue(disposable.isDisposed)
     }
 
     @Test
     fun does_not_dispose_previous_disposable_WHEN_replace_disposable() {
-        wrapper.set(disposable)
+        serialDisposable.set(disposable)
 
-        wrapper.replace(Disposable())
+        serialDisposable.replace(Disposable())
 
         assertFalse(disposable.isDisposed)
     }
 
     @Test
     fun returns_previous_disposable_WHEN_replace_disposable() {
-        wrapper.set(disposable)
+        serialDisposable.set(disposable)
 
-        val previousDisposable = wrapper.replace(Disposable())
+        val previousDisposable = serialDisposable.replace(Disposable())
 
         assertSame(disposable, previousDisposable)
     }
 
     @Test
     fun isDisposed_returns_false_WHEN_not_disposed() {
-        assertFalse(wrapper.isDisposed)
+        assertFalse(serialDisposable.isDisposed)
     }
 
     @Test
     fun isDisposed_returns_true_WHEN_disposed() {
-        wrapper.dispose()
+        serialDisposable.dispose()
 
-        assertTrue(wrapper.isDisposed)
+        assertTrue(serialDisposable.isDisposed)
     }
 
     @Test
     fun isDisposed_returns_true_WHEN_already_disposed_and_setDisposable() {
-        wrapper.dispose()
-        wrapper.set(disposable)
+        serialDisposable.dispose()
+        serialDisposable.set(disposable)
 
-        assertTrue(wrapper.isDisposed)
+        assertTrue(serialDisposable.isDisposed)
     }
 }

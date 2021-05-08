@@ -258,9 +258,14 @@ public abstract interface class com/badoo/reaktive/disposable/Disposable {
 public final class com/badoo/reaktive/disposable/DisposableExtKt {
 	public static final fun addTo (Lcom/badoo/reaktive/disposable/Disposable;Lcom/badoo/reaktive/disposable/CompositeDisposable;)Lcom/badoo/reaktive/disposable/Disposable;
 	public static final fun setTo (Lcom/badoo/reaktive/disposable/Disposable;Lcom/badoo/reaktive/disposable/DisposableWrapper;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static final fun setTo (Lcom/badoo/reaktive/disposable/Disposable;Lcom/badoo/reaktive/disposable/SerialDisposable;)Lcom/badoo/reaktive/disposable/Disposable;
 }
 
-public class com/badoo/reaktive/disposable/DisposableWrapper : com/badoo/reaktive/disposable/Disposable {
+public class com/badoo/reaktive/disposable/DisposableWrapper : com/badoo/reaktive/disposable/SerialDisposable {
+	public fun <init> ()V
+}
+
+public class com/badoo/reaktive/disposable/SerialDisposable : com/badoo/reaktive/disposable/Disposable {
 	public fun <init> ()V
 	public fun dispose ()V
 	public fun isDisposed ()Z

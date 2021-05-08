@@ -1,7 +1,7 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.observable.TestObservable
@@ -202,7 +202,7 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
         }
             .repeat(count = -1)
             .subscribe(
-                object : DisposableWrapper(), ObservableObserver<Int> {
+                object : SerialDisposable(), ObservableObserver<Int> {
                     override fun onSubscribe(disposable: Disposable) {
                         set(disposable)
                     }
