@@ -3,6 +3,7 @@ package com.badoo.reaktive.utils
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.native.concurrent.ThreadLocal
 
+@Deprecated("Use custom solution with kotlin.native.concurrent.WorkerBoundReference")
 open class ThreadLocalHolder<T>(initialValue: T? = null) {
 
     private val originalThreadId = currentThreadId
