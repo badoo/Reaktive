@@ -7,6 +7,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class MppConfigurationPlugin : Plugin<Project> {
@@ -38,6 +39,21 @@ class MppConfigurationPlugin : Plugin<Project> {
             setupJvmTarget(project)
             setupJsTarget(project)
             setupLinuxX64Target(project)
+
+            if (Target.shouldDefineTarget(project, Target.JVM)) {
+                project.tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+                    kotlinOptions {
+                        /*
+                         * Starting from Kotlin 1.5.0 the default jvmTarget is 1.8, and the 1.6 target is deprecated.
+                         * For some reason some JVM tests are failing with
+                         * java.lang.NoSuchMethodError: 'int java.lang.Integer.compareTo(int)'.
+                         * The Integer.compareTo method was added in Java 1.8.
+                         * We should find a fix, or avoid using the Integer.compareTo method.
+                         */
+                        jvmTarget = "1.6"
+                    }
+                }
+            }
 
             project.kotlin {
                 sourceSets {
@@ -129,7 +145,6 @@ class MppConfigurationPlugin : Plugin<Project> {
         if (!Target.shouldDefineTarget(project, Target.JVM)) return
         project.pluginManager.apply("com.android.library")
         project.extensions.configure(BaseExtension::class.java) {
-            buildToolsVersion("29.0.2")
             compileSdkVersion(29)
             defaultConfig {
                 minSdkVersion(1)
