@@ -40,21 +40,6 @@ class MppConfigurationPlugin : Plugin<Project> {
             setupJsTarget(project)
             setupLinuxX64Target(project)
 
-            if (Target.shouldDefineTarget(project, Target.JVM)) {
-                project.tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-                    kotlinOptions {
-                        /*
-                         * Starting from Kotlin 1.5.0 the default jvmTarget is 1.8, and the 1.6 target is deprecated.
-                         * For some reason some JVM tests are failing with
-                         * java.lang.NoSuchMethodError: 'int java.lang.Integer.compareTo(int)'.
-                         * The Integer.compareTo method was added in Java 1.8.
-                         * We should find a fix, or avoid using the Integer.compareTo method.
-                         */
-                        jvmTarget = "1.6"
-                    }
-                }
-            }
-
             project.kotlin {
                 sourceSets {
                     maybeCreate("jvmJsCommonMain").dependsOn(getByName("commonMain"))
