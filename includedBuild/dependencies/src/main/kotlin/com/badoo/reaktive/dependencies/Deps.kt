@@ -2,7 +2,7 @@ package com.badoo.reaktive.dependencies
 
 object Deps {
 
-    private const val kotlinVersion = "1.4.30"
+    private const val kotlinVersion = "1.5.0"
     private const val coroutinesVersion = "1.4.2"
     private const val detektVersion = "1.9.1"
     private const val asmVersion = "6.0"
@@ -70,7 +70,7 @@ object Deps {
     }
 
     object Android {
-        const val plugin = "com.android.tools.build:gradle:4.1.0"
+        const val plugin = "com.android.tools.build:gradle:4.2.0"
         val androidx = Androidx
 
         object Androidx {

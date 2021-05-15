@@ -1,3 +1,7 @@
+/*
+ * This file has been modified by Badoo to add support Kotlin 1.5.0.
+ */
+
 import com.gradle.publish.*
 import kotlinx.validation.build.*
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -58,7 +62,10 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.apply {
         languageVersion = "1.3"
         jvmTarget = "1.8"
-        allWarningsAsErrors = true
+
+        // Disable allWarningsAsErrors due to some warnings with Kotlin 1.5.0
+        // allWarningsAsErrors = true
+
         // Suppress the warning about kotlin-reflect 1.3 and kotlin-stdlib 1.4 in the classpath.
         // It's incorrect in this case because we're limiting API version to 1.3 anyway.
         freeCompilerArgs += "-Xskip-runtime-version-check"

@@ -7,6 +7,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class MppConfigurationPlugin : Plugin<Project> {
@@ -129,7 +130,6 @@ class MppConfigurationPlugin : Plugin<Project> {
         if (!Target.shouldDefineTarget(project, Target.JVM)) return
         project.pluginManager.apply("com.android.library")
         project.extensions.configure(BaseExtension::class.java) {
-            buildToolsVersion("29.0.2")
             compileSdkVersion(29)
             defaultConfig {
                 minSdkVersion(1)
