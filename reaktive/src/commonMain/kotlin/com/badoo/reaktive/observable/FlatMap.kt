@@ -5,22 +5,50 @@ import com.badoo.reaktive.base.ValueCallback
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.utils.ObjectReference
+import com.badoo.reaktive.utils.RefCounter
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.lock.Lock
+import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.queue.SharedQueue
+import com.badoo.reaktive.utils.use
 
 fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
-    observable { emitter ->
-        val upstreamObserver = FlatMapObserver(emitter.serialize(), mapper)
+    flatMap(maxConcurrency = Int.MAX_VALUE, mapper = mapper)
+
+fun <T, R> Observable<T>.flatMap(maxConcurrency: Int, mapper: (T) -> Observable<R>): Observable<R> {
+    require(maxConcurrency > 0) { "masConcurrency value must be positive" }
+
+    return observable { emitter ->
+        val upstreamObserver = FlatMapObserver(emitter.serialize(), maxConcurrency, mapper)
         emitter.setDisposable(upstreamObserver)
         subscribe(upstreamObserver)
+    }
+}
+
+fun <T, U, R> Observable<T>.flatMap(mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
+    flatMap(maxConcurrency = Int.MAX_VALUE, mapper = mapper, resultSelector = resultSelector)
+
+fun <T, U, R> Observable<T>.flatMap(maxConcurrency: Int, mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
+    flatMap(maxConcurrency = maxConcurrency) { t ->
+        mapper(t).map { u -> resultSelector(t, u) }
     }
 
 private class FlatMapObserver<in T, in R>(
     private val callbacks: ObservableCallbacks<R>,
+    maxConcurrency: Int,
     private val mapper: (T) -> Observable<R>
 ) : CompositeDisposable(), ObservableObserver<T>, ErrorCallback by callbacks {
 
     private val activeSourceCount = AtomicInt(1)
+
+    private val queue: FlatMapQueue<Observable<R>>? =
+        maxConcurrency
+            .takeIf { it < Int.MAX_VALUE }
+            ?.let { FlatMapQueue(limit = it, callback = ::subscribeInner) }
+            ?.addTo(this)
 
     override fun onSubscribe(disposable: Disposable) {
         add(disposable)
@@ -29,8 +57,18 @@ private class FlatMapObserver<in T, in R>(
     override fun onNext(value: T) {
         activeSourceCount.addAndGet(1)
 
+        callbacks.tryCatch({ mapper(value) }) { inner ->
+            if (queue == null) {
+                subscribeInner(inner)
+            } else {
+                queue.offer(inner)
+            }
+        }
+    }
+
+    private fun subscribeInner(inner: Observable<R>) {
         callbacks.tryCatch {
-            mapper(value).subscribe(InnerObserver())
+            inner.subscribe(InnerObserver())
         }
     }
 
@@ -53,12 +91,56 @@ private class FlatMapObserver<in T, in R>(
 
         override fun onComplete() {
             remove(value!!)
+            queue?.poll()
             this@FlatMapObserver.onComplete()
         }
     }
 }
 
-fun <T, U, R> Observable<T>.flatMap(mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
-    flatMap { t ->
-        mapper(t).map { u -> resultSelector(t, u) }
+private class FlatMapQueue<in T : Any>(
+    limit: Int,
+    private val callback: (T) -> Unit
+) : Disposable {
+
+    private val lock = Lock()
+    private val refCounter = RefCounter(lock::destroy)
+    private val count = AtomicInt(limit)
+    private val queue = SharedQueue<T>()
+
+    private val _isDisposed = AtomicBoolean(false)
+    override val isDisposed: Boolean get() = _isDisposed.value
+
+    override fun dispose() {
+        if (_isDisposed.compareAndSet(expectedValue = false, newValue = true)) {
+            sync(queue::clear)
+            refCounter.release()
+        }
     }
+
+    fun offer(value: T) {
+        sync {
+            if (count.value > 0) {
+                count.value--
+                value
+            } else {
+                queue.offer(value)
+                null
+            }
+        }?.also(callback)
+    }
+
+    fun poll() {
+        sync {
+            val next = queue.poll()
+            if (next == null) {
+                count.value++
+            }
+            next
+        }?.also(callback)
+    }
+
+    private inline fun <T> sync(block: () -> T): T? =
+        refCounter.use {
+            lock.synchronized(block)
+        }
+}
