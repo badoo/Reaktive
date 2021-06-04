@@ -7,6 +7,11 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.handleReaktiveError
 import com.badoo.reaktive.utils.isolate.IsolatedReference
 
+/**
+ * Prevents the downstream from freezing by saving the [CompletableObserver] in a thread local storage.
+ *
+ * Please refer to the corresponding Readme [section](https://github.com/badoo/Reaktive#thread-local-tricks-to-avoid-freezing).
+ */
 fun Completable.threadLocal(): Completable =
     completable {
         val disposables = CompositeDisposable()

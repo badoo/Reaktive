@@ -27,5 +27,10 @@ fun <T> Single<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _
         )
     }
 
+/**
+ * When the [Single] signals `onError`, re-subscribes to the [Single], up to `times` times.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#retry-long-).
+ */
 fun <T> Single<T>.retry(times: Int): Single<T> =
     retry { attempt, _ -> attempt < times }

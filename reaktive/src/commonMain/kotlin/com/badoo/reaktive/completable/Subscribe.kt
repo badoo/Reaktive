@@ -7,6 +7,13 @@ import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.utils.handleReaktiveError
 
+/**
+ * Subscribes to the [Completable] and provides event callbacks.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#subscribe-io.reactivex.functions.Action-io.reactivex.functions.Consumer-).
+ *
+ * @param isThreadLocal see [Completable.threadLocal]
+ */
 @UseReturnValue
 fun Completable.subscribe(
     isThreadLocal: Boolean = false,
