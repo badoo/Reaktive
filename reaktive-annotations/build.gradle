@@ -4,6 +4,21 @@ plugins {
     id 'detekt-configuration'
 }
 
+plugins.apply "dev.petuska.npm.publish"
+
 configuration {
     enableLinuxArm32Hfp()
+}
+
+
+npmPublishing {
+    repositories {
+        repository {
+            registry = uri("http://localhost:4873")
+            authToken = "y7tJdftrqx+2JEsk+I2Q2FW8tG++LFO7wG0YLsjHTgg="
+        }
+    }
+
+    organization = "com.badoo"
+    access = PUBLIC
 }

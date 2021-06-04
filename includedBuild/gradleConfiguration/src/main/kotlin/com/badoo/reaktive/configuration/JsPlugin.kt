@@ -20,18 +20,10 @@ class JsPlugin : Plugin<Project> {
         }
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
             js(TARGET_NAME_JS) {
-                browser {
-                    testTask {
-                        useKarma {
-                            useChromeHeadless()
-                        }
-                    }
-                }
-                nodejs {
-                    testTask {
-                        useCommonJs()
-                    }
-                }
+                browser()
+                nodejs()
+
+                binaries.library()
             }
             sourceSets.getByName(TARGET_NAME_JS.appendCapitalized(SourceSet.MAIN_SOURCE_SET_NAME)) {
                 dependencies {
