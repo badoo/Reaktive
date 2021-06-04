@@ -19,7 +19,7 @@ fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
     flatMap(maxConcurrency = Int.MAX_VALUE, mapper = mapper)
 
 fun <T, R> Observable<T>.flatMap(maxConcurrency: Int, mapper: (T) -> Observable<R>): Observable<R> {
-    require(maxConcurrency > 0) { "masConcurrency value must be positive" }
+    require(maxConcurrency > 0) { "maxConcurrency value must be positive" }
 
     return observable { emitter ->
         val upstreamObserver = FlatMapObserver(emitter.serialize(), maxConcurrency, mapper)
