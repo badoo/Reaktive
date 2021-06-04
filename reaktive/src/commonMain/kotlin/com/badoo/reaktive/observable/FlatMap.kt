@@ -103,16 +103,21 @@ private class FlatMapQueue<in T : Any>(
 ) : Disposable {
 
     private val lock = Lock()
-    private val refCounter = RefCounter(lock::destroy)
     private val count = AtomicInt(limit)
     private val queue = SharedQueue<T>()
+
+    private val refCounter =
+        RefCounter {
+            lock.destroy()
+            count.value = 0
+            queue.clear()
+        }
 
     private val _isDisposed = AtomicBoolean(false)
     override val isDisposed: Boolean get() = _isDisposed.value
 
     override fun dispose() {
         if (_isDisposed.compareAndSet(expectedValue = false, newValue = true)) {
-            sync(queue::clear)
             refCounter.release()
         }
     }
