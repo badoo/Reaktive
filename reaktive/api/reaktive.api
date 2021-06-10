@@ -691,6 +691,7 @@ public final class com/badoo/reaktive/observable/FirstOrErrorKt {
 }
 
 public final class com/badoo/reaktive/observable/FlatMapCompletableKt {
+	public static final fun flatMapCompletable (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun flatMapCompletable (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
 }
 
@@ -699,16 +700,22 @@ public final class com/badoo/reaktive/observable/FlatMapIterableKt {
 }
 
 public final class com/badoo/reaktive/observable/FlatMapKt {
+	public static final fun flatMap (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun flatMap (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMap (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMap (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/FlatMapMaybeKt {
+	public static final fun flatMapMaybe (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun flatMapMaybe (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMapMaybe (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMapMaybe (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/FlatMapSingleKt {
+	public static final fun flatMapSingle (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun flatMapSingle (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMapSingle (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMapSingle (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 }

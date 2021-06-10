@@ -180,12 +180,114 @@ class FlatMapTest
         assertFalse(inners[1].hasSubscribers)
     }
 
-    private fun flatMapUpstreamAndSubscribe(innerSources: List<Observable<String?>>): TestObservableObserver<String?> =
-        flatMapUpstreamAndSubscribe { innerSources[it!!] }
+    @Test
+    fun subscribes_to_inner_sources_WHEN_upstream_produced_values_and_maxConcurrency_not_reached() {
+        val inners = createInnerSources(2)
+        flatMapUpstreamAndSubscribe(inners, maxConcurrency = 2)
 
-    private fun flatMapUpstreamAndSubscribe(mapper: (Int?) -> Observable<String?>): TestObservableObserver<String?> =
-        source.flatMap(mapper).test()
+        source.onNext(0)
+        source.onNext(1)
+
+        assertTrue(inners[0].hasSubscribers)
+        assertTrue(inners[1].hasSubscribers)
+    }
+
+    @Test
+    fun does_not_subscribe_to_new_inner_sources_WHEN_upstream_produced_two_values_over_maxConcurrency() {
+        val inners = createInnerSources(4)
+        flatMapUpstreamAndSubscribe(inners, maxConcurrency = 2)
+        source.onNext(0)
+        source.onNext(1)
+
+        source.onNext(2)
+        source.onNext(3)
+
+        assertFalse(inners[2].hasSubscribers)
+        assertFalse(inners[3].hasSubscribers)
+    }
+
+    @Test
+    fun subscribes_to_next_queued_inner_source_WHEN_upstream_produced_two_values_over_maxConcurrency_and_inner_source_completed() {
+        val inners = createInnerSources(4)
+        flatMapUpstreamAndSubscribe(inners, maxConcurrency = 2)
+        source.onNext(0)
+        source.onNext(1)
+
+        source.onNext(2)
+        source.onNext(3)
+        inners[1].onComplete()
+
+        assertTrue(inners[2].hasSubscribers)
+    }
+
+    @Test
+    fun does_not_subscribe_to_second_queued_inner_source_WHEN_upstream_produced_two_values_over_maxConcurrency_and_inner_source_completed() {
+        val inners = createInnerSources(4)
+        flatMapUpstreamAndSubscribe(inners, maxConcurrency = 2)
+        source.onNext(0)
+        source.onNext(1)
+
+        source.onNext(2)
+        source.onNext(3)
+        inners[1].onComplete()
+
+        assertFalse(inners[3].hasSubscribers)
+    }
+
+    @Test
+    fun subscribes_to_second_queued_inner_source_WHEN_upstream_produced_two_values_over_maxConcurrency_and_two_inner_sources_completed() {
+        val inners = createInnerSources(4)
+        flatMapUpstreamAndSubscribe(inners, maxConcurrency = 2)
+        source.onNext(0)
+        source.onNext(1)
+
+        source.onNext(2)
+        source.onNext(3)
+        inners[1].onComplete()
+        inners[2].onComplete()
+
+        assertTrue(inners[3].hasSubscribers)
+    }
+
+    @Test
+    fun subscribes_to_inner_source_WHEN_maxConcurrency_reached_and_inner_source_completed_and_upstream_produced_value() {
+        val inners = createInnerSources(3)
+        flatMapUpstreamAndSubscribe(inners, maxConcurrency = 2)
+
+        source.onNext(0)
+        source.onNext(1)
+        inners[0].onComplete()
+        source.onNext(2)
+
+        assertTrue(inners[2].hasSubscribers)
+    }
+
+    @Test
+    fun does_not_subscribe_to_inner_source_WHEN_upstream_produced_one_value_over_maxConcurrency_and_inner_source_completed_and_upstream_produced_value() {
+        val inners = createInnerSources(4)
+        flatMapUpstreamAndSubscribe(inners, maxConcurrency = 2)
+
+        source.onNext(0)
+        source.onNext(1)
+        source.onNext(2)
+        inners[0].onComplete()
+        source.onNext(3)
+
+        assertFalse(inners[3].hasSubscribers)
+    }
+
+    private fun flatMapUpstreamAndSubscribe(
+        innerSources: List<Observable<String?>>,
+        maxConcurrency: Int = Int.MAX_VALUE
+    ): TestObservableObserver<String?> =
+        flatMapUpstreamAndSubscribe(maxConcurrency = maxConcurrency) { innerSources[it!!] }
+
+    private fun flatMapUpstreamAndSubscribe(
+        maxConcurrency: Int = Int.MAX_VALUE,
+        mapper: (Int?) -> Observable<String?>
+    ): TestObservableObserver<String?> =
+        source.flatMap(maxConcurrency, mapper).test()
 
     private fun createInnerSources(count: Int): List<TestObservable<String?>> =
-        List(count) { TestObservable<String?>() }
+        List(count) { TestObservable() }
 }
