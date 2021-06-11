@@ -9,7 +9,7 @@ import com.badoo.reaktive.observable.map
 import com.badoo.reaktive.observable.observable
 
 /**
- * Calls the `mapper` with the value emitted by the [Single] and subscribes to the returned inner [Observable].
+ * Calls the [mapper] with the value emitted by the [Single] and subscribes to the returned inner [Observable].
  * Emits values from the inner [Observable].
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#flatMapObservable-io.reactivex.functions.Function-).
@@ -30,8 +30,8 @@ fun <T, R> Single<T>.flatMapObservable(mapper: (T) -> Observable<R>): Observable
     }
 
 /**
- * Calls the `mapper` with the value emitted by the [Single] and subscribes to the returned inner [Observable].
- * For each value emitted by the inner [Observable], calls the `resultSelector` function with the original and the inner values and emits the result.
+ * Calls the [mapper] with the value emitted by the [Single] and subscribes to the returned inner [Observable].
+ * For each value emitted by the inner [Observable], calls the [resultSelector] function with the original and the inner values and emits the result.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#flatMapObservable-io.reactivex.functions.Function-).
  */

@@ -5,6 +5,11 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 
+/**
+ * Delays `onComplete` or `onError` signals from the current [Completable] for the specified time.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#delay-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-boolean-).
+ */
 fun Completable.delay(delayMillis: Long, scheduler: Scheduler, delayError: Boolean = false): Completable =
     completable { emitter ->
         val disposables = CompositeDisposable()

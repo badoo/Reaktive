@@ -6,7 +6,7 @@ import com.badoo.reaktive.observable.firstOrError
 import com.badoo.reaktive.observable.zip
 
 /**
- * Subscribes to all provided [Single]s, accumulates all their values and emits a value returned by the `mapper` function.
+ * Subscribes to all provided [Single]s, accumulates all their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zip-java.lang.Iterable-io.reactivex.functions.Function-).
  */
@@ -16,7 +16,7 @@ fun <T, R> Iterable<Single<T>>.zip(mapper: (List<T>) -> R): Single<R> =
         .firstOrError()
 
 /**
- * Subscribes to all `sources` [Single]s, accumulates all their values and emits a value returned by the `mapper` function.
+ * Subscribes to all `sources` [Single]s, accumulates all their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zipArray-io.reactivex.functions.Function-io.reactivex.SingleSource...-).
  */
@@ -24,7 +24,7 @@ fun <T, R> zip(vararg sources: Single<T>, mapper: (List<T>) -> R): Single<R> =
     sources.toList().zip(mapper)
 
 /**
- * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the `mapper` function.
+ * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zip-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.functions.BiFunction-).
  */
@@ -40,7 +40,7 @@ fun <T1, T2, R> zip(
         }
 
 /**
- * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the `mapper` function.
+ * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zip-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.functions.Function3-).
  */
@@ -57,7 +57,7 @@ fun <T1, T2, T3, R> zip(
         }
 
 /**
- * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the `mapper` function.
+ * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zip-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.functions.Function4-).
  */
@@ -75,7 +75,7 @@ fun <T1, T2, T3, T4, R> zip(
         }
 
 /**
- * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the `mapper` function.
+ * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zip-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.functions.Function5-).
  */
@@ -94,7 +94,7 @@ fun <T1, T2, T3, T4, T5, R> zip(
         }
 
 /**
- * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the `mapper` function.
+ * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zip-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.functions.Function6-).
  */
@@ -114,7 +114,7 @@ fun <T1, T2, T3, T4, T5, T6, R> zip(
         }
 
 /**
- * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the `mapper` function.
+ * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zip-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.functions.Function7-).
  */
@@ -143,7 +143,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, R> zip(
         }
 
 /**
- * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the `mapper` function.
+ * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zip-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.functions.Function8-).
  */
@@ -174,7 +174,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, R> zip(
         }
 
 /**
- * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the `mapper` function.
+ * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zip-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.functions.Function9-).
  */
@@ -207,7 +207,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> zip(
         }
 
 /**
- * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the `mapper` function.
+ * Subscribes to all `source` [Single]s, accumulates their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zip-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.SingleSource-io.reactivex.functions.Function9-).
  */
