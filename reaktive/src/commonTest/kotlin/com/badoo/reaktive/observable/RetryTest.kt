@@ -97,9 +97,9 @@ class RetryTest : ObservableToObservableTests by ObservableToObservableTestsImpl
             }
             .test()
         upstream.onError(Throwable())
-        assertSame(timeRef.value, 0)
-        upstream.onError(Throwable())
         assertSame(timeRef.value, 1)
+        upstream.onError(Throwable())
+        assertSame(timeRef.value, 2)
     }
 
     @Test
