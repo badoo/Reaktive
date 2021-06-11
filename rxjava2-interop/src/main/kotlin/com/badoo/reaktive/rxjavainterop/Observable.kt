@@ -10,7 +10,11 @@ fun <T : Any> Observable<T>.asRxJava2ObservableSource(): io.reactivex.Observable
         subscribe(observer.asReaktiveObservableObserver())
     }
 
-@Deprecated(message = "Use asRxJava2ObservableSource", replaceWith = ReplaceWith("asRxJava2ObservableSource()"))
+@Deprecated(
+    message = "Use asRxJava2ObservableSource",
+    replaceWith = ReplaceWith("asRxJava2ObservableSource()"),
+    level = DeprecationLevel.ERROR
+)
 fun <T : Any> Observable<T>.asRxJava2Source(): io.reactivex.ObservableSource<T> = asRxJava2ObservableSource()
 
 fun <T : Any> Observable<T>.asRxJava2Observable(): io.reactivex.Observable<T> =
@@ -20,7 +24,11 @@ fun <T : Any> Observable<T>.asRxJava2Observable(): io.reactivex.Observable<T> =
         }
     }
 
-@Deprecated(message = "Use asRxJava2Observable", replaceWith = ReplaceWith("asRxJava2Observable()"))
+@Deprecated(
+    message = "Use asRxJava2Observable",
+    replaceWith = ReplaceWith("asRxJava2Observable()"),
+    level = DeprecationLevel.ERROR
+)
 fun <T : Any> Observable<T>.asRxJava2(): io.reactivex.Observable<T> = asRxJava2Observable()
 
 fun <T : Any> io.reactivex.ObservableSource<out T>.asReaktiveObservable(): Observable<T> =
@@ -28,7 +36,11 @@ fun <T : Any> io.reactivex.ObservableSource<out T>.asReaktiveObservable(): Obser
         subscribe(observer.asRxJava2Observer())
     }
 
-@Deprecated(message = "Use asReaktiveObservable", replaceWith = ReplaceWith("asReaktiveObservable()"))
+@Deprecated(
+    message = "Use asReaktiveObservable",
+    replaceWith = ReplaceWith("asReaktiveObservable()"),
+    level = DeprecationLevel.ERROR
+)
 fun <T : Any> io.reactivex.ObservableSource<out T>.asReaktive(): Observable<T> = asReaktiveObservable()
 
 fun <T : Any> io.reactivex.Observer<in T>.asReaktiveObservableObserver(): ObservableObserver<T> =
@@ -50,7 +62,11 @@ fun <T : Any> io.reactivex.Observer<in T>.asReaktiveObservableObserver(): Observ
         }
     }
 
-@Deprecated(message = "Use asReaktiveObservableObserver", replaceWith = ReplaceWith("asReaktiveObservableObserver()"))
+@Deprecated(
+    message = "Use asReaktiveObservableObserver",
+    replaceWith = ReplaceWith("asReaktiveObservableObserver()"),
+    level = DeprecationLevel.ERROR
+)
 fun <T : Any> io.reactivex.Observer<in T>.asReaktive(): ObservableObserver<T> = asReaktiveObservableObserver()
 
 fun <T : Any> ObservableObserver<T>.asRxJava2Observer(): io.reactivex.Observer<T> =
@@ -72,5 +88,9 @@ fun <T : Any> ObservableObserver<T>.asRxJava2Observer(): io.reactivex.Observer<T
         }
     }
 
-@Deprecated(message = "Use asRxJava2Observer", replaceWith = ReplaceWith("asRxJava2Observer()"))
+@Deprecated(
+    message = "Use asRxJava2Observer",
+    replaceWith = ReplaceWith("asRxJava2Observer()"),
+    level = DeprecationLevel.ERROR
+)
 fun <T : Any> ObservableObserver<T>.asRxJava2(): io.reactivex.Observer<T> = asRxJava2Observer()

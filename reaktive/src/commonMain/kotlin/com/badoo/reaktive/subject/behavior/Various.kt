@@ -6,6 +6,6 @@ package com.badoo.reaktive.subject.behavior
         "BehaviorSubject<T>(initialValue)",
         "com.badoo.reaktive.subject.BehaviorSubject"
     ),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
 fun <T> behaviorSubject(initialValue: T): BehaviorSubject<T> = BehaviorSubject(initialValue = initialValue)

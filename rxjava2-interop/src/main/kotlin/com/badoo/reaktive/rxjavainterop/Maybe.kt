@@ -10,7 +10,11 @@ fun <T : Any> Maybe<T>.asRxJava2MaybeSource(): io.reactivex.MaybeSource<T> =
         subscribe(observer.asReaktiveMaybeObserver())
     }
 
-@Deprecated(message = "Use asRxJava2MaybeSource", replaceWith = ReplaceWith("asRxJava2MaybeSource()"))
+@Deprecated(
+    message = "Use asRxJava2MaybeSource",
+    replaceWith = ReplaceWith("asRxJava2MaybeSource()"),
+    level = DeprecationLevel.ERROR
+)
 fun <T : Any> Maybe<T>.asRxJava2Source(): io.reactivex.MaybeSource<T> = asRxJava2MaybeSource()
 
 fun <T : Any> Maybe<T>.asRxJava2Maybe(): io.reactivex.Maybe<T> =
@@ -20,7 +24,11 @@ fun <T : Any> Maybe<T>.asRxJava2Maybe(): io.reactivex.Maybe<T> =
         }
     }
 
-@Deprecated(message = "Use asRxJava2Maybe", replaceWith = ReplaceWith("asRxJava2Maybe()"))
+@Deprecated(
+    message = "Use asRxJava2Maybe",
+    replaceWith = ReplaceWith("asRxJava2Maybe()"),
+    level = DeprecationLevel.ERROR
+)
 fun <T : Any> Maybe<T>.asRxJava2(): io.reactivex.Maybe<T> = asRxJava2Maybe()
 
 fun <T : Any> io.reactivex.MaybeSource<out T>.asReaktiveMaybe(): Maybe<T> =
@@ -28,7 +36,11 @@ fun <T : Any> io.reactivex.MaybeSource<out T>.asReaktiveMaybe(): Maybe<T> =
         subscribe(observer.asRxJava2MaybeObserver())
     }
 
-@Deprecated(message = "Use asReaktiveMaybe", replaceWith = ReplaceWith("asReaktiveMaybe()"))
+@Deprecated(
+    message = "Use asReaktiveMaybe",
+    replaceWith = ReplaceWith("asReaktiveMaybe()"),
+    level = DeprecationLevel.ERROR
+)
 fun <T : Any> io.reactivex.MaybeSource<out T>.asReaktive(): Maybe<T> = asReaktiveMaybe()
 
 fun <T : Any> io.reactivex.MaybeObserver<in T>.asReaktiveMaybeObserver(): MaybeObserver<T> =
@@ -50,7 +62,11 @@ fun <T : Any> io.reactivex.MaybeObserver<in T>.asReaktiveMaybeObserver(): MaybeO
         }
     }
 
-@Deprecated(message = "Use asReaktiveMaybeObserver", replaceWith = ReplaceWith("asReaktiveMaybeObserver()"))
+@Deprecated(
+    message = "Use asReaktiveMaybeObserver",
+    replaceWith = ReplaceWith("asReaktiveMaybeObserver()"),
+    level = DeprecationLevel.ERROR
+)
 fun <T : Any> io.reactivex.MaybeObserver<in T>.asReaktive(): MaybeObserver<T> = asReaktiveMaybeObserver()
 
 fun <T : Any> MaybeObserver<T>.asRxJava2MaybeObserver(): io.reactivex.MaybeObserver<T> =
@@ -72,5 +88,9 @@ fun <T : Any> MaybeObserver<T>.asRxJava2MaybeObserver(): io.reactivex.MaybeObser
         }
     }
 
-@Deprecated(message = "Use asRxJava2MaybeObserver", replaceWith = ReplaceWith("asRxJava2MaybeObserver()"))
+@Deprecated(
+    message = "Use asRxJava2MaybeObserver",
+    replaceWith = ReplaceWith("asRxJava2MaybeObserver()"),
+    level = DeprecationLevel.ERROR
+)
 fun <T : Any> MaybeObserver<T>.asRxJava2(): io.reactivex.MaybeObserver<T> = asRxJava2MaybeObserver()
