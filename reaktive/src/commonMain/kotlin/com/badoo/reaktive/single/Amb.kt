@@ -4,8 +4,7 @@ import com.badoo.reaktive.base.CompositeDisposableObserver
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 /**
- * Runs multiple [Single]s and signals the events of the first one (disposing
- * the rest).
+ * Runs multiple [Single]s and signals the events of the first one to terminate (disposing the rest).
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#amb-java.lang.Iterable-).
  */

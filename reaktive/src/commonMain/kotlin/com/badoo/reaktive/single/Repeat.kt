@@ -4,7 +4,7 @@ import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.repeat
 
 /**
- * When the [Single] signals `onSuccess`, re-subscribes to the [Single], `count` times.
+ * When the [Single] signals `onSuccess`, re-subscribes to the [Single], [count] times.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#repeat-long-).
  */
