@@ -7,6 +7,11 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 
+/**
+ * When the [Completable] signals `onError`, resumes the flow with a new [Completable] returned by [nextSupplier].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#onErrorResumeNext-io.reactivex.functions.Function-).
+ */
 fun Completable.onErrorResumeNext(nextSupplier: (Throwable) -> Completable): Completable =
     completable { emitter ->
         subscribe(
@@ -30,5 +35,10 @@ fun Completable.onErrorResumeNext(nextSupplier: (Throwable) -> Completable): Com
         )
     }
 
+/**
+ * When the [Completable] signals `onError`, resumes the flow with `next` [Completable].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#onErrorResumeNext-io.reactivex.functions.Function-).
+ */
 fun Completable.onErrorResumeNext(next: Completable): Completable =
     onErrorResumeNext { next }

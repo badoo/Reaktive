@@ -1,7 +1,7 @@
 package com.badoo.reaktive.coroutinesinterop
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableObserver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -12,12 +12,12 @@ import kotlinx.coroutines.flow.channelFlow
 @ExperimentalCoroutinesApi
 fun <T> Observable<T>.asFlow(): Flow<T> =
     channelFlow {
-        val disposableWrapper = DisposableWrapper()
+        val serialDisposable = SerialDisposable()
 
         val observer =
             object : ObservableObserver<T> {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    serialDisposable.set(disposable)
                 }
 
                 override fun onNext(value: T) {
@@ -39,5 +39,5 @@ fun <T> Observable<T>.asFlow(): Flow<T> =
             channel.close(e)
         }
 
-        awaitClose(disposableWrapper::dispose)
+        awaitClose(serialDisposable::dispose)
     }

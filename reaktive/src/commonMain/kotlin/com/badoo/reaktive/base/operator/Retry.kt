@@ -9,7 +9,7 @@ internal class Retry(
     private val emitter: ErrorCallback,
     private val predicate: (attempt: Int, Throwable) -> Boolean
 ) {
-    private val attempt = AtomicInt(-1)
+    private val attempt = AtomicInt(0)
 
     fun onError(error: Throwable, resubscribe: () -> Unit) {
         emitter.tryCatch(

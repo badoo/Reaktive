@@ -7,21 +7,25 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatchAndHandle
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.disposable.plusAssign
 
+/**
+ * Calls the shared [action] for each new observer with the [Disposable] sent to the downstream.
+ * The [action] is called for each new observer **after** its `onSubscribe` callback is called.
+ */
 fun Completable.doOnAfterSubscribe(action: (Disposable) -> Unit): Completable =
     completableUnsafe { observer ->
-        val disposableWrapper = DisposableWrapper()
+        val serialDisposable = SerialDisposable()
 
-        observer.onSubscribe(disposableWrapper)
+        observer.onSubscribe(serialDisposable)
 
         try {
-            action(disposableWrapper)
+            action(serialDisposable)
         } catch (e: Throwable) {
             observer.onError(e)
-            disposableWrapper.dispose()
+            serialDisposable.dispose()
 
             return@completableUnsafe
         }
@@ -29,15 +33,15 @@ fun Completable.doOnAfterSubscribe(action: (Disposable) -> Unit): Completable =
         subscribeSafe(
             object : CompletableObserver {
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableWrapper.set(disposable)
+                    serialDisposable.set(disposable)
                 }
 
                 override fun onComplete() {
-                    disposableWrapper.doIfNotDisposed(dispose = true, block = observer::onComplete)
+                    serialDisposable.doIfNotDisposed(dispose = true, block = observer::onComplete)
                 }
 
                 override fun onError(error: Throwable) {
-                    disposableWrapper.doIfNotDisposed(dispose = true) {
+                    serialDisposable.doIfNotDisposed(dispose = true) {
                         observer.onError(error)
                     }
                 }
@@ -45,6 +49,10 @@ fun Completable.doOnAfterSubscribe(action: (Disposable) -> Unit): Completable =
         )
     }
 
+/**
+ * Calls the [action] when the [Completable] signals `onComplete`.
+ * The [action] is called **after** the observer is called.
+ */
 fun Completable.doOnAfterComplete(action: () -> Unit): Completable =
     completable { emitter ->
         subscribe(
@@ -63,6 +71,10 @@ fun Completable.doOnAfterComplete(action: () -> Unit): Completable =
         )
     }
 
+/**
+ * Calls the [consumer] with the emitted `Throwable` when the [Completable] signals `onError`.
+ * The [consumer] is called **after** the observer is called.
+ */
 fun Completable.doOnAfterError(consumer: (Throwable) -> Unit): Completable =
     completable { emitter ->
         subscribe(
@@ -83,6 +95,10 @@ fun Completable.doOnAfterError(consumer: (Throwable) -> Unit): Completable =
         )
     }
 
+/**
+ * Calls the [action] when the [Completable] signals a terminal event: either `onComplete` or `onError`.
+ * The [action] is called **after** the observer is called.
+ */
 fun Completable.doOnAfterTerminate(action: () -> Unit): Completable =
     completable { emitter ->
         subscribe(
@@ -108,6 +124,10 @@ fun Completable.doOnAfterTerminate(action: () -> Unit): Completable =
         )
     }
 
+/**
+ * Calls the shared [action] when the [Disposable] sent to the observer via `onSubscribe` is disposed.
+ * The [action] is called **after** the upstream is disposed.
+ */
 fun Completable.doOnAfterDispose(action: () -> Unit): Completable =
     completableUnsafe { observer ->
         val disposables = CompositeDisposable()
@@ -145,6 +165,11 @@ fun Completable.doOnAfterDispose(action: () -> Unit): Completable =
         )
     }
 
+/**
+ * Calls the [action] when one of the following events occur:
+ * - The [Completable] signals a terminal event: either `onComplete` or `onError` (the [action] is called **after** the observer is called).
+ * - The [Disposable] sent to the observer via `onSubscribe` is disposed (the [action] is called **after** the upstream is disposed).
+ */
 fun Completable.doOnAfterFinally(action: () -> Unit): Completable =
     completableUnsafe { observer ->
         val disposables = CompositeDisposable()

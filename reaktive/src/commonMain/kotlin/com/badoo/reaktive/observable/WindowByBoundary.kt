@@ -2,7 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.setCancellable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.single.delay
 import com.badoo.reaktive.single.repeat
@@ -177,7 +177,7 @@ private class WindowByBoundary<T>(
 
     private class UpstreamObserver<in T>(
         private val actor: Serializer<Any?>
-    ) : ObservableObserver<T>, DisposableWrapper() {
+    ) : ObservableObserver<T>, SerialDisposable() {
         override fun onSubscribe(disposable: Disposable) {
             set(disposable)
         }
@@ -197,7 +197,7 @@ private class WindowByBoundary<T>(
 
     private class BoundaryObserver(
         private val actor: Serializer<Any?>
-    ) : ObservableObserver<Any?>, DisposableWrapper() {
+    ) : ObservableObserver<Any?>, SerialDisposable() {
         override fun onSubscribe(disposable: Disposable) {
             set(disposable)
         }

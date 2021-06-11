@@ -258,9 +258,14 @@ public abstract interface class com/badoo/reaktive/disposable/Disposable {
 public final class com/badoo/reaktive/disposable/DisposableExtKt {
 	public static final fun addTo (Lcom/badoo/reaktive/disposable/Disposable;Lcom/badoo/reaktive/disposable/CompositeDisposable;)Lcom/badoo/reaktive/disposable/Disposable;
 	public static final fun setTo (Lcom/badoo/reaktive/disposable/Disposable;Lcom/badoo/reaktive/disposable/DisposableWrapper;)Lcom/badoo/reaktive/disposable/Disposable;
+	public static final fun setTo (Lcom/badoo/reaktive/disposable/Disposable;Lcom/badoo/reaktive/disposable/SerialDisposable;)Lcom/badoo/reaktive/disposable/Disposable;
 }
 
-public class com/badoo/reaktive/disposable/DisposableWrapper : com/badoo/reaktive/disposable/Disposable {
+public class com/badoo/reaktive/disposable/DisposableWrapper : com/badoo/reaktive/disposable/SerialDisposable {
+	public fun <init> ()V
+}
+
+public class com/badoo/reaktive/disposable/SerialDisposable : com/badoo/reaktive/disposable/Disposable {
 	public fun <init> ()V
 	public fun dispose ()V
 	public fun isDisposed ()Z
@@ -686,6 +691,7 @@ public final class com/badoo/reaktive/observable/FirstOrErrorKt {
 }
 
 public final class com/badoo/reaktive/observable/FlatMapCompletableKt {
+	public static final fun flatMapCompletable (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun flatMapCompletable (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
 }
 
@@ -694,16 +700,22 @@ public final class com/badoo/reaktive/observable/FlatMapIterableKt {
 }
 
 public final class com/badoo/reaktive/observable/FlatMapKt {
+	public static final fun flatMap (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun flatMap (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMap (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMap (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/FlatMapMaybeKt {
+	public static final fun flatMapMaybe (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun flatMapMaybe (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMapMaybe (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMapMaybe (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/FlatMapSingleKt {
+	public static final fun flatMapSingle (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun flatMapSingle (Lcom/badoo/reaktive/observable/Observable;ILkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMapSingle (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun flatMapSingle (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/observable/Observable;
 }
@@ -1392,12 +1404,6 @@ public final class com/badoo/reaktive/subject/unicast/UnicastSubjectBuilderKt {
 public final class com/badoo/reaktive/utils/HandleSourceErrorKt {
 	public static final fun handleReaktiveError (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun handleReaktiveError$default (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-}
-
-public class com/badoo/reaktive/utils/ThreadLocalStorage : com/badoo/reaktive/utils/ThreadLocalHolder, com/badoo/reaktive/disposable/Disposable {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/Object;)V
-	public synthetic fun <init> (Ljava/lang/Object;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class com/badoo/reaktive/utils/UncaughtErrorHandlerKt {

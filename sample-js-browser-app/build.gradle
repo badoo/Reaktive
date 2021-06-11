@@ -4,7 +4,12 @@ plugins {
     id 'org.jetbrains.kotlin.js'
 }
 
-kotlin.target.browser()
+kotlin {
+    js(IR) {
+        browser()
+        binaries.executable()
+    }
+}
 
 dependencies {
     implementation Deps.kotlin.stdlib.js

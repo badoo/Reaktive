@@ -7,7 +7,7 @@ import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.completable.CompletableObserver
 import com.badoo.reaktive.completable.completableTimer
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.maybe.maybeTimer
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.single.repeatWhen
@@ -242,7 +242,7 @@ private class WindowBySignal<T, S>(
 
     private abstract class AbstractObserver(
         private val actor: Serializer<Any?>
-    ) : Observer, ErrorCallback, DisposableWrapper() {
+    ) : Observer, ErrorCallback, SerialDisposable() {
         private var isCompleted = AtomicBoolean()
 
         fun markCompleted() {

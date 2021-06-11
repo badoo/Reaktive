@@ -10,7 +10,11 @@ fun Completable.asRxJava3CompletableSource(): io.reactivex.rxjava3.core.Completa
         subscribe(observer.asReaktiveCompletableObserver())
     }
 
-@Deprecated(message = "Use asRxJava3CompletableSource", replaceWith = ReplaceWith("asRxJava3CompletableSource()"))
+@Deprecated(
+    message = "Use asRxJava3CompletableSource",
+    replaceWith = ReplaceWith("asRxJava3CompletableSource()"),
+    level = DeprecationLevel.ERROR
+)
 fun Completable.asRxJava3Source(): io.reactivex.rxjava3.core.CompletableSource = asRxJava3CompletableSource()
 
 fun Completable.asRxJava3Completable(): io.reactivex.rxjava3.core.Completable =
@@ -20,7 +24,11 @@ fun Completable.asRxJava3Completable(): io.reactivex.rxjava3.core.Completable =
         }
     }
 
-@Deprecated(message = "Use asRxJava3Completable", replaceWith = ReplaceWith("asRxJava3Completable()"))
+@Deprecated(
+    message = "Use asRxJava3Completable",
+    replaceWith = ReplaceWith("asRxJava3Completable()"),
+    level = DeprecationLevel.ERROR
+)
 fun Completable.asRxJava3(): io.reactivex.rxjava3.core.Completable = asRxJava3Completable()
 
 fun io.reactivex.rxjava3.core.CompletableSource.asReaktiveCompletable(): Completable =
@@ -28,7 +36,11 @@ fun io.reactivex.rxjava3.core.CompletableSource.asReaktiveCompletable(): Complet
         subscribe(observer.asRxJava3CompletableObserver())
     }
 
-@Deprecated(message = "Use asReaktiveCompletable", replaceWith = ReplaceWith("asReaktiveCompletable()"))
+@Deprecated(
+    message = "Use asReaktiveCompletable",
+    replaceWith = ReplaceWith("asReaktiveCompletable()"),
+    level = DeprecationLevel.ERROR
+)
 fun io.reactivex.rxjava3.core.CompletableSource.asReaktive(): Completable = asReaktiveCompletable()
 
 fun io.reactivex.rxjava3.core.CompletableObserver.asReaktiveCompletableObserver(): CompletableObserver =
@@ -46,7 +58,11 @@ fun io.reactivex.rxjava3.core.CompletableObserver.asReaktiveCompletableObserver(
         }
     }
 
-@Deprecated(message = "Use asReaktiveCompletableObserver", replaceWith = ReplaceWith("asReaktiveCompletableObserver()"))
+@Deprecated(
+    message = "Use asReaktiveCompletableObserver",
+    replaceWith = ReplaceWith("asReaktiveCompletableObserver()"),
+    level = DeprecationLevel.ERROR
+)
 fun io.reactivex.rxjava3.core.CompletableObserver.asReaktive(): CompletableObserver = asReaktiveCompletableObserver()
 
 fun CompletableObserver.asRxJava3CompletableObserver(): io.reactivex.rxjava3.core.CompletableObserver =
@@ -64,5 +80,9 @@ fun CompletableObserver.asRxJava3CompletableObserver(): io.reactivex.rxjava3.cor
         }
     }
 
-@Deprecated(message = "Use asRxJava3CompletableObserver", replaceWith = ReplaceWith("asRxJava3CompletableObserver()"))
+@Deprecated(
+    message = "Use asRxJava3CompletableObserver",
+    replaceWith = ReplaceWith("asRxJava3CompletableObserver()"),
+    level = DeprecationLevel.ERROR
+)
 fun CompletableObserver.asRxJava3(): io.reactivex.rxjava3.core.CompletableObserver = asRxJava3CompletableObserver()

@@ -143,6 +143,7 @@ class PublishConfigurationPlugin : Plugin<Project> {
             DarwinPlugin.TARGET_NAME_WATCHOS_ARM32 to Target.shouldPublishTarget(project, Target.WATCHOS),
             DarwinPlugin.TARGET_NAME_WATCHOS_ARM64 to Target.shouldPublishTarget(project, Target.WATCHOS),
             DarwinPlugin.TARGET_NAME_WATCHOS_SIM to Target.shouldPublishTarget(project, Target.WATCHOS),
+            DarwinPlugin.TARGET_NAME_WATCHOS_X64 to Target.shouldPublishTarget(project, Target.WATCHOS),
             DarwinPlugin.TARGET_NAME_TVOS_ARM64 to Target.shouldPublishTarget(project, Target.TVOS),
             DarwinPlugin.TARGET_NAME_TVOS_X64 to Target.shouldPublishTarget(project, Target.TVOS),
             DarwinPlugin.TARGET_NAME_MACOS_X64 to Target.shouldPublishTarget(project, Target.MACOS)

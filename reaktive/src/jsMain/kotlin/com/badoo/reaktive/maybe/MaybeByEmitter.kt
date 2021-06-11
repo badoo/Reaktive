@@ -2,13 +2,13 @@ package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 
 // Don't inline at the moment for JS, we had random crashes in JS
 actual fun <T> maybe(onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
         val emitter =
-            object : DisposableWrapper(), MaybeEmitter<T> {
+            object : SerialDisposable(), MaybeEmitter<T> {
                 override fun setDisposable(disposable: Disposable?) {
                     set(disposable)
                 }

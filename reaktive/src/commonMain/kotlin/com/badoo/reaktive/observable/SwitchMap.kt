@@ -6,7 +6,7 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.update
@@ -17,8 +17,8 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
 
-        val innerDisposableWrapper = DisposableWrapper()
-        disposables += innerDisposableWrapper
+        val innerSerialDisposable = SerialDisposable()
+        disposables += innerSerialDisposable
 
         val state = AtomicReference(SwitchMapState())
         val serializedEmitter = emitter.serialize()
@@ -37,21 +37,21 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
                 }
 
                 private fun onInnerObservable(observable: Observable<R>) {
-                    val localDisposableWrapper = DisposableWrapper()
+                    val localSerialDisposable = SerialDisposable()
 
                     /*
                      * Dispose any existing inner Observable.
                      * If a previous Observable did not provide its disposable yet
                      * it will be disposed automatically later since
-                     * its localDisposableWrapper is disposed.
+                     * its localSerialDisposable is disposed.
                      */
-                    innerDisposableWrapper.set(localDisposableWrapper)
+                    innerSerialDisposable.set(localSerialDisposable)
 
                     val innerObserver =
                         object : ObservableObserver<R>, ValueCallback<R> by serializedEmitter,
                             ErrorCallback by serializedEmitter {
                             override fun onSubscribe(disposable: Disposable) {
-                                localDisposableWrapper.set(disposable)
+                                localSerialDisposable.set(disposable)
                             }
 
                             override fun onComplete() {

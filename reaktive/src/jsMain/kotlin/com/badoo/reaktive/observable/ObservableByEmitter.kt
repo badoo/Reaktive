@@ -2,13 +2,13 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 
 // Don't inline at the moment for JS, we had random crashes in JS
 actual fun <T> observable(onSubscribe: (emitter: ObservableEmitter<T>) -> Unit): Observable<T> =
     observableUnsafe { observer ->
         val emitter =
-            object : DisposableWrapper(), ObservableEmitter<T> {
+            object : SerialDisposable(), ObservableEmitter<T> {
                 override fun setDisposable(disposable: Disposable?) {
                     set(disposable)
                 }

@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 class SerializerTest {
 
     private val values = arrayListOf<Int?>()
-    private val comparator = Comparator<Int>(Int::compareTo)
+    private val comparator = Comparator<Int> { a, b -> a.compareTo(b) }
 
     @Test
     fun value_emitted_WHEN_sent() {

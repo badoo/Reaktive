@@ -1,6 +1,6 @@
 # <img src="https://raw.githubusercontent.com/badoo/Reaktive/master/assets/logo_reaktive.png" height="36">
 
-[![Download](https://api.bintray.com/packages/badoo/maven/reaktive/images/download.svg)](https://bintray.com/badoo/maven/reaktive/_latestVersion)
+[![Maven Central](https://img.shields.io/maven-central/v/com.badoo.reaktive/reaktive?color=blue)](https://search.maven.org/artifact/com.badoo.reaktive/reaktive)
 [![Build Status](https://github.com/badoo/Reaktive/workflows/Build/badge.svg?branch=master)](https://github.com/badoo/Reaktive/actions)
 [![License](https://img.shields.io/badge/License-Apache/2.0-blue.svg)](https://github.com/badoo/Reaktive/blob/master/LICENSE)
 [![kotlinlang|reaktive](https://img.shields.io/badge/kotlinlang-reaktive-blue?logo=slack)](https://kotlinlang.slack.com/archives/CU05HB31A)
@@ -14,16 +14,7 @@ Should you have any questions or feedback welcome to the **Kotlin Slack channel*
 Recommended minimum Gradle version is 5.3. Please read first the documentation about
 [metadata publishing mode](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#experimental-metadata-publishing-mode).
 
-Reaktive is published to Bintray, the repository is synchronized with JCenter.
-Make sure you have the JCenter repository specified in your build.gradle:
-
-```groovy
-repositories {
-    jcenter()
-}
-```
-
-There are a number of modules published:
+There are a number of modules published to Maven Central:
 - `reaktive` - the main Reaktive library (multiplatform)
 - `reaktive-annotations` - collection of annotations (mutiplatform)
 - `reaktive-testing` - testing utilities (multiplatform)

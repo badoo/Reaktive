@@ -2,7 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.base.setCancellable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.DisposableWrapper
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.subject.unicast.UnicastSubject
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
@@ -44,7 +44,7 @@ private class UpstreamObserver<T>(
     private val skip: Long,
     private val activeWindowsCount: AtomicInt,
     private val downstream: ObservableCallbacks<Observable<T>>
-) : DisposableWrapper(), ObservableObserver<T> {
+) : SerialDisposable(), ObservableObserver<T> {
     private val windows = SharedQueue<UnicastSubject<T>>()
     private val skippedCount = AtomicLong()
     private val tailWindowValuesCount = AtomicLong()

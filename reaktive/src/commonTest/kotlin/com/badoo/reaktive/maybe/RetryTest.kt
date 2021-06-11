@@ -96,9 +96,9 @@ class RetryTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ retry() }) {
             }
             .test()
         upstream.onError(Throwable())
-        assertSame(timeRef.value, 0)
-        upstream.onError(Throwable())
         assertSame(timeRef.value, 1)
+        upstream.onError(Throwable())
+        assertSame(timeRef.value, 2)
     }
 
     @Test

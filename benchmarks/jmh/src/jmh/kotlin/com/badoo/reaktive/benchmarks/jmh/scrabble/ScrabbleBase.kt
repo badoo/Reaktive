@@ -50,7 +50,7 @@ abstract class ScrabbleBase {
 
     private fun readResource(path: String) =
         BufferedReader(InputStreamReader(GZIPInputStream(this.javaClass.classLoader.getResourceAsStream(path)))).lines()
-            .map { it.toLowerCase() }.collect(Collectors.toSet())
+            .map { it.lowercase() }.collect(Collectors.toSet())
 
     init {
         val expected = listOf(
