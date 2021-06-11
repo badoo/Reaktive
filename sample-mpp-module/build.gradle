@@ -24,10 +24,11 @@ kotlin {
         }
         if (Target.shouldDefineTarget(project, Target.ALL_MACOS_HOSTED)) {
             def configureFrameworks = { target ->
-                [target.binaries.getFramework('DEBUG'), target.binaries.getFramework('RELEASE')].each {
-                    // Reaktive should be included into framework file, so we don't need to generate 2 framework files
-                    it.export project(':reaktive')
-                    it.transitiveExport = true
+                target.binaries {
+                    framework {
+                        export project(':reaktive')
+                        transitiveExport = true
+                    }
                 }
             }
             if (Target.shouldDefineTarget(project, Target.IOS)) {
