@@ -21,7 +21,11 @@ fun io.reactivex.Scheduler.asReaktiveScheduler(): Scheduler =
         }
     }
 
-@Deprecated(message = "Use asReaktiveScheduler", replaceWith = ReplaceWith("asReaktiveScheduler()"))
+@Deprecated(
+    message = "Use asReaktiveScheduler",
+    replaceWith = ReplaceWith("asReaktiveScheduler()"),
+    level = DeprecationLevel.ERROR
+)
 fun io.reactivex.Scheduler.asReaktive(): Scheduler = asReaktiveScheduler()
 
 private fun io.reactivex.Scheduler.Worker.asExecutor(disposables: CompositeDisposable): Scheduler.Executor =
