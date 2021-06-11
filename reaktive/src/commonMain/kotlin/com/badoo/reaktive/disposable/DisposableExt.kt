@@ -4,6 +4,7 @@ package com.badoo.reaktive.disposable
     message = "Please use SerialDisposable and the corresponding `Disposable.setTo(SerialDisposable)` extension function",
     level = DeprecationLevel.ERROR
 )
+@Suppress("DEPRECATION_ERROR")
 fun <T : Disposable> T.setTo(disposableWrapper: DisposableWrapper): T {
     disposableWrapper.set(this)
 
