@@ -8,7 +8,7 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 
 /**
- * When the [Completable] signals `onError`, resumes the flow with a new [Completable] returned by `nextSupplier.
+ * When the [Completable] signals `onError`, resumes the flow with a new [Completable] returned by [nextSupplier].
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#onErrorResumeNext-io.reactivex.functions.Function-).
  */

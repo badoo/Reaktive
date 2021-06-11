@@ -8,7 +8,7 @@ import com.badoo.reaktive.observable.observable
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
 /**
- * When the [Single] signals `onSuccess`, re-subscribes to the [Single] if the `predicate` function returns `false`.
+ * When the [Single] signals `onSuccess`, re-subscribes to the [Single] if the [predicate] function returns `false`.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#repeatUntil-io.reactivex.functions.BooleanSupplier-).
  */

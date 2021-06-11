@@ -8,7 +8,7 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 
 /**
- * When the [Single] signals `onError`, resumes the flow with a new [Single] returned by `nextSupplier.
+ * When the [Single] signals `onError`, resumes the flow with a new [Single] returned by [nextSupplier].
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#onErrorResumeNext-io.reactivex.functions.Function-).
  */
@@ -33,7 +33,7 @@ fun <T> Single<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Single<T>): Sin
     }
 
 /**
- * When the [Single] signals `onError`, resumes the flow with `next` [Single].
+ * When the [Single] signals `onError`, resumes the flow with [next] [Single].
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#onErrorResumeNext-io.reactivex.Single-).
  */

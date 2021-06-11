@@ -7,8 +7,8 @@ import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.maybe
 
 /**
- * Filters the value emitted by the [Single] using the provided `predicate`.
- * The returned [Maybe] signals `onSuccess` if the `predicate` returned `true`, otherwise signals `onComplete`.
+ * Filters the value emitted by the [Single] using the provided [predicate].
+ * The returned [Maybe] signals `onSuccess` if the [predicate] returned `true`, otherwise signals `onComplete`.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#filter-io.reactivex.functions.Predicate-).
  */

@@ -21,7 +21,7 @@ inline fun completableUnsafe(crossinline onSubscribe: (observer: CompletableObse
     )
 
 /**
- * Returns a [Completable] that signals the specified `error` via `onError`.
+ * Returns a [Completable] that signals the specified [error] via `onError`.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#error-java.lang.Throwable-).
  */
@@ -74,7 +74,7 @@ private val completableOfNever by lazy {
 fun completableOfNever(): Completable = completableOfNever
 
 /**
- * Returns a [Completable] that calls the `func` shared function and then completes.
+ * Returns a [Completable] that calls the [func] shared function and then completes.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#fromCallable-java.util.concurrent.Callable-).
  */

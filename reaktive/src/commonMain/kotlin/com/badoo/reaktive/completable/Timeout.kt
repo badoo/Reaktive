@@ -7,7 +7,7 @@ import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.scheduler.Scheduler
 
 /**
- * Disposes the current [Completable] if it does not signal within the `timeoutMillis` timeout, and subscribes to `other` [Completable] if provided.
+ * Disposes the current [Completable] if it does not signal within the [timeoutMillis] timeout, and subscribes to [other] [Completable] if provided.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#timeout-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-io.reactivex.CompletableSource-).
  */

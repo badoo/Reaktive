@@ -12,8 +12,8 @@ import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.disposable.plusAssign
 
 /**
- * Calls the shared `action` for each new observer with the [Disposable] sent to the downstream.
- * The `action` is called for each new observer **after** its `onSubscribe` callback is called.
+ * Calls the shared [action] for each new observer with the [Disposable] sent to the downstream.
+ * The [action] is called for each new observer **after** its `onSubscribe` callback is called.
  */
 fun Completable.doOnAfterSubscribe(action: (Disposable) -> Unit): Completable =
     completableUnsafe { observer ->
@@ -50,8 +50,8 @@ fun Completable.doOnAfterSubscribe(action: (Disposable) -> Unit): Completable =
     }
 
 /**
- * Calls the `action` when the [Completable] signals `onComplete`.
- * The `action` is called **after** the observer is called.
+ * Calls the [action] when the [Completable] signals `onComplete`.
+ * The [action] is called **after** the observer is called.
  */
 fun Completable.doOnAfterComplete(action: () -> Unit): Completable =
     completable { emitter ->
@@ -72,8 +72,8 @@ fun Completable.doOnAfterComplete(action: () -> Unit): Completable =
     }
 
 /**
- * Calls the `action` with the emitted `Throwable` when the [Completable] signals `onError`.
- * The `action` is called **after** the observer is called.
+ * Calls the [consumer] with the emitted `Throwable` when the [Completable] signals `onError`.
+ * The [consumer] is called **after** the observer is called.
  */
 fun Completable.doOnAfterError(consumer: (Throwable) -> Unit): Completable =
     completable { emitter ->
@@ -96,8 +96,8 @@ fun Completable.doOnAfterError(consumer: (Throwable) -> Unit): Completable =
     }
 
 /**
- * Calls the `action` when the [Completable] signals a terminal event: either `onComplete` or `onError`.
- * The `action` is called **after** the observer is called.
+ * Calls the [action] when the [Completable] signals a terminal event: either `onComplete` or `onError`.
+ * The [action] is called **after** the observer is called.
  */
 fun Completable.doOnAfterTerminate(action: () -> Unit): Completable =
     completable { emitter ->
@@ -125,8 +125,8 @@ fun Completable.doOnAfterTerminate(action: () -> Unit): Completable =
     }
 
 /**
- * Calls the shared `action` when the [Disposable] sent to the observer via `onSubscribe` is disposed.
- * The `action` is called **after** the upstream is disposed.
+ * Calls the shared [action] when the [Disposable] sent to the observer via `onSubscribe` is disposed.
+ * The [action] is called **after** the upstream is disposed.
  */
 fun Completable.doOnAfterDispose(action: () -> Unit): Completable =
     completableUnsafe { observer ->
@@ -166,9 +166,9 @@ fun Completable.doOnAfterDispose(action: () -> Unit): Completable =
     }
 
 /**
- * Calls the `action` when one of the following events occur:
- * - The [Completable] signals a terminal event: either `onComplete` or `onError` (the `action` is called **after** the observer is called).
- * - The [Disposable] sent to the observer via `onSubscribe` is disposed (the `action` is called **after** the upstream is disposed).
+ * Calls the [action] when one of the following events occur:
+ * - The [Completable] signals a terminal event: either `onComplete` or `onError` (the [action] is called **after** the observer is called).
+ * - The [Disposable] sent to the observer via `onSubscribe` is disposed (the [action] is called **after** the upstream is disposed).
  */
 fun Completable.doOnAfterFinally(action: () -> Unit): Completable =
     completableUnsafe { observer ->

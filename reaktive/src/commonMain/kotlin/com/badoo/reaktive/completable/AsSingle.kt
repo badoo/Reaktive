@@ -8,7 +8,7 @@ import com.badoo.reaktive.single.SingleEmitter
 import com.badoo.reaktive.single.single
 
 /**
- * Converts this [Completable] into a [Single] which emits the `defaultValue` when this [Completable] completes.
+ * Converts this [Completable] into a [Single] which emits the [defaultValue] when this [Completable] completes.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#toSingleDefault-T-).
  */
@@ -18,7 +18,7 @@ fun <T> Completable.asSingle(defaultValue: T): Single<T> =
     }
 
 /**
- * Converts this [Completable] into a [Single] which emits a value returned by `defaultValueSupplier` when this [Completable] completes.
+ * Converts this [Completable] into a [Single] which emits a value returned by [defaultValueSupplier] when this [Completable] completes.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#toSingle-java.util.concurrent.Callable-).
  */

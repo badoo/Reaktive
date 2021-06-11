@@ -5,7 +5,7 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 
 /**
- * When the [Completable] signals `onError`, re-subscribes to the [Completable] if the `predicate` returns `true`.
+ * When the [Completable] signals `onError`, re-subscribes to the [Completable] if the [predicate] returns `true`.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#retry-io.reactivex.functions.BiPredicate-).
  */
@@ -27,7 +27,7 @@ fun Completable.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -
     }
 
 /**
- * When the [Completable] signals `onError`, re-subscribes to the [Completable], up to `times` times.
+ * When the [Completable] signals `onError`, re-subscribes to the [Completable], up to [times] times.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#retry-long-).
  */

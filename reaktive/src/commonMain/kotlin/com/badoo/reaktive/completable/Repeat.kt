@@ -4,7 +4,7 @@ import com.badoo.reaktive.observable.asCompletable
 import com.badoo.reaktive.observable.repeat
 
 /**
- * When the [Completable] signals `onComplete`, re-subscribes to the [Completable], `count` times.
+ * When the [Completable] signals `onComplete`, re-subscribes to the [Completable], [count] times.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#repeat-long-).
  */

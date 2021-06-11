@@ -5,7 +5,7 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 
 /**
- * Converts the value emitted by the [Single] using the provided `mapper` and emits the result.
+ * Converts the value emitted by the [Single] using the provided [mapper] and emits the result.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#map-io.reactivex.functions.Function-).
  */
