@@ -6,6 +6,11 @@ import com.badoo.reaktive.disposable.SerialDisposable
 
 // Separate implementation prevents unnecessary freezing: https://github.com/badoo/Reaktive/issues/472
 // Not inlined due to https://youtrack.jetbrains.com/issue/KT-44764
+/**
+ * Creates a [Completable] with manual signalling via [CompletableEmitter].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#create-io.reactivex.CompletableOnSubscribe-).
+ */
 actual fun completable(onSubscribe: (emitter: CompletableEmitter) -> Unit): Completable =
     completableUnsafe { observer ->
         val serialDisposable = SerialDisposable()

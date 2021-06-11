@@ -104,6 +104,9 @@ class MppConfigurationPlugin : Plugin<Project> {
                     maybeCreate("watchosSimMain").dependsOn(getByName("darwinCommonMain"))
                     maybeCreate("watchosSimTest").dependsOn(getByName("darwinCommonTest"))
 
+                    maybeCreate("watchosX64Main").dependsOn(getByName("darwinCommonMain"))
+                    maybeCreate("watchosX64Test").dependsOn(getByName("darwinCommonTest"))
+
                     maybeCreate("tvosArm64Main").dependsOn(getByName("darwinCommonMain"))
                     maybeCreate("tvosArm64Test").dependsOn(getByName("darwinCommonTest"))
 

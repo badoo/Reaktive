@@ -30,6 +30,7 @@ class DarwinPlugin : Plugin<Project> {
                 watchosArm32(TARGET_NAME_WATCHOS_ARM32).configureFramework(buildBinariesTasks)
                 watchosArm64(TARGET_NAME_WATCHOS_ARM64).configureFramework(buildBinariesTasks)
                 watchosX86(TARGET_NAME_WATCHOS_SIM).configureFramework(buildBinariesTasks)
+                watchosX64(TARGET_NAME_WATCHOS_X64).configureFramework(buildBinariesTasks)
             }
             if (Target.shouldDefineTarget(target, Target.TVOS)) {
                 tvosArm64(TARGET_NAME_TVOS_ARM64).configureFramework(buildBinariesTasks)
@@ -44,7 +45,6 @@ class DarwinPlugin : Plugin<Project> {
     }
 
     private fun KotlinNativeTarget.configureFramework(buildTasks: MutableCollection<Any>) {
-        binaries { framework() }
         buildTasks += compilations.named(SourceSet.MAIN_SOURCE_SET_NAME).map { it.binariesTaskName }
     }
 
@@ -102,6 +102,7 @@ class DarwinPlugin : Plugin<Project> {
         const val TARGET_NAME_WATCHOS_ARM32 = "watchosArm32"
         const val TARGET_NAME_WATCHOS_ARM64 = "watchosArm64"
         const val TARGET_NAME_WATCHOS_SIM = "watchosSim"
+        const val TARGET_NAME_WATCHOS_X64 = "watchosX64"
         const val TARGET_NAME_TVOS_ARM64 = "tvosArm64"
         const val TARGET_NAME_TVOS_X64 = "tvosSim"
         const val TARGET_NAME_MACOS_X64 = "macosX64"

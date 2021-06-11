@@ -11,6 +11,11 @@ import com.badoo.reaktive.single.flatMap
 import com.badoo.reaktive.single.flatMapMaybe
 import com.badoo.reaktive.single.flatMapObservable
 
+/**
+ * Returns a [Completable] that first runs this [Completable] and waits for its completion, then runs the other [Completable].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#andThen-io.reactivex.CompletableSource-).
+ */
 fun Completable.andThen(completable: Completable): Completable =
     completable { emitter ->
         subscribe(
@@ -29,11 +34,26 @@ fun Completable.andThen(completable: Completable): Completable =
         )
     }
 
+/**
+ * Returns a [Single] that first runs this [Completable] and waits for its completion, then runs the other [Single].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#andThen-io.reactivex.SingleSource-).
+ */
 fun <T> Completable.andThen(single: Single<T>): Single<T> =
     asSingle(Unit).flatMap { single }
 
+/**
+ * Returns an [Observable] that first runs this [Completable] and waits for its completion, then runs the other [Observable].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#andThen-io.reactivex.ObservableSource-).
+ */
 fun <T> Completable.andThen(observable: Observable<T>): Observable<T> =
     asSingle(Unit).flatMapObservable { observable }
 
+/**
+ * Returns an [Observable] that first runs this [Completable] and waits for its completion, then runs the other [Maybe].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#andThen-io.reactivex.MaybeSource-).
+ */
 fun <T> Completable.andThen(maybe: Maybe<T>): Maybe<T> =
     asSingle(Unit).flatMapMaybe { maybe }

@@ -8,6 +8,11 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
+/**
+ * Merges multiple [Completable]s into one [Completable], running all [Completable]s simultaneously.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#merge-java.lang.Iterable-).
+ */
 fun Iterable<Completable>.merge(): Completable =
     completable { emitter ->
         val disposables = CompositeDisposable()
@@ -39,6 +44,11 @@ fun Iterable<Completable>.merge(): Completable =
         }
     }
 
+/**
+ * Merges multiple [Completable]s into one [Completable], running all [Completable]s simultaneously.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#mergeArray-io.reactivex.CompletableSource...-).
+ */
 fun merge(vararg sources: Completable): Completable =
     sources
         .asList()

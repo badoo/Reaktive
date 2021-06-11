@@ -21,7 +21,7 @@ inline fun <T> singleUnsafe(crossinline onSubscribe: (observer: SingleObserver<T
     )
 
 /**
- * Returns a [Single] that emits the specified `value`.
+ * Returns a [Single] that emits the specified [value].
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#just-T-).
  */
@@ -55,7 +55,7 @@ private val singleOfNever by lazy {
 fun <T> singleOfNever(): Single<T> = singleOfNever
 
 /**
- * Returns a [Single] that signals the specified `error` via `onError`.
+ * Returns a [Single] that signals the specified [error] via `onError`.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#error-java.lang.Throwable-).
  */
@@ -75,7 +75,7 @@ fun <T> singleOfError(error: Throwable): Single<T> =
 fun <T> Throwable.toSingleOfError(): Single<T> = singleOfError(this)
 
 /**
- * Returns a [Single] that emits the value returned by the `func` shared function.
+ * Returns a [Single] that emits the value returned by the [func] shared function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#fromCallable-java.util.concurrent.Callable-).
  */
