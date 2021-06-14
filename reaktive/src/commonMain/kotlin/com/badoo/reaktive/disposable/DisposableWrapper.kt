@@ -6,6 +6,6 @@ package com.badoo.reaktive.disposable
 @Deprecated(
     message = "Please use SerialDisposable",
     replaceWith = ReplaceWith("SerialDisposable"),
-    level = DeprecationLevel.ERROR
+    level = DeprecationLevel.WARNING
 )
 open class DisposableWrapper : SerialDisposable()
