@@ -6,10 +6,14 @@ import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ProducerScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
@@ -45,6 +49,22 @@ class FlowAsObservableJvmJsTest {
                 .test()
 
         observer.assertError(error)
+    }
+
+    @Test
+    fun produces_error_WHEN_launch_in_flow_produced_error() {
+        val observer =
+            flow<Nothing> {
+                coroutineScope {
+                    launch { throw Exception("Msg") }
+                    yield()
+                }
+            }
+                .asObservable()
+                .test()
+
+
+        assertEquals("Msg", observer.error?.message)
     }
 
     @Test
