@@ -34,7 +34,7 @@ fun <T, R> Iterable<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Observ
                             val mappedValue =
                                 try {
                                     @Suppress("UNCHECKED_CAST")
-                                    mapper(values as List<T>)
+                                    mapper(values.toList() as List<T>)
                                 } catch (e: Throwable) {
                                     emitter.onError(e)
                                     return@serializer false
