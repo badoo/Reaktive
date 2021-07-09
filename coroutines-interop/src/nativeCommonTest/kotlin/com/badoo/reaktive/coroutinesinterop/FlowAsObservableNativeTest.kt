@@ -8,8 +8,11 @@ import com.badoo.reaktive.scheduler.ioScheduler
 import com.badoo.reaktive.single.blockingGet
 import com.badoo.reaktive.test.observable.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -27,6 +30,23 @@ class FlowAsObservableNativeTest {
                 .toList()
 
         assertFailsWith<Exception>(message = "error") {
+            observable.blockingGet()
+        }
+    }
+
+    @Test
+    fun produces_error_WHEN_launch_in_flow_produced_error() {
+        val observable =
+            flow<Nothing> {
+                coroutineScope {
+                    launch { throw Exception("Msg") }
+                    yield()
+                }
+            }
+                .asObservable()
+                .toList()
+
+        assertFailsWith<Exception>(message = "Msg") {
             observable.blockingGet()
         }
     }
