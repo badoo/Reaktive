@@ -8,7 +8,10 @@ import com.badoo.reaktive.utils.atomic.getValue
 import com.badoo.reaktive.utils.atomic.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class SingleFromCoroutineTest {
@@ -34,6 +37,17 @@ class SingleFromCoroutineTest {
         val observer = singleFromCoroutine { throw error }.test()
 
         observer.assertError(error)
+    }
+
+    @Test
+    fun produces_error_WHEN_launch_in_coroutine_thrown_exception() {
+        val observer =
+            singleFromCoroutine {
+                launch { throw Exception("Msg") }
+                yield()
+            }.test()
+
+        assertEquals("Msg", observer.error?.message)
     }
 
     @Test
