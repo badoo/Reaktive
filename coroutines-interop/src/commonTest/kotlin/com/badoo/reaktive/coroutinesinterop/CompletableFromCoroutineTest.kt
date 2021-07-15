@@ -8,9 +8,10 @@ import com.badoo.reaktive.utils.atomic.getValue
 import com.badoo.reaktive.utils.atomic.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class CompletableFromCoroutineTest {
@@ -29,6 +30,17 @@ class CompletableFromCoroutineTest {
         val observer = completableFromCoroutine { throw error }.test()
 
         observer.assertError(error)
+    }
+
+    @Test
+    fun produces_error_WHEN_launch_in_coroutine_thrown_exception() {
+        val observer =
+            completableFromCoroutine {
+                launch { throw Exception("Msg") }
+                yield()
+            }.test()
+
+        assertEquals("Msg", observer.error?.message)
     }
 
     @Test
