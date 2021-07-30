@@ -5,6 +5,11 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observable
 
+/**
+ * Converts this [Maybe] into an [Observable], which signals a success value via `onNext` followed by `onComplete`.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#toObservable--).
+ */
 fun <T> Maybe<T>.asObservable(): Observable<T> =
     observable { emitter ->
         subscribe(

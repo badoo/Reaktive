@@ -6,7 +6,8 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 
 /**
- * Delays `onSuccess` or `onError` signals from the current [Single] for the specified time.
+ * Delays `onSuccess` signal from the current [Single] for the specified time.
+ * The `onError` signal is not delayed by default, which can be enabled by setting the [delayError] flag.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#delay-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-boolean-).
  */

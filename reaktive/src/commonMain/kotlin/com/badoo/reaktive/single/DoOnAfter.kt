@@ -74,7 +74,7 @@ fun <T> Single<T>.doOnAfterSuccess(action: (T) -> Unit): Single<T> =
     }
 
 /**
- * Calls the [consumer] with the emitted `Throwable` when the [Single] signals `onError`.
+ * Calls the [consumer] with the emitted [Throwable] when the [Single] signals `onError`.
  * The [consumer] is called **after** the observer is called.
  */
 fun <T> Single<T>.doOnAfterError(consumer: (Throwable) -> Unit): Single<T> =

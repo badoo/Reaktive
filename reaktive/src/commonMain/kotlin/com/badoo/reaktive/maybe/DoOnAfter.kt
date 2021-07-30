@@ -13,6 +13,10 @@ import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.disposable.plusAssign
 
+/**
+ * Calls the shared [action] for each new observer with the [Disposable] sent to the downstream.
+ * The [action] is called for each new observer **after** its `onSubscribe` callback is called.
+ */
 fun <T> Maybe<T>.doOnAfterSubscribe(action: (Disposable) -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
         val serialDisposable = SerialDisposable()
@@ -53,6 +57,10 @@ fun <T> Maybe<T>.doOnAfterSubscribe(action: (Disposable) -> Unit): Maybe<T> =
         )
     }
 
+/**
+ * Calls the [action] with the emitted value when the [Maybe] signals `onSuccess`.
+ * The [action] is called **after** the observer is called.
+ */
 fun <T> Maybe<T>.doOnAfterSuccess(action: (T) -> Unit): Maybe<T> =
     maybe { emitter ->
         subscribe(
@@ -71,6 +79,10 @@ fun <T> Maybe<T>.doOnAfterSuccess(action: (T) -> Unit): Maybe<T> =
         )
     }
 
+/**
+ * Calls the [action] when the [Maybe] signals `onComplete`.
+ * The [action] is called **after** the observer is called.
+ */
 fun <T> Maybe<T>.doOnAfterComplete(action: () -> Unit): Maybe<T> =
     maybe { emitter ->
         subscribe(
@@ -89,6 +101,10 @@ fun <T> Maybe<T>.doOnAfterComplete(action: () -> Unit): Maybe<T> =
         )
     }
 
+/**
+ * Calls the [consumer] with the emitted [Throwable] when the [Maybe] signals `onError`.
+ * The [consumer] is called **after** the observer is called.
+ */
 fun <T> Maybe<T>.doOnAfterError(consumer: (Throwable) -> Unit): Maybe<T> =
     maybe { emitter ->
         subscribe(
@@ -109,6 +125,10 @@ fun <T> Maybe<T>.doOnAfterError(consumer: (Throwable) -> Unit): Maybe<T> =
         )
     }
 
+/**
+ * Calls the [action] when the [Maybe] signals a terminal event: `onSuccess`, `onComplete` or `onError`.
+ * The [action] is called **after** the observer is called.
+ */
 fun <T> Maybe<T>.doOnAfterTerminate(action: () -> Unit): Maybe<T> =
     maybe { emitter ->
         subscribe(
@@ -141,6 +161,10 @@ fun <T> Maybe<T>.doOnAfterTerminate(action: () -> Unit): Maybe<T> =
         )
     }
 
+/**
+ * Calls the shared [action] when the [Disposable] sent to the observer via `onSubscribe` is disposed.
+ * The [action] is called **after** the upstream is disposed.
+ */
 fun <T> Maybe<T>.doOnAfterDispose(action: () -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
         val disposables = CompositeDisposable()
@@ -182,6 +206,11 @@ fun <T> Maybe<T>.doOnAfterDispose(action: () -> Unit): Maybe<T> =
         )
     }
 
+/**
+ * Calls the [action] when one of the following events occur:
+ * - The [Maybe] signals a terminal event: `onSuccess`, `onComplete` or `onError` (the [action] is called **after** the observer is called).
+ * - The [Disposable] sent to the observer via `onSubscribe` is disposed (the [action] is called **after** the upstream is disposed).
+ */
 fun <T> Maybe<T>.doOnAfterFinally(action: () -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
         val disposables = CompositeDisposable()
