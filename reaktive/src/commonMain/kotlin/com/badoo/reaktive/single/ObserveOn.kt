@@ -7,7 +7,7 @@ import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.freeze
 
 /**
- * Signals `onSuccess` and `onError` events of the [Single] on the specified [Scheduler].
+ * Signals all events of the [Single] on the specified [Scheduler].
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#observeOn-io.reactivex.Scheduler-).
  */

@@ -6,6 +6,11 @@ import com.badoo.reaktive.base.operator.Retry
 import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.disposable.Disposable
 
+/**
+ * When the [Maybe] signals `onError`, re-subscribes to the [Maybe] if the [predicate] returns `true`.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#retry-io.reactivex.functions.BiPredicate-).
+ */
 fun <T> Maybe<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Maybe<T> =
     maybe { emitter ->
         subscribe(
@@ -23,5 +28,10 @@ fun <T> Maybe<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ 
         )
     }
 
+/**
+ * When the [Maybe] signals `onError`, re-subscribes to the [Maybe], up to [times] times.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#retry-long-).
+ */
 fun <T> Maybe<T>.retry(times: Int): Maybe<T> =
     retry { attempt, _ -> attempt < times }

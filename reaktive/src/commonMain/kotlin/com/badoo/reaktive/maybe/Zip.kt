@@ -5,14 +5,29 @@ package com.badoo.reaktive.maybe
 import com.badoo.reaktive.observable.firstOrComplete
 import com.badoo.reaktive.observable.zip
 
+/**
+ * Subscribes to all provided [Maybe]s, accumulates all their values and emits a value returned by the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#zip-java.lang.Iterable-io.reactivex.functions.Function-).
+ */
 fun <T, R> Iterable<Maybe<T>>.zip(mapper: (List<T>) -> R): Maybe<R> =
     map(Maybe<T>::asObservable)
         .zip(mapper)
         .firstOrComplete()
 
+/**
+ * Subscribes to all [sources] [Maybe]s, accumulates all their values and emits a value returned by the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#zipArray-io.reactivex.functions.Function-io.reactivex.MaybeSource...-).
+ */
 fun <T, R> zip(vararg sources: Maybe<T>, mapper: (List<T>) -> R): Maybe<R> =
     sources.toList().zip(mapper)
 
+/**
+ * Subscribes to all `source` [Maybe]s, accumulates their values and emits a value returned by the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#zip-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.functions.BiFunction-).
+ */
 fun <T1, T2, R> zip(
     source1: Maybe<T1>,
     source2: Maybe<T2>,
@@ -24,6 +39,11 @@ fun <T1, T2, R> zip(
             mapper(values[0] as T1, values[1] as T2)
         }
 
+/**
+ * Subscribes to all `source` [Maybe]s, accumulates their values and emits a value returned by the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#zip-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.functions.Function3-).
+ */
 fun <T1, T2, T3, R> zip(
     source1: Maybe<T1>,
     source2: Maybe<T2>,
@@ -36,6 +56,11 @@ fun <T1, T2, T3, R> zip(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3)
         }
 
+/**
+ * Subscribes to all `source` [Maybe]s, accumulates their values and emits a value returned by the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#zip-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.functions.Function4-).
+ */
 fun <T1, T2, T3, T4, R> zip(
     source1: Maybe<T1>,
     source2: Maybe<T2>,
@@ -49,6 +74,11 @@ fun <T1, T2, T3, T4, R> zip(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4)
         }
 
+/**
+ * Subscribes to all `source` [Maybe]s, accumulates their values and emits a value returned by the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#zip-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.functions.Function5-).
+ */
 fun <T1, T2, T3, T4, T5, R> zip(
     source1: Maybe<T1>,
     source2: Maybe<T2>,
@@ -63,6 +93,11 @@ fun <T1, T2, T3, T4, T5, R> zip(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4, values[4] as T5)
         }
 
+/**
+ * Subscribes to all `source` [Maybe]s, accumulates their values and emits a value returned by the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#zip-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.functions.Function6-).
+ */
 fun <T1, T2, T3, T4, T5, T6, R> zip(
     source1: Maybe<T1>,
     source2: Maybe<T2>,
@@ -78,6 +113,11 @@ fun <T1, T2, T3, T4, T5, T6, R> zip(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4, values[4] as T5, values[5] as T6)
         }
 
+/**
+ * Subscribes to all `source` [Maybe]s, accumulates their values and emits a value returned by the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#zip-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.functions.Function7-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, R> zip(
     source1: Maybe<T1>,
     source2: Maybe<T2>,
@@ -102,6 +142,11 @@ fun <T1, T2, T3, T4, T5, T6, T7, R> zip(
             )
         }
 
+/**
+ * Subscribes to all `source` [Maybe]s, accumulates their values and emits a value returned by the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#zip-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.functions.Function8-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, T8, R> zip(
     source1: Maybe<T1>,
     source2: Maybe<T2>,
@@ -128,6 +173,11 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, R> zip(
             )
         }
 
+/**
+ * Subscribes to all `source` [Maybe]s, accumulates their values and emits a value returned by the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#zip-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.functions.Function9-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> zip(
     source1: Maybe<T1>,
     source2: Maybe<T2>,
@@ -156,6 +206,11 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> zip(
             )
         }
 
+/**
+ * Subscribes to all `source` [Maybe]s, accumulates their values and emits a value returned by the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#zip-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.MaybeSource-io.reactivex.functions.Function9-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> zip(
     source1: Maybe<T1>,
     source2: Maybe<T2>,

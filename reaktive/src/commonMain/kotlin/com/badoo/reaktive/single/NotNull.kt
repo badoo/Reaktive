@@ -6,7 +6,7 @@ import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.maybe
 
 /**
- * Returns a [Maybe] that emits the value emitted by the [Single] only if it is not `null`, completes otherwise.
+ * Returns a [Maybe] that emits the value emitted by this [Single] only if it is not `null`, completes otherwise.
  */
 fun <T : Any> Single<T?>.notNull(): Maybe<T> =
     maybe { emitter ->

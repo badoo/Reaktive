@@ -8,9 +8,15 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observable
 import com.badoo.reaktive.observable.serialize
+import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
+/**
+ * Merges multiple [Maybe]s into one [Observable], running all [Maybe]s simultaneously.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#merge-java.lang.Iterable-).
+ */
 fun <T> Iterable<Maybe<T>>.merge(): Observable<T> =
     observable { emitter ->
         val disposables = CompositeDisposable()
@@ -47,6 +53,11 @@ fun <T> Iterable<Maybe<T>>.merge(): Observable<T> =
         }
     }
 
+/**
+ * Merges multiple [Maybe]s into one [Observable], running all [Single]s simultaneously.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#merge-java.lang.Iterable-).
+ */
 fun <T> merge(vararg sources: Maybe<T>): Observable<T> =
     sources
         .asList()
