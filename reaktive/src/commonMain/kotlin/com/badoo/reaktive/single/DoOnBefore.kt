@@ -81,7 +81,7 @@ fun <T> Single<T>.doOnBeforeSuccess(consumer: (T) -> Unit): Single<T> =
     }
 
 /**
- * Calls the [consumer] with the emitted `Throwable` when the [Single] signals `onError`.
+ * Calls the [consumer] with the emitted [Throwable] when the [Single] signals `onError`.
  * The [consumer] is called **before** the observer is called.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#doOnError-io.reactivex.functions.Consumer-).
@@ -182,6 +182,8 @@ fun <T> Single<T>.doOnBeforeDispose(action: () -> Unit): Single<T> =
  * Calls the [action] when one of the following events occur:
  * - The [Single] signals a terminal event: either `onSuccess` or `onError` (the [action] is called **before** the observer is called).
  * - The [Disposable] sent to the observer via `onSubscribe` is disposed (the [action] is called **before** the upstream is disposed).
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#doFinally-io.reactivex.functions.Action-).
  */
 fun <T> Single<T>.doOnBeforeFinally(action: () -> Unit): Single<T> =
     singleUnsafe { observer ->

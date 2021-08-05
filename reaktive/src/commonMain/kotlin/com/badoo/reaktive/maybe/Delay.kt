@@ -5,6 +5,12 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 
+/**
+ * Delays `onSuccess` and `onComplete` signals from the current [Maybe] for the specified time.
+ * The `onError` signal is not delayed by default, which can be enabled by setting the [delayError] flag.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#delay-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-).
+ */
 fun <T> Maybe<T>.delay(delayMillis: Long, scheduler: Scheduler, delayError: Boolean = false): Maybe<T> =
     maybe { emitter ->
         val disposables = CompositeDisposable()

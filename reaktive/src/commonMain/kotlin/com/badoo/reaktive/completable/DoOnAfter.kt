@@ -72,7 +72,7 @@ fun Completable.doOnAfterComplete(action: () -> Unit): Completable =
     }
 
 /**
- * Calls the [consumer] with the emitted `Throwable` when the [Completable] signals `onError`.
+ * Calls the [consumer] with the emitted [Throwable] when the [Completable] signals `onError`.
  * The [consumer] is called **after** the observer is called.
  */
 fun Completable.doOnAfterError(consumer: (Throwable) -> Unit): Completable =

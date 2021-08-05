@@ -57,7 +57,7 @@ fun Completable.doOnBeforeSubscribe(action: (Disposable) -> Unit): Completable =
  * Calls the [action] with the emitted value when the [Completable] signals `onComplete`.
  * The [action] is called **before** the observer is called.
  *
- * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#delaySubscription-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-).
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#doOnComplete-io.reactivex.functions.Action-).
  */
 fun Completable.doOnBeforeComplete(action: () -> Unit): Completable =
     completable { emitter ->
@@ -77,7 +77,7 @@ fun Completable.doOnBeforeComplete(action: () -> Unit): Completable =
     }
 
 /**
- * Calls the [consumer] with the emitted `Throwable` when the [Completable] signals `onError`.
+ * Calls the [consumer] with the emitted [Throwable] when the [Completable] signals `onError`.
  * The [consumer] is called **before** the observer is called.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#doOnError-io.reactivex.functions.Consumer-).
@@ -178,6 +178,8 @@ fun Completable.doOnBeforeDispose(action: () -> Unit): Completable =
  * Calls the [action] when one of the following events occur:
  * - The [Completable] signals a terminal event: either `onComplete` or `onError` (the [action] is called **before** the observer is called).
  * - The [Disposable] sent to the observer via `onSubscribe` is disposed (the [action] is called **before** the upstream is disposed).
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#doFinally-io.reactivex.functions.Action-).
  */
 fun Completable.doOnBeforeFinally(action: () -> Unit): Completable =
     completableUnsafe { observer ->

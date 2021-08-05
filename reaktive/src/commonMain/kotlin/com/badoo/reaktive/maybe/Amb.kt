@@ -3,6 +3,11 @@ package com.badoo.reaktive.maybe
 import com.badoo.reaktive.base.CompositeDisposableObserver
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
+/**
+ * Runs multiple [Maybe]s and signals the events of the first one to terminate (disposing the rest).
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#amb-java.lang.Iterable-).
+ */
 fun <T> Iterable<Maybe<T>>.amb(): Maybe<T> =
     maybe { emitter ->
         val sources = toList()
@@ -40,4 +45,9 @@ fun <T> Iterable<Maybe<T>>.amb(): Maybe<T> =
         sources.forEach { it.subscribe(disposableObserver) }
     }
 
+/**
+ * Runs multiple [Maybe]s and signals the events of the first one to terminate (disposing the rest).
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#ambArray-io.reactivex.MaybeSource...-).
+ */
 fun <T> amb(vararg sources: Maybe<T>): Maybe<T> = sources.asList().amb()

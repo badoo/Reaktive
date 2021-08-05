@@ -6,6 +6,11 @@ import com.badoo.reaktive.disposable.SerialDisposable
 
 // Separate implementation prevents unnecessary freezing: https://github.com/badoo/Reaktive/issues/472
 // Not inlined due to https://youtrack.jetbrains.com/issue/KT-44764
+/**
+ * Creates a [Maybe] with manual signalling via [MaybeEmitter].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#create-io.reactivex.MaybeOnSubscribe-).
+ */
 actual fun <T> maybe(onSubscribe: (emitter: MaybeEmitter<T>) -> Unit): Maybe<T> =
     maybeUnsafe { observer ->
         val serialDisposable = SerialDisposable()

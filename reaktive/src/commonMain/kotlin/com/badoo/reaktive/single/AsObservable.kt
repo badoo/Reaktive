@@ -6,7 +6,7 @@ import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observable
 
 /**
- * Converts this [Single] into an [Observable], which signals either `onNext` with `onComplete` or `onError`.
+ * Converts this [Single] into an [Observable], which signals the success value via `onNext` followed by `onComplete`.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#toObservable--).
  */
