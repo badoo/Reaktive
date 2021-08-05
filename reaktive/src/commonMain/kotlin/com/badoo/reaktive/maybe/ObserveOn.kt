@@ -6,6 +6,11 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.freeze
 
+/**
+ * Signals all events of the [Maybe] on the specified [Scheduler].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#observeOn-io.reactivex.Scheduler-).
+ */
 fun <T> Maybe<T>.observeOn(scheduler: Scheduler): Maybe<T> =
     maybe { emitter ->
         val disposables = CompositeDisposable()

@@ -3,6 +3,9 @@ package com.badoo.reaktive.maybe
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 
+/**
+ * Returns a [Maybe] that emits the value emitted by this [Maybe] only if it is not `null`, completes otherwise.
+ */
 fun <T : Any> Maybe<T?>.notNull(): Maybe<T> =
     maybe { emitter ->
         subscribe(
