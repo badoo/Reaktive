@@ -10,7 +10,7 @@
     "build": "tsc",
     "build:run": "yarn build && node build/index.js",
     "reinstall": "yarn remove @com.badoo/reaktive && yarn add ../build/publications/npm/js",
-    "rebuild": "(cd ../../ && ./gradlew :reaktive:pack) && yarn reinstall"
+    "rebuild": "(cd ../../ && ./gradlew :reaktive:assembleJsNpmPublication) && yarn reinstall"
   },
   "dependencies": {
     "@com.badoo/reaktive": "../build/publications/npm/js"
