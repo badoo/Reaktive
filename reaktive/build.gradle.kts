@@ -51,12 +51,4 @@ npmPublishing {
 
     organization = "com.badoo"
     // access = PUBLIC
-
-    publications {
-        named("js") {
-            dependencies {
-                npm("kotlin", "1.5.21")
-            }
-        }
-    }
 }
