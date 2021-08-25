@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "build",
+    "declaration": true
+  }
+}

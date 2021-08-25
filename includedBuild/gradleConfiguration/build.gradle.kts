@@ -9,6 +9,7 @@ plugins {
 repositories {
     google()
     jcenter()
+    mavenCentral()
     gradlePluginPortal()
 }
 
@@ -21,7 +22,7 @@ dependencies {
     implementation(Deps.shadow)
     implementation(Deps.kotlinx.compatibility)
     implementation("com.badoo.reaktive.dependencies:dependencies:SNAPSHOT")
-    implementation("dev.petuska:npm-publish:2.0.3")
+    implementation("dev.petuska:npm-publish:2.1.0")
 }
 
 gradlePlugin {

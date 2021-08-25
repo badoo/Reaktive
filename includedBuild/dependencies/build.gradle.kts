@@ -9,6 +9,7 @@ version = "SNAPSHOT"
 
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 gradlePlugin {
