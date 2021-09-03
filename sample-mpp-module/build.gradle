@@ -26,18 +26,21 @@ kotlin {
             def configureFrameworks = { target ->
                 target.binaries {
                     framework {
+                        baseName = "shared"
                         export project(':reaktive')
                         transitiveExport = true
                     }
                 }
             }
             if (Target.shouldDefineTarget(project, Target.IOS)) {
-                configureFrameworks(ios32)
-                configureFrameworks(ios64)
-                configureFrameworks(iosSim)
+                configureFrameworks(iosArm32)
+                configureFrameworks(iosArm64)
+                configureFrameworks(iosX64)
+                configureFrameworks(iosSimulatorArm64)
             }
             if (Target.shouldDefineTarget(project, Target.MACOS)) {
                 configureFrameworks(macosX64)
+                configureFrameworks(macosArm64)
             }
         }
     }

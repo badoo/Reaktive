@@ -1,16 +1,9 @@
 import com.badoo.reaktive.configuration.Target
-import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 
 open class BuildIosSampleTask : DefaultTask() {
 
     @InputDirectory
     val sources: File = project.file("sample-ios-app")
-
-    @InputDirectory
-    val releaseFramework: Property<File> = project.objects.property()
-
-    @InputDirectory
-    val debugFramework: Property<File> = project.objects.property()
 
     init {
         group = LifecycleBasePlugin.BUILD_GROUP
@@ -48,17 +41,5 @@ open class BuildIosSampleTask : DefaultTask() {
 }
 
 if (Target.shouldDefineTarget(project, Target.IOS)) {
-    tasks.register<BuildIosSampleTask>("build") {
-        val sampleMppModuleTasks = project(":sample-mpp-module").tasks
-        releaseFramework.set(
-            sampleMppModuleTasks
-                .named<FatFrameworkTask>("fatIosRelease")
-                .map { it.fatFrameworkDir }
-        )
-        debugFramework.set(
-            sampleMppModuleTasks
-                .named<FatFrameworkTask>("fatIosDebug")
-                .map { it.fatFrameworkDir }
-        )
-    }
+    tasks.register<BuildIosSampleTask>("build")
 }

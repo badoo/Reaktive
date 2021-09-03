@@ -11,19 +11,19 @@
 		1F5F7F4623B19649005AD62E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5F7F4523B19649005AD62E /* ViewController.swift */; };
 		1F5F7F4823B1964D005AD62E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F5F7F4723B1964D005AD62E /* Assets.xcassets */; };
 		1F5F7F4B23B1964D005AD62E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F5F7F4923B1964D005AD62E /* Main.storyboard */; };
-		1F5F7F5523B1967B005AD62E /* sample_mpp_module.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F5F7F5423B1967B005AD62E /* sample_mpp_module.framework */; };
-		1F5F7F5623B1967B005AD62E /* sample_mpp_module.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1F5F7F5423B1967B005AD62E /* sample_mpp_module.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1FAB9CAF23B2C035008AF3C6 /* ImageLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAB9CAE23B2C035008AF3C6 /* ImageLoading.swift */; };
+		1FC5357A26E2819A00FAE19C /* shared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FC5357926E2819A00FAE19C /* shared.framework */; };
+		1FC5357B26E2819A00FAE19C /* shared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1FC5357926E2819A00FAE19C /* shared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		1F5F7F5723B1967B005AD62E /* Embed Frameworks */ = {
+		1FC5357C26E2819A00FAE19C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1F5F7F5623B1967B005AD62E /* sample_mpp_module.framework in Embed Frameworks */,
+				1FC5357B26E2819A00FAE19C /* shared.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -40,6 +40,7 @@
 		1F5F7F4D23B1964D005AD62E /* sample_macos_app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = sample_macos_app.entitlements; sourceTree = "<group>"; };
 		1F5F7F5423B1967B005AD62E /* sample_mpp_module.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sample_mpp_module.framework; path = "../sample-mpp-module/build/bin/macosX64/releaseFramework/sample_mpp_module.framework"; sourceTree = "<group>"; };
 		1FAB9CAE23B2C035008AF3C6 /* ImageLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoading.swift; sourceTree = "<group>"; };
+		1FC5357926E2819A00FAE19C /* shared.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = shared.framework; path = "../sample-mpp-module/build/bin/macosX64/releaseFramework/shared.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,7 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F5F7F5523B1967B005AD62E /* sample_mpp_module.framework in Frameworks */,
+				1FC5357A26E2819A00FAE19C /* shared.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +89,7 @@
 		1F5F7F5323B1967A005AD62E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1FC5357926E2819A00FAE19C /* shared.framework */,
 				1F5F7F5423B1967B005AD62E /* sample_mpp_module.framework */,
 			);
 			name = Frameworks;
@@ -103,7 +105,7 @@
 				1F5F7F3C23B19649005AD62E /* Sources */,
 				1F5F7F3D23B19649005AD62E /* Frameworks */,
 				1F5F7F3E23B19649005AD62E /* Resources */,
-				1F5F7F5723B1967B005AD62E /* Embed Frameworks */,
+				1FC5357C26E2819A00FAE19C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
