@@ -1,5 +1,5 @@
 import Cocoa
-import sample_mpp_module
+import shared
 
 class ViewController: NSViewController {
 

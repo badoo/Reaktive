@@ -101,29 +101,41 @@ class MppConfigurationPlugin : Plugin<Project> {
                     maybeCreate("watchosArm32Main").dependsOn(getByName("darwinCommonMain"))
                     maybeCreate("watchosArm64Test").dependsOn(getByName("darwinCommonTest"))
 
-                    maybeCreate("watchosSimMain").dependsOn(getByName("darwinCommonMain"))
-                    maybeCreate("watchosSimTest").dependsOn(getByName("darwinCommonTest"))
+                    maybeCreate("watchosX86Main").dependsOn(getByName("darwinCommonMain"))
+                    maybeCreate("watchosX86Test").dependsOn(getByName("darwinCommonTest"))
 
                     maybeCreate("watchosX64Main").dependsOn(getByName("darwinCommonMain"))
                     maybeCreate("watchosX64Test").dependsOn(getByName("darwinCommonTest"))
 
+                    maybeCreate("watchosSimulatorArm64Main").dependsOn(getByName("darwinCommonMain"))
+                    maybeCreate("watchosSimulatorArm64Test").dependsOn(getByName("darwinCommonTest"))
+
                     maybeCreate("tvosArm64Main").dependsOn(getByName("darwinCommonMain"))
                     maybeCreate("tvosArm64Test").dependsOn(getByName("darwinCommonTest"))
 
-                    maybeCreate("tvosSimMain").dependsOn(getByName("darwinCommonMain"))
-                    maybeCreate("tvosSimTest").dependsOn(getByName("darwinCommonTest"))
+                    maybeCreate("tvosX64Main").dependsOn(getByName("darwinCommonMain"))
+                    maybeCreate("tvosX64Test").dependsOn(getByName("darwinCommonTest"))
+
+                    maybeCreate("tvosSimulatorArm64Main").dependsOn(getByName("darwinCommonMain"))
+                    maybeCreate("tvosSimulatorArm64Test").dependsOn(getByName("darwinCommonTest"))
 
                     maybeCreate("macosX64Main").dependsOn(getByName("darwinCommonMain"))
                     maybeCreate("macosX64Test").dependsOn(getByName("darwinCommonTest"))
 
-                    maybeCreate("ios32Main").dependsOn(getByName("darwinCommonMain"))
-                    maybeCreate("ios32Test").dependsOn(getByName("darwinCommonTest"))
+                    maybeCreate("macosArm64Main").dependsOn(getByName("darwinCommonMain"))
+                    maybeCreate("macosArm64Test").dependsOn(getByName("darwinCommonTest"))
 
-                    maybeCreate("ios64Main").dependsOn(getByName("darwinCommonMain"))
-                    maybeCreate("ios64Test").dependsOn(getByName("darwinCommonTest"))
+                    maybeCreate("iosArm32Main").dependsOn(getByName("darwinCommonMain"))
+                    maybeCreate("iosArm32Test").dependsOn(getByName("darwinCommonTest"))
 
-                    maybeCreate("iosSimMain").dependsOn(getByName("darwinCommonMain"))
-                    maybeCreate("iosSimTest").dependsOn(getByName("darwinCommonTest"))
+                    maybeCreate("iosArm64Main").dependsOn(getByName("darwinCommonMain"))
+                    maybeCreate("iosArm64Test").dependsOn(getByName("darwinCommonTest"))
+
+                    maybeCreate("iosX64Main").dependsOn(getByName("darwinCommonMain"))
+                    maybeCreate("iosX64Test").dependsOn(getByName("darwinCommonTest"))
+
+                    maybeCreate("iosSimulatorArm64Main").dependsOn(getByName("darwinCommonMain"))
+                    maybeCreate("iosSimulatorArm64Test").dependsOn(getByName("darwinCommonTest"))
                 }
             }
         }

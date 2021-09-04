@@ -1,5 +1,3 @@
-Before opening Xcode build native library with command `./gradlew sample-mpp-module:fatIosDebug sample-mpp-module:fatIosRelease`
-and install all required Pod dependencies via `pod install`.
-
-See [Multiplatform Project: iOS and Android](https://kotlinlang.org/docs/tutorials/native/mpp-ios-android.html)
-for further details how to setup build.
+Before opening the Xcode project, install all required Pod dependencies via `pod install` command.
+The framework is assembled automatically on Xcode build.
+See the [documentation](https://kotlinlang.org/docs/mobile/discover-kmm-project.html#ios-framework) about `embedAndSignAppleFrameworkForXcode` Gradle task.
