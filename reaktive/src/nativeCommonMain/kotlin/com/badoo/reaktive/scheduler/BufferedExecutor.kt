@@ -17,10 +17,10 @@ internal actual class BufferedExecutor<in T> actual constructor(
     private val lock = Lock()
     private val refCounter = RefCounter(lock::destroy) // Guards the Lock and prevents its usage when destroyed
     private val queue: Queue<T> = LinkedFreezableQueue()
-    private val isDraining = AtomicBoolean()
+    private val isDraining = AtomicBoolean(false) // Default value supplied due to KT-48811
     private val drainFunction = ::drain
 
-    private val _isDisposed = AtomicBoolean()
+    private val _isDisposed = AtomicBoolean(false) // Default value supplied due to KT-48811
     override val isDisposed: Boolean get() = _isDisposed.value
 
     override fun dispose() {

@@ -5,9 +5,14 @@
  * :runReleaseExecutableLinux - without debug symbols
  * :runDebugExecutableLinux - with debug symbols
  */
-plugins {
-    id 'kotlin-multiplatform'
+
+import com.badoo.reaktive.configuration.Target
+
+if (!Target.shouldDefineTarget(project, Target.LINUX)) {
+    return
 }
+
+plugins.apply("kotlin-multiplatform")
 
 kotlin {
     linuxX64("linux") {

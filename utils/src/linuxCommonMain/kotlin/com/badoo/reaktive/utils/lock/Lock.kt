@@ -1,16 +1,12 @@
 package com.badoo.reaktive.utils.lock
 
-import com.badoo.reaktive.utils.NANOS_IN_SECOND
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.alloc
-import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import platform.posix.CLOCK_MONOTONIC
 import platform.posix.PTHREAD_MUTEX_RECURSIVE
-import platform.posix.__syscall_slong_t
-import platform.posix.__time_t
 import platform.posix.clock_gettime
 import platform.posix.pthread_cond_broadcast
 import platform.posix.pthread_cond_destroy
@@ -95,17 +91,6 @@ actual class Lock {
             pthread_cond_destroy(cond.ptr)
             pthread_condattr_destroy(attr.ptr)
             arena.clear()
-        }
-
-        private companion object {
-            private operator fun timespec.plusAssign(nanos: Long) {
-                tv_sec += (nanos / NANOS_IN_SECOND).convert<__time_t>()
-                tv_nsec += (nanos % NANOS_IN_SECOND).convert<__syscall_slong_t>()
-                if (tv_nsec >= NANOS_IN_SECOND) {
-                    tv_sec += 1
-                    tv_nsec -= NANOS_IN_SECOND.convert<__syscall_slong_t>()
-                }
-            }
         }
     }
 }

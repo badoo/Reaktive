@@ -1,5 +1,6 @@
 package com.badoo.reaktive.disposable
 
+import com.badoo.reaktive.utils.synchronized
 import kotlin.jvm.Volatile
 
 /**

@@ -1,9 +1,12 @@
+import com.badoo.reaktive.configuration.Target
 import com.badoo.reaktive.dependencies.Deps
 
-plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
+if (!Target.shouldDefineTarget(project, Target.JVM)) {
+    return
 }
+
+plugins.apply("com.android.application")
+plugins.apply("kotlin-android")
 
 android {
     compileSdkVersion 29

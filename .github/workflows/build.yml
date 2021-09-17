@@ -57,14 +57,7 @@ jobs:
         if: matrix.os == 'macOS-latest'
         run: >
           ./gradlew
-          :reaktive-annotations:build
-          :utils:build
-          :reaktive-testing:build
-          :reaktive:build
-          :coroutines-interop:build
-          :sample-mpp-module:build
-          :sample-ios-app:build
-          :sample-macos-app:build
+          build
           -Ptarget=all_macos_hosted
       - name: Bundle the build report
         if: failure()

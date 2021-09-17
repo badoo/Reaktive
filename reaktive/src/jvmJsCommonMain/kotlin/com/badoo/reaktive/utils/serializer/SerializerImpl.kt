@@ -2,6 +2,7 @@ package com.badoo.reaktive.utils.serializer
 
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.queue.Queue
+import com.badoo.reaktive.utils.synchronized
 import kotlin.jvm.Volatile
 
 /*

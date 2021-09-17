@@ -9,17 +9,6 @@ configuration {
 }
 
 kotlin {
-    targets {
-//            fromPreset(presets.jvm, 'jvmCommon')
-//            fromPreset(presets.jvm, 'jvmJsCommon')
-//            fromPreset(presets.linuxX64, 'jvmNativeCommon')
-//            fromPreset(presets.linuxX64, 'nativeCommon')
-//            fromPreset(presets.linuxArm32Hfp, 'nativeCommon')
-//            fromPreset(presets.linuxX64, 'linuxCommon')
-
-//            fromPreset(presets.iosX64, 'darwinCommon')
-    }
-
     sourceSets {
         commonMain {
             dependencies {

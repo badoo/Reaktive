@@ -7,11 +7,6 @@ plugins {
 }
 
 kotlin {
-    targets {
-//        fromPreset(presets.jvm, 'jvmJsCommon')
-//        fromPreset(presets.linuxX64, 'nativeCommon')
-    }
-
     sourceSets {
         commonMain {
             dependencies {
