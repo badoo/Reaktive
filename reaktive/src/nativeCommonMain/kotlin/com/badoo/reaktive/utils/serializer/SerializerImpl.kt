@@ -15,8 +15,8 @@ internal abstract class SerializerImpl<in T>(
 ) : Serializer<T> {
 
     private val queue = AtomicReference<List<T>>(emptyList())
-    private val isDone = AtomicBoolean(false) // Default value supplied due to KT-48811
-    private val counter = AtomicInt(0) // Default value supplied due to KT-48811
+    private val isDone = AtomicBoolean()
+    private val counter = AtomicInt()
 
     override fun accept(value: T) {
         if (isDone.value) {

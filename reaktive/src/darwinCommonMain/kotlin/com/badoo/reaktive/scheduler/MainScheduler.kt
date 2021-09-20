@@ -59,7 +59,7 @@ internal class MainScheduler : Scheduler {
         }
 
         override fun cancel() {
-            operations.clear(dispose = true) // Default value supplied due to KT-48811
+            operations.clear()
         }
 
         override val isDisposed: Boolean

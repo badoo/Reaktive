@@ -1,13 +1,10 @@
-import com.badoo.reaktive.configuration.Target
 import com.badoo.reaktive.dependencies.Deps
 
-if (!Target.shouldDefineTarget(project, Target.JVM)) {
-    return
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'publish-configuration'
+    id 'detekt-configuration'
 }
-
-plugins.apply("org.jetbrains.kotlin.jvm")
-plugins.apply("publish-configuration")
-plugins.apply("detekt-configuration")
 
 group = reaktive_group_id
 version = reaktive_version

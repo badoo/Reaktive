@@ -3,7 +3,6 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.queue.ArrayQueue
 import com.badoo.reaktive.utils.queue.Queue
-import com.badoo.reaktive.utils.synchronized
 
 internal actual open class SerializedObservableCallbacks<in T> actual constructor(
     private val delegate: ObservableCallbacks<T>

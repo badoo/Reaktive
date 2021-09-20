@@ -1,11 +1,8 @@
-import com.badoo.reaktive.configuration.Target
 import com.badoo.reaktive.dependencies.Deps
 
-if (!Target.shouldDefineTarget(project, Target.JS)) {
-    return
+plugins {
+    id 'org.jetbrains.kotlin.js'
 }
-
-plugins.apply("org.jetbrains.kotlin.js")
 
 kotlin {
     js(IR) {

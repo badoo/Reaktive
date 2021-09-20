@@ -1,11 +1,15 @@
 package com.badoo.reaktive.utils.lock
 
+import com.badoo.reaktive.utils.NANOS_IN_MICRO
+import com.badoo.reaktive.utils.NANOS_IN_SECOND
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import platform.posix.PTHREAD_MUTEX_RECURSIVE
+import platform.posix.__darwin_time_t
 import platform.posix.gettimeofday
 import platform.posix.pthread_cond_broadcast
 import platform.posix.pthread_cond_destroy
@@ -73,7 +77,8 @@ actual class Lock {
                     // it can't wait less then 1 second and lock can't create condition
                     val tv: timeval = alloc { gettimeofday(ptr, null) }
                     val ts: timespec = alloc()
-                    ts.set(tv)
+                    ts.tv_sec = tv.tv_sec
+                    ts.tv_nsec = (tv.tv_usec * NANOS_IN_MICRO).convert()
                     ts += timeoutNanos
                     pthread_cond_timedwait(cond.ptr, lockPtr, ts.ptr)
                 }
@@ -89,6 +94,17 @@ actual class Lock {
         override fun destroy() {
             pthread_cond_destroy(cond.ptr)
             arena.clear()
+        }
+
+        private companion object {
+            private operator fun timespec.plusAssign(nanos: Long) {
+                tv_sec += (nanos / NANOS_IN_SECOND).convert<__darwin_time_t>()
+                tv_nsec += (nanos % NANOS_IN_SECOND).convert<__darwin_time_t>()
+                if (tv_nsec >= NANOS_IN_SECOND) {
+                    tv_sec += 1
+                    tv_nsec -= NANOS_IN_SECOND.convert<__darwin_time_t>()
+                }
+            }
         }
     }
 }
