@@ -13,9 +13,6 @@ class JsPlugin : Plugin<Project> {
     }
 
     private fun configureJsCompilation(target: Project) {
-        if (!Target.shouldDefineTarget(target, Target.JS)) {
-            return
-        }
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
             js {
                 browser {
@@ -30,6 +27,8 @@ class JsPlugin : Plugin<Project> {
                         useCommonJs()
                     }
                 }
+
+                disableIfUndefined(Target.JS)
             }
             sourceSets.getByName("jsMain") {
                 dependencies {

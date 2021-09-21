@@ -13,28 +13,20 @@ class DarwinPlugin : Plugin<Project> {
 
     private fun configureDarwinCompilation(target: Project) {
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
-            if (Target.shouldDefineTarget(target, Target.IOS)) {
-                iosArm32()
-                iosArm64()
-                iosX64()
-                iosSimulatorArm64()
-            }
-            if (Target.shouldDefineTarget(target, Target.WATCHOS)) {
-                watchosArm32()
-                watchosArm64()
-                watchosX86()
-                watchosX64()
-                watchosSimulatorArm64()
-            }
-            if (Target.shouldDefineTarget(target, Target.TVOS)) {
-                tvosArm64()
-                tvosX64()
-                tvosSimulatorArm64()
-            }
-            if (Target.shouldDefineTarget(target, Target.MACOS)) {
-                macosX64()
-                macosArm64()
-            }
+            iosArm32().disableIfUndefined(Target.IOS)
+            iosArm64().disableIfUndefined(Target.IOS)
+            iosX64().disableIfUndefined(Target.IOS)
+            iosSimulatorArm64().disableIfUndefined(Target.IOS)
+            watchosArm32().disableIfUndefined(Target.WATCHOS)
+            watchosArm64().disableIfUndefined(Target.WATCHOS)
+            watchosX86().disableIfUndefined(Target.WATCHOS)
+            watchosX64().disableIfUndefined(Target.WATCHOS)
+            watchosSimulatorArm64().disableIfUndefined(Target.WATCHOS)
+            tvosArm64().disableIfUndefined(Target.TVOS)
+            tvosX64().disableIfUndefined(Target.TVOS)
+            tvosSimulatorArm64().disableIfUndefined(Target.TVOS)
+            macosX64().disableIfUndefined(Target.MACOS)
+            macosArm64().disableIfUndefined(Target.MACOS)
         }
     }
 }
