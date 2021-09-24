@@ -138,13 +138,17 @@ class PublishConfigurationPlugin : Plugin<Project> {
             "iosArm32" to Target.shouldPublishTarget(project, Target.IOS),
             "iosArm64" to Target.shouldPublishTarget(project, Target.IOS),
             "iosX64" to Target.shouldPublishTarget(project, Target.IOS),
+            "iosSimulatorArm64" to Target.shouldPublishTarget(project, Target.IOS),
             "watchosArm32" to Target.shouldPublishTarget(project, Target.WATCHOS),
             "watchosArm64" to Target.shouldPublishTarget(project, Target.WATCHOS),
             "watchosX86" to Target.shouldPublishTarget(project, Target.WATCHOS),
             "watchosX64" to Target.shouldPublishTarget(project, Target.WATCHOS),
+            "watchosSimulatorArm64" to Target.shouldPublishTarget(project, Target.WATCHOS),
             "tvosArm64" to Target.shouldPublishTarget(project, Target.TVOS),
             "tvosX64" to Target.shouldPublishTarget(project, Target.TVOS),
-            "macosX64" to Target.shouldPublishTarget(project, Target.MACOS)
+            "tvosSimulatorArm64" to Target.shouldPublishTarget(project, Target.TVOS),
+            "macosX64" to Target.shouldPublishTarget(project, Target.MACOS),
+            "macosArm64" to Target.shouldPublishTarget(project, Target.MACOS)
         )
     }
 
