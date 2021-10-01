@@ -8,11 +8,23 @@ import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.SingleEmitter
 import com.badoo.reaktive.single.single
 
+/**
+ * Returns a [Single] that emits only the very first element emitted by the source [Observable],
+ * or [defaultValue] if the source [Observable] is empty.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#first-T-).
+ */
 fun <T> Observable<T>.firstOrDefault(defaultValue: T): Single<T> =
     firstOrAction { emitter ->
         emitter.onSuccess(defaultValue)
     }
 
+/**
+ * Returns a [Single] that emits only the very first element emitted by the source [Observable],
+ * or a value returned by [defaultValueSupplier] if the source [Observable] is empty.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#first-T-).
+ */
 fun <T> Observable<T>.firstOrDefault(defaultValueSupplier: () -> T): Single<T> =
     firstOrAction { emitter ->
         emitter.tryCatch(block = defaultValueSupplier, onSuccess = emitter::onSuccess)

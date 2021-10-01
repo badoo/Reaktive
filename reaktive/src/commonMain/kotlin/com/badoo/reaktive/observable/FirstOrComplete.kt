@@ -6,6 +6,12 @@ import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.maybe
 
+/**
+ * Returns a [Maybe] that emits only the very first element emitted by the source [Observable],
+ * or completes if the source [Observable] is empty.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#firstElement--).
+ */
 fun <T> Observable<T>.firstOrComplete(): Maybe<T> =
     maybe { emitter ->
         val serialDisposable = SerialDisposable()

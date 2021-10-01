@@ -7,6 +7,11 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
+/**
+ * Runs multiple [Observable]s and signals events of the first one signalled (disposing the rest).
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#amb-java.lang.Iterable-).
+ */
 fun <T> Iterable<Observable<T>>.amb(): Observable<T> =
     observable { emitter ->
         val sources = toList()
@@ -25,6 +30,11 @@ fun <T> Iterable<Observable<T>>.amb(): Observable<T> =
         }
     }
 
+/**
+ * Runs multiple [Observable]s and signals events of the first one signalled (disposing the rest).
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#ambArray-io.reactivex.ObservableSource...-).
+ */
 fun <T> amb(vararg sources: Observable<T>): Observable<T> = sources.asList().amb()
 
 private class AmbObserver<in T>(
