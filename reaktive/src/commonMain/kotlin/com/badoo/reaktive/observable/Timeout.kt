@@ -7,6 +7,13 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.scheduler.Scheduler
 
+/**
+ * Returns an [Observable] that emits elements from the source [Observable] and counts a timeout specified by
+ * [timeoutMillis]. If the timeout ever hits, disposes the source [Observable] and subscribes to the
+ * [other][other] [Observable], if any.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#timeout-io.reactivex.functions.Function-io.reactivex.ObservableSource-).
+ */
 fun <T> Observable<T>.timeout(timeoutMillis: Long, scheduler: Scheduler, other: Observable<T>? = null): Observable<T> =
     observable { emitter ->
         val onTimeout: () -> Unit =

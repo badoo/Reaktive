@@ -11,6 +11,12 @@ import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.replace
 
+/**
+ * Combines the elements emitted by the source [Observable] with the latest emitted elements emitted by the
+ * [others][others] [Observable]s. Elements are combined using the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#withLatestFrom-java.lang.Iterable-io.reactivex.functions.Function-).
+ */
 fun <T, U, R> Observable<T>.withLatestFrom(
     others: Iterable<Observable<U>>,
     mapper: (value: T, others: List<U>) -> R
@@ -65,11 +71,23 @@ fun <T, U, R> Observable<T>.withLatestFrom(
         )
     }
 
+/**
+ * Combines the elements emitted by the source [Observable] with a latest emitted element emitted by the
+ * [other][other] [Observable]. Elements are combined using the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#withLatestFrom-io.reactivex.ObservableSource-io.reactivex.functions.BiFunction-).
+ */
 fun <T, U, R> Observable<T>.withLatestFrom(other: Observable<U>, mapper: (T, U) -> R): Observable<R> =
     withLatestFrom(listOf(other)) { value, others ->
         mapper(value, others[0])
     }
 
+/**
+ * Combines the elements emitted by the source [Observable] with latest emitted elements emitted by
+ * [other1] and [other2][other2] [Observable]s. Elements are combined using the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#withLatestFrom-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function3-).
+ */
 fun <T, T1, T2, R> Observable<T>.withLatestFrom(
     other1: Observable<T1>,
     other2: Observable<T2>,
@@ -80,6 +98,12 @@ fun <T, T1, T2, R> Observable<T>.withLatestFrom(
         mapper(value, others[0] as T1, others[1] as T2)
     }
 
+/**
+ * Combines the elements emitted by the source [Observable] with latest emitted elements emitted by
+ * [other1], [other2] and [other3][other3] [Observable]s. Elements are combined using the [mapper] function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#withLatestFrom-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function4-).
+ */
 fun <T, T1, T2, T3, R> Observable<T>.withLatestFrom(
     other1: Observable<T1>,
     other2: Observable<T2>,

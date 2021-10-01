@@ -5,8 +5,11 @@ import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 
 /**
- * Mirror items emitted by upstream until a specified condition becomes false.
- * See: [http://reactivex.io/documentation/operators/takewhile.html].
+ * Returns an [Observable] that checks the specified [predicate] for each element emitted
+ * by the source [Observable], and emits the element if the [predicate] returned `true` or
+ * completes if it returned `false`.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#takeWhile-io.reactivex.functions.Predicate-).
  */
 fun <T> Observable<T>.takeWhile(predicate: (T) -> Boolean): Observable<T> =
     observable { emitter ->

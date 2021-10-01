@@ -11,6 +11,12 @@ import com.badoo.reaktive.utils.atomic.update
 import com.badoo.reaktive.utils.replace
 import com.badoo.reaktive.utils.serializer.serializer
 
+/**
+ * Returns an [Observable] that emits the results of the specified [mapper] function,
+ * applied to combinations of elements emitted, in sequence, by source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#zip-java.lang.Iterable-io.reactivex.functions.Function-).
+ */
 @Suppress("ComplexMethod", "LongMethod")
 fun <T, R> Iterable<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
@@ -115,11 +121,23 @@ private sealed class ZipEvent<out T> {
     class OnError(val error: Throwable) : ZipEvent<Nothing>()
 }
 
+/**
+ * Returns an [Observable] that emits the results of the specified [mapper] function,
+ * applied to combinations of elements emitted, in sequence, by [sources][sources] [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#zipArray-io.reactivex.functions.Function-boolean-int-io.reactivex.ObservableSource...-).
+ */
 fun <T, R> zip(vararg sources: Observable<T>, mapper: (List<T>) -> R): Observable<R> =
     sources
         .asList()
         .zip(mapper)
 
+/**
+ * Returns an [Observable] that emits the results of the specified [mapper] function,
+ * applied to combinations of elements emitted, in sequence, by the specified [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#zip-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.BiFunction-).
+ */
 fun <T1, T2, R> zip(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -131,6 +149,12 @@ fun <T1, T2, R> zip(
             mapper(values[0] as T1, values[1] as T2)
         }
 
+/**
+ * Returns an [Observable] that emits the results of the specified [mapper] function,
+ * applied to combinations of elements emitted, in sequence, by the specified [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#zip-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function3-).
+ */
 fun <T1, T2, T3, R> zip(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -143,6 +167,12 @@ fun <T1, T2, T3, R> zip(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3)
         }
 
+/**
+ * Returns an [Observable] that emits the results of the specified [mapper] function,
+ * applied to combinations of elements emitted, in sequence, by the specified [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#zip-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function4-).
+ */
 fun <T1, T2, T3, T4, R> zip(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -156,6 +186,12 @@ fun <T1, T2, T3, T4, R> zip(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4)
         }
 
+/**
+ * Returns an [Observable] that emits the results of the specified [mapper] function,
+ * applied to combinations of elements emitted, in sequence, by the specified [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#zip-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function5-).
+ */
 fun <T1, T2, T3, T4, T5, R> zip(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -170,6 +206,12 @@ fun <T1, T2, T3, T4, T5, R> zip(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4, values[4] as T5)
         }
 
+/**
+ * Returns an [Observable] that emits the results of the specified [mapper] function,
+ * applied to combinations of elements emitted, in sequence, by the specified [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#zip-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function6-).
+ */
 fun <T1, T2, T3, T4, T5, T6, R> zip(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -185,6 +227,12 @@ fun <T1, T2, T3, T4, T5, T6, R> zip(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4, values[4] as T5, values[5] as T6)
         }
 
+/**
+ * Returns an [Observable] that emits the results of the specified [mapper] function,
+ * applied to combinations of elements emitted, in sequence, by the specified [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#zip-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function7-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, R> zip(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -209,6 +257,12 @@ fun <T1, T2, T3, T4, T5, T6, T7, R> zip(
             )
         }
 
+/**
+ * Returns an [Observable] that emits the results of the specified [mapper] function,
+ * applied to combinations of elements emitted, in sequence, by the specified [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#zip-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function8-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, T8, R> zip(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -235,6 +289,12 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, R> zip(
             )
         }
 
+/**
+ * Returns an [Observable] that emits the results of the specified [mapper] function,
+ * applied to combinations of elements emitted, in sequence, by the specified [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#zip-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function9-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> zip(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -263,6 +323,12 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> zip(
             )
         }
 
+/**
+ * Returns an [Observable] that emits the results of the specified [mapper] function,
+ * applied to combinations of elements emitted, in sequence, by the specified [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#zip-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function9-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> zip(
     source1: Observable<T1>,
     source2: Observable<T2>,

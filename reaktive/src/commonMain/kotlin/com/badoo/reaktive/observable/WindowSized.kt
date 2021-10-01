@@ -10,8 +10,9 @@ import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.queue.SharedQueue
 
 /**
- * Please refer to the corresponding RxJava
- * [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-long-long-).
+ * Returns an [Observable] that emits windows of elements it collects from the source [Observable].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-long-long-).
  */
 fun <T> Observable<T>.window(
     count: Long,
