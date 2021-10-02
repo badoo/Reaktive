@@ -10,6 +10,12 @@ import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 import com.badoo.reaktive.utils.atomic.update
 
+/**
+ * Returns an [Observable] that mirrors the source [Observable], but drops elements
+ * that are followed by newer ones before the [timeoutMillis] timeout expires on a specified [Scheduler].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#debounce-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-).
+ */
 fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Observable<T> =
     observable { emitter ->
         val disposables = CompositeDisposable()

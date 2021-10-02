@@ -34,7 +34,7 @@ fun <T> Maybe<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Maybe<T>): Maybe
     }
 
 /**
- * When the [Maybe] signals `onError`, resumes the flow with [next] [Maybe].
+ * When the [Maybe] signals `onError`, resumes the flow with [next][next] [Maybe].
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#onErrorResumeNext-io.reactivex.MaybeSource-).
  */

@@ -4,6 +4,11 @@ import com.badoo.reaktive.base.CompleteCallback
 import com.badoo.reaktive.base.ValueCallback
 import com.badoo.reaktive.disposable.Disposable
 
+/**
+ * Returns an [Observable] which completes when this [Observable] signals `onError`.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#onErrorComplete--).
+ */
 fun <T> Observable<T>.onErrorComplete(): Observable<T> =
     observable { emitter ->
         subscribe(
