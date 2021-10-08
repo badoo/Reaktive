@@ -21,7 +21,7 @@ inline fun <T> maybeUnsafe(crossinline onSubscribe: (observer: MaybeObserver<T>)
     )
 
 /**
- * Returns a [Maybe] that emits the specified [value].
+ * Returns a [Maybe] that emits the specified [value]. The value is emitted even if it is `null`.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#just-T-).
  */
@@ -115,6 +115,11 @@ private val maybeOfNever by lazy {
  */
 fun <T> maybeOfNever(): Maybe<T> = maybeOfNever
 
+/**
+ * Returns a [Maybe] that emits the value returned by the [func] shared function.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#fromCallable-java.util.concurrent.Callable-).
+ */
 fun <T> maybeFromFunction(func: () -> T): Maybe<T> =
     maybe { emitter ->
         emitter.onSuccess(func())

@@ -7,6 +7,12 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.handleReaktiveError
 import com.badoo.reaktive.utils.isolate.IsolatedReference
 
+/**
+ * Prevents the downstream from [freezing](https://kotlinlang.org/docs/native-immutability.html)
+ * by saving the observer in a thread local storage.
+ *
+ * Please refer to the corresponding Readme [section](https://github.com/badoo/Reaktive#thread-local-tricks-to-avoid-freezing).
+ */
 fun <T> Observable<T>.threadLocal(): Observable<T> =
     observable {
         val disposables = CompositeDisposable()

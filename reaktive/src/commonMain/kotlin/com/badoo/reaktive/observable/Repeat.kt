@@ -6,6 +6,11 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.serializer.serializer
 
+/**
+ * Returns an [Observable] that automatically resubscribes to this [Observable] at most [count] times.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#repeat-long-).
+ */
 fun <T> Observable<T>.repeat(count: Int = -1): Observable<T> =
     observable { emitter ->
         val observer =

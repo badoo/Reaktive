@@ -7,6 +7,12 @@ import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 
+/**
+ * Returns an [Observable] that connects to this [ConnectableObservable] when the number
+ * of active subscribers reaches [subscriberCount] and disconnects when all subscribers have unsubscribed.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/observables/ConnectableObservable.html#refCount-int-).
+ */
 fun <T> ConnectableObservable<T>.refCount(subscriberCount: Int = 1): Observable<T> {
     require(subscriberCount > 0)
 

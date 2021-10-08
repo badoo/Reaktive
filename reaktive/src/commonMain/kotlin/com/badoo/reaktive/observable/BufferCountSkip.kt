@@ -7,7 +7,7 @@ import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.queue.SharedQueue
 
 /**
- * Returns an [Observable] that emits buffered [List]s of items it collects from the source [Observable].
+ * Returns an [Observable] that emits buffered [List]s of elements it collects from the source [Observable].
  * The first buffer is started with the first element emitted by the source [Observable].
  * Every subsequent buffer is started every [skip] elements, making overlapping buffers possible.
  * Buffers are emitted once the size reaches [count] elements.

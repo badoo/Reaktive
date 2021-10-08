@@ -6,7 +6,9 @@ import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
 /**
- * Emit only the first [limit] items emitted by source.
+ * Emit only the first [limit] elements emitted by source [Observable].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#take-long-).
  */
 fun <T> Observable<T>.take(limit: Int): Observable<T> {
     require(limit >= 0) { "count >= 0 required but it was $limit" }

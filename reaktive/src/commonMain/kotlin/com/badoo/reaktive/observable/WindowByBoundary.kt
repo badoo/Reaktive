@@ -16,8 +16,9 @@ import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
 
 /**
- * Please refer to the corresponding RxJava
- * [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-long-boolean-).
+ * Returns an [Observable] that emits non-overlapping windows of elements it collects from the source [Observable].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-long-boolean-).
  */
 fun <T> Observable<T>.window(
     spanMillis: Long,
@@ -35,8 +36,10 @@ fun <T> Observable<T>.window(
 }
 
 /**
- * Please refer to the corresponding RxJava
- * [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-io.reactivex.ObservableSource-).
+ * Returns an [Observable] that emits non-overlapping windows of elements it collects from the source [Observable].
+ * Window boundaries are determined by the elements emitted by the specified [boundaries][boundaries] [Observable].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-io.reactivex.ObservableSource-int-).
  */
 fun <T> Observable<T>.window(
     boundaries: Observable<*>,

@@ -6,6 +6,11 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 
+/**
+ * Returns an [Observable] that emits elements emitted by the source [Observable] until the [other][other] [Observable] emits an element.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#takeUntil-io.reactivex.ObservableSource-).
+ */
 fun <T> Observable<T>.takeUntil(other: Observable<*>): Observable<T> =
     observable {
         val emitter = it.serialize()
