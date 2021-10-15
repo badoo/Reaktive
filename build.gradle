@@ -1,5 +1,5 @@
 buildscript {
-    ext.reaktive_version = '1.2.0'
+    ext.reaktive_version = '1.2.1'
     ext.reaktive_group_id = 'com.badoo.reaktive'
 }
 
