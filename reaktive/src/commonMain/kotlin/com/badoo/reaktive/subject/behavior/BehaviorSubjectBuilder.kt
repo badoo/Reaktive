@@ -4,6 +4,11 @@ import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.subject.DefaultSubject
 import com.badoo.reaktive.utils.atomic.AtomicReference
 
+/**
+ * Creates a new instance of [BehaviorSubject].
+ *
+ * @param initialValue an initial value of the returned [BehaviorSubject]
+ */
 @Suppress("FunctionName")
 fun <T> BehaviorSubject(initialValue: T): BehaviorSubject<T> =
     object : DefaultSubject<T>(), BehaviorSubject<T> {

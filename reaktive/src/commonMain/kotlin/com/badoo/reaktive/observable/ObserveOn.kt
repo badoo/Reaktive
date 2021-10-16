@@ -7,6 +7,11 @@ import com.badoo.reaktive.scheduler.BufferedExecutor
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.freeze
 
+/**
+ * Signals all events of the [Observable] on the specified [Scheduler].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#observeOn-io.reactivex.Scheduler-).
+ */
 fun <T> Observable<T>.observeOn(scheduler: Scheduler): Observable<T> =
     observable { emitter ->
         val disposables = CompositeDisposable()

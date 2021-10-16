@@ -1,5 +1,5 @@
 import UIKit
-import sample_mpp_module
+import shared
 import AlamofireImage
 
 class ViewController: UIViewController {

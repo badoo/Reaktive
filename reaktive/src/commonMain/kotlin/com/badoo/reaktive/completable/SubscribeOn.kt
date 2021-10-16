@@ -7,7 +7,7 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 
 /**
- * Returns a [Completable] that subscribes to the current [Completable] on the specified [Scheduler].
+ * Returns a [Completable] that subscribes to the source [Completable] on the specified [Scheduler].
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#subscribeOn-io.reactivex.Scheduler-).
  */

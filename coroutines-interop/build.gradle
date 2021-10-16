@@ -9,11 +9,6 @@ plugins {
 version = "${property("reaktive_version")}-nmtc"
 
 kotlin {
-    targets {
-//        fromPreset(presets.jvm, 'jvmJsCommon')
-//        fromPreset(presets.linuxX64, 'nativeCommon')
-    }
-
     sourceSets {
         commonMain {
             dependencies {

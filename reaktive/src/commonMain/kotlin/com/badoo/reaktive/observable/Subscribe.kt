@@ -7,6 +7,13 @@ import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.utils.handleReaktiveError
 
+/**
+ * Subscribes to the [Observable] and provides event callbacks.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#subscribe-io.reactivex.functions.Consumer-io.reactivex.functions.Consumer-io.reactivex.functions.Action-io.reactivex.functions.Consumer-).
+ *
+ * @param isThreadLocal see [Observable.threadLocal]
+ */
 @UseReturnValue
 fun <T> Observable<T>.subscribe(
     isThreadLocal: Boolean = false,

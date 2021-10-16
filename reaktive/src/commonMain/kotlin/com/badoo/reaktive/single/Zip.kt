@@ -16,7 +16,7 @@ fun <T, R> Iterable<Single<T>>.zip(mapper: (List<T>) -> R): Single<R> =
         .firstOrError()
 
 /**
- * Subscribes to all `sources` [Single]s, accumulates all their values and emits a value returned by the [mapper] function.
+ * Subscribes to all [sources] [Single]s, accumulates all their values and emits a value returned by the [mapper] function.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#zipArray-io.reactivex.functions.Function-io.reactivex.SingleSource...-).
  */

@@ -9,7 +9,7 @@ import com.badoo.reaktive.utils.isolate.IsolatedReference
 
 /**
  * Prevents the downstream from [freezing](https://kotlinlang.org/docs/native-immutability.html)
- * by saving the [SingleObserver] in a thread local storage.
+ * by saving the observer in a thread local storage.
  *
  * Please refer to the corresponding Readme [section](https://github.com/badoo/Reaktive#thread-local-tricks-to-avoid-freezing).
  */

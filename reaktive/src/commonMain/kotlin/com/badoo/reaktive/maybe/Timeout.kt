@@ -6,6 +6,12 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.scheduler.Scheduler
 
+/**
+ * Disposes the current [Maybe] if it does not signal within the [timeoutMillis] timeout,
+ * and subscribes to [other] [Maybe] if provided.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#timeout-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-io.reactivex.MaybeSource-).
+ */
 fun <T> Maybe<T>.timeout(timeoutMillis: Long, scheduler: Scheduler, other: Maybe<T>? = null): Maybe<T> =
     maybe { emitter ->
         val onTimeout: () -> Unit =

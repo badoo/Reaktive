@@ -12,6 +12,12 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 
+/**
+ * Returns an [Observable] that mirrors the source [Observable], but drops elements
+ * that are followed by newer ones within a computed debounce duration.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#debounce-io.reactivex.functions.Function-).
+ */
 fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable<T> =
     observable { emitter ->
         val disposables = CompositeDisposable()

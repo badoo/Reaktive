@@ -10,6 +10,14 @@ import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.MaybeObserver
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
+/**
+ * Returns an [Observable] that calls the [handler] when this [Observable] completes,
+ * subscribes to the returned [Maybe], and resubscribes to this [Observable] when the
+ * [Maybe] succeeds with any value. If the returned [Maybe] completes then the returned
+ * [Observable] completes as well.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#repeatWhen-io.reactivex.functions.Function-).
+ */
 fun <T> Observable<T>.repeatWhen(handler: (repeatNumber: Int) -> Maybe<*>): Observable<T> =
     observable { emitter ->
         val observer =

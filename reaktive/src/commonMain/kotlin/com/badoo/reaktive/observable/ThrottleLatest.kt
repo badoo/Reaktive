@@ -17,8 +17,11 @@ import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
 
 /**
- * Please refer to the corresponding RxJava
- * [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#throttleLatest-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-boolean-)
+ * Emits a first element from the source [Observable] and opens a time window specified by [timeoutMillis].
+ * Then does not emit any elements from the source [Observable] while the time window is open, and only emits a
+ * most recent element when the time window closes.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#throttleLatest-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-boolean-)
  */
 fun <T> Observable<T>.throttleLatest(timeoutMillis: Long, scheduler: Scheduler, emitLast: Boolean = false): Observable<T> {
     require(timeoutMillis >= 0L) { "Timeout must not be negative" }
@@ -28,6 +31,13 @@ fun <T> Observable<T>.throttleLatest(timeoutMillis: Long, scheduler: Scheduler, 
     return throttleLatest(timeout = { timeout }, emitLast = emitLast)
 }
 
+/**
+ * Emits a first element from the source [Observable], then calls the [timeout] supplier and
+ * and opens a time window defined by a returned [Completable]. Then does not emit any elements from
+ * the source [Observable] while the time window is open, and only emits a most recent element when the time window closes.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#throttleLatest-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-boolean-)
+ */
 fun <T> Observable<T>.throttleLatest(timeout: (T) -> Completable, emitLast: Boolean = false): Observable<T> =
     observable { emitter ->
         ThrottleLatest(

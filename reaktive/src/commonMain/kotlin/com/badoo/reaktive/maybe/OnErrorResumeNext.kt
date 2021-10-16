@@ -8,6 +8,11 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 
+/**
+ * When the [Maybe] signals `onError`, resumes the flow with a new [Maybe] returned by [nextSupplier].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#onErrorResumeNext-io.reactivex.functions.Function-).
+ */
 fun <T> Maybe<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Maybe<T>): Maybe<T> =
     maybe { emitter ->
         subscribe(
@@ -28,5 +33,10 @@ fun <T> Maybe<T>.onErrorResumeNext(nextSupplier: (Throwable) -> Maybe<T>): Maybe
         )
     }
 
+/**
+ * When the [Maybe] signals `onError`, resumes the flow with [next][next] [Maybe].
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#onErrorResumeNext-io.reactivex.MaybeSource-).
+ */
 fun <T> Maybe<T>.onErrorResumeNext(next: Maybe<T>): Maybe<T> =
     onErrorResumeNext { next }

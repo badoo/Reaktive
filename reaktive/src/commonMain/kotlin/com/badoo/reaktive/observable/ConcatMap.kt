@@ -12,6 +12,12 @@ import com.badoo.reaktive.utils.queue.SharedQueue
 import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
 
+/**
+ * Returns an [Observable] that applies the [mapper] to every element emitted by the source [Observable]
+ * and concatenates the returned [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#concatMap-io.reactivex.functions.Function-).
+ */
 fun <T, R> Observable<T>.concatMap(mapper: (T) -> Observable<R>): Observable<R> =
     observable { emitter ->
         val upstreamObserver = ConcatMapObserver(emitter.serialize(), mapper)

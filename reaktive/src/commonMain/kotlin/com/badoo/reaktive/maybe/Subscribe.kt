@@ -7,6 +7,13 @@ import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.doIfNotDisposed
 import com.badoo.reaktive.utils.handleReaktiveError
 
+/**
+ * Subscribes to the [Maybe] and provides event callbacks.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#subscribe-io.reactivex.functions.Consumer-io.reactivex.functions.Consumer-io.reactivex.functions.Action-).
+ *
+ * @param isThreadLocal see [Maybe.threadLocal]
+ */
 @UseReturnValue
 fun <T> Maybe<T>.subscribe(
     isThreadLocal: Boolean = false,

@@ -1,7 +1,5 @@
 package com.badoo.reaktive.publish
 
-import com.badoo.reaktive.configuration.DarwinPlugin
-import com.badoo.reaktive.configuration.JsPlugin
 import com.badoo.reaktive.configuration.Target
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -132,21 +130,25 @@ class PublishConfigurationPlugin : Plugin<Project> {
             "kotlinMultiplatform" to Target.shouldPublishTarget(project, Target.META),
             KotlinMultiplatformPlugin.METADATA_TARGET_NAME to Target.shouldPublishTarget(project, Target.META),
             "jvm" to Target.shouldPublishTarget(project, Target.JVM),
-            JsPlugin.TARGET_NAME_JS to Target.shouldPublishTarget(project, Target.JS),
+            "js" to Target.shouldPublishTarget(project, Target.JS),
             "androidDebug" to Target.shouldPublishTarget(project, Target.JVM),
             "androidRelease" to Target.shouldPublishTarget(project, Target.JVM),
             "linuxX64" to Target.shouldPublishTarget(project, Target.LINUX),
             "linuxArm32Hfp" to Target.shouldPublishTarget(project, Target.LINUX),
-            DarwinPlugin.TARGET_NAME_IOS_ARM32 to Target.shouldPublishTarget(project, Target.IOS),
-            DarwinPlugin.TARGET_NAME_IOS_ARM64 to Target.shouldPublishTarget(project, Target.IOS),
-            DarwinPlugin.TARGET_NAME_IOS_X64 to Target.shouldPublishTarget(project, Target.IOS),
-            DarwinPlugin.TARGET_NAME_WATCHOS_ARM32 to Target.shouldPublishTarget(project, Target.WATCHOS),
-            DarwinPlugin.TARGET_NAME_WATCHOS_ARM64 to Target.shouldPublishTarget(project, Target.WATCHOS),
-            DarwinPlugin.TARGET_NAME_WATCHOS_SIM to Target.shouldPublishTarget(project, Target.WATCHOS),
-            DarwinPlugin.TARGET_NAME_WATCHOS_X64 to Target.shouldPublishTarget(project, Target.WATCHOS),
-            DarwinPlugin.TARGET_NAME_TVOS_ARM64 to Target.shouldPublishTarget(project, Target.TVOS),
-            DarwinPlugin.TARGET_NAME_TVOS_X64 to Target.shouldPublishTarget(project, Target.TVOS),
-            DarwinPlugin.TARGET_NAME_MACOS_X64 to Target.shouldPublishTarget(project, Target.MACOS)
+            "iosArm32" to Target.shouldPublishTarget(project, Target.IOS),
+            "iosArm64" to Target.shouldPublishTarget(project, Target.IOS),
+            "iosX64" to Target.shouldPublishTarget(project, Target.IOS),
+            "iosSimulatorArm64" to Target.shouldPublishTarget(project, Target.IOS),
+            "watchosArm32" to Target.shouldPublishTarget(project, Target.WATCHOS),
+            "watchosArm64" to Target.shouldPublishTarget(project, Target.WATCHOS),
+            "watchosX86" to Target.shouldPublishTarget(project, Target.WATCHOS),
+            "watchosX64" to Target.shouldPublishTarget(project, Target.WATCHOS),
+            "watchosSimulatorArm64" to Target.shouldPublishTarget(project, Target.WATCHOS),
+            "tvosArm64" to Target.shouldPublishTarget(project, Target.TVOS),
+            "tvosX64" to Target.shouldPublishTarget(project, Target.TVOS),
+            "tvosSimulatorArm64" to Target.shouldPublishTarget(project, Target.TVOS),
+            "macosX64" to Target.shouldPublishTarget(project, Target.MACOS),
+            "macosArm64" to Target.shouldPublishTarget(project, Target.MACOS)
         )
     }
 

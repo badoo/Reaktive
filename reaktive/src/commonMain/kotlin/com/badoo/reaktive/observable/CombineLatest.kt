@@ -10,6 +10,12 @@ import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.serializer.serializer
 
+/**
+ * Combines source [Observable]s by emitting an element that aggregates the latest elements of each of the source [Observable]s
+ * each time an element is received from any of the source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#combineLatest-java.lang.Iterable-io.reactivex.functions.Function-).
+ */
 fun <T, R> Iterable<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Observable<R> =
     observable { emitter ->
         val sources = toList()
@@ -34,7 +40,7 @@ fun <T, R> Iterable<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Observ
                             val mappedValue =
                                 try {
                                     @Suppress("UNCHECKED_CAST")
-                                    mapper(values as List<T>)
+                                    mapper(values.toList() as List<T>)
                                 } catch (e: Throwable) {
                                     emitter.onError(e)
                                     return@serializer false
@@ -95,11 +101,23 @@ private sealed class CombineLatestEvent<out T> {
     class OnError(val error: Throwable) : CombineLatestEvent<Nothing>()
 }
 
+/**
+ * Combines source [Observable]s by emitting an element that aggregates the latest elements of each of the source [Observable]s
+ * each time an element is received from any of the source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#combineLatest-java.lang.Iterable-io.reactivex.functions.Function-).
+ */
 fun <T, R> combineLatest(vararg sources: Observable<T>, mapper: (List<T>) -> R): Observable<R> =
     sources
         .asList()
         .combineLatest(mapper)
 
+/**
+ * Combines source [Observable]s by emitting an element that aggregates the latest elements of each of the source [Observable]s
+ * each time an element is received from any of the source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#combineLatest-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.BiFunction-).
+ */
 fun <T1, T2, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -111,6 +129,12 @@ fun <T1, T2, R> combineLatest(
             mapper(values[0] as T1, values[1] as T2)
         }
 
+/**
+ * Combines source [Observable]s by emitting an element that aggregates the latest elements of each of the source [Observable]s
+ * each time an element is received from any of the source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#combineLatest-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function3-).
+ */
 fun <T1, T2, T3, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -123,6 +147,12 @@ fun <T1, T2, T3, R> combineLatest(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3)
         }
 
+/**
+ * Combines source [Observable]s by emitting an element that aggregates the latest elements of each of the source [Observable]s
+ * each time an element is received from any of the source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#combineLatest-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function4-).
+ */
 fun <T1, T2, T3, T4, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -136,6 +166,12 @@ fun <T1, T2, T3, T4, R> combineLatest(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4)
         }
 
+/**
+ * Combines source [Observable]s by emitting an element that aggregates the latest elements of each of the source [Observable]s
+ * each time an element is received from any of the source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#combineLatest-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function5-).
+ */
 fun <T1, T2, T3, T4, T5, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -150,6 +186,12 @@ fun <T1, T2, T3, T4, T5, R> combineLatest(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4, values[4] as T5)
         }
 
+/**
+ * Combines source [Observable]s by emitting an element that aggregates the latest elements of each of the source [Observable]s
+ * each time an element is received from any of the source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#combineLatest-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function6-).
+ */
 fun <T1, T2, T3, T4, T5, T6, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -165,6 +207,12 @@ fun <T1, T2, T3, T4, T5, T6, R> combineLatest(
             mapper(values[0] as T1, values[1] as T2, values[2] as T3, values[3] as T4, values[4] as T5, values[5] as T6)
         }
 
+/**
+ * Combines source [Observable]s by emitting an element that aggregates the latest elements of each of the source [Observable]s
+ * each time an element is received from any of the source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#combineLatest-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function7-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -189,6 +237,12 @@ fun <T1, T2, T3, T4, T5, T6, T7, R> combineLatest(
             )
         }
 
+/**
+ * Combines source [Observable]s by emitting an element that aggregates the latest elements of each of the source [Observable]s
+ * each time an element is received from any of the source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#combineLatest-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function8-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -215,6 +269,12 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combineLatest(
             )
         }
 
+/**
+ * Combines source [Observable]s by emitting an element that aggregates the latest elements of each of the source [Observable]s
+ * each time an element is received from any of the source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#combineLatest-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function9-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,
@@ -243,6 +303,12 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> combineLatest(
             )
         }
 
+/**
+ * Combines source [Observable]s by emitting an element that aggregates the latest elements of each of the source [Observable]s
+ * each time an element is received from any of the source [Observable]s.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#combineLatest-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.ObservableSource-io.reactivex.functions.Function9-).
+ */
 fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> combineLatest(
     source1: Observable<T1>,
     source2: Observable<T2>,

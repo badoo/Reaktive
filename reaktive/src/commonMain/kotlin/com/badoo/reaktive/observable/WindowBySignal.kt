@@ -23,6 +23,8 @@ import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
 
 /**
+ * Returns an [Observable] that emits possibly overlapping windows of elements it collects from the source [Observable].
+ *
  * Please refer to the corresponding RxJava
  * [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-long-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-).
  */
@@ -45,8 +47,11 @@ fun <T> Observable<T>.window(
 }
 
 /**
- * Please refer to the corresponding RxJava
- * [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-io.reactivex.ObservableSource-io.reactivex.functions.Function-)
+ * Returns an [Observable] that emits possibly overlapping windows of elements it collects from the source [Observable].
+ * Every new window is opened when the [opening][opening] [Observable] emits an element.
+ * Each window is closed when the corresponding [Observable] returned by the [closing] function completes.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-io.reactivex.ObservableSource-io.reactivex.functions.Function-).
  */
 fun <T, S> Observable<T>.window(
     opening: Observable<S>,

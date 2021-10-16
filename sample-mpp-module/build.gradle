@@ -1,5 +1,3 @@
-import com.badoo.reaktive.configuration.Target
-
 /*
  * In order to build this module for LinuxX64 you should install libcurl4-openssl-dev package in your system
  */
@@ -14,32 +12,28 @@ configuration {
 
 kotlin {
     targets {
-//        fromPreset(presets.iosX64, 'darwinCommon')
-        if (Target.shouldDefineTarget(project, Target.LINUX)) {
-            linuxX64 {
-                compilations.main.cinterops {
-                    libcurl.includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+        linuxX64 {
+            compilations.main.cinterops {
+                libcurl.includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+            }
+        }
+
+        def configureFrameworks = { target ->
+            target.binaries {
+                framework {
+                    baseName = "shared"
+                    export project(':reaktive')
+                    transitiveExport = true
                 }
             }
         }
-        if (Target.shouldDefineTarget(project, Target.ALL_MACOS_HOSTED)) {
-            def configureFrameworks = { target ->
-                target.binaries {
-                    framework {
-                        export project(':reaktive')
-                        transitiveExport = true
-                    }
-                }
-            }
-            if (Target.shouldDefineTarget(project, Target.IOS)) {
-                configureFrameworks(ios32)
-                configureFrameworks(ios64)
-                configureFrameworks(iosSim)
-            }
-            if (Target.shouldDefineTarget(project, Target.MACOS)) {
-                configureFrameworks(macosX64)
-            }
-        }
+
+        configureFrameworks(iosArm32)
+        configureFrameworks(iosArm64)
+        configureFrameworks(iosX64)
+        configureFrameworks(iosSimulatorArm64)
+        configureFrameworks(macosX64)
+        configureFrameworks(macosArm64)
     }
 
     sourceSets {

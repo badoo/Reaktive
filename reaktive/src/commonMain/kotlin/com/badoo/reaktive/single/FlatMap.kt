@@ -32,7 +32,7 @@ fun <T, R> Single<T>.flatMap(mapper: (T) -> Single<R>): Single<R> =
     }
 
 /**
- * Calls the `mapper` with the value emitted by the [Single] and subscribes to the returned inner [Single].
+ * Calls the [mapper] with the value emitted by the [Single] and subscribes to the returned inner [Single].
  * When the inner [Single] emits, calls the [resultSelector] function with the original and the inner values and emits the result.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#flatMap-io.reactivex.functions.Function-).

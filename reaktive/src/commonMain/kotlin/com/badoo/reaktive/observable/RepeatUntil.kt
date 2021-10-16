@@ -6,6 +6,12 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
+/**
+ * Returns an [Observable] that calls the [predicate] when this [Observable] completes
+ * and resubscribes to this [Observable] if the [predicate] returned `false`.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#repeatUntil-io.reactivex.functions.BooleanSupplier-).
+ */
 fun <T> Observable<T>.repeatUntil(predicate: () -> Boolean): Observable<T> =
     observable { emitter ->
         val observer =

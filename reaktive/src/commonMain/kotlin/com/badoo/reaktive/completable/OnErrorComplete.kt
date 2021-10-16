@@ -4,7 +4,7 @@ import com.badoo.reaktive.base.CompleteCallback
 import com.badoo.reaktive.disposable.Disposable
 
 /**
- * Returns a [Completable] which completes when this [Completable] signals either `onComplete` or `onError`.
+ * Returns a [Completable] which completes when this [Completable] signals `onError`.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#onErrorComplete--).
  */

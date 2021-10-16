@@ -8,6 +8,14 @@ import com.badoo.reaktive.maybe.maybe
 import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.Uninitialized
 
+/**
+ * Returns a [Maybe] that subscribes to this [Observable] and calls the [reducer] function
+ * with a result of a previous [reducer] invocation and a current element.
+ * The returned [Maybe] emits a result of the final [reducer] invocation, or completes
+ * if the source [Observable] emitted less than two elements.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#reduce-io.reactivex.functions.BiFunction-).
+ */
 fun <T> Observable<T>.reduce(reducer: (a: T, b: T) -> T): Maybe<T> =
     maybe { emitter ->
         subscribe(
