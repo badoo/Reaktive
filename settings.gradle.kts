@@ -6,7 +6,6 @@ pluginManagement {
     }
 }
 
-includeBuild("tools/binary-compatibility-validator")
 includeBuild("includedBuild/dependencies")
 includeBuild("includedBuild/gradleConfiguration")
 
