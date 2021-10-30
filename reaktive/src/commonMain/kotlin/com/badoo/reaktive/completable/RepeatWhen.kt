@@ -10,6 +10,6 @@ import com.badoo.reaktive.observable.repeatWhen
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#repeatWhen-io.reactivex.functions.Function-).
  */
 fun Completable.repeatWhen(handler: (repeatNumber: Int) -> Maybe<*>): Completable =
-    asObservable<Nothing>()
+    asObservable()
         .repeatWhen(handler)
         .asCompletable()
