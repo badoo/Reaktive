@@ -23,9 +23,6 @@ class ObservableToObservableTestsImpl(
     transform: Observable<*>.() -> Observable<*>
 ) : ObservableToObservableTests, SourceTests by SourceTestsImpl(TestObservable<Nothing>(), { transform().test() }) {
 
-    @Deprecated("Just to fix complilation issues")
-    constructor() : this({ throw UnsupportedOperationException() })
-
     private val upstream = TestObservable<Nothing>()
     private val observer = upstream.transform().test()
 

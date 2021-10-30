@@ -10,13 +10,6 @@ fun <T : Any> Single<T>.asRxJava2SingleSource(): io.reactivex.SingleSource<T> =
         subscribe(observer.asReaktiveSingleObserver())
     }
 
-@Deprecated(
-    message = "Use asRxJava2SingleSource",
-    replaceWith = ReplaceWith("asRxJava2SingleSource()"),
-    level = DeprecationLevel.ERROR
-)
-fun <T : Any> Single<T>.asRxJava2Source(): io.reactivex.SingleSource<T> = asRxJava2SingleSource()
-
 fun <T : Any> Single<T>.asRxJava2Single(): io.reactivex.Single<T> =
     object : io.reactivex.Single<T>() {
         override fun subscribeActual(observer: io.reactivex.SingleObserver<in T>) {
@@ -24,24 +17,10 @@ fun <T : Any> Single<T>.asRxJava2Single(): io.reactivex.Single<T> =
         }
     }
 
-@Deprecated(
-    message = "Use asRxJava2Single",
-    replaceWith = ReplaceWith("asRxJava2Single()"),
-    level = DeprecationLevel.ERROR
-)
-fun <T : Any> Single<T>.asRxJava2(): io.reactivex.Single<T> = asRxJava2Single()
-
 fun <T : Any> io.reactivex.SingleSource<out T>.asReaktiveSingle(): Single<T> =
     singleUnsafe { observer ->
         subscribe(observer.asRxJava2SingleObserver())
     }
-
-@Deprecated(
-    message = "Use asReaktiveSingle",
-    replaceWith = ReplaceWith("asReaktiveSingle()"),
-    level = DeprecationLevel.ERROR
-)
-fun <T : Any> io.reactivex.SingleSource<out T>.asReaktive(): Single<T> = asReaktiveSingle()
 
 fun <T : Any> io.reactivex.SingleObserver<in T>.asReaktiveSingleObserver(): SingleObserver<T> =
     object : SingleObserver<T> {
@@ -58,13 +37,6 @@ fun <T : Any> io.reactivex.SingleObserver<in T>.asReaktiveSingleObserver(): Sing
         }
     }
 
-@Deprecated(
-    message = "Use asReaktiveSingleObserver",
-    replaceWith = ReplaceWith("asReaktiveSingleObserver()"),
-    level = DeprecationLevel.ERROR
-)
-fun <T : Any> io.reactivex.SingleObserver<in T>.asReaktive(): SingleObserver<T> = asReaktiveSingleObserver()
-
 fun <T : Any> SingleObserver<T>.asRxJava2SingleObserver(): io.reactivex.SingleObserver<T> =
     object : io.reactivex.SingleObserver<T> {
         override fun onSubscribe(disposable: io.reactivex.disposables.Disposable) {
@@ -79,10 +51,3 @@ fun <T : Any> SingleObserver<T>.asRxJava2SingleObserver(): io.reactivex.SingleOb
             this@asRxJava2SingleObserver.onError(error)
         }
     }
-
-@Deprecated(
-    message = "Use asRxJava2SingleObserver",
-    replaceWith = ReplaceWith("asRxJava2SingleObserver()"),
-    level = DeprecationLevel.ERROR
-)
-fun <T : Any> SingleObserver<T>.asRxJava2(): io.reactivex.SingleObserver<T> = asRxJava2SingleObserver()
