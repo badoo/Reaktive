@@ -1,8 +1,0 @@
-# Project exclude paths
-/.gradle/
-/build/
-/buildSrc/.gradle/
-/buildSrc/build/
-/sample-project/build/
-/.idea/
-!/.idea/copyright

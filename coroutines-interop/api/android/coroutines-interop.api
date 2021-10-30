@@ -1,0 +1,49 @@
+public final class com/badoo/reaktive/coroutinesinterop/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/CompletableFromCoroutineKt {
+	public static final fun asCompletable (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun asCompletable (Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun completableFromCoroutine (Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/completable/Completable;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/CoroutineContextAsDisposableKt {
+	public static final fun asDisposable (Lkotlin/coroutines/CoroutineContext;)Lcom/badoo/reaktive/disposable/Disposable;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/CoroutineContextAsSchedulerKt {
+	public static final fun asScheduler (Lkotlin/coroutines/CoroutineContext;)Lcom/badoo/reaktive/scheduler/Scheduler;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/FlowAsObservableKt {
+	public static final fun asObservable (Lkotlinx/coroutines/flow/Flow;)Lcom/badoo/reaktive/observable/Observable;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/JobAsDisposableKt {
+	public static final fun asDisposable (Lkotlinx/coroutines/Job;)Lcom/badoo/reaktive/disposable/Disposable;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/MaybeFromCoroutineKt {
+	public static final fun asMaybe (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun asMaybe (Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun maybeFromCoroutine (Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/maybe/Maybe;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/ObservableAsFlowKt {
+	public static final fun asFlow (Lcom/badoo/reaktive/observable/Observable;)Lkotlinx/coroutines/flow/Flow;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/SchedulerAsCorotuineDispatcherKt {
+	public static final fun asCoroutineDispatcher (Lcom/badoo/reaktive/scheduler/Scheduler;)Lkotlinx/coroutines/CoroutineDispatcher;
+}
+
+public final class com/badoo/reaktive/coroutinesinterop/SingleFromCoroutineKt {
+	public static final fun asSingle (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
+	public static final fun asSingle (Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/single/Single;
+	public static final fun singleFromCoroutine (Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/single/Single;
+}
+

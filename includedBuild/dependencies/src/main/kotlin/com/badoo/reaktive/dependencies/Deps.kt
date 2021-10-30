@@ -45,8 +45,7 @@ object Deps {
     object Kotlinx {
         val coroutines = Coroutines
         val metadata = Metadata
-        // TODO Remove tools/binary-compatibility-validator on upgrade
-        val compatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.5.0-SNAPSHOT"
+        val compatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.8.0-RC"
 
         object Coroutines {
             val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
