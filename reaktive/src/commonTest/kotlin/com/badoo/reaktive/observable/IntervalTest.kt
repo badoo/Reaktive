@@ -19,7 +19,11 @@ class IntervalTest {
 
     private val scheduler = TestScheduler()
     private val timer = scheduler.timer
-    private val upstream = observableInterval(50L, 100L, scheduler)
+    private val upstream = observableInterval(
+        periodMillis = 100L,
+        startDelayMillis = 50L,
+        scheduler = scheduler
+    )
     private val observer = upstream.test()
 
     @Test
