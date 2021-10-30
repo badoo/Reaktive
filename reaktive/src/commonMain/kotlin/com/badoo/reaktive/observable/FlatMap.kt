@@ -17,21 +17,14 @@ import com.badoo.reaktive.utils.use
 
 /**
  * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Observable].
- * Emits elements from inner [Observable]s. All inner [Observable]s are subscribed concurrently without any limits.
- *
- * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMap-io.reactivex.functions.Function-).
- */
-fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
-    flatMap(maxConcurrency = Int.MAX_VALUE, mapper = mapper)
-
-/**
- * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Observable].
  * Emits elements from inner [Observable]s. The maximum number of concurrently subscribed inner [Observable]s is
  * determined by the [maxConcurrency] argument.
  *
+ * By default, all inner [Observable]s are subscribed concurrently without any limits.
+ *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMap-io.reactivex.functions.Function-int-).
  */
-fun <T, R> Observable<T>.flatMap(maxConcurrency: Int, mapper: (T) -> Observable<R>): Observable<R> {
+fun <T, R> Observable<T>.flatMap(maxConcurrency: Int = Int.MAX_VALUE, mapper: (T) -> Observable<R>): Observable<R> {
     require(maxConcurrency > 0) { "maxConcurrency value must be positive" }
 
     return observable { emitter ->
@@ -44,22 +37,14 @@ fun <T, R> Observable<T>.flatMap(maxConcurrency: Int, mapper: (T) -> Observable<
 /**
  * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Observable].
  * For each element [U] emitted by an inner [Observable], calls [resultSelector] with the original source element [T]
- * and the inner element [U], and emits the result element [R]. All inner [Observable]s are subscribed concurrently without any limits.
- *
- * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMap-io.reactivex.functions.Function-io.reactivex.functions.BiFunction-).
- */
-fun <T, U, R> Observable<T>.flatMap(mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
-    flatMap(maxConcurrency = Int.MAX_VALUE, mapper = mapper, resultSelector = resultSelector)
-
-/**
- * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Observable].
- * For each element [U] emitted by an inner [Observable], calls [resultSelector] with the original source element [T]
  * and the inner element [U], and emits the result element [R]. The maximum number of concurrently subscribed inner [Observable]s is
  * determined by the [maxConcurrency] argument.
  *
+ * By default, all inner [Observable]s are subscribed concurrently without any limits.
+ *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMap-io.reactivex.functions.Function-io.reactivex.functions.BiFunction-int-).
  */
-fun <T, U, R> Observable<T>.flatMap(maxConcurrency: Int, mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
+fun <T, U, R> Observable<T>.flatMap(maxConcurrency: Int = Int.MAX_VALUE, mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
     flatMap(maxConcurrency = maxConcurrency) { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
