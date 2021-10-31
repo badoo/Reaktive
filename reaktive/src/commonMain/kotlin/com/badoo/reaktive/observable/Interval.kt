@@ -11,7 +11,7 @@ import com.badoo.reaktive.utils.atomic.AtomicLong
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#interval-long-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-).
  */
-fun observableInterval(periodMillis: Long, startDelayMillis: Long = periodMillis,  scheduler: Scheduler): Observable<Long> =
+fun observableInterval(periodMillis: Long, startDelayMillis: Long = periodMillis, scheduler: Scheduler): Observable<Long> =
     observable { emitter ->
         val executor = scheduler.newExecutor()
         emitter.setDisposable(executor)
