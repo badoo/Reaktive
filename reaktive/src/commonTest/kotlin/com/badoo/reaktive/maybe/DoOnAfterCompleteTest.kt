@@ -17,7 +17,7 @@ class DoOnAfterCompleteTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOnA
 
     @Test
     fun does_not_call_action_WHEN_upstream_succeeded() {
-        val isCalled = AtomicBoolean(false)
+        val isCalled = AtomicBoolean()
 
         upstream
             .doOnAfterComplete {
