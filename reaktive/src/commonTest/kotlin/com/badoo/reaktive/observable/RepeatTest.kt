@@ -146,8 +146,8 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
     @Test
     fun does_not_resubscribe_to_upstream_recursively() {
         val isFirstIteration = AtomicBoolean(true)
-        val isFirstIterationFinished = AtomicBoolean(false)
-        val isSecondIterationRecursive = AtomicBoolean(false)
+        val isFirstIterationFinished = AtomicBoolean()
+        val isSecondIterationRecursive = AtomicBoolean()
 
         val upstream =
             observableUnsafe<Int> { observer ->
@@ -168,7 +168,7 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
 
     @Test
     fun does_not_resubscribe_to_upstream_WHEN_disposed_and_upstream_completed() {
-        val isResubscribed = AtomicBoolean(false)
+        val isResubscribed = AtomicBoolean()
         val upstreamObserver = AtomicReference<ObservableObserver<Int>?>(null)
 
         val upstream =
