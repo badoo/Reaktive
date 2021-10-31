@@ -10,7 +10,7 @@ import com.badoo.reaktive.maybe.maybe
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#toMaybe--).
  */
-fun <T> Completable.asMaybe(): Maybe<T> =
+fun Completable.asMaybe(): Maybe<Nothing> =
     maybe { emitter ->
         subscribeSafe(
             object : CompletableObserver, CompletableCallbacks by emitter {

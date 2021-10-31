@@ -53,7 +53,7 @@ class DoOnAfterCompleteTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOnA
 
     @Test
     fun does_not_call_action_WHEN_upstream_produced_error() {
-        val isCalled = AtomicBoolean()
+        val isCalled = AtomicBoolean(false)
 
         upstream
             .doOnAfterComplete {

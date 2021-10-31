@@ -9,6 +9,6 @@ import com.badoo.reaktive.observable.repeat
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#repeat-long-).
  */
 fun Completable.repeat(count: Int = -1): Completable =
-    asObservable<Nothing>()
+    asObservable()
         .repeat(count = count)
         .asCompletable()
