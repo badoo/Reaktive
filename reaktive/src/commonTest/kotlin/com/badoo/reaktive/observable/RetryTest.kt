@@ -89,7 +89,7 @@ class RetryTest : ObservableToObservableTests by ObservableToObservableTestsImpl
 
     @Test
     fun predicate_receives_valid_counter_WHEN_upstream_produces_error() {
-        val timeRef = AtomicLong(0)
+        val timeRef = AtomicLong()
         upstream
             .retry { time, _ ->
                 timeRef.value = time
