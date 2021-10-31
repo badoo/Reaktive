@@ -8,7 +8,7 @@ import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -89,7 +89,7 @@ class RetryTest : ObservableToObservableTests by ObservableToObservableTestsImpl
 
     @Test
     fun predicate_receives_valid_counter_WHEN_upstream_produces_error() {
-        val timeRef = AtomicInt()
+        val timeRef = AtomicLong(0)
         upstream
             .retry { time, _ ->
                 timeRef.value = time

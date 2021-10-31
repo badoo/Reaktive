@@ -7,7 +7,7 @@ import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.assertComplete
 import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -88,7 +88,7 @@ class RetryTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ retry() }) {
 
     @Test
     fun predicate_receives_valid_counter_WHEN_upstream_produces_error() {
-        val timeRef = AtomicInt()
+        val timeRef = AtomicLong(0)
         upstream
             .retry { time, _ ->
                 timeRef.value = time

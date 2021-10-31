@@ -6,7 +6,7 @@ import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -79,7 +79,7 @@ class RetryTest : SingleToSingleTests by SingleToSingleTestsImpl({ retry() }) {
 
     @Test
     fun predicate_receives_valid_counter_WHEN_upstream_produces_error() {
-        val timeRef = AtomicInt()
+        val timeRef = AtomicLong(0)
         upstream
             .retry { time, _ ->
                 timeRef.value = time
