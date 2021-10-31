@@ -80,10 +80,10 @@ fun <T> Maybe<T>.doOnAfterSuccess(consumer: (T) -> Unit): Maybe<T> =
     }
 
 /**
- * Calls the [consumer] when the [Maybe] signals `onComplete`.
- * The [consumer] is called **after** the observer is called.
+ * Calls the [action] when the [Maybe] signals `onComplete`.
+ * The [action] is called **after** the observer is called.
  */
-fun <T> Maybe<T>.doOnAfterComplete(consumer: () -> Unit): Maybe<T> =
+fun <T> Maybe<T>.doOnAfterComplete(action: () -> Unit): Maybe<T> =
     maybe { emitter ->
         subscribe(
             object : MaybeObserver<T>, SuccessCallback<T> by emitter, ErrorCallback by emitter {
@@ -95,7 +95,7 @@ fun <T> Maybe<T>.doOnAfterComplete(consumer: () -> Unit): Maybe<T> =
                     emitter.onComplete()
 
                     // Can't send error to downstream, already terminated with onComplete
-                    tryCatchAndHandle(block = consumer)
+                    tryCatchAndHandle(block = action)
                 }
             }
         )
