@@ -9,7 +9,7 @@ import com.badoo.reaktive.single.map
  * Emits elements from inner [Single]s. The maximum number of concurrently subscribed inner [Single]s is
  * determined by the [maxConcurrency] argument.
  *
- * All inner [Single]s are subscribed concurrently without any limits.
+ * By default, all inner [Single]s are subscribed concurrently without any limits.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMapMaybe-io.reactivex.functions.Function-).
  */
@@ -22,7 +22,7 @@ fun <T, R> Observable<T>.flatMapSingle(maxConcurrency: Int = Int.MAX_VALUE, mapp
  * and the inner element [U], and emits the result element [R]. The maximum number of concurrently subscribed inner [Single]s is
  * determined by the [maxConcurrency] argument.
  *
- * All inner [Single]s are subscribed concurrently without any limits.
+ * By default, all inner [Single]s are subscribed concurrently without any limits.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMapMaybe-io.reactivex.functions.Function-).
  */

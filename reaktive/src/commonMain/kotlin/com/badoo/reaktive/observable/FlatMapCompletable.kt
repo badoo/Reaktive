@@ -7,7 +7,7 @@ import com.badoo.reaktive.completable.asObservable
  * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Completable].
  * The maximum number of concurrently subscribed inner [Completable]s is determined by the [maxConcurrency] argument.
  *
- * All inner [Completable]s are subscribed concurrently without any limits.
+ * By default, all inner [Completable]s are subscribed concurrently without any limits.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMapCompletable-io.reactivex.functions.Function-).
  */

@@ -9,7 +9,7 @@ import com.badoo.reaktive.maybe.map
  * Emits elements from inner [Maybe]s. The maximum number of concurrently subscribed inner [Maybe]s is
  * determined by the [maxConcurrency] argument.
  *
- * All inner [Maybe]s are subscribed concurrently without any limits.
+ * By default, all inner [Maybe]s are subscribed concurrently without any limits.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMapMaybe-io.reactivex.functions.Function-).
  */
@@ -22,7 +22,7 @@ fun <T, R> Observable<T>.flatMapMaybe(maxConcurrency: Int = Int.MAX_VALUE, mappe
  * and the inner element [U], and emits the result element [R]. The maximum number of concurrently subscribed inner [Maybe]s is
  * determined by the [maxConcurrency] argument.
  *
- * All inner [Maybe]s are subscribed concurrently without any limits.
+ * By default, all inner [Maybe]s are subscribed concurrently without any limits.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMapMaybe-io.reactivex.functions.Function-).
  */
