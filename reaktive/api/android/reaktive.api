@@ -191,8 +191,8 @@ public final class com/badoo/reaktive/completable/OnErrorResumeNextKt {
 }
 
 public final class com/badoo/reaktive/completable/RepeatKt {
-	public static final fun repeat (Lcom/badoo/reaktive/completable/Completable;I)Lcom/badoo/reaktive/completable/Completable;
-	public static synthetic fun repeat$default (Lcom/badoo/reaktive/completable/Completable;IILjava/lang/Object;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun repeat (Lcom/badoo/reaktive/completable/Completable;J)Lcom/badoo/reaktive/completable/Completable;
+	public static synthetic fun repeat$default (Lcom/badoo/reaktive/completable/Completable;JILjava/lang/Object;)Lcom/badoo/reaktive/completable/Completable;
 }
 
 public final class com/badoo/reaktive/completable/RepeatUntilKt {
@@ -204,7 +204,7 @@ public final class com/badoo/reaktive/completable/RepeatWhenKt {
 }
 
 public final class com/badoo/reaktive/completable/RetryKt {
-	public static final fun retry (Lcom/badoo/reaktive/completable/Completable;I)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun retry (Lcom/badoo/reaktive/completable/Completable;J)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun retry (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/completable/Completable;
 	public static synthetic fun retry$default (Lcom/badoo/reaktive/completable/Completable;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lcom/badoo/reaktive/completable/Completable;
 }
@@ -483,8 +483,8 @@ public final class com/badoo/reaktive/maybe/OnErrorReturnKt {
 }
 
 public final class com/badoo/reaktive/maybe/RepeatKt {
-	public static final fun repeat (Lcom/badoo/reaktive/maybe/Maybe;I)Lcom/badoo/reaktive/observable/Observable;
-	public static synthetic fun repeat$default (Lcom/badoo/reaktive/maybe/Maybe;IILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun repeat (Lcom/badoo/reaktive/maybe/Maybe;J)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun repeat$default (Lcom/badoo/reaktive/maybe/Maybe;JILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/maybe/RepeatUntilKt {
@@ -839,8 +839,8 @@ public final class com/badoo/reaktive/observable/RefCountKt {
 }
 
 public final class com/badoo/reaktive/observable/RepeatKt {
-	public static final fun repeat (Lcom/badoo/reaktive/observable/Observable;I)Lcom/badoo/reaktive/observable/Observable;
-	public static synthetic fun repeat$default (Lcom/badoo/reaktive/observable/Observable;IILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun repeat (Lcom/badoo/reaktive/observable/Observable;J)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun repeat$default (Lcom/badoo/reaktive/observable/Observable;JILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/RepeatUntilKt {
@@ -1231,8 +1231,8 @@ public final class com/badoo/reaktive/single/OnErrorReturnKt {
 }
 
 public final class com/badoo/reaktive/single/RepeatKt {
-	public static final fun repeat (Lcom/badoo/reaktive/single/Single;I)Lcom/badoo/reaktive/observable/Observable;
-	public static synthetic fun repeat$default (Lcom/badoo/reaktive/single/Single;IILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun repeat (Lcom/badoo/reaktive/single/Single;J)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun repeat$default (Lcom/badoo/reaktive/single/Single;JILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/single/RepeatUntilKt {
