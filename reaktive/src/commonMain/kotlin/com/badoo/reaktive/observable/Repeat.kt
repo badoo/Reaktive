@@ -17,7 +17,7 @@ fun <T> Observable<T>.repeat(times: Long = Long.MAX_VALUE): Observable<T> {
     return observable { emitter ->
         val observer =
             object : ObservableObserver<T>, ValueCallback<T> by emitter, ErrorCallback by emitter {
-                private val counter: AtomicLong? = if (times >= 0) AtomicLong(times) else null
+                private val counter: AtomicLong? = if (times < Long.MAX_VALUE) AtomicLong(times) else null
 
                 // Prevents recursive subscriptions
                 private val serializer =
