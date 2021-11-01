@@ -26,7 +26,11 @@ fun <T, R> Observable<T>.flatMapSingle(maxConcurrency: Int = Int.MAX_VALUE, mapp
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMapMaybe-io.reactivex.functions.Function-).
  */
-fun <T, U, R> Observable<T>.flatMapSingle(maxConcurrency: Int = Int.MAX_VALUE, mapper: (T) -> Single<U>, resultSelector: (T, U) -> R): Observable<R> =
+fun <T, U, R> Observable<T>.flatMapSingle(
+    maxConcurrency: Int = Int.MAX_VALUE,
+    mapper: (T) -> Single<U>,
+    resultSelector: (T, U) -> R
+): Observable<R> =
     flatMapSingle(maxConcurrency = maxConcurrency) { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
