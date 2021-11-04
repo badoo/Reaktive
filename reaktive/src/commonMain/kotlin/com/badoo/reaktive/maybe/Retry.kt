@@ -11,7 +11,7 @@ import com.badoo.reaktive.disposable.Disposable
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#retry-io.reactivex.functions.BiPredicate-).
  */
-fun <T> Maybe<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Maybe<T> =
+fun <T> Maybe<T>.retry(predicate: (attempt: Long, Throwable) -> Boolean = { _, _ -> true }): Maybe<T> =
     maybe { emitter ->
         subscribe(
             object : MaybeObserver<T>, SuccessCallback<T> by emitter, CompleteCallback by emitter {

@@ -6,10 +6,11 @@ import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -79,7 +80,7 @@ class RetryTest : SingleToSingleTests by SingleToSingleTestsImpl({ retry() }) {
 
     @Test
     fun predicate_receives_valid_counter_WHEN_upstream_produces_error() {
-        val timeRef = AtomicInt()
+        val timeRef = AtomicLong()
         upstream
             .retry { time, _ ->
                 timeRef.value = time
@@ -87,9 +88,9 @@ class RetryTest : SingleToSingleTests by SingleToSingleTestsImpl({ retry() }) {
             }
             .test()
         upstream.onError(Throwable())
-        assertSame(timeRef.value, 1)
+        assertEquals(1, timeRef.value)
         upstream.onError(Throwable())
-        assertSame(timeRef.value, 2)
+        assertEquals(2, timeRef.value)
     }
 
     @Test
