@@ -10,6 +10,7 @@ import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -87,9 +88,9 @@ class RetryTest : SingleToSingleTests by SingleToSingleTestsImpl({ retry() }) {
             }
             .test()
         upstream.onError(Throwable())
-        assertSame(timeRef.value, 1L)
+        assertEquals(1, timeRef.value)
         upstream.onError(Throwable())
-        assertSame(timeRef.value, 2L)
+        assertEquals(2, timeRef.value)
     }
 
     @Test
