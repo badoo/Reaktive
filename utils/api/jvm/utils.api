@@ -19,16 +19,6 @@ public class com/badoo/reaktive/utils/ObjectReference {
 	public final fun setValue (Ljava/lang/Object;)V
 }
 
-public class com/badoo/reaktive/utils/ThreadLocalHolder {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/Object;)V
-	public synthetic fun <init> (Ljava/lang/Object;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun dispose ()V
-	public final fun get ()Ljava/lang/Object;
-	public final fun isDisposed ()Z
-	public final fun set (Ljava/lang/Object;)V
-}
-
 public final class com/badoo/reaktive/utils/ThrowableExtKt {
 	public static final fun printStack (Ljava/lang/Throwable;)V
 }
