@@ -21,13 +21,6 @@ fun io.reactivex.rxjava3.core.Scheduler.asReaktiveScheduler(): Scheduler =
         }
     }
 
-@Deprecated(
-    message = "Use asReaktiveScheduler",
-    replaceWith = ReplaceWith("asReaktiveScheduler()"),
-    level = DeprecationLevel.ERROR
-)
-fun io.reactivex.rxjava3.core.Scheduler.asReaktive(): Scheduler = asReaktiveScheduler()
-
 private fun io.reactivex.rxjava3.core.Scheduler.Worker.asExecutor(disposables: CompositeDisposable): Scheduler.Executor =
     object : Scheduler.Executor {
         private val taskDisposables = CompositeDisposable()
