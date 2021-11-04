@@ -175,7 +175,7 @@ class FlatMapSingleTest
         flatMapUpstreamAndSubscribe { innerSources[it!!] }
 
     private fun flatMapUpstreamAndSubscribe(mapper: (Int?) -> Single<Int?>): TestObservableObserver<Int?> =
-        upstream.flatMapSingle(mapper).test()
+        upstream.flatMapSingle(mapper = mapper).test()
 
     private fun createInnerSources(count: Int): List<TestSingle<Int?>> =
         List(count) { TestSingle<Int?>() }
