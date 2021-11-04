@@ -87,9 +87,9 @@ class RetryTest : SingleToSingleTests by SingleToSingleTestsImpl({ retry() }) {
             }
             .test()
         upstream.onError(Throwable())
-        assertSame(timeRef.value, 1)
+        assertSame(timeRef.value, 1L)
         upstream.onError(Throwable())
-        assertSame(timeRef.value, 2)
+        assertSame(timeRef.value, 2L)
     }
 
     @Test
