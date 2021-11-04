@@ -18,9 +18,6 @@ class ObservableToObservableForwardTestsImpl(
     transform: Observable<Int?>.() -> Observable<Int?>
 ) : ObservableToObservableForwardTests {
 
-    @Deprecated("Just to fix complilation issues")
-    constructor() : this({ throw UnsupportedOperationException() })
-
     private val upstream = TestObservable<Int?>()
     private val observer = upstream.transform().test()
 

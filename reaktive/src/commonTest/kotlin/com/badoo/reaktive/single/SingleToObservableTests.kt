@@ -20,9 +20,6 @@ class SingleToObservableTestsImpl(
     transform: Single<Unit>.() -> Observable<*>
 ) : SingleToObservableTests, SourceTests by SourceTestsImpl(TestSingle<Nothing>(), { transform().test() }) {
 
-    @Deprecated("Just to fix complilation issues")
-    constructor() : this({ throw UnsupportedOperationException() })
-
     private val upstream = TestSingle<Unit>()
     private val observer = upstream.transform().test()
 

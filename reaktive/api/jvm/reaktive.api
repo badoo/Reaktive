@@ -257,12 +257,7 @@ public abstract interface class com/badoo/reaktive/disposable/Disposable {
 
 public final class com/badoo/reaktive/disposable/DisposableExtKt {
 	public static final fun addTo (Lcom/badoo/reaktive/disposable/Disposable;Lcom/badoo/reaktive/disposable/CompositeDisposable;)Lcom/badoo/reaktive/disposable/Disposable;
-	public static final fun setTo (Lcom/badoo/reaktive/disposable/Disposable;Lcom/badoo/reaktive/disposable/DisposableWrapper;)Lcom/badoo/reaktive/disposable/Disposable;
 	public static final fun setTo (Lcom/badoo/reaktive/disposable/Disposable;Lcom/badoo/reaktive/disposable/SerialDisposable;)Lcom/badoo/reaktive/disposable/Disposable;
-}
-
-public class com/badoo/reaktive/disposable/DisposableWrapper : com/badoo/reaktive/disposable/SerialDisposable {
-	public fun <init> ()V
 }
 
 public class com/badoo/reaktive/disposable/SerialDisposable : com/badoo/reaktive/disposable/Disposable {
@@ -1381,19 +1376,11 @@ public final class com/badoo/reaktive/subject/behavior/BehaviorSubjectBuilderKt 
 	public static final fun BehaviorSubject (Ljava/lang/Object;)Lcom/badoo/reaktive/subject/behavior/BehaviorSubject;
 }
 
-public final class com/badoo/reaktive/subject/behavior/VariousKt {
-	public static final fun behaviorSubject (Ljava/lang/Object;)Lcom/badoo/reaktive/subject/behavior/BehaviorSubject;
-}
-
 public abstract interface class com/badoo/reaktive/subject/publish/PublishSubject : com/badoo/reaktive/subject/Subject {
 }
 
 public final class com/badoo/reaktive/subject/publish/PublishSubjectBuilderKt {
 	public static final fun PublishSubject ()Lcom/badoo/reaktive/subject/publish/PublishSubject;
-}
-
-public final class com/badoo/reaktive/subject/publish/VariousKt {
-	public static final fun publishSubject ()Lcom/badoo/reaktive/subject/publish/PublishSubject;
 }
 
 public abstract interface class com/badoo/reaktive/subject/replay/ReplaySubject : com/badoo/reaktive/subject/Subject {

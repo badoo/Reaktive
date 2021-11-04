@@ -10,13 +10,6 @@ fun Completable.asRxJava3CompletableSource(): io.reactivex.rxjava3.core.Completa
         subscribe(observer.asReaktiveCompletableObserver())
     }
 
-@Deprecated(
-    message = "Use asRxJava3CompletableSource",
-    replaceWith = ReplaceWith("asRxJava3CompletableSource()"),
-    level = DeprecationLevel.ERROR
-)
-fun Completable.asRxJava3Source(): io.reactivex.rxjava3.core.CompletableSource = asRxJava3CompletableSource()
-
 fun Completable.asRxJava3Completable(): io.reactivex.rxjava3.core.Completable =
     object : io.reactivex.rxjava3.core.Completable() {
         override fun subscribeActual(observer: io.reactivex.rxjava3.core.CompletableObserver) {
@@ -24,24 +17,10 @@ fun Completable.asRxJava3Completable(): io.reactivex.rxjava3.core.Completable =
         }
     }
 
-@Deprecated(
-    message = "Use asRxJava3Completable",
-    replaceWith = ReplaceWith("asRxJava3Completable()"),
-    level = DeprecationLevel.ERROR
-)
-fun Completable.asRxJava3(): io.reactivex.rxjava3.core.Completable = asRxJava3Completable()
-
 fun io.reactivex.rxjava3.core.CompletableSource.asReaktiveCompletable(): Completable =
     completableUnsafe { observer ->
         subscribe(observer.asRxJava3CompletableObserver())
     }
-
-@Deprecated(
-    message = "Use asReaktiveCompletable",
-    replaceWith = ReplaceWith("asReaktiveCompletable()"),
-    level = DeprecationLevel.ERROR
-)
-fun io.reactivex.rxjava3.core.CompletableSource.asReaktive(): Completable = asReaktiveCompletable()
 
 fun io.reactivex.rxjava3.core.CompletableObserver.asReaktiveCompletableObserver(): CompletableObserver =
     object : CompletableObserver {
@@ -58,13 +37,6 @@ fun io.reactivex.rxjava3.core.CompletableObserver.asReaktiveCompletableObserver(
         }
     }
 
-@Deprecated(
-    message = "Use asReaktiveCompletableObserver",
-    replaceWith = ReplaceWith("asReaktiveCompletableObserver()"),
-    level = DeprecationLevel.ERROR
-)
-fun io.reactivex.rxjava3.core.CompletableObserver.asReaktive(): CompletableObserver = asReaktiveCompletableObserver()
-
 fun CompletableObserver.asRxJava3CompletableObserver(): io.reactivex.rxjava3.core.CompletableObserver =
     object : io.reactivex.rxjava3.core.CompletableObserver {
         override fun onSubscribe(disposable: io.reactivex.rxjava3.disposables.Disposable) {
@@ -79,10 +51,3 @@ fun CompletableObserver.asRxJava3CompletableObserver(): io.reactivex.rxjava3.cor
             this@asRxJava3CompletableObserver.onError(error)
         }
     }
-
-@Deprecated(
-    message = "Use asRxJava3CompletableObserver",
-    replaceWith = ReplaceWith("asRxJava3CompletableObserver()"),
-    level = DeprecationLevel.ERROR
-)
-fun CompletableObserver.asRxJava3(): io.reactivex.rxjava3.core.CompletableObserver = asRxJava3CompletableObserver()

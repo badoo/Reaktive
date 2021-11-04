@@ -24,9 +24,6 @@ class CompletableToObservableTestsImpl(
     transform: Completable.() -> Observable<*>
 ) : CompletableToObservableTests, SourceTests by SourceTestsImpl(TestCompletable(), { transform().test() }) {
 
-    @Deprecated("Just to fix complilation issues")
-    constructor() : this({ throw UnsupportedOperationException() })
-
     private val upstream = TestCompletable()
     private val observer = upstream.transform().test()
 

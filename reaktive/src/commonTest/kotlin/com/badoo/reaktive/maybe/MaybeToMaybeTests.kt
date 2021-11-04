@@ -26,9 +26,6 @@ class MaybeToMaybeTestsImpl(
     transform: Maybe<Unit>.() -> Maybe<*>
 ) : MaybeToMaybeTests, SourceTests by SourceTestsImpl(TestMaybe<Nothing>(), { transform().test() }) {
 
-    @Deprecated("Just to fix complilation issues")
-    constructor() : this({ throw UnsupportedOperationException() })
-
     private val upstream = TestMaybe<Unit>()
     private val observer = upstream.transform().test()
 
