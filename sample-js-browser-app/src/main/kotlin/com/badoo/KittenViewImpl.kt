@@ -4,8 +4,8 @@ import com.badoo.reaktive.samplemppmodule.view.AbstractKittenView
 import com.badoo.reaktive.samplemppmodule.view.KittenView.Event
 import com.badoo.reaktive.samplemppmodule.view.KittenView.ViewModel
 import org.w3c.dom.Image
-import kotlin.browser.document
-import kotlin.browser.window
+import kotlinx.browser.document
+import kotlinx.browser.window
 
 class KittenViewImpl : AbstractKittenView() {
 
