@@ -6,8 +6,10 @@ import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.utils.ensureNeverFrozen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.channelFlow
 
 @ExperimentalCoroutinesApi
@@ -24,7 +26,7 @@ fun <T> Observable<T>.asFlow(): Flow<T> =
                 }
 
                 override fun onNext(value: T) {
-                    channel.offer(value)
+                    channel.trySend(value)
                 }
 
                 override fun onComplete() {
@@ -43,4 +45,4 @@ fun <T> Observable<T>.asFlow(): Flow<T> =
         }
 
         awaitClose(serialDisposable::dispose)
-    }
+    }.buffer(capacity = Channel.UNLIMITED)
