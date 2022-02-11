@@ -85,7 +85,7 @@ internal class CoroutineContextScheduler(
 
         override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
             channelRef.value?.channel?.apply {
-                offer(
+                trySend(
                     Task(
                         startAtMillis = clock.uptimeMillis + startDelayMillis,
                         periodMillis = periodMillis,
