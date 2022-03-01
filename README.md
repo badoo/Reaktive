@@ -128,14 +128,16 @@ kotlin {
 * Interoperability with Kotlin Coroutines: conversions between coroutines (including Flow) and Reaktive
 * Interoperability with RxJava2 and RxJava3: conversion of sources between Reaktive and RxJava, ability to reuse RxJava's schedulers
 
-### Kotlin Native pitfalls
-Kotlin Native memory model and concurrency are very special. In general shared mutable state between threads is not allowed.
+### Reaktive and the old (strict) Kotlin/Native memory model
+
+The old (strict) Kotlin Native memory model and concurrency are very special. In general shared mutable state between threads is not allowed.
 Since Reaktive supports multithreading in Kotlin Native, please read the following documents before using it:
 * [Concurrency](https://kotlinlang.org/docs/reference/native/concurrency.html#object-transfer-and-freezing)
 * [Immutability](https://kotlinlang.org/docs/reference/native/immutability.html)
 
 Object detachment is relatively difficult to achieve and is very error-prone when the objects are created from outside and
 are not fully managed by the library. This is why Reaktive prefers frozen state. Here are some hints:
+
 * Any callback (and any captured objects) submitted to a Scheduler will be frozen
 * `subscribeOn` freezes both its upstream source and downstream observer,
 all the Disposables (upstream's and downstream's) are frozen as well,
@@ -145,6 +147,7 @@ upstream source is **not** frozen by the operator
 * Other operators that use scheduler (like `debounce`, `timer`, `delay`, etc.) behave same as `observeOn` in most of the cases
 
 #### Thread local tricks to avoid freezing
+
 Sometimes freezing is not acceptable, e.g. we might want to load some data in background and then update the UI.
 Obviously UI can not be frozen. With Reaktive it is possible to achieve such a behaviour in two ways:
 
@@ -182,6 +185,13 @@ observable<Any> { emitter ->
 ```
 
 In both cases subscription (`subscribe` call) **must** be performed on the Main thread.
+
+### Reaktive and the new (relaxed) Kotlin/Native memory model
+
+The new (relaxed) Kotlin/Native [memory model](https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md)
+allows passing objects between threads without freezing. When using this memory model, there is no need
+to use the `threadLocal` operator/argument anymore. Please make sure that you also **disabled freezing**
+as [described in the documentation](https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md#unexpected-object-freezing).
 
 ### Coroutines interop
 
