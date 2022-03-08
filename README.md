@@ -196,59 +196,41 @@ as [described in the documentation](https://github.com/JetBrains/kotlin/blob/mas
 ### Coroutines interop
 
 This functionality is provided by the `coroutines-interop` module which is published in two versions:
-- `coroutines-interop:<version>` is based on stable `kotlinx.coroutines`
-- `coroutines-interop:<version>-nmtc` is based on [work-in-progress](https://github.com/Kotlin/kotlinx.coroutines/pull/1648) multi-threaded `kotlinx.coroutines`
+
+- `coroutines-interop:<version>` is based on stable `kotlinx.coroutines` - use this variant with the stable version of coroutines **and** with the old (strict) memory model.
+- `coroutines-interop:<version>-nmtc` is based on [work-in-progress](https://github.com/Kotlin/kotlinx.coroutines/pull/1648) multi-threaded `kotlinx.coroutines` - use this variant with either the multi-threaded version of coroutines **or** the new (relaxed) memory model.
 
 #### Coroutines interop based on stable kotlinx.coroutines
 
 There are few important limitations:
+
 - Neither `Job` nor `CoroutineContext` can be frozen (until release of the multi-threaded coroutines).
 - Because of the first limitation all `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed inside `runBlocking` block in Kotlin/Native and should be subscribed on a background `Scheduler`.
-- Ktor does not work well in multithreaded environment in Kotlin/Native (it may crash), so please don't mix Ktor and "stable" `coroutines-interop`.
 
 Consider the following example for `corutines-interop`:
+
 ```kotlin
 singleFromCoroutine {
-    /*
-     * This block will be executed inside `runBlocking` in Kotlin/Native.
-     * Please avoid using Ktor here, it may crash.
-     */
+    // This block will be executed inside `runBlocking` in Kotlin/Native
 }
-    .subscribeOn(ioScheduler)
+    .subscribeOn(ioScheduler) // Switching to a background thread is necessary
     .observeOn(mainScheduler)
     .subscribe { /* Get the result here */ }
 ```
 
-We recommend to avoid using Ktor in Kotlin/Native multithreaded environment until multithreaded coroutines, but if you really need consider the following function:
-```kotlin
-fun <T> singleFromCoroutineUnsafe(mainContext: CoroutineContext, block: suspend CoroutineScope.() -> T): Single<T> =
-    single { emitter ->
-        GlobalScope
-            .launch(mainContext) {
-                try {
-                    emitter.onSuccess(block())
-                } catch (e: Throwable) {
-                    emitter.onError(e)
-                }
-            }
-            .asDisposable()
-            .also(emitter::setDisposable)
-    }
-```
+Please note that Ktor uses multi-threaded coroutines by default. If you are using Ktor, please use `coroutines-interop` module based on multi-threaded coroutines and proceed to the next Readme secion.
 
-Now you can use this function together with Ktor but make sure you are doing this always on Main thread, neither `subscribeOn` nor `observeOn` nor any other thread switch are allowed.
 
 #### Coroutines interop based on multi-threaded kotlinx.coroutines
 
-The multi-threaded `kotlinx.coroutines` variant lifts some unpleasant restrictions: 
-- Both `Job` and `CoroutineContext` can be frozen.
+The multi-threaded `kotlinx.coroutines` variant lifts some unpleasant restrictions - both `Job` and `CoroutineContext` can be frozen.
 
-So there is one crucial difference:
-- All `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed asynchronously in all targets (including Kotlin/Native), so can be subscribed on any scheduler.
+So there is one crucial difference - all `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed asynchronously in all targets (including Kotlin/Native), so can be subscribed on any scheduler.
 
-Limitations:
+Notes:
+
 - Because multi-threaded coroutines are work-in-progress, there are possible [issues](https://github.com/Kotlin/kotlinx.coroutines/blob/native-mt/kotlin-native-sharing.md#known-problems).
-- Ktor can be used out of the box, but still can not be frozen, so main thread only.
+- Ktor can be used out of the box without any known limitations
 
 ##### Coroutines interop general limitations
 
