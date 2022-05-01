@@ -8,7 +8,7 @@ group = "com.badoo.reaktive.dependencies"
 version = "SNAPSHOT"
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 gradlePlugin {
