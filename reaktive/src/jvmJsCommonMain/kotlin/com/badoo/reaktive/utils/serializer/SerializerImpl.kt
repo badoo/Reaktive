@@ -2,6 +2,7 @@ package com.badoo.reaktive.utils.serializer
 
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.queue.Queue
+import com.badoo.reaktive.utils.synchronizedCompat
 import kotlin.jvm.Volatile
 
 /*
@@ -30,7 +31,7 @@ internal abstract class SerializerImpl<in T>(
                 return
             }
         } else {
-            synchronized(queue) {
+            synchronizedCompat(queue) {
                 queue.offer(value)
             }
 
@@ -43,7 +44,7 @@ internal abstract class SerializerImpl<in T>(
     }
 
     override fun clear() {
-        synchronized(queue, queue::clear)
+        synchronizedCompat(queue, queue::clear)
     }
 
     abstract fun onValue(value: T): Boolean
@@ -55,7 +56,7 @@ internal abstract class SerializerImpl<in T>(
                 var isEmpty = false
                 var value: T? = null
 
-                synchronized(queue) {
+                synchronizedCompat(queue) {
                     isEmpty = queue.isEmpty
                     if (!isEmpty) {
                         value = queue.poll()
