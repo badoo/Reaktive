@@ -7,6 +7,9 @@ pluginManagement {
     }
 }
 
+// Set up a different name for the root project because of https://youtrack.jetbrains.com/issue/KT-48407
+rootProject.name = "Reaktive-root"
+
 includeBuild("includedBuild/dependencies")
 includeBuild("includedBuild/gradleConfiguration")
 
