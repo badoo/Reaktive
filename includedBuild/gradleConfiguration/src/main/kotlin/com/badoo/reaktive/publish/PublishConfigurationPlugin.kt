@@ -83,7 +83,6 @@ class PublishConfigurationPlugin : Plugin<Project> {
         // Constants from PgpSignatoryFactory.PROPERTIES
         val password = project.findProperty("signing.password")?.toString()
         val keyFile = project.findProperty("signing.secretKeyRingFile")?.toString()
-        val keyId = project.findProperty("signing.keyId")?.toString()
 
         if (inMemoryKey == null && keyFile == null) {
             project.logger.warn("No signing config provided, skip signing")

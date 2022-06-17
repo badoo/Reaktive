@@ -130,8 +130,8 @@ class MppConfigurationPlugin : Plugin<Project> {
         project.extensions.configure(BaseExtension::class.java) {
             compileSdkVersion(29)
             defaultConfig {
-                minSdkVersion(1)
-                targetSdkVersion(29)
+                minSdk = 1
+                targetSdk = 29
             }
         }
         project.kotlin {

@@ -3,6 +3,7 @@ package com.badoo.reaktive.utils.lock
 import com.badoo.reaktive.utils.NANOS_IN_SECOND
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.UnsafeNumber
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
@@ -78,7 +79,7 @@ actual class Lock {
         override fun await(timeoutNanos: Long) {
             if (timeoutNanos >= 0L) {
                 memScoped {
-                    val ts: timespec = alloc { clock_gettime(CLOCK_MONOTONIC, ptr) }
+                    val ts = alloc<timespec> { clock_gettime(CLOCK_MONOTONIC, ptr) }
                     ts += timeoutNanos
                     pthread_cond_timedwait(cond.ptr, lockPtr, ts.ptr)
                 }
@@ -98,6 +99,7 @@ actual class Lock {
         }
 
         private companion object {
+            @OptIn(UnsafeNumber::class)
             private operator fun timespec.plusAssign(nanos: Long) {
                 tv_sec += (nanos / NANOS_IN_SECOND).convert<__time_t>()
                 tv_nsec += (nanos % NANOS_IN_SECOND).convert<__syscall_slong_t>()
