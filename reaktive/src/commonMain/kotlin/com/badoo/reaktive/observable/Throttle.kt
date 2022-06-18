@@ -1,35 +1,45 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.atomic.AtomicLong
-import com.badoo.reaktive.utils.clock.Clock
-import com.badoo.reaktive.utils.clock.DefaultClock
+import com.badoo.reaktive.base.CompositeDisposableObserver
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.scheduler.Scheduler
+import com.badoo.reaktive.scheduler.computationScheduler
+import com.badoo.reaktive.utils.atomic.AtomicBoolean
+
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "Hidden for binary compatibility until v2.0.0")
+fun <T> Observable<T>.throttle(windowMillis: Long): Observable<T> =
+    throttle(windowMillis = windowMillis, scheduler = computationScheduler)
 
 /**
  * Returns an [Observable] that emits only the first element emitted by the source [Observable] during a time window
  * defined by [windowMillis], which begins with the emitted element.
  *
- * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#throttleFirst-long-java.util.concurrent.TimeUnit-).
+ * Values are emitted on the upstream thread, the [scheduler] is used only for timings.
+ *
+ * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#throttleFirst-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-).
  */
-fun <T> Observable<T>.throttle(windowMillis: Long): Observable<T> = throttle(windowMillis, DefaultClock)
+fun <T> Observable<T>.throttle(windowMillis: Long, scheduler: Scheduler = computationScheduler): Observable<T> {
+    if (windowMillis <= 0) {
+        return this
+    }
 
-internal fun <T> Observable<T>.throttle(windowMillis: Long, clock: Clock): Observable<T> =
-    observable { emitter ->
+    return observable { emitter ->
         subscribe(
-            object : ObservableObserver<T>, ObservableCallbacks<T> by emitter {
-                private val lastTime = AtomicLong(-windowMillis)
+            object : CompositeDisposableObserver(), ObservableObserver<T>, ObservableCallbacks<T> by emitter {
+                private val executor = scheduler.newExecutor().addTo(this)
+                private val gate = AtomicBoolean()
 
-                override fun onSubscribe(disposable: Disposable) {
-                    emitter.setDisposable(disposable)
+                init {
+                    emitter.setDisposable(this)
                 }
 
                 override fun onNext(value: T) {
-                    val time = clock.uptimeMillis
-                    if (time - lastTime.value >= windowMillis) {
-                        lastTime.value = time
+                    if (gate.compareAndSet(expectedValue = false, newValue = true)) {
                         emitter.onNext(value)
+                        executor.submit(delayMillis = windowMillis) { gate.value = false }
                     }
                 }
             }
         )
     }
+}
