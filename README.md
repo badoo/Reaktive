@@ -11,101 +11,35 @@ Should you have any questions or feedback welcome to the **Kotlin Slack channel*
 [#reaktive](https://kotlinlang.slack.com/archives/CU05HB31A)
 
 ### Setup
-Recommended minimum Gradle version is 5.3. Please read first the documentation about
-[metadata publishing mode](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#experimental-metadata-publishing-mode).
 
 There are a number of modules published to Maven Central:
+
 - `reaktive` - the main Reaktive library (multiplatform)
 - `reaktive-annotations` - collection of annotations (mutiplatform)
 - `reaktive-testing` - testing utilities (multiplatform)
 - `utils` - some utilities like `Clock`, `AtomicReference`, `Lock`, etc. (multiplatform)
 - `coroutines-interop` - Kotlin coroutines interoperability helpers (multiplatform)
-- `rxjava2-interop` - RxJava2 interoperability helpers (JVM and Android)
-- `rxjava3-interop` - RxJava3 interoperability helpers (JVM and Android)
+- `rxjava2-interop` - RxJava v2 interoperability helpers (JVM and Android)
+- `rxjava3-interop` - RxJava v3 interoperability helpers (JVM and Android)
 
-#### Multiplatform module publications
+#### Configuring dependencies
 
-Kotlin common (root publication):
-```groovy
-implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
-```
-JVM:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-jvm:<latest-version>'
-```
-Android (debug and release):
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-android:<latest-version>'
-```
-iOS 32:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-ios32:<latest-version>'
-```
-iOS 64:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-ios64:<latest-version>'
-```
-iOS sim:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-iossim:<latest-version>'
-```
-macOS x64:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-macosx64:<latest-version>'
-```
-watchOS ARM32
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-watchosarm32:<latest-version>'
-```
-watchOS ARM64
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-watchosarm64:<latest-version>'
-```
-watchOS sim
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-watchossim:<latest-version>'
-```
-tvOS ARM64
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-tvosarm64:<latest-version>'
-```
-tvOS sim
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-tvossim:<latest-version>'
-```
-JavaScript:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-js:<latest-version>'
-```
-Linux x64:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-linuxx64:<latest-version>'
-```
-Linux ARM 32 hfp:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-linuxarm32hfp:<latest-version>'
-```
-
-#### Regular modules:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
-```
-
-#### Typical dependencies configuration for MPP module (metadata mode)
 ```groovy
 kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation 'com.badoo.reaktive:reaktive:<latest-version>'
-                implementation 'com.badoo.reaktive:reaktive-annotations:<latest-version>'
-                implementation 'com.badoo.reaktive:coroutines-interop:<latest-version>'
+                implementation 'com.badoo.reaktive:reaktive:<version>'
+                implementation 'com.badoo.reaktive:reaktive-annotations:<version>'
+                implementation 'com.badoo.reaktive:coroutines-interop:<version>' // For interop with coroutines
+                implementation 'com.badoo.reaktive:rxjava2-interop:<version>' // For interop with RxJava v2
+                implementation 'com.badoo.reaktive:rxjava3-interop:<version>' // For interop with RxJava v3
             }
         }
 
         commonTest {
             dependencies {
-                implementation 'com.badoo.reaktive:reaktive-testing:<latest-version>'
+                implementation 'com.badoo.reaktive:reaktive-testing:<version>'
             }
         }
     }
@@ -113,6 +47,7 @@ kotlin {
 ```
 
 ### Features:
+
 * Multiplatform: JVM, Android, iOS, macOS, watchOS, tvOS, JavaScript, Linux X64, Linux ARM 32 hfp
 * Schedulers support: 
   * `computationScheduler` - fixed thread pool equal to a number of cores
