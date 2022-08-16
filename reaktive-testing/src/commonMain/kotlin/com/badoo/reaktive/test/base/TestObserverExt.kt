@@ -1,12 +1,12 @@
 package com.badoo.reaktive.test.base
 
+import com.badoo.reaktive.test.assert.assertEquals
+import com.badoo.reaktive.test.assert.assertFalse
+import com.badoo.reaktive.test.assert.assertNotNull
+import com.badoo.reaktive.test.assert.assertNull
+import com.badoo.reaktive.test.assert.assertTrue
+import com.badoo.reaktive.test.assert.fail
 import com.badoo.reaktive.utils.printStack
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 fun <T : TestObserver> T.assertError(): T {
     assertTrue(isError, "Source did not fail")
