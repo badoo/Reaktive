@@ -1,4 +1,5 @@
 import com.badoo.reaktive.configuration.Target
+import org.gradle.internal.os.OperatingSystem
 
 open class BuildIosSampleTask : DefaultTask() {
 
@@ -40,6 +41,6 @@ open class BuildIosSampleTask : DefaultTask() {
     }
 }
 
-if (Target.shouldDefineTarget(project, Target.IOS)) {
+if (OperatingSystem.current().isMacOsX && Target.shouldDefineTarget(project, Target.IOS)) {
     tasks.register<BuildIosSampleTask>("build")
 }

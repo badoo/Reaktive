@@ -12,19 +12,22 @@ class BinaryCompatibilityConfigurationPlugin : Plugin<Project> {
         if (Target.shouldDefineTarget(target, Target.ALL_LINUX_HOSTED)) {
             target.apply(plugin = "binary-compatibility-validator")
             target.extensions.configure(ApiValidationExtension::class) {
-                ignoredProjects.addAll(
-                    listOfNotNull(
-                        "benchmarks",
-                        "jmh",
-                        "sample-mpp-module",
-                        "sample-android-app",
-                        "sample-js-browser-app",
-                        "sample-linuxx64-app",
-                        "sample-ios-app",
-                        "sample-macos-app",
-                        "check-publication".takeIf { target.hasProperty("check_publication") }
+                if (target.hasProperty("check_publication")) {
+                    ignoredProjects.add("check-publication")
+                } else {
+                    ignoredProjects.addAll(
+                        listOf(
+                            "benchmarks",
+                            "jmh",
+                            "sample-mpp-module",
+                            "sample-android-app",
+                            "sample-js-browser-app",
+                            "sample-linuxx64-app",
+                            "sample-ios-app",
+                            "sample-macos-app",
+                        )
                     )
-                )
+                }
             }
         }
     }

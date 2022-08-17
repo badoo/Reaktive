@@ -3,7 +3,7 @@ package com.badoo.reaktive.utils.clock
 import com.badoo.reaktive.utils.MILLIS_IN_SECOND
 import com.badoo.reaktive.utils.NANOS_IN_MILLI
 import com.badoo.reaktive.utils.NANOS_IN_SECOND
-import kotlin.browser.window
+import kotlinx.browser.window
 
 private external val process: dynamic
 
