@@ -59,7 +59,7 @@ internal class MainScheduler : Scheduler {
         }
 
         override fun cancel() {
-            operations.clear()
+            operations.clear(dispose = true)
         }
 
         override val isDisposed: Boolean

@@ -3,7 +3,7 @@ package com.badoo
 import com.badoo.reaktive.samplemppmodule.binder.KittenBinder
 import com.badoo.reaktive.samplemppmodule.KittenStoreBuilderImpl
 import org.w3c.dom.get
-import kotlin.browser.document
+import kotlinx.browser.document
 
 /**
  * How to run: execute "sample-js-browser-app:run" Gradle task
