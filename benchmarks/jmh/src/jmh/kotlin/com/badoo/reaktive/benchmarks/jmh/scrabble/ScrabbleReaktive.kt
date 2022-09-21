@@ -66,7 +66,7 @@ open class ScrabbleReaktive : ScrabbleBase() {
                 .flatMapObservable { map ->
                     map.entries.asObservable()
                 }
-                .flatMap(blank)
+                .flatMap(mapper = blank)
                 .reduce { a, b -> a + b }
         }
 
@@ -81,7 +81,7 @@ open class ScrabbleReaktive : ScrabbleBase() {
                 .flatMapObservable { map ->
                     map.entries.asObservable()
                 }
-                .flatMap(letterScore)
+                .flatMap(mapper = letterScore)
                 .reduce { a, b -> a + b }
         }
 
@@ -100,7 +100,7 @@ open class ScrabbleReaktive : ScrabbleBase() {
         // Bonus for double letter
         val bonusForDoubleLetter = { word: String ->
             toBeMaxed(word)
-                .flatMap(scoreOfALetter)
+                .flatMap(mapper = scoreOfALetter)
                 .reduce(::max)
         }
 
