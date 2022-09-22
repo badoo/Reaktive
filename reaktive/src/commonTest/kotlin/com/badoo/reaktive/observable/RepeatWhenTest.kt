@@ -15,6 +15,7 @@ import com.badoo.reaktive.utils.atomic.AtomicInt
 import kotlin.math.max
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 class RepeatWhenTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ repeatWhen { maybeOfEmpty<Unit>() } }) {
 
@@ -156,5 +157,22 @@ class RepeatWhenTest : ObservableToObservableTests by ObservableToObservableTest
         upstream.onError(error)
 
         observer.assertError(error)
+    }
+
+    @Test
+    fun predicate_receives_valid_attempt_WHEN_upstream_completes() {
+        val upstream = TestObservable<Int?>()
+        val timeRef = AtomicInt()
+        upstream
+            .repeatWhen { attempt ->
+                timeRef.value = attempt
+                maybeOf(Unit)
+            }
+            .test()
+
+        upstream.onComplete()
+        assertSame(timeRef.value, 1)
+        upstream.onComplete()
+        assertSame(timeRef.value, 2)
     }
 }
