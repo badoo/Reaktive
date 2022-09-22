@@ -232,6 +232,47 @@ class MyActivity : AppCompatActivity(), DisposableScope by DisposableScope() {
 
 Please see the corresponding documentation page: [Reaktive and Swift interoperability](docs/SwiftInterop.md).
 
+### Plugins
+
+Reaktive provides Plugin API, something similar to [RxJava plugins](https://github.com/ReactiveX/RxJava/wiki/Plugins). The Plugin API provides a way to decorate Reaktive sources. A plugin should implement the [ReaktivePlugin](https://github.com/badoo/Reaktive/blob/master/reaktive/src/commonMain/kotlin/com/badoo/reaktive/plugin/ReaktivePlugin.kt) interface, and can be registered using the `registerReaktivePlugin` function and unregistered using the `unregisterReaktivePlugin` function.
+
+```kotlin
+object MyPlugin : ReaktivePlugin {
+    override fun <T> onAssembleObservable(observable: Observable<T>): Observable<T> =
+        object : Observable<T> {
+            private val traceException = TraceException()
+
+            override fun subscribe(observer: ObservableObserver<T>) {
+                observable.subscribe(
+                    object : ObservableObserver<T> by observer {
+                        override fun onError(error: Throwable) {
+                            observer.onError(error, traceException)
+                        }
+                    }
+                )
+            }
+        }
+
+    override fun <T> onAssembleSingle(single: Single<T>): Single<T> =
+        TODO("Similar to onAssembleSingle")
+
+    override fun <T> onAssembleMaybe(maybe: Maybe<T>): Maybe<T> = 
+        TODO("Similar to onAssembleSingle")
+
+    override fun onAssembleCompletable(completable: Completable): Completable =
+        TODO("Similar to onAssembleSingle")
+
+    private fun ErrorCallback.onError(error: Throwable, traceException: TraceException) {
+        if (error.suppressedExceptions.lastOrNull() !is TraceException) {
+            error.addSuppressed(traceException)
+        }
+        onError(error)
+    }
+
+    private class TraceException : Exception()
+}
+```
+
 ### Samples:
 * [MPP module](https://github.com/badoo/Reaktive/tree/master/sample-mpp-module)
 * [Android app](https://github.com/badoo/Reaktive/tree/master/sample-android-app)
