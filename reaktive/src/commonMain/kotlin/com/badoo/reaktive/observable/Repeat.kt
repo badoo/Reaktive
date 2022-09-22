@@ -7,12 +7,16 @@ import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.serializer.serializer
 
 /**
- * Returns an [Observable] that automatically resubscribes to this [Observable] at most [times] times.
+ * Returns an [Observable] that repeats the sequence of this [Observable] at most [times] times.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#repeat-long-).
  */
 fun <T> Observable<T>.repeat(times: Long = Long.MAX_VALUE): Observable<T> {
     require(times >= 0L) { "Number of times must not be negative" }
+
+    if (times == 0L) {
+        return observableOfEmpty()
+    }
 
     return observable { emitter ->
         val observer =
@@ -31,7 +35,7 @@ fun <T> Observable<T>.repeat(times: Long = Long.MAX_VALUE): Observable<T> {
                 }
 
                 override fun onComplete() {
-                    if ((counter == null) || (counter.addAndGet(-1) >= 0)) {
+                    if ((counter == null) || (counter.addAndGet(-1) > 0)) {
                         if (!emitter.isDisposed) {
                             subscribeToUpstream()
                         }

@@ -19,12 +19,30 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ repeat(times = 0) }) {
+class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ repeat(times = 1) }) {
 
     @Test
-    fun emits_all_values_of_first_iteration_WHEN_times_is_positive() {
+    fun does_not_subscribe_to_upstream_WHEN_times_is_0() {
         val upstream = TestObservable<Int?>()
-        val observer = upstream.repeat(times = 2).test()
+
+        upstream.repeat(times = 0).test()
+
+        assertFalse(upstream.hasSubscribers)
+    }
+
+    @Test
+    fun completes_WHEN_times_is_0() {
+        val upstream = TestObservable<Int?>()
+
+        val observer = upstream.repeat(times = 0).test()
+
+        observer.assertComplete()
+    }
+
+    @Test
+    fun emits_all_values_of_first_iteration_WHEN_times_is_1() {
+        val upstream = TestObservable<Int?>()
+        val observer = upstream.repeat(times = 1).test()
 
         upstream.onNext(0, null, 2)
 
@@ -32,9 +50,9 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
     }
 
     @Test
-    fun emits_all_values_of_first_iteration_WHEN_times_is_zero() {
+    fun emits_all_values_of_first_iteration_WHEN_times_is_MAX_VALUE() {
         val upstream = TestObservable<Int?>()
-        val observer = upstream.repeat(times = 0).test()
+        val observer = upstream.repeat(times = Long.MAX_VALUE).test()
 
         upstream.onNext(0, null, 2)
 
@@ -51,7 +69,7 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
                 upstreams[index.addAndGet(1)].subscribe(observer)
             }
 
-        upstream.repeat(times = 1).test()
+        upstream.repeat(times = 2).test()
 
         upstreams[0].onComplete()
 
@@ -59,9 +77,9 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
     }
 
     @Test
-    fun does_not_subscribe_to_upstream_WHEN_upstream_completed_and_times_is_0() {
+    fun does_not_subscribe_to_upstream_WHEN_upstream_completed_and_times_is_1() {
         val upstream = TestObservable<Int?>()
-        upstream.repeat(times = 0).test()
+        upstream.repeat(times = 1).test()
 
         upstream.onNext(0)
         upstream.onComplete()
@@ -72,7 +90,7 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
     @Test
     fun does_not_subscribe_to_upstream_WHEN_upstream_completed_and_times_is_reached() {
         val upstream = TestObservable<Int?>()
-        upstream.repeat(times = 1).test()
+        upstream.repeat(times = 2).test()
 
         upstream.onComplete()
         upstream.onNext(0)
@@ -82,7 +100,7 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
     }
 
     @Test
-    fun emits_all_values_of_second_iteration_WHEN_times_is_infinite() {
+    fun emits_all_values_of_second_iteration_WHEN_times_is_MAX_VALUE() {
         val upstream = TestObservable<Int?>()
         val observer = upstream.repeat(times = Long.MAX_VALUE).test()
 
@@ -95,9 +113,9 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
     }
 
     @Test
-    fun emits_all_values_of_second_iteration_WHEN_times_is_1() {
+    fun emits_all_values_of_second_iteration_WHEN_times_is_2() {
         val upstream = TestObservable<Int?>()
-        val observer = upstream.repeat(times = 1).test()
+        val observer = upstream.repeat(times = 2).test()
 
         upstream.onNext(0, 1)
         observer.reset()
@@ -108,9 +126,9 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
     }
 
     @Test
-    fun completes_after_second_iteration_WHEN_times_is_1() {
+    fun completes_after_second_iteration_WHEN_times_is_2() {
         val upstream = TestObservable<Int?>()
-        val observer = upstream.repeat(times = 1).test()
+        val observer = upstream.repeat(times = 2).test()
 
         upstream.onNext(0)
         upstream.onComplete()
@@ -121,9 +139,9 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
     }
 
     @Test
-    fun does_not_completes_after_second_iteration_WHEN_times_is_2() {
+    fun does_not_completes_after_second_iteration_WHEN_times_is_3() {
         val upstream = TestObservable<Int?>()
-        val observer = upstream.repeat(times = 2).test()
+        val observer = upstream.repeat(times = 3).test()
 
         upstream.onNext(0)
         upstream.onComplete()
@@ -151,7 +169,7 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
                 }
             }
 
-        upstream.repeat(times = 1).test()
+        upstream.repeat(times = 2).test()
 
         assertFalse(isSecondIterationRecursive.value)
     }
@@ -171,7 +189,7 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
                 }
             }
 
-        val downstreamObserver = upstream.repeat(times = 1).test()
+        val downstreamObserver = upstream.repeat(times = 2).test()
 
         downstreamObserver.dispose()
         upstreamObserver.value!!.onComplete()
@@ -180,7 +198,7 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
     }
 
     @Test
-    fun emits_all_values_repeatedly_for_first_1000_iterations_WHEN_times_is_infinite() {
+    fun emits_all_values_repeatedly_for_first_1000_iterations_WHEN_times_is_MAX_VALUE() {
         val list = SharedList<Int>(3000)
 
         observableUnsafe<Int> { observer ->
@@ -219,7 +237,7 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
     @Test
     fun produces_error_WHEN_second_iteration_produced_error() {
         val upstream = TestObservable<Int>()
-        val observer = upstream.repeat(times = 2).test()
+        val observer = upstream.repeat(times = 3).test()
         val error = Exception()
 
         upstream.onComplete()
