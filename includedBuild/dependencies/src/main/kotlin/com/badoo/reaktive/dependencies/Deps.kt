@@ -47,7 +47,7 @@ object Deps {
         object Coroutines {
             val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
             val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
-            val test = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutinesVersion"
+            val swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutinesVersion"
             val core = Core()
 
             class Core(
