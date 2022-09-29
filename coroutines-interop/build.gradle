@@ -11,6 +11,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation Deps.kotlinx.coroutines.core
+                implementation Deps.kotlinx.coroutines.swing
                 implementation project(':reaktive')
                 implementation project(':utils')
             }
