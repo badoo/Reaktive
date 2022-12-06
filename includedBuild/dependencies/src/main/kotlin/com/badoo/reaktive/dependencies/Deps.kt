@@ -2,8 +2,8 @@ package com.badoo.reaktive.dependencies
 
 object Deps {
 
-    private const val kotlinVersion = "1.7.0"
-    private const val coroutinesVersion = "1.6.1"
+    private const val kotlinVersion = "1.7.21"
+    private const val coroutinesVersion = "1.6.4"
     private const val detektVersion = "1.9.1"
 
     val kotlin = Kotlin
