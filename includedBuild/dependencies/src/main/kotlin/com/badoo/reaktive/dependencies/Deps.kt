@@ -2,7 +2,7 @@ package com.badoo.reaktive.dependencies
 
 object Deps {
 
-    private const val kotlinVersion = "1.7.21"
+    private const val kotlinVersion = "1.8.0"
     private const val coroutinesVersion = "1.6.4"
     private const val detektVersion = "1.9.1"
 
@@ -42,7 +42,7 @@ object Deps {
     object Kotlinx {
         val coroutines = Coroutines
         val metadata = Metadata
-        val compatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.10.0"
+        val compatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.12.1"
 
         object Coroutines {
             val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
@@ -66,7 +66,7 @@ object Deps {
     }
 
     object Android {
-        const val plugin = "com.android.tools.build:gradle:7.2.0"
+        const val plugin = "com.android.tools.build:gradle:7.3.1"
         val androidx = Androidx
 
         object Androidx {
