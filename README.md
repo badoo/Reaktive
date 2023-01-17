@@ -97,7 +97,7 @@ observable<Any> { emitter ->
     .subscribeOn(ioScheduler)
     .observeOn(mainScheduler)
     .threadLocal()
-    .doOnBeforeNext { values += it } // Callback is not frozen, we can updated the mutable list
+    .doOnBeforeNext { values += it } // Callback is not frozen, we can update the mutable list
     .doOnBeforeFinally { isFinished = true } // Callback is not frozen, we can change the flag
     .subscribe()
 ```
@@ -114,7 +114,7 @@ observable<Any> { emitter ->
     .observeOn(mainScheduler)
     .subscribe(
         isThreadLocal = true,
-        onNext = { values += it }, // Callback is not frozen, we can updated the mutable list
+        onNext = { values += it }, // Callback is not frozen, we can update the mutable list
         onComplete = { isComplete = true } // Callback is not frozen, we can change the flag
     )
 ```
@@ -142,7 +142,7 @@ There are few important limitations:
 - Neither `Job` nor `CoroutineContext` can be frozen (until release of the multi-threaded coroutines).
 - Because of the first limitation all `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed inside `runBlocking` block in Kotlin/Native and should be subscribed on a background `Scheduler`.
 
-Consider the following example for `corutines-interop`:
+Consider the following example for `coroutines-interop`:
 
 ```kotlin
 singleFromCoroutine {
@@ -153,7 +153,7 @@ singleFromCoroutine {
     .subscribe { /* Get the result here */ }
 ```
 
-Please note that Ktor uses multi-threaded coroutines by default. If you are using Ktor, please use `coroutines-interop` module based on multi-threaded coroutines and proceed to the next Readme secion.
+Please note that Ktor uses multi-threaded coroutines by default. If you are using Ktor, please use `coroutines-interop` module based on multi-threaded coroutines and proceed to the next Readme section.
 
 
 #### Coroutines interop based on multi-threaded kotlinx.coroutines
