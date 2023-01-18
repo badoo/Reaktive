@@ -7,9 +7,6 @@ on:
       - mt-coroutines
   pull_request:
 
-env:
-  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.compiler.execution.strategy=in-process
-
 jobs:
   build:
     strategy:
@@ -19,33 +16,33 @@ jobs:
     name: Build on ${{matrix.os}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: 11
+          distribution: 'zulu'
+          java-version: '11'
       - name: Install dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libgtk-3-dev nodejs chromium-browser
-      - name: Set up cache
-        uses: actions/cache@v2
+      - name: Select Xcode version
+        if: matrix.os == 'macOS-latest'
+        uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
         with:
-          path: ~/.gradle/caches
-          key: ${{ matrix.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ matrix.os }}-gradle-
+          xcode-version: '13.4.1'
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Build Linux
         if: matrix.os == 'ubuntu-latest'
-        run: >
-          ./gradlew
-          build
-          linkDebugTestLinuxArm32Hfp
-          -Ptarget=all_linux_hosted
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: |
+            build
+            linkDebugTestLinuxArm32Hfp
+            -Ptarget=all_linux_hosted
       - name: Test linuxArm32Hfp
         if: matrix.os == 'ubuntu-latest'
-        uses: uraimo/run-on-arch-action@v2.0.5
+        uses: uraimo/run-on-arch-action@v2
         with:
           arch: armv7
           distro: ubuntu20.04
@@ -55,17 +52,18 @@ jobs:
             ./reaktive-testing/build/bin/linuxArm32Hfp/debugTest/test.kexe
       - name: Build macOS
         if: matrix.os == 'macOS-latest'
-        run: >
-          ./gradlew
-          :reaktive-annotations:build
-          :utils:build
-          :reaktive-testing:build
-          :reaktive:build
-          :coroutines-interop:build
-          :sample-mpp-module:build
-          :sample-ios-app:build
-          :sample-macos-app:build
-          -Ptarget=all_macos_hosted
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: |
+            :reaktive-annotations:build
+            :utils:build
+            :reaktive-testing:build
+            :reaktive:build
+            :coroutines-interop:build
+            :sample-mpp-module:build
+            :sample-ios-app:build
+            :sample-macos-app:build
+            -Ptarget=all_macos_hosted
       - name: Bundle the build report
         if: failure()
         run: find . -type d -name 'reports' | zip -@ -r build-reports.zip

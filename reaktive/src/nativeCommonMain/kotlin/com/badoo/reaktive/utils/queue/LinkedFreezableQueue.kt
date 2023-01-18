@@ -63,7 +63,7 @@ internal class LinkedFreezableQueue<T>(
 
             override fun next(): T {
                 val current = node ?: throw NoSuchElementException()
-                node = current.next?.value
+                node = current.next.value
 
                 return current.item
             }

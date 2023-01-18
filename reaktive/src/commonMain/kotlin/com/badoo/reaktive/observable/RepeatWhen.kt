@@ -18,7 +18,7 @@ import com.badoo.reaktive.utils.atomic.AtomicInt
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#repeatWhen-io.reactivex.functions.Function-).
  */
-fun <T> Observable<T>.repeatWhen(handler: (repeatNumber: Int) -> Maybe<*>): Observable<T> =
+fun <T> Observable<T>.repeatWhen(handler: (attempt: Int) -> Maybe<*>): Observable<T> =
     observable { emitter ->
         val observer =
             object : ObservableObserver<T>, ValueCallback<T> by emitter, ErrorCallback by emitter {

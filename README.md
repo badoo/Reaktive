@@ -11,101 +11,35 @@ Should you have any questions or feedback welcome to the **Kotlin Slack channel*
 [#reaktive](https://kotlinlang.slack.com/archives/CU05HB31A)
 
 ### Setup
-Recommended minimum Gradle version is 5.3. Please read first the documentation about
-[metadata publishing mode](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#experimental-metadata-publishing-mode).
 
 There are a number of modules published to Maven Central:
+
 - `reaktive` - the main Reaktive library (multiplatform)
 - `reaktive-annotations` - collection of annotations (mutiplatform)
 - `reaktive-testing` - testing utilities (multiplatform)
 - `utils` - some utilities like `Clock`, `AtomicReference`, `Lock`, etc. (multiplatform)
 - `coroutines-interop` - Kotlin coroutines interoperability helpers (multiplatform)
-- `rxjava2-interop` - RxJava2 interoperability helpers (JVM and Android)
-- `rxjava3-interop` - RxJava3 interoperability helpers (JVM and Android)
+- `rxjava2-interop` - RxJava v2 interoperability helpers (JVM and Android)
+- `rxjava3-interop` - RxJava v3 interoperability helpers (JVM and Android)
 
-#### Multiplatform module publications
+#### Configuring dependencies
 
-Kotlin common (root publication):
-```groovy
-implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
-```
-JVM:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-jvm:<latest-version>'
-```
-Android (debug and release):
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-android:<latest-version>'
-```
-iOS 32:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-ios32:<latest-version>'
-```
-iOS 64:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-ios64:<latest-version>'
-```
-iOS sim:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-iossim:<latest-version>'
-```
-macOS x64:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-macosx64:<latest-version>'
-```
-watchOS ARM32
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-watchosarm32:<latest-version>'
-```
-watchOS ARM64
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-watchosarm64:<latest-version>'
-```
-watchOS sim
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-watchossim:<latest-version>'
-```
-tvOS ARM64
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-tvosarm64:<latest-version>'
-```
-tvOS sim
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-tvossim:<latest-version>'
-```
-JavaScript:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-js:<latest-version>'
-```
-Linux x64:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-linuxx64:<latest-version>'
-```
-Linux ARM 32 hfp:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-linuxarm32hfp:<latest-version>'
-```
-
-#### Regular modules:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
-```
-
-#### Typical dependencies configuration for MPP module (metadata mode)
 ```groovy
 kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation 'com.badoo.reaktive:reaktive:<latest-version>'
-                implementation 'com.badoo.reaktive:reaktive-annotations:<latest-version>'
-                implementation 'com.badoo.reaktive:coroutines-interop:<latest-version>'
+                implementation 'com.badoo.reaktive:reaktive:<version>'
+                implementation 'com.badoo.reaktive:reaktive-annotations:<version>'
+                implementation 'com.badoo.reaktive:coroutines-interop:<version>' // For interop with coroutines
+                implementation 'com.badoo.reaktive:rxjava2-interop:<version>' // For interop with RxJava v2
+                implementation 'com.badoo.reaktive:rxjava3-interop:<version>' // For interop with RxJava v3
             }
         }
 
         commonTest {
             dependencies {
-                implementation 'com.badoo.reaktive:reaktive-testing:<latest-version>'
+                implementation 'com.badoo.reaktive:reaktive-testing:<version>'
             }
         }
     }
@@ -113,6 +47,7 @@ kotlin {
 ```
 
 ### Features:
+
 * Multiplatform: JVM, Android, iOS, macOS, watchOS, tvOS, JavaScript, Linux X64, Linux ARM 32 hfp
 * Schedulers support: 
   * `computationScheduler` - fixed thread pool equal to a number of cores
@@ -162,7 +97,7 @@ observable<Any> { emitter ->
     .subscribeOn(ioScheduler)
     .observeOn(mainScheduler)
     .threadLocal()
-    .doOnBeforeNext { values += it } // Callback is not frozen, we can updated the mutable list
+    .doOnBeforeNext { values += it } // Callback is not frozen, we can update the mutable list
     .doOnBeforeFinally { isFinished = true } // Callback is not frozen, we can change the flag
     .subscribe()
 ```
@@ -179,7 +114,7 @@ observable<Any> { emitter ->
     .observeOn(mainScheduler)
     .subscribe(
         isThreadLocal = true,
-        onNext = { values += it }, // Callback is not frozen, we can updated the mutable list
+        onNext = { values += it }, // Callback is not frozen, we can update the mutable list
         onComplete = { isComplete = true } // Callback is not frozen, we can change the flag
     )
 ```
@@ -207,7 +142,7 @@ There are few important limitations:
 - Neither `Job` nor `CoroutineContext` can be frozen (until release of the multi-threaded coroutines).
 - Because of the first limitation all `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed inside `runBlocking` block in Kotlin/Native and should be subscribed on a background `Scheduler`.
 
-Consider the following example for `corutines-interop`:
+Consider the following example for `coroutines-interop`:
 
 ```kotlin
 singleFromCoroutine {
@@ -218,7 +153,7 @@ singleFromCoroutine {
     .subscribe { /* Get the result here */ }
 ```
 
-Please note that Ktor uses multi-threaded coroutines by default. If you are using Ktor, please use `coroutines-interop` module based on multi-threaded coroutines and proceed to the next Readme secion.
+Please note that Ktor uses multi-threaded coroutines by default. If you are using Ktor, please use `coroutines-interop` module based on multi-threaded coroutines and proceed to the next Readme section.
 
 
 #### Coroutines interop based on multi-threaded kotlinx.coroutines
@@ -296,6 +231,47 @@ class MyActivity : AppCompatActivity(), DisposableScope by DisposableScope() {
 ### Reaktive and Swift interoperability
 
 Please see the corresponding documentation page: [Reaktive and Swift interoperability](docs/SwiftInterop.md).
+
+### Plugins
+
+Reaktive provides Plugin API, something similar to [RxJava plugins](https://github.com/ReactiveX/RxJava/wiki/Plugins). The Plugin API provides a way to decorate Reaktive sources. A plugin should implement the [ReaktivePlugin](https://github.com/badoo/Reaktive/blob/master/reaktive/src/commonMain/kotlin/com/badoo/reaktive/plugin/ReaktivePlugin.kt) interface, and can be registered using the `registerReaktivePlugin` function and unregistered using the `unregisterReaktivePlugin` function.
+
+```kotlin
+object MyPlugin : ReaktivePlugin {
+    override fun <T> onAssembleObservable(observable: Observable<T>): Observable<T> =
+        object : Observable<T> {
+            private val traceException = TraceException()
+
+            override fun subscribe(observer: ObservableObserver<T>) {
+                observable.subscribe(
+                    object : ObservableObserver<T> by observer {
+                        override fun onError(error: Throwable) {
+                            observer.onError(error, traceException)
+                        }
+                    }
+                )
+            }
+        }
+
+    override fun <T> onAssembleSingle(single: Single<T>): Single<T> =
+        TODO("Similar to onAssembleSingle")
+
+    override fun <T> onAssembleMaybe(maybe: Maybe<T>): Maybe<T> = 
+        TODO("Similar to onAssembleSingle")
+
+    override fun onAssembleCompletable(completable: Completable): Completable =
+        TODO("Similar to onAssembleSingle")
+
+    private fun ErrorCallback.onError(error: Throwable, traceException: TraceException) {
+        if (error.suppressedExceptions.lastOrNull() !is TraceException) {
+            error.addSuppressed(traceException)
+        }
+        onError(error)
+    }
+
+    private class TraceException : Exception()
+}
+```
 
 ### Samples:
 * [MPP module](https://github.com/badoo/Reaktive/tree/master/sample-mpp-module)

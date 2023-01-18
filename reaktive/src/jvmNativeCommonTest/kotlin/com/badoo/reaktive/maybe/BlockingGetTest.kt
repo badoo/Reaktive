@@ -19,7 +19,7 @@ class BlockingGetTest {
 
     @Test
     fun returns_null_value_WHEN_succeeded_with_null() {
-        val upstream = maybeOf(null).subscribeOn(computationScheduler)
+        val upstream = maybeOf<Any?>(null).subscribeOn(computationScheduler)
 
         val result = upstream.blockingGet()
 
@@ -28,7 +28,7 @@ class BlockingGetTest {
 
     @Test
     fun returns_null_value_WHEN_completed() {
-        val upstream = maybeOfEmpty<Nothing>().subscribeOn(computationScheduler)
+        val upstream = maybeOfEmpty<Any>().subscribeOn(computationScheduler)
 
         val result = upstream.blockingGet()
 
@@ -37,7 +37,7 @@ class BlockingGetTest {
 
     @Test
     fun throws_exception_WHEN_upstream_produced_error() {
-        val upstream = maybeOfError<Nothing>(Exception("Error")).subscribeOn(computationScheduler)
+        val upstream = maybeOfError<Any>(Exception("Error")).subscribeOn(computationScheduler)
 
         assertFailsWith<Exception>("Error") {
             upstream.blockingGet()
