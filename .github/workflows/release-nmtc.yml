@@ -16,7 +16,7 @@ jobs:
         with:
           username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}
-          staging-profile-id: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+          staging_profile_id: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
           description: ${{ github.repository }}/${{ github.workflow }}#${{ github.run_number }}
 
   linux-host-publish:
