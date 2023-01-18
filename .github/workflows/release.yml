@@ -74,6 +74,10 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
+      - name: Select Xcode version
+        uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
+        with:
+          xcode-version: '13.4.1'
       - name: Release iOS, MacOS
         uses: gradle/gradle-build-action@v2
         with:
@@ -124,6 +128,10 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
+      - name: Select Xcode version
+        uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
+        with:
+          xcode-version: '13.4.1'
       - name: Check iOS
         uses: gradle/gradle-build-action@v2
         with:
