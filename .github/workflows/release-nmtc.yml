@@ -8,15 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     name: Create staging repository
     outputs:
-      repository-id: ${{ steps.create.outputs.repository-id }}
+      repository-id: ${{ steps.create.outputs.repository_id }}
     steps:
       - id: create
         name: Create staging repository
-        uses: nexus-actions/create-nexus-staging-repo@67d9c1133c2fdcb777e20c040595073e20311225
+        uses: nexus-actions/create-nexus-staging-repo@3e5e7209801629febdcf75541a4898710d28df9a
         with:
           username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}
-          staging-profile-id: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+          staging_profile_id: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
           description: ${{ github.repository }}/${{ github.workflow }}#${{ github.run_number }}
 
   linux-host-publish:
@@ -72,6 +72,10 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
+      - name: Select Xcode version
+        uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
+        with:
+          xcode-version: '13.4.1'
       - name: Release iOS, MacOS
         uses: gradle/gradle-build-action@v2
         with:
