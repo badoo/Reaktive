@@ -6,10 +6,6 @@ import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.scheduler.computationScheduler
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
-@Deprecated(level = DeprecationLevel.HIDDEN, message = "Hidden for binary compatibility until v2.0.0")
-fun <T> Observable<T>.throttle(windowMillis: Long): Observable<T> =
-    throttle(windowMillis = windowMillis, scheduler = computationScheduler)
-
 /**
  * Returns an [Observable] that emits only the first element emitted by the source [Observable] during a time window
  * defined by [windowMillis], which begins with the emitted element.
