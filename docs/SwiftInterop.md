@@ -20,7 +20,7 @@ kotlin {
                     }
 
                     "iosArm64" -> {
-                        export("com.badoo.reaktive:reaktive-ios64:<version>")
+                        export("com.badoo.reaktive:reaktive-iosarm64:<version>")
                     }
 
                     else -> error("Unsupported target: $target")

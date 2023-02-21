@@ -351,6 +351,7 @@ class WindowByBoundaryTest : ObservableToObservableTests by ObservableToObservab
     }
 
     @Ignore
+    @Test
     override fun unsubscribes_from_upstream_WHEN_disposed() {
         // Not applicable
     }

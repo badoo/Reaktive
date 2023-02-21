@@ -28,12 +28,12 @@ kotlin {
             }
         }
 
-        configureFrameworks(iosArm32)
-        configureFrameworks(iosArm64)
-        configureFrameworks(iosX64)
-        configureFrameworks(iosSimulatorArm64)
-        configureFrameworks(macosX64)
-        configureFrameworks(macosArm64)
+        configureFrameworks(iosArm32())
+        configureFrameworks(iosArm64())
+        configureFrameworks(iosX64())
+        configureFrameworks(iosSimulatorArm64())
+        configureFrameworks(macosX64())
+        configureFrameworks(macosArm64())
     }
 
     sourceSets {

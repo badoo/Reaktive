@@ -4,18 +4,23 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.maybe.maybeOf
 import com.badoo.reaktive.maybe.maybeOfEmpty
 import com.badoo.reaktive.maybe.maybeUnsafe
+import com.badoo.reaktive.observable.repeatWhen
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.maybe.TestMaybe
+import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.atomicList
+import com.badoo.reaktive.utils.atomic.getValue
 import com.badoo.reaktive.utils.atomic.plusAssign
+import com.badoo.reaktive.utils.atomic.setValue
 import kotlin.math.max
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 class RepeatWhenTest : SingleToObservableTests by SingleToObservableTestsImpl({ repeatWhen { _, _ -> maybeOfEmpty<Unit>() } }) {
 
@@ -175,5 +180,23 @@ class RepeatWhenTest : SingleToObservableTests by SingleToObservableTestsImpl({ 
         upstream.onError(error)
 
         observer.assertError(error)
+    }
+
+    @Test
+    fun predicate_receives_valid_attempt_WHEN_upstream_completes() {
+        val upstream = TestObservable<Int?>()
+        var attemptVar by AtomicInt()
+
+        upstream
+            .repeatWhen { attempt ->
+                attemptVar = attempt
+                maybeOf(Unit)
+            }
+            .test()
+
+        upstream.onComplete()
+        assertSame(attemptVar, 1)
+        upstream.onComplete()
+        assertSame(attemptVar, 2)
     }
 }

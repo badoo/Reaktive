@@ -14,21 +14,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation Deps.kotlin.test.common
                 implementation project(':reaktive')
                 implementation project(':utils')
-            }
-        }
-
-        jvmCommonMain {
-            dependencies {
-                implementation Deps.kotlin.test.junit
-            }
-        }
-
-        jsMain {
-            dependencies {
-                implementation Deps.kotlin.test.js
             }
         }
     }

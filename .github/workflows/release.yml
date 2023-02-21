@@ -5,24 +5,21 @@ on:
   release:
     types: [ created ]
 
-env:
-  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.compiler.execution.strategy=in-process
-
 jobs:
   create-staging-repository:
     runs-on: ubuntu-latest
     name: Create staging repository
     outputs:
-      repository-id: ${{ steps.create.outputs.repository-id }}
+      repository-id: ${{ steps.create.outputs.repository_id }}
     steps:
       - id: create
         name: Create staging repository
-        uses: nexus-actions/create-nexus-staging-repo@v1
+        uses: nexus-actions/create-nexus-staging-repo@3e5e7209801629febdcf75541a4898710d28df9a
         with:
           username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}
-          staging-profile-id: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
-          description: Created by $GITHUB_WORKFLOW ($GITHUB_ACTION) for $GITHUB_REPOSITORY
+          staging_profile_id: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+          description: ${{ github.repository }}/${{ github.workflow }}#${{ github.run_number }}
 
   linux-host-publish:
     name: Release on Ubuntu
@@ -32,31 +29,36 @@ jobs:
       SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: 1.8
+          distribution: 'zulu'
+          java-version: '11'
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Release JVM, Android, JS, Linux
-        run: >
-          ./gradlew
-          publishAllFilteredToSonatype
-          -Ptarget=all_linux_hosted
-          -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
-          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
-          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
-          -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
+        uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: true
+          arguments: |
+            publishAllFilteredToSonatype
+            -Ptarget=all_linux_hosted
+            -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
+            -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
+            -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
+            -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
       - name: Release Metadata
-        run: >
-          ./gradlew
-          publishAllFilteredToSonatype
-          -Ptarget=meta
-          -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
-          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
-          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
-          -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
+        uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: true
+          arguments: |
+            publishAllFilteredToSonatype
+            -Ptarget=meta
+            -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
+            -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
+            -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
+            -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
 
   macos-host-publish:
     name: Release on macOS
@@ -66,20 +68,27 @@ jobs:
       SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: 1.8
+          distribution: 'zulu'
+          java-version: '11'
+      - name: Select Xcode version
+        uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
+        with:
+          xcode-version: '13.4.1'
       - name: Release iOS, MacOS
-        run: >
-          ./gradlew
-          publishAllFilteredToSonatype
-          -Ptarget=all_macos_hosted
-          -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
-          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
-          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
-          -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
+        uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: true
+          arguments: |
+            publishAllFilteredToSonatype
+            -Ptarget=all_macos_hosted
+            -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
+            -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
+            -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
+            -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
 
   linux-host-check:
     name: Check on Ubuntu
@@ -87,22 +96,25 @@ jobs:
     needs: [ create-staging-repository, linux-host-publish ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: 1.8
+          distribution: 'zulu'
+          java-version: '11'
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Check JVM, Android, JS, Linux
-        run: >
-          ./gradlew
-          :tools:check-publication:build
-          -Ptarget=all_linux_hosted
-          -Pcheck_publication
-          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
-          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
-          -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
+        uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: true
+          arguments: |
+            :tools:check-publication:build
+            -Ptarget=all_linux_hosted
+            -Pcheck_publication
+            -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
+            -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
+            -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
 
   macos-host-check:
     name: Check on macOS
@@ -110,20 +122,27 @@ jobs:
     needs: [ create-staging-repository, linux-host-publish, macos-host-publish ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: 1.8
+          distribution: 'zulu'
+          java-version: '11'
+      - name: Select Xcode version
+        uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
+        with:
+          xcode-version: '13.4.1'
       - name: Check iOS
-        run: >
-          ./gradlew
-          :tools:check-publication:build
-          -Ptarget=all_macos_hosted
-          -Pcheck_publication
-          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
-          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
-          -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
+        uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: true
+          arguments: |
+            :tools:check-publication:build
+            -Ptarget=all_macos_hosted
+            -Pcheck_publication
+            -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
+            -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
+            -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
 
   close-staging-repository:
     runs-on: ubuntu-latest
@@ -132,14 +151,14 @@ jobs:
     steps:
       - name: Discard
         if: ${{ needs.linux-host-check.result != 'success' || needs.macos-host-check.result != 'success' }}
-        uses: nexus-actions/drop-nexus-staging-repo@main
+        uses: nexus-actions/drop-nexus-staging-repo@59443053a1b36f5f71ede68776d73294bf4bfb5e
         with:
           username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}
           staging_repository_id: ${{ needs.create-staging-repository.outputs.repository-id }}
       - name: Release
         if: ${{ needs.linux-host-check.result == 'success' && needs.macos-host-check.result == 'success' }}
-        uses: nexus-actions/release-nexus-staging-repo@main
+        uses: nexus-actions/release-nexus-staging-repo@f2b4c7f64ecec2cb0d24349182c1bbeda5c4c056
         with:
           username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}

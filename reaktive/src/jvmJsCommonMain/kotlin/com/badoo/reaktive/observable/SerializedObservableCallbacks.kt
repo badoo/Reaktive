@@ -3,6 +3,7 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.queue.ArrayQueue
 import com.badoo.reaktive.utils.queue.Queue
+import com.badoo.reaktive.utils.synchronizedCompat
 
 internal actual open class SerializedObservableCallbacks<in T> actual constructor(
     private val delegate: ObservableCallbacks<T>
@@ -16,7 +17,7 @@ internal actual open class SerializedObservableCallbacks<in T> actual constructo
     private var isEmpty = true
 
     override fun onNext(value: T) {
-        synchronized(this) {
+        synchronizedCompat(this) {
             if (isFinished) {
                 return
             }
@@ -36,7 +37,7 @@ internal actual open class SerializedObservableCallbacks<in T> actual constructo
     }
 
     override fun onComplete() {
-        synchronized(this) {
+        synchronizedCompat(this) {
             if (isFinished) {
                 return
             }
@@ -54,7 +55,7 @@ internal actual open class SerializedObservableCallbacks<in T> actual constructo
     }
 
     override fun onError(error: Throwable) {
-        synchronized(this) {
+        synchronizedCompat(this) {
             if (isFinished) {
                 return
             }
@@ -75,7 +76,7 @@ internal actual open class SerializedObservableCallbacks<in T> actual constructo
         while (true) {
             var sendItem: Any? = Uninitialized
 
-            synchronized(this) {
+            synchronizedCompat(this) {
                 when {
                     isEmpty -> {
                         isDraining = false
