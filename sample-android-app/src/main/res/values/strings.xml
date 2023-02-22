@@ -1,6 +1,0 @@
-<resources>
-
-    <string name="app_name">AndroidSampleApp</string>
-    <string name="load_random_kitten">Load random kitten</string>
-    <string name="error_loading_kitten">Error loading kitten</string>
-</resources>

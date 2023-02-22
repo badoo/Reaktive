@@ -19,12 +19,6 @@ class BinaryCompatibilityConfigurationPlugin : Plugin<Project> {
                         listOf(
                             "benchmarks",
                             "jmh",
-                            "sample-mpp-module",
-                            "sample-android-app",
-                            "sample-js-browser-app",
-                            "sample-linuxx64-app",
-                            "sample-ios-app",
-                            "sample-macos-app",
                         )
                     )
                 }

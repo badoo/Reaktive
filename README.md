@@ -274,9 +274,6 @@ object MyPlugin : ReaktivePlugin {
 ```
 
 ### Samples:
-* [MPP module](https://github.com/badoo/Reaktive/tree/master/sample-mpp-module)
-* [Android app](https://github.com/badoo/Reaktive/tree/master/sample-android-app)
-* [iOS app](https://github.com/badoo/Reaktive/tree/master/sample-ios-app)
-* [macOS app](https://github.com/badoo/Reaktive/tree/master/sample-macos-app)
-* [JavaScript browser app](https://github.com/badoo/Reaktive/tree/master/sample-js-browser-app)
-* [Linux x64 app](https://github.com/badoo/Reaktive/tree/master/sample-linuxx64-app)
+
+* [Todo App](https://github.com/JetBrains/compose-jb/tree/master/examples/todoapp) - a multiplatform todo application.
+* [Search GitHub](https://github.com/search?q=%22com.badoo.reaktive%22&type=code) - there are many projects using Reaktive on GitHub. 
