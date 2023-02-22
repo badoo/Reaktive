@@ -2,17 +2,15 @@ package com.badoo.reaktive.dependencies
 
 object Deps {
 
-    private const val kotlinVersion = "1.5.30"
-    private const val coroutinesVersion = "1.5.2"
+    private const val kotlinVersion = "1.8.0"
+    private const val coroutinesVersion = "1.6.4"
     private const val detektVersion = "1.9.1"
-    private const val asmVersion = "6.0"
 
     val kotlin = Kotlin
     val kotlinx = Kotlinx
     val android = Android
     val jmh = Jmh
     val detekt = Detekt
-    val asm = Asm()
     val rxjava2 = "io.reactivex.rxjava2:rxjava:2.2.7"
     val rxjava3 = "io.reactivex.rxjava3:rxjava:3.0.7"
     val picasso = "com.squareup.picasso:picasso:2.71828"
@@ -22,7 +20,6 @@ object Deps {
         val stdlib = Stdlib()
         val test = Test
         val plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        val compilerEmbeddable = "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"
 
         class Stdlib(
             private val name: String = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
@@ -45,7 +42,7 @@ object Deps {
     object Kotlinx {
         val coroutines = Coroutines
         val metadata = Metadata
-        val compatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.8.0-RC"
+        val compatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.12.1"
 
         object Coroutines {
             val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
@@ -69,7 +66,7 @@ object Deps {
     }
 
     object Android {
-        const val plugin = "com.android.tools.build:gradle:4.2.0"
+        const val plugin = "com.android.tools.build:gradle:7.3.1"
         val androidx = Androidx
 
         object Androidx {
@@ -87,13 +84,5 @@ object Deps {
     object Detekt {
         const val plugin = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektVersion"
         const val ktlint = "io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion"
-    }
-
-    class Asm(
-        private val name: String = "org.ow2.asm:asm:$asmVersion"
-    ) : CharSequence by name {
-        val tree = "org.ow2.asm:asm-tree:$asmVersion"
-
-        override fun toString() = name
     }
 }

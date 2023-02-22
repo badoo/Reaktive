@@ -6,6 +6,6 @@ internal actual fun createDefaultUncaughtErrorHandler(): (Throwable) -> Unit = {
         .also { thread ->
             thread
                 .uncaughtExceptionHandler
-                .uncaughtException(thread, e)
+                ?.uncaughtException(thread, e)
         }
 }

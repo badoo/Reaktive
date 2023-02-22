@@ -20,8 +20,8 @@ internal class DisposableScopeImpl : DisposableScope, CompositeDisposable() {
         return this
     }
 
-    override fun <T> T.scope(dispose: (T) -> Unit): T {
-        Disposable { dispose(this) }.scope()
+    override fun <T> T.scope(onDispose: (T) -> Unit): T {
+        Disposable { onDispose(this) }.scope()
 
         return this
     }

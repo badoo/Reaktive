@@ -4,6 +4,7 @@ import com.badoo.reaktive.utils.NANOS_IN_MICRO
 import com.badoo.reaktive.utils.NANOS_IN_SECOND
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.UnsafeNumber
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
@@ -75,10 +76,9 @@ actual class Lock {
                     // iOS does not support it
                     // can't use NSRecursiveLock and NSCondition,
                     // it can't wait less then 1 second and lock can't create condition
-                    val tv: timeval = alloc { gettimeofday(ptr, null) }
-                    val ts: timespec = alloc()
-                    ts.tv_sec = tv.tv_sec
-                    ts.tv_nsec = (tv.tv_usec * NANOS_IN_MICRO).convert()
+                    val tv = alloc<timeval> { gettimeofday(ptr, null) }
+                    val ts = alloc<timespec>()
+                    ts.set(tv)
                     ts += timeoutNanos
                     pthread_cond_timedwait(cond.ptr, lockPtr, ts.ptr)
                 }
@@ -97,6 +97,13 @@ actual class Lock {
         }
 
         private companion object {
+            @OptIn(UnsafeNumber::class)
+            private fun timespec.set(time: timeval) {
+                tv_sec = time.tv_sec
+                tv_nsec = (time.tv_usec * NANOS_IN_MICRO).convert()
+            }
+
+            @OptIn(UnsafeNumber::class)
             private operator fun timespec.plusAssign(nanos: Long) {
                 tv_sec += (nanos / NANOS_IN_SECOND).convert<__darwin_time_t>()
                 tv_nsec += (nanos % NANOS_IN_SECOND).convert<__darwin_time_t>()

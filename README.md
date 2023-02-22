@@ -11,101 +11,35 @@ Should you have any questions or feedback welcome to the **Kotlin Slack channel*
 [#reaktive](https://kotlinlang.slack.com/archives/CU05HB31A)
 
 ### Setup
-Recommended minimum Gradle version is 5.3. Please read first the documentation about
-[metadata publishing mode](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#experimental-metadata-publishing-mode).
 
 There are a number of modules published to Maven Central:
+
 - `reaktive` - the main Reaktive library (multiplatform)
 - `reaktive-annotations` - collection of annotations (mutiplatform)
 - `reaktive-testing` - testing utilities (multiplatform)
 - `utils` - some utilities like `Clock`, `AtomicReference`, `Lock`, etc. (multiplatform)
 - `coroutines-interop` - Kotlin coroutines interoperability helpers (multiplatform)
-- `rxjava2-interop` - RxJava2 interoperability helpers (JVM and Android)
-- `rxjava3-interop` - RxJava3 interoperability helpers (JVM and Android)
+- `rxjava2-interop` - RxJava v2 interoperability helpers (JVM and Android)
+- `rxjava3-interop` - RxJava v3 interoperability helpers (JVM and Android)
 
-#### Multiplatform module publications
+#### Configuring dependencies
 
-Kotlin common (root publication):
-```groovy
-implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
-```
-JVM:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-jvm:<latest-version>'
-```
-Android (debug and release):
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-android:<latest-version>'
-```
-iOS 32:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-ios32:<latest-version>'
-```
-iOS 64:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-ios64:<latest-version>'
-```
-iOS sim:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-iossim:<latest-version>'
-```
-macOS x64:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-macosx64:<latest-version>'
-```
-watchOS ARM32
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-watchosarm32:<latest-version>'
-```
-watchOS ARM64
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-watchosarm64:<latest-version>'
-```
-watchOS sim
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-watchossim:<latest-version>'
-```
-tvOS ARM64
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-tvosarm64:<latest-version>'
-```
-tvOS sim
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-tvossim:<latest-version>'
-```
-JavaScript:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-js:<latest-version>'
-```
-Linux x64:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-linuxx64:<latest-version>'
-```
-Linux ARM 32 hfp:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>-linuxarm32hfp:<latest-version>'
-```
-
-#### Regular modules:
-```groovy
-implementation 'com.badoo.reaktive:<module-name>:<latest-version>'
-```
-
-#### Typical dependencies configuration for MPP module (metadata mode)
 ```groovy
 kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation 'com.badoo.reaktive:reaktive:<latest-version>'
-                implementation 'com.badoo.reaktive:reaktive-annotations:<latest-version>'
-                implementation 'com.badoo.reaktive:coroutines-interop:<latest-version>'
+                implementation 'com.badoo.reaktive:reaktive:<version>'
+                implementation 'com.badoo.reaktive:reaktive-annotations:<version>'
+                implementation 'com.badoo.reaktive:coroutines-interop:<version>' // For interop with coroutines
+                implementation 'com.badoo.reaktive:rxjava2-interop:<version>' // For interop with RxJava v2
+                implementation 'com.badoo.reaktive:rxjava3-interop:<version>' // For interop with RxJava v3
             }
         }
 
         commonTest {
             dependencies {
-                implementation 'com.badoo.reaktive:reaktive-testing:<latest-version>'
+                implementation 'com.badoo.reaktive:reaktive-testing:<version>'
             }
         }
     }
@@ -113,6 +47,7 @@ kotlin {
 ```
 
 ### Features:
+
 * Multiplatform: JVM, Android, iOS, macOS, watchOS, tvOS, JavaScript, Linux X64, Linux ARM 32 hfp
 * Schedulers support: 
   * `computationScheduler` - fixed thread pool equal to a number of cores
@@ -128,14 +63,16 @@ kotlin {
 * Interoperability with Kotlin Coroutines: conversions between coroutines (including Flow) and Reaktive
 * Interoperability with RxJava2 and RxJava3: conversion of sources between Reaktive and RxJava, ability to reuse RxJava's schedulers
 
-### Kotlin Native pitfalls
-Kotlin Native memory model and concurrency are very special. In general shared mutable state between threads is not allowed.
+### Reaktive and the old (strict) Kotlin/Native memory model
+
+The old (strict) Kotlin Native memory model and concurrency are very special. In general shared mutable state between threads is not allowed.
 Since Reaktive supports multithreading in Kotlin Native, please read the following documents before using it:
 * [Concurrency](https://kotlinlang.org/docs/reference/native/concurrency.html#object-transfer-and-freezing)
 * [Immutability](https://kotlinlang.org/docs/reference/native/immutability.html)
 
 Object detachment is relatively difficult to achieve and is very error-prone when the objects are created from outside and
 are not fully managed by the library. This is why Reaktive prefers frozen state. Here are some hints:
+
 * Any callback (and any captured objects) submitted to a Scheduler will be frozen
 * `subscribeOn` freezes both its upstream source and downstream observer,
 all the Disposables (upstream's and downstream's) are frozen as well,
@@ -145,6 +82,7 @@ upstream source is **not** frozen by the operator
 * Other operators that use scheduler (like `debounce`, `timer`, `delay`, etc.) behave same as `observeOn` in most of the cases
 
 #### Thread local tricks to avoid freezing
+
 Sometimes freezing is not acceptable, e.g. we might want to load some data in background and then update the UI.
 Obviously UI can not be frozen. With Reaktive it is possible to achieve such a behaviour in two ways:
 
@@ -159,7 +97,7 @@ observable<Any> { emitter ->
     .subscribeOn(ioScheduler)
     .observeOn(mainScheduler)
     .threadLocal()
-    .doOnBeforeNext { values += it } // Callback is not frozen, we can updated the mutable list
+    .doOnBeforeNext { values += it } // Callback is not frozen, we can update the mutable list
     .doOnBeforeFinally { isFinished = true } // Callback is not frozen, we can change the flag
     .subscribe()
 ```
@@ -176,69 +114,58 @@ observable<Any> { emitter ->
     .observeOn(mainScheduler)
     .subscribe(
         isThreadLocal = true,
-        onNext = { values += it }, // Callback is not frozen, we can updated the mutable list
+        onNext = { values += it }, // Callback is not frozen, we can update the mutable list
         onComplete = { isComplete = true } // Callback is not frozen, we can change the flag
     )
 ```
 
 In both cases subscription (`subscribe` call) **must** be performed on the Main thread.
 
+### Reaktive and the new (relaxed) Kotlin/Native memory model
+
+The new (relaxed) Kotlin/Native [memory model](https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md)
+allows passing objects between threads without freezing. When using this memory model, there is no need
+to use the `threadLocal` operator/argument anymore. Please make sure that you also **disabled freezing**
+as [described in the documentation](https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md#unexpected-object-freezing).
+
 ### Coroutines interop
 
 This functionality is provided by the `coroutines-interop` module which is published in two versions:
-- `coroutines-interop:<version>` is based on stable `kotlinx.coroutines`
-- `coroutines-interop:<version>-nmtc` is based on [work-in-progress](https://github.com/Kotlin/kotlinx.coroutines/pull/1648) multi-threaded `kotlinx.coroutines`
+
+- `coroutines-interop:<version>` is based on stable `kotlinx.coroutines` - use this variant with the stable version of coroutines **and** with the old (strict) memory model.
+- `coroutines-interop:<version>-nmtc` is based on [work-in-progress](https://github.com/Kotlin/kotlinx.coroutines/pull/1648) multi-threaded `kotlinx.coroutines` - use this variant with either the multi-threaded version of coroutines **or** the new (relaxed) memory model.
 
 #### Coroutines interop based on stable kotlinx.coroutines
 
 There are few important limitations:
+
 - Neither `Job` nor `CoroutineContext` can be frozen (until release of the multi-threaded coroutines).
 - Because of the first limitation all `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed inside `runBlocking` block in Kotlin/Native and should be subscribed on a background `Scheduler`.
-- Ktor does not work well in multithreaded environment in Kotlin/Native (it may crash), so please don't mix Ktor and "stable" `coroutines-interop`.
 
-Consider the following example for `corutines-interop`:
+Consider the following example for `coroutines-interop`:
+
 ```kotlin
 singleFromCoroutine {
-    /*
-     * This block will be executed inside `runBlocking` in Kotlin/Native.
-     * Please avoid using Ktor here, it may crash.
-     */
+    // This block will be executed inside `runBlocking` in Kotlin/Native
 }
-    .subscribeOn(ioScheduler)
+    .subscribeOn(ioScheduler) // Switching to a background thread is necessary
     .observeOn(mainScheduler)
     .subscribe { /* Get the result here */ }
 ```
 
-We recommend to avoid using Ktor in Kotlin/Native multithreaded environment until multithreaded coroutines, but if you really need consider the following function:
-```kotlin
-fun <T> singleFromCoroutineUnsafe(mainContext: CoroutineContext, block: suspend CoroutineScope.() -> T): Single<T> =
-    single { emitter ->
-        GlobalScope
-            .launch(mainContext) {
-                try {
-                    emitter.onSuccess(block())
-                } catch (e: Throwable) {
-                    emitter.onError(e)
-                }
-            }
-            .asDisposable()
-            .also(emitter::setDisposable)
-    }
-```
+Please note that Ktor uses multi-threaded coroutines by default. If you are using Ktor, please use `coroutines-interop` module based on multi-threaded coroutines and proceed to the next Readme section.
 
-Now you can use this function together with Ktor but make sure you are doing this always on Main thread, neither `subscribeOn` nor `observeOn` nor any other thread switch are allowed.
 
 #### Coroutines interop based on multi-threaded kotlinx.coroutines
 
-The multi-threaded `kotlinx.coroutines` variant lifts some unpleasant restrictions: 
-- Both `Job` and `CoroutineContext` can be frozen.
+The multi-threaded `kotlinx.coroutines` variant lifts some unpleasant restrictions - both `Job` and `CoroutineContext` can be frozen.
 
-So there is one crucial difference:
-- All `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed asynchronously in all targets (including Kotlin/Native), so can be subscribed on any scheduler.
+So there is one crucial difference - all `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed asynchronously in all targets (including Kotlin/Native), so can be subscribed on any scheduler.
 
-Limitations:
+Notes:
+
 - Because multi-threaded coroutines are work-in-progress, there are possible [issues](https://github.com/Kotlin/kotlinx.coroutines/blob/native-mt/kotlin-native-sharing.md#known-problems).
-- Ktor can be used out of the box, but still can not be frozen, so main thread only.
+- Ktor can be used out of the box without any known limitations
 
 ##### Coroutines interop general limitations
 
@@ -304,6 +231,47 @@ class MyActivity : AppCompatActivity(), DisposableScope by DisposableScope() {
 ### Reaktive and Swift interoperability
 
 Please see the corresponding documentation page: [Reaktive and Swift interoperability](docs/SwiftInterop.md).
+
+### Plugins
+
+Reaktive provides Plugin API, something similar to [RxJava plugins](https://github.com/ReactiveX/RxJava/wiki/Plugins). The Plugin API provides a way to decorate Reaktive sources. A plugin should implement the [ReaktivePlugin](https://github.com/badoo/Reaktive/blob/master/reaktive/src/commonMain/kotlin/com/badoo/reaktive/plugin/ReaktivePlugin.kt) interface, and can be registered using the `registerReaktivePlugin` function and unregistered using the `unregisterReaktivePlugin` function.
+
+```kotlin
+object MyPlugin : ReaktivePlugin {
+    override fun <T> onAssembleObservable(observable: Observable<T>): Observable<T> =
+        object : Observable<T> {
+            private val traceException = TraceException()
+
+            override fun subscribe(observer: ObservableObserver<T>) {
+                observable.subscribe(
+                    object : ObservableObserver<T> by observer {
+                        override fun onError(error: Throwable) {
+                            observer.onError(error, traceException)
+                        }
+                    }
+                )
+            }
+        }
+
+    override fun <T> onAssembleSingle(single: Single<T>): Single<T> =
+        TODO("Similar to onAssembleSingle")
+
+    override fun <T> onAssembleMaybe(maybe: Maybe<T>): Maybe<T> = 
+        TODO("Similar to onAssembleSingle")
+
+    override fun onAssembleCompletable(completable: Completable): Completable =
+        TODO("Similar to onAssembleSingle")
+
+    private fun ErrorCallback.onError(error: Throwable, traceException: TraceException) {
+        if (error.suppressedExceptions.lastOrNull() !is TraceException) {
+            error.addSuppressed(traceException)
+        }
+        onError(error)
+    }
+
+    private class TraceException : Exception()
+}
+```
 
 ### Samples:
 * [MPP module](https://github.com/badoo/Reaktive/tree/master/sample-mpp-module)

@@ -1,10 +1,10 @@
 package com.badoo.reaktive.test.maybe
 
 import com.badoo.reaktive.maybe.Maybe
+import com.badoo.reaktive.test.assert.assertEquals
+import com.badoo.reaktive.test.assert.assertFalse
+import com.badoo.reaktive.test.assert.assertTrue
 import com.badoo.reaktive.utils.freeze
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 fun <T> TestMaybeObserver<T>.assertSuccess(): TestMaybeObserver<T> {
     assertTrue(isSuccess, "Maybe did not succeed")

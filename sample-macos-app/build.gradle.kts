@@ -1,4 +1,5 @@
 import com.badoo.reaktive.configuration.Target
+import org.gradle.internal.os.OperatingSystem
 
 open class BuildMacosSampleTask : DefaultTask() {
 
@@ -29,7 +30,7 @@ open class BuildMacosSampleTask : DefaultTask() {
     }
 }
 
-if (Target.shouldDefineTarget(project, Target.MACOS)) {
+if (OperatingSystem.current().isMacOsX && Target.shouldDefineTarget(project, Target.MACOS)) {
     tasks.register<BuildMacosSampleTask>("build") {
         val binariesTasks = project(":sample-mpp-module").tasks.named("macosX64MainBinaries")
         // macosX64MainBinaries does not define any outputs, hardcode them

@@ -231,6 +231,11 @@ public final class com/badoo/reaktive/completable/TimerKt {
 	public static final fun completableTimer (JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/completable/Completable;
 }
 
+public final class com/badoo/reaktive/completable/UsingKt {
+	public static final fun completableUsing (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
+	public static synthetic fun completableUsing$default (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/completable/Completable;
+}
+
 public final class com/badoo/reaktive/completable/VariousKt {
 	public static final fun completableFromFunction (Lkotlin/jvm/functions/Function0;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun completableOfEmpty ()Lcom/badoo/reaktive/completable/Completable;
@@ -526,6 +531,11 @@ public final class com/badoo/reaktive/maybe/TimeoutKt {
 
 public final class com/badoo/reaktive/maybe/TimerKt {
 	public static final fun maybeTimer (JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/maybe/Maybe;
+}
+
+public final class com/badoo/reaktive/maybe/UsingKt {
+	public static final fun maybeUsing (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static synthetic fun maybeUsing$default (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/maybe/Maybe;
 }
 
 public final class com/badoo/reaktive/maybe/VariousKt {
@@ -939,7 +949,9 @@ public final class com/badoo/reaktive/observable/ThreadLocalKt {
 }
 
 public final class com/badoo/reaktive/observable/ThrottleKt {
-	public static final fun throttle (Lcom/badoo/reaktive/observable/Observable;J)Lcom/badoo/reaktive/observable/Observable;
+	public static final synthetic fun throttle (Lcom/badoo/reaktive/observable/Observable;J)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun throttle (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun throttle$default (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;ILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/ThrottleLatestKt {
@@ -965,6 +977,11 @@ public final class com/badoo/reaktive/observable/ToListKt {
 public final class com/badoo/reaktive/observable/ToMapKt {
 	public static final fun toMap (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
 	public static final fun toMap (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
+}
+
+public final class com/badoo/reaktive/observable/UsingKt {
+	public static final fun observableUsing (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun observableUsing$default (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
 
 public final class com/badoo/reaktive/observable/VariousKt {
@@ -1302,6 +1319,11 @@ public final class com/badoo/reaktive/single/TimeoutKt {
 
 public final class com/badoo/reaktive/single/TimerKt {
 	public static final fun singleTimer (JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/single/Single;
+}
+
+public final class com/badoo/reaktive/single/UsingKt {
+	public static final fun singleUsing (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
+	public static synthetic fun singleUsing$default (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/badoo/reaktive/single/Single;
 }
 
 public final class com/badoo/reaktive/single/VariousKt {

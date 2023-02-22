@@ -8,7 +8,7 @@ import com.badoo.reaktive.single.flatMap
 import com.badoo.reaktive.single.map
 import com.badoo.reaktive.single.onErrorReturnValue
 import org.w3c.fetch.Response
-import kotlin.browser.window
+import kotlinx.browser.window
 import kotlin.js.Promise
 
 internal class KittenLoaderImpl : KittenLoader {
