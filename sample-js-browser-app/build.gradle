@@ -1,4 +1,8 @@
-import com.badoo.reaktive.dependencies.Deps
+/*
+ * Use the following Gradle tasks to run your application:
+ * :browserProductionRun - release mode
+ * :browserDevelopmentRun - debug mode
+ */
 
 plugins {
     id 'org.jetbrains.kotlin.js'
@@ -12,6 +16,6 @@ kotlin {
 }
 
 dependencies {
-    implementation Deps.kotlin.stdlib.js
+    implementation project(':reaktive')
     implementation project(':sample-mpp-module')
 }

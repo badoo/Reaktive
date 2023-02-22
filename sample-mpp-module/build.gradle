@@ -1,47 +1,35 @@
-/*
- * In order to build this module for LinuxX64 you should install libcurl4-openssl-dev package in your system
- */
 plugins {
     id 'mpp-configuration'
     id 'detekt-configuration'
 }
 
-configuration {
-    enableLinuxArm32Hfp()
-}
-
 kotlin {
-    targets {
-        linuxX64 {
-            compilations.main.cinterops {
-                libcurl.includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+    def configureFrameworks = { target ->
+        target.binaries {
+            framework {
+                baseName = "shared"
+                export project(':reaktive')
             }
         }
-
-        def configureFrameworks = { target ->
-            target.binaries {
-                framework {
-                    baseName = "shared"
-                    export project(':reaktive')
-                    transitiveExport = true
-                }
-            }
-        }
-
-        configureFrameworks(iosArm32())
-        configureFrameworks(iosArm64())
-        configureFrameworks(iosX64())
-        configureFrameworks(iosSimulatorArm64())
-        configureFrameworks(macosX64())
-        configureFrameworks(macosArm64())
     }
+
+    configureFrameworks(iosArm32())
+    configureFrameworks(iosArm64())
+    configureFrameworks(iosX64())
+    configureFrameworks(iosSimulatorArm64())
+    configureFrameworks(macosX64())
+    configureFrameworks(macosArm64())
 
     sourceSets {
         commonMain {
             dependencies {
                 api project(':reaktive')
-                implementation project(':reaktive-annotations')
-                implementation project(':utils')
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation project(":reaktive-testing")
             }
         }
     }
