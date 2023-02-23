@@ -942,7 +942,6 @@ public final class com/badoo/reaktive/observable/ThreadLocalKt {
 }
 
 public final class com/badoo/reaktive/observable/ThrottleKt {
-	public static final synthetic fun throttle (Lcom/badoo/reaktive/observable/Observable;J)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun throttle (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;)Lcom/badoo/reaktive/observable/Observable;
 	public static synthetic fun throttle$default (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;ILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
