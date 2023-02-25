@@ -62,7 +62,6 @@ jobs:
             :coroutines-interop:build
             :sample-mpp-module:build
             :sample-ios-app:build
-            :sample-macos-app:build
             -Ptarget=all_macos_hosted
       - name: Bundle the build report
         if: failure()

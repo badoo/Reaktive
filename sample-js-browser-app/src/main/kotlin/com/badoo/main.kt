@@ -1,38 +1,33 @@
 package com.badoo
 
-import com.badoo.reaktive.samplemppmodule.binder.KittenBinder
-import com.badoo.reaktive.samplemppmodule.KittenStoreBuilderImpl
-import org.w3c.dom.get
+import com.badoo.reaktive.samplemppmodule.Counter
+import com.badoo.reaktive.samplemppmodule.Counter.Event
+import com.badoo.reaktive.observable.subscribe
 import kotlinx.browser.document
-
-/**
- * How to run: execute "sample-js-browser-app:run" Gradle task
- * and click on the link in build log (like "http://localhost:8080/")
- */
-
-private val kittenBinder = KittenBinder(KittenStoreBuilderImpl())
-private var lastVisibility = false
+import org.w3c.dom.HTMLElement
 
 fun main() {
-    document.addEventListener(
-        "DOMContentLoaded",
-        {
-            kittenBinder.onViewCreated(KittenViewImpl())
-            checkVisibility()
-        }
-    )
-
-    document.addEventListener("visibilitychange", { checkVisibility() })
+    document.addEventListener(type = "DOMContentLoaded", callback = { onLoaded() })
 }
 
-private fun checkVisibility() {
-    val isVisible = !(document["hidden"] as Boolean)
-    if (isVisible != lastVisibility) {
-        lastVisibility = isVisible
-        if (isVisible) {
-            kittenBinder.onStart()
-        } else {
-            kittenBinder.onStop()
-        }
+private fun onLoaded() {
+    console.log("Loaded")
+    val counter = Counter()
+
+    val valueText = document.getElementById("value")  as HTMLElement
+    val loader = document.getElementById("loader")  as HTMLElement
+    val incrementButton = document.getElementById("button-increment")  as HTMLElement
+    val decrementButton = document.getElementById("button-decrement")  as HTMLElement
+    val resetButton = document.getElementById("button-reset") as HTMLElement
+    val fibonacciButton = document.getElementById("button-fibonacci")  as HTMLElement
+
+    counter.state.subscribe { state ->
+        valueText.innerHTML = state.value.toString()
+        loader.hidden = !state.isLoading
     }
+
+    incrementButton.onclick = { counter.onEvent(Event.Increment) }
+    decrementButton.onclick = { counter.onEvent(Event.Decrement) }
+    resetButton.onclick = { counter.onEvent(Event.Reset) }
+    fibonacciButton.onclick = { counter.onEvent(Event.Fibonacci) }
 }

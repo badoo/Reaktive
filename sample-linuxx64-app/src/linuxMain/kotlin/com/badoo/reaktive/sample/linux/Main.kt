@@ -1,28 +1,52 @@
 package com.badoo.reaktive.sample.linux
 
-import com.badoo.reaktive.scheduler.overrideSchedulers
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.reinterpret
-import libgtk3.G_APPLICATION_FLAGS_NONE
-import libgtk3.GtkApplication
-import libgtk3.g_application_run
-import libgtk3.g_object_unref
-import libgtk3.gtk_application_new
+import com.badoo.reaktive.completable.blockingAwait
+import com.badoo.reaktive.observable.asCompletable
+import com.badoo.reaktive.observable.doOnBeforeNext
+import com.badoo.reaktive.samplemppmodule.Counter
 
 /**
- * How to run:
- * * Install libcurl4-openssl-dev and libgtk-3-dev in your system
- * * Execute ":sample-linuxx64-app:runDebugExecutableLinux" Gradle task
+ * Use the following Gradle tasks to run the application:
+ *
+ * - `:runReleaseExecutableLinux` - release mode
+ * - `:runDebugExecutableLinux` - debug mode
  */
 fun main() {
-    overrideSchedulers(main = ::MainScheduler)
+    val counter = Counter()
 
-    val app: CPointer<GtkApplication> = gtk_application_new("com.badoo.reaktive.sample.linux", G_APPLICATION_FLAGS_NONE).requireNotNull()
+    counter.state
+        .doOnBeforeNext { state ->
+            onStateChanged(
+                state = state,
+                onEvent = counter::onEvent,
+                onExit = counter::dispose,
+            )
+        }
+        .asCompletable()
+        .blockingAwait()
+}
 
-    app.signalConnect0("activate") {
-        MainWindow(app).show()
+private fun onStateChanged(
+    state: Counter.State,
+    onEvent: (Counter.Event) -> Unit,
+    onExit: () -> Unit,
+) {
+    println(state)
+
+    if (!state.isLoading) {
+        print("Enter command (+, -, 0, f, q): ")
+
+        when (readln()) {
+            "+" -> onEvent(Counter.Event.Increment)
+            "-" -> onEvent(Counter.Event.Decrement)
+            "0" -> onEvent(Counter.Event.Reset)
+            "f" -> onEvent(Counter.Event.Fibonacci)
+            "q" -> onExit()
+
+            else -> {
+                println("Invalid command")
+                onExit()
+            }
+        }
     }
-
-    g_application_run(app.reinterpret(), 0, null)
-    g_object_unref(app)
 }

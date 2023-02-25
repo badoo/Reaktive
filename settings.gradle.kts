@@ -24,7 +24,6 @@ if (!startParameter.projectProperties.containsKey("check_publication")) {
     include(":sample-js-browser-app")
     include(":sample-linuxx64-app")
     include(":sample-ios-app")
-    include(":sample-macos-app")
 } else {
     include(":tools:check-publication")
 }
