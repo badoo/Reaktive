@@ -3,7 +3,3 @@ plugins {
     id 'publish-configuration'
     id 'detekt-configuration'
 }
-
-configuration {
-    enableLinuxArm32Hfp()
-}
