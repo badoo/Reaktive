@@ -110,9 +110,6 @@ class MppConfigurationPlugin : Plugin<Project> {
                 maybeCreate("macosArm64Main").dependsOn(getByName("darwinCommonMain"))
                 maybeCreate("macosArm64Test").dependsOn(getByName("darwinCommonTest"))
 
-                maybeCreate("iosArm32Main").dependsOn(getByName("darwinCommonMain"))
-                maybeCreate("iosArm32Test").dependsOn(getByName("darwinCommonTest"))
-
                 maybeCreate("iosArm64Main").dependsOn(getByName("darwinCommonMain"))
                 maybeCreate("iosArm64Test").dependsOn(getByName("darwinCommonTest"))
 
@@ -166,18 +163,6 @@ class MppConfigurationPlugin : Plugin<Project> {
         project.kotlin {
             linuxX64 {
                 disableIfUndefined(Target.LINUX)
-            }
-        }
-    }
-
-    fun setupLinuxArm32HfpTarget(project: Project) {
-        project.kotlin {
-            linuxArm32Hfp {
-                disableIfUndefined(Target.LINUX)
-            }
-            sourceSets {
-                maybeCreate("linuxArm32HfpMain").dependsOn(getByName("linuxCommonMain"))
-                maybeCreate("linuxArm32HfpTest").dependsOn(getByName("linuxCommonTest"))
             }
         }
     }

@@ -6,10 +6,6 @@ plugins {
     id 'detekt-configuration'
 }
 
-configuration {
-    enableLinuxArm32Hfp()
-}
-
 kotlin {
     sourceSets {
         commonMain {
