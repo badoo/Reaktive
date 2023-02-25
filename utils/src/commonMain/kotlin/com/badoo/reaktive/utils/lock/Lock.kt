@@ -7,8 +7,6 @@ expect class Lock constructor() {
 
     fun release()
 
-    fun destroy()
-
     /**
      * Returns a [Condition] instance for use with this `Lock` instance.
      *

@@ -10,10 +10,6 @@ actual class Lock {
         // no-op
     }
 
-    actual fun destroy() {
-        // no-op
-    }
-
     actual fun newCondition(): Condition {
         throw IllegalStateException("Condition is not supported in JavaScript")
     }

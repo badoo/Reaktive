@@ -23,11 +23,6 @@ internal class DelayQueue<T : Any> {
         }
     }
 
-    fun destroy() {
-        condition.destroy()
-        lock.destroy()
-    }
-
     fun removeFirst(): T? =
         doSynchronizedIfNotTerminated { queue ->
             queue
