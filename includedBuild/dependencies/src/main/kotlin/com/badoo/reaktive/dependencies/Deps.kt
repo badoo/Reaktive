@@ -13,7 +13,6 @@ object Deps {
     val detekt = Detekt
     val rxjava2 = "io.reactivex.rxjava2:rxjava:2.2.7"
     val rxjava3 = "io.reactivex.rxjava3:rxjava:3.0.7"
-    val picasso = "com.squareup.picasso:picasso:2.71828"
     val shadow = "com.github.jengelman.gradle.plugins:shadow:5.1.0"
 
     object Kotlin {
