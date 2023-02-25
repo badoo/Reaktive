@@ -9,25 +9,18 @@ The following Gradle configuration can be used as a reference.
 
 ```Kotlin
 kotlin {
-    ios {
-        binaries {
-            framework {
-                // Some setup code here
+    targets
+        .filterIsInstance<KotlinNativeTarget>()
+        .filter { it.konanTarget.family == Family.IOS }
+        .forEach { target ->
+            target.binaries {
+                framework {
+                    // Some setup code here
 
-                when (val target = this.compilation.target.name) {
-                    "iosX64" -> {
-                        export("com.badoo.reaktive:reaktive-iossim:<version>")
-                    }
-
-                    "iosArm64" -> {
-                        export("com.badoo.reaktive:reaktive-ios64:<version>")
-                    }
-
-                    else -> error("Unsupported target: $target")
+                    export("com.badoo.reaktive:reaktive:<version>")
                 }
             }
         }
-    }
 
     sourceSets {
         named("commonMain") {
@@ -48,6 +41,7 @@ Reaktive provides wrapper classes.
 You can wrap Reaktive sources using corresponding `wrap()` extension functions:
 
 - `Observable<T>.wrap(): ObservableWrapper<T>`
+- `BehaviorObservable<T>.wrap(): BehaviorObservableWrapper<T>` - can be also used for exposing `BehaviorSubject` 
 - `Single<T>.wrap(): SingleWrapper<T>`
 - `Maybe<T>.wrap(): MaybeWrapper<T>`
 - `Completable.wrap(): CompletableWrapper`
@@ -64,6 +58,13 @@ class SharedDataSource {
             .subscribeOn(ioScheduler)
             .observeOn(mainScheduler)
             .wrap()
+}
+```
+
+```kotlin
+class SharedViewModel {
+    private val _state = BehaviorSubject(State())
+    val state: BehaviorObservableWrapper<State> = _state.wrap()
 }
 ```
 
