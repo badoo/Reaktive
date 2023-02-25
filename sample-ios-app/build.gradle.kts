@@ -14,22 +14,9 @@ open class BuildIosSampleTask : DefaultTask() {
     open fun buildSample() {
         project.exec {
             commandLine(
-                "pod",
-                "deintegrate"
-            )
-        }
-        project.exec {
-            commandLine(
-                "pod",
-                "install",
-                "--repo-update"
-            )
-        }
-        project.exec {
-            commandLine(
                 "xcodebuild",
-                "-workspace",
-                "sample-ios-app.xcworkspace",
+                "-project",
+                "sample-ios-app.xcodeproj",
                 "-scheme",
                 "sample-ios-app",
                 "-sdk",

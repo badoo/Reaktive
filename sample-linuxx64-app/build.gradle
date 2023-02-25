@@ -1,10 +1,9 @@
 /*
- * In order to build this app you should install libcurl4-openssl-dev and libgtk-3-dev packages in your system.
- *
- * Use the following Gradle tasks to run your application:
- * :runReleaseExecutableLinux - without debug symbols
- * :runDebugExecutableLinux - with debug symbols
+ * Use the following Gradle tasks to run the application:
+ * :runReleaseExecutableLinux - release mode
+ * :runDebugExecutableLinux - debug mode
  */
+
 plugins {
     id 'kotlin-multiplatform'
 }
@@ -17,34 +16,18 @@ kotlin {
                 runTask?.args('')
             }
         }
-
-        compilations.main.cinterops {
-            gtk3 {
-                ['/opt/local/include',
-                 '/usr/include',
-                 '/usr/local/include'
-                ].each {
-                    includeDirs "$it/atk-1.0",
-                            "$it/gdk-pixbuf-2.0",
-                            "$it/cairo",
-                            "$it/pango-1.0",
-                            "$it/gtk-3.0",
-                            "$it/glib-2.0",
-                            "$it/harfbuzz"
-                }
-
-                includeDirs '/opt/local/lib/glib-2.0/include',
-                        '/usr/lib/x86_64-linux-gnu/glib-2.0/include',
-                        '/usr/local/lib/glib-2.0/include'
-            }
-        }
     }
 
     sourceSets {
         linuxMain {
             dependencies {
+                implementation project(":reaktive")
                 implementation project(':sample-mpp-module')
             }
         }
     }
+}
+
+tasks.withType(Exec.class).configureEach {
+    standardInput = System.in
 }

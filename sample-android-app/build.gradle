@@ -18,14 +18,10 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation Deps.kotlin.stdlib.jdk7
     implementation Deps.android.androidx.appcompat
     implementation Deps.android.androidx.constraintLayout
     implementation Deps.android.androidx.exifinterface
     implementation project(':reaktive')
-    implementation project(':reaktive-testing')
-    implementation project(':rxjava2-interop')
     implementation project(':sample-mpp-module')
-    implementation Deps.picasso
 }
