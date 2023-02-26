@@ -6,6 +6,8 @@ plugins {
     id 'detekt-configuration'
 }
 
+version = "${property("reaktive_version")}-nmtc"
+
 kotlin {
     sourceSets {
         commonMain {

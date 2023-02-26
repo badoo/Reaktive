@@ -4,7 +4,6 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableObserver
-import com.badoo.reaktive.utils.ensureNeverFrozen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
@@ -15,8 +14,6 @@ import kotlinx.coroutines.flow.channelFlow
 @ExperimentalCoroutinesApi
 fun <T> Observable<T>.asFlow(): Flow<T> =
     channelFlow {
-        channel.ensureNeverFrozen()
-
         val serialDisposable = SerialDisposable()
 
         val observer =
