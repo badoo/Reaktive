@@ -7,13 +7,11 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.utils.ObjectReference
-import com.badoo.reaktive.utils.RefCounter
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.lock.Lock
 import com.badoo.reaktive.utils.lock.synchronized
 import com.badoo.reaktive.utils.queue.SharedQueue
-import com.badoo.reaktive.utils.use
 
 /**
  * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Observable].
@@ -123,19 +121,14 @@ private class FlatMapQueue<in T : Any>(
     private val count = AtomicInt(limit)
     private val queue = SharedQueue<T>()
 
-    private val refCounter =
-        RefCounter {
-            lock.destroy()
-            count.value = 0
-            queue.clear()
-        }
-
     private val _isDisposed = AtomicBoolean(false)
     override val isDisposed: Boolean get() = _isDisposed.value
 
     override fun dispose() {
-        if (_isDisposed.compareAndSet(expectedValue = false, newValue = true)) {
-            refCounter.release()
+        lock.synchronized {
+            _isDisposed.value = true
+            count.value = 0
+            queue.clear()
         }
     }
 
@@ -162,7 +155,7 @@ private class FlatMapQueue<in T : Any>(
     }
 
     private inline fun <T> sync(block: () -> T): T? =
-        refCounter.use {
-            lock.synchronized(block)
+        lock.synchronized {
+            if (_isDisposed.value) null else block()
         }
 }

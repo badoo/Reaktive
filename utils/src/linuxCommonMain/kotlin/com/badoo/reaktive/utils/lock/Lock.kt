@@ -1,6 +1,7 @@
 package com.badoo.reaktive.utils.lock
 
 import com.badoo.reaktive.utils.NANOS_IN_SECOND
+import com.badoo.reaktive.utils.freeze
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.UnsafeNumber
@@ -33,12 +34,17 @@ import platform.posix.pthread_mutexattr_init
 import platform.posix.pthread_mutexattr_settype
 import platform.posix.pthread_mutexattr_t
 import platform.posix.timespec
+import kotlin.native.internal.createCleaner
 
 actual class Lock {
 
     private val arena = Arena()
     private val attr = arena.alloc<pthread_mutexattr_t>()
     private val mutex = arena.alloc<pthread_mutex_t>()
+
+    @Suppress("unused") // Must be stored in a property
+    @OptIn(ExperimentalStdlibApi::class)
+    private val cleaner = createCleaner(Resources(arena, attr, mutex).freeze(), Resources::destroy)
 
     init {
         pthread_mutexattr_init(attr.ptr)
@@ -54,13 +60,19 @@ actual class Lock {
         pthread_mutex_unlock(mutex.ptr)
     }
 
-    actual fun destroy() {
-        pthread_mutex_destroy(mutex.ptr)
-        pthread_mutexattr_destroy(attr.ptr)
-        arena.clear()
-    }
-
     actual fun newCondition(): Condition = ConditionImpl(mutex.ptr)
+
+    private class Resources(
+        val arena: Arena,
+        val attr: pthread_mutexattr_t,
+        val mutex: pthread_mutex_t,
+    ) {
+        fun destroy() {
+            pthread_mutex_destroy(mutex.ptr)
+            pthread_mutexattr_destroy(attr.ptr)
+            arena.clear()
+        }
+    }
 
     private class ConditionImpl(
         private val lockPtr: CPointer<pthread_mutex_t>
@@ -69,6 +81,10 @@ actual class Lock {
         private val arena = Arena()
         private val attr = arena.alloc<pthread_condattr_t>()
         private val cond = arena.alloc<pthread_cond_t>()
+
+        @Suppress("unused") // Must be stored in a property
+        @OptIn(ExperimentalStdlibApi::class)
+        private val cleaner = createCleaner(Resources(arena, attr, cond).freeze(), Resources::destroy)
 
         init {
             pthread_condattr_init(attr.ptr)
@@ -92,12 +108,6 @@ actual class Lock {
             pthread_cond_broadcast(cond.ptr)
         }
 
-        override fun destroy() {
-            pthread_cond_destroy(cond.ptr)
-            pthread_condattr_destroy(attr.ptr)
-            arena.clear()
-        }
-
         private companion object {
             @OptIn(UnsafeNumber::class)
             private operator fun timespec.plusAssign(nanos: Long) {
@@ -107,6 +117,18 @@ actual class Lock {
                     tv_sec += 1
                     tv_nsec -= NANOS_IN_SECOND.convert<__syscall_slong_t>()
                 }
+            }
+        }
+
+        private class Resources(
+            val arena: Arena,
+            val attr: pthread_condattr_t,
+            val cond: pthread_cond_t,
+        ) {
+            fun destroy() {
+                pthread_cond_destroy(cond.ptr)
+                pthread_condattr_destroy(attr.ptr)
+                arena.clear()
             }
         }
     }

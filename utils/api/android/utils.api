@@ -104,7 +104,6 @@ public final class com/badoo/reaktive/utils/clock/DefaultClock : com/badoo/reakt
 
 public abstract interface class com/badoo/reaktive/utils/lock/Condition {
 	public abstract fun await (J)V
-	public abstract fun destroy ()V
 	public abstract fun signal ()V
 }
 
@@ -113,20 +112,17 @@ public final class com/badoo/reaktive/utils/lock/Condition$DefaultImpls {
 }
 
 public final class com/badoo/reaktive/utils/lock/ConditionExtKt {
-	public static final fun use (Lcom/badoo/reaktive/utils/lock/Condition;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun waitFor (Lcom/badoo/reaktive/utils/lock/Condition;JLkotlin/jvm/functions/Function0;)Z
 }
 
 public final class com/badoo/reaktive/utils/lock/Lock {
 	public fun <init> ()V
 	public final fun acquire ()V
-	public final fun destroy ()V
 	public final fun newCondition ()Lcom/badoo/reaktive/utils/lock/Condition;
 	public final fun release ()V
 }
 
 public final class com/badoo/reaktive/utils/lock/LockExtKt {
 	public static final fun synchronized (Lcom/badoo/reaktive/utils/lock/Lock;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
-	public static final fun use (Lcom/badoo/reaktive/utils/lock/Lock;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 

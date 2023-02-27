@@ -30,6 +30,5 @@ internal class ExpirationPool<T : Any>(
         while (true) {
             onItemExpired(queue.take() ?: break)
         }
-        queue.destroy()
     }
 }

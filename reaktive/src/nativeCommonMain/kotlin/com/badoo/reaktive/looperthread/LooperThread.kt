@@ -33,7 +33,6 @@ internal class LooperThread {
             val message = queue.take() ?: break
             message.task()
         }
-        queue.destroy()
     }
 
     private class Message(
