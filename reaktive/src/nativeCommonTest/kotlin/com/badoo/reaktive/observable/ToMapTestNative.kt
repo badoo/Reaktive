@@ -20,7 +20,6 @@ class ToMapTestNative {
         upstream.onComplete()
 
         observer.assertSuccess(mapOf("0" to 0, "null" to null, "1" to 1, "2" to 2))
-        assertTrue(observer.value.isFrozen)
     }
 
     @Test
@@ -34,6 +33,5 @@ class ToMapTestNative {
         upstream.onComplete()
 
         observer.assertSuccess(mapOf("0" to 0, "1" to 1))
-        assertTrue(observer.value.isFrozen)
     }
 }

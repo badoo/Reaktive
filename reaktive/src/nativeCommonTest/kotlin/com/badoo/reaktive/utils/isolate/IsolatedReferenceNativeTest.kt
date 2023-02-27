@@ -13,23 +13,6 @@ import kotlin.test.assertTrue
 class IsolatedReferenceNativeTest {
 
     @Test
-    fun throws_IncorrectDereferenceException_WHEN_value_not_frozen_and_get_value_from_another_thread() {
-        val ref = IsolatedReference(Data())
-
-        val error =
-            doInBackgroundBlocking {
-                try {
-                    ref.getOrThrow()
-                    null
-                } catch (e: Throwable) {
-                    e
-                }
-            }
-
-        assertTrue(error is IncorrectDereferenceException)
-    }
-
-    @Test
     fun returns_value_WHEN_value_frozen_and_get_value_from_another_thread() {
         val data = Data().freeze()
         val ref = IsolatedReference(data)

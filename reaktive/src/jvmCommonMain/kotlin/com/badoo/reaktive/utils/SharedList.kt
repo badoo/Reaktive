@@ -1,5 +1,4 @@
 package com.badoo.reaktive.utils
 
-internal actual class SharedList<T> actual constructor(
-    initialCapacity: Int
-) : java.util.ArrayList<T>(initialCapacity), MutableList<T>
+@Suppress("ACTUAL_WITHOUT_EXPECT") // KT-37316
+internal actual typealias SharedList<T> = java.util.ArrayList<T>

@@ -1,16 +1,11 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.test.doInBackgroundBlocking
-import com.badoo.reaktive.test.observable.TestObservable
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.reaktiveUncaughtErrorHandler
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.native.concurrent.ensureNeverFrozen
 import kotlin.native.concurrent.freeze
 import kotlin.test.AfterTest
 import kotlin.test.Test
-import kotlin.test.assertNotNull
 
 class ThreadLocalTestNative {
 
@@ -28,37 +23,6 @@ class ThreadLocalTestNative {
         upstream
             .threadLocal()
             .subscribe(downstreamObserver)
-    }
-
-    @Test
-    fun calls_uncaught_exception_WHEN_upstream_produced_value_on_another_thread() {
-        testCallsUncaughtExceptionWhenEventOccurredOnBackground { it.onNext(Unit) }
-    }
-
-    @Test
-    fun calls_uncaught_exception_WHEN_upstream_completed_on_another_thread() {
-        testCallsUncaughtExceptionWhenEventOccurredOnBackground(ObservableCallbacks<*>::onComplete)
-    }
-
-    @Test
-    fun calls_uncaught_exception_WHEN_upstream_produced_error_on_another_thread() {
-        testCallsUncaughtExceptionWhenEventOccurredOnBackground { it.onError(Exception()) }
-    }
-
-    private fun testCallsUncaughtExceptionWhenEventOccurredOnBackground(block: (ObservableCallbacks<Unit>) -> Unit) {
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
-        reaktiveUncaughtErrorHandler = { caughtException.value = it }
-        val upstream = TestObservable<Unit>()
-
-        upstream
-            .threadLocal()
-            .subscribe(dummyObserver())
-
-        doInBackgroundBlocking {
-            block(upstream)
-        }
-
-        assertNotNull(caughtException.value)
     }
 
     private fun dummyObserver(): ObservableObserver<Unit> =

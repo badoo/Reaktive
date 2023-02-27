@@ -20,7 +20,6 @@ class ToListTestNative {
         upstream.onComplete()
 
         observer.assertSuccess(listOf(0, null, 1, null, 2))
-        assertTrue(observer.value.isFrozen)
     }
 
     @Test
@@ -34,6 +33,5 @@ class ToListTestNative {
         upstream.onComplete()
 
         observer.assertSuccess(listOf(0, 1))
-        assertTrue(observer.value.isFrozen)
     }
 }
