@@ -22,16 +22,6 @@ class PairReferenceNativeTest {
     }
 
     @Test
-    fun freezes_current_values_WHEN_frozen() {
-        val ref = PairReference(Any(), Any())
-
-        ref.freeze()
-
-        assertTrue(ref.first.isFrozen)
-        assertTrue(ref.second.isFrozen)
-    }
-
-    @Test
     fun does_not_freeze_new_values_IF_not_frozen() {
         val ref = PairReference(Any(), Any())
 
@@ -40,17 +30,5 @@ class PairReferenceNativeTest {
 
         assertFalse(ref.first.isFrozen)
         assertFalse(ref.second.isFrozen)
-    }
-
-    @Test
-    fun freezes_new_values_IF_frozen() {
-        val ref = PairReference(Any(), Any())
-
-        ref.freeze()
-        ref.first = Any()
-        ref.second = Any()
-
-        assertTrue(ref.first.isFrozen)
-        assertTrue(ref.second.isFrozen)
     }
 }
