@@ -5,7 +5,6 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.single
-import com.badoo.reaktive.utils.ObjectReference
 
 /**
  * Collects elements emitted by the **finite** source [Observable] into a data structure [C]
@@ -20,19 +19,21 @@ import com.badoo.reaktive.utils.ObjectReference
 fun <T, C> Observable<T>.collect(initialCollection: C, accumulator: (C, T) -> C): Single<C> =
     single { emitter ->
         subscribe(
-            object : ObjectReference<C>(initialCollection), ObservableObserver<T>, ErrorCallback by emitter {
+            object : ObservableObserver<T>, ErrorCallback by emitter {
+                private var collection = initialCollection
+
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
                 }
 
                 override fun onNext(value: T) {
                     emitter.tryCatch {
-                        this.value = accumulator(this.value, value)
+                        collection = accumulator(collection, value)
                     }
                 }
 
                 override fun onComplete() {
-                    emitter.onSuccess(value)
+                    emitter.onSuccess(collection)
                 }
             }
         )

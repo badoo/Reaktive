@@ -2,7 +2,6 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.Uninitialized
 
 /**
@@ -16,10 +15,10 @@ fun <T> Observable<T>.scan(accumulator: (acc: T, value: T) -> T): Observable<T> 
     observable { emitter ->
         subscribe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
-                var cache = ObjectReference<Any?>(Uninitialized)
+                private var cache: Any? = Uninitialized
 
                 override fun onNext(value: T) {
-                    val previous = cache.value
+                    val previous = cache
 
                     val next =
                         if (previous == Uninitialized) {
@@ -34,7 +33,7 @@ fun <T> Observable<T>.scan(accumulator: (acc: T, value: T) -> T): Observable<T> 
                             }
                         }
 
-                    cache.value = next
+                    cache = next
 
                     emitter.onNext(next)
                 }
@@ -68,16 +67,14 @@ fun <T, R> Observable<T>.scan(seed: R, accumulator: (acc: R, value: T) -> R): Ob
  */
 fun <T, R> Observable<T>.scan(getSeed: () -> R, accumulator: (acc: R, value: T) -> R): Observable<R> =
     observable { emitter ->
-        val cache: ObjectReference<R> =
-            getSeed()
-                .also(emitter::onNext)
-                .let(::ObjectReference)
+        var cache: R = getSeed()
+        emitter.onNext(cache)
 
         subscribe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
 
                 override fun onNext(value: T) {
-                    val previous = cache.value
+                    val previous = cache
 
                     val next =
                         try {
@@ -87,7 +84,7 @@ fun <T, R> Observable<T>.scan(getSeed: () -> R, accumulator: (acc: R, value: T) 
                             return
                         }
 
-                    cache.value = next
+                    cache = next
 
                     emitter.onNext(next)
                 }

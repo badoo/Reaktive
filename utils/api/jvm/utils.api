@@ -13,12 +13,6 @@ public final class com/badoo/reaktive/utils/FreezeKt {
 	public static final fun isFrozen (Ljava/lang/Object;)Z
 }
 
-public class com/badoo/reaktive/utils/ObjectReference {
-	public fun <init> (Ljava/lang/Object;)V
-	public final fun getValue ()Ljava/lang/Object;
-	public final fun setValue (Ljava/lang/Object;)V
-}
-
 public final class com/badoo/reaktive/utils/ThrowableExtKt {
 	public static final fun printStack (Ljava/lang/Throwable;)V
 }
