@@ -10,7 +10,6 @@ import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicReference
@@ -199,7 +198,7 @@ class RepeatTest : ObservableToObservableTests by ObservableToObservableTestsImp
 
     @Test
     fun emits_all_values_repeatedly_for_first_1000_iterations_WHEN_times_is_MAX_VALUE() {
-        val list = SharedList<Int>(3000)
+        val list = ArrayList<Int>(3000)
 
         observableUnsafe<Int> { observer ->
             observer.onSubscribe(Disposable())

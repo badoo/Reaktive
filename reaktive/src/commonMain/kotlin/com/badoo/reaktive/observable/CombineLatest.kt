@@ -5,7 +5,6 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.serializer.serializer
@@ -27,7 +26,7 @@ fun <T, R> Iterable<Observable<T>>.combineLatest(mapper: (List<T>) -> R): Observ
 
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
-        val values = SharedList<Any?>(sources.size) { Uninitialized }
+        val values = MutableList<Any?>(sources.size) { Uninitialized }
         val activeSourceCount = AtomicInt(sources.size)
 
         val serializer =

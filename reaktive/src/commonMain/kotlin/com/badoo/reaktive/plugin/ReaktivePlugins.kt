@@ -7,17 +7,16 @@ import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.single.Single
-import com.badoo.reaktive.utils.SharedList
 import kotlin.jvm.JvmName
 
 @ExperimentalReaktiveApi
-internal expect var plugins: SharedList<ReaktivePlugin>?
+internal var plugins: ArrayList<ReaktivePlugin>? = null
 
 @ExperimentalReaktiveApi
 fun registerReaktivePlugin(plugin: ReaktivePlugin) {
     var list = plugins
     if (list == null) {
-        list = SharedList(0)
+        list = ArrayList()
         plugins = list
     }
     list.add(plugin)
