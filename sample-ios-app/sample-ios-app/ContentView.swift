@@ -64,11 +64,7 @@ public final class CounterHost: ObservableObject {
     
     init() {
         state = counter.state.value
-     
-        disposable = counter.state.subscribe(
-            isThreadLocal: true,
-            onNext: { [weak self] value in self?.state = value }
-        )
+        disposable = counter.state.subscribe { [weak self] value in self?.state = value }
     }
     
     deinit {

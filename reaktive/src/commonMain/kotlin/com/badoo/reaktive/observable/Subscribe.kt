@@ -11,12 +11,9 @@ import com.badoo.reaktive.utils.handleReaktiveError
  * Subscribes to the [Observable] and provides event callbacks.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#subscribe-io.reactivex.functions.Consumer-io.reactivex.functions.Consumer-io.reactivex.functions.Action-io.reactivex.functions.Consumer-).
- *
- * @param isThreadLocal see [Observable.threadLocal]
  */
 @UseReturnValue
 fun <T> Observable<T>.subscribe(
-    isThreadLocal: Boolean = false,
     onSubscribe: ((Disposable) -> Unit)? = null,
     onError: ((Throwable) -> Unit)? = null,
     onComplete: (() -> Unit)? = null,
@@ -36,9 +33,7 @@ fun <T> Observable<T>.subscribe(
         return serialDisposable
     }
 
-    val source = if (isThreadLocal) threadLocal() else this
-
-    source.subscribeSafe(
+    subscribeSafe(
         object : ObservableObserver<T> {
             override fun onSubscribe(disposable: Disposable) {
                 serialDisposable.set(disposable)
