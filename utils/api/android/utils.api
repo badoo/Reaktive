@@ -14,12 +14,6 @@ public final class com/badoo/reaktive/utils/ConstantsKt {
 	public static final field NANOS_IN_SECOND J
 }
 
-public final class com/badoo/reaktive/utils/FreezeKt {
-	public static final fun ensureNeverFrozen (Ljava/lang/Object;)Ljava/lang/Object;
-	public static final fun freeze (Ljava/lang/Object;)Ljava/lang/Object;
-	public static final fun isFrozen (Ljava/lang/Object;)Z
-}
-
 public final class com/badoo/reaktive/utils/ThrowableExtKt {
 	public static final fun printStack (Ljava/lang/Throwable;)V
 }

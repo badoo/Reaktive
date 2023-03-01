@@ -5,7 +5,6 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.BufferedExecutor
 import com.badoo.reaktive.scheduler.Scheduler
-import com.badoo.reaktive.utils.freeze
 
 /**
  * Signals all events of the [Observable] on the specified [Scheduler].
@@ -38,8 +37,6 @@ fun <T> Observable<T>.observeOn(scheduler: Scheduler): Observable<T> =
                 }
 
                 override fun onError(error: Throwable) {
-                    error.freeze()
-
                     executor.submit {
                         emitter.onError(error)
                     }

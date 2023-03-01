@@ -14,8 +14,6 @@ import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.plusAssign
-import com.badoo.reaktive.utils.ensureNeverFrozen
-import com.badoo.reaktive.utils.freeze
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -25,12 +23,8 @@ class ObservableByEmitterTest {
 
     private val emitterRef = AtomicReference<ObservableEmitter<Int?>?>(null)
     private val emitter: ObservableEmitter<Int?> get() = requireNotNull(emitterRef.value)
-    private val observable = createObservable(emitterRef)
+    private val observable = observable { emitterRef.value = it }
     private val observer = observable.test()
-
-    // To avoid freezing of the test class
-    private fun createObservable(emitterReference: AtomicReference<ObservableEmitter<Int?>?>): Observable<Int?> =
-        observable { emitterReference.value = it }
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
@@ -366,30 +360,6 @@ class ObservableByEmitterTest {
         emitter.onError(Exception())
 
         assertFalse(isErrorRecursively.value)
-    }
-
-    @Test
-    fun does_not_freeze_observer_WHEN_disposable_is_frozen() {
-        observable.subscribe(
-            object : ObservableObserver<Int?> {
-                init {
-                    ensureNeverFrozen()
-                }
-
-                override fun onSubscribe(disposable: Disposable) {
-                    disposable.freeze()
-                }
-
-                override fun onNext(value: Int?) {
-                }
-
-                override fun onComplete() {
-                }
-
-                override fun onError(error: Throwable) {
-                }
-            }
-        )
     }
 
     private fun observer(

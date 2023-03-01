@@ -7,7 +7,6 @@ import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndUpdate
 import com.badoo.reaktive.utils.atomic.update
-import com.badoo.reaktive.utils.freeze
 
 class TestScheduler(
     isManualProcessing: Boolean = false
@@ -29,10 +28,6 @@ class TestScheduler(
     val executors: List<Executor> get() = _executors.value
     private val tasks = AtomicReference<List<Task>>(emptyList())
     private var isProcessing = AtomicBoolean()
-
-    init {
-        freeze()
-    }
 
     override fun newExecutor(): Executor {
         val executor = ExecutorImpl()

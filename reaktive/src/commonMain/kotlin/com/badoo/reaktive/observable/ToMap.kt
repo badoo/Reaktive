@@ -1,7 +1,6 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.single.Single
-import com.badoo.reaktive.utils.isFrozen
 
 /**
  * Returns a [Single] that emits a [Map] containing all elements emitted by the **finite** source [Observable],
@@ -30,13 +29,6 @@ fun <T, K, V> Observable<T>.toMap(keySelector: (T) -> K, valueSelector: (T) -> V
     collect(LinkedHashMap()) { map, item ->
         val key = keySelector(item)
         val value = valueSelector(item)
-        if (map.isFrozen) {
-            LinkedHashMap<K, V>(map.size + 1).apply {
-                putAll(map)
-                put(key, value)
-            }
-        } else {
-            map[key] = value
-            map
-        }
+        map[key] = value
+        map
     }
