@@ -8,7 +8,6 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.queue.SharedQueue
 import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
 
@@ -32,7 +31,7 @@ private class ConcatMapObserver<in T, in R>(
 
     private val actor = serializer(::processEvent)
     private val innerObserver = InnerObserver(callbacks, actor).addTo(this)
-    private val queue = SharedQueue<T>()
+    private val queue = ArrayDeque<T>()
     private val state = AtomicReference(State.IDLE)
 
     override fun onSubscribe(disposable: Disposable) {
@@ -68,7 +67,7 @@ private class ConcatMapObserver<in T, in R>(
     }
 
     private fun onInnerCompleted(): Boolean {
-        if (queue.isEmpty) {
+        if (queue.isEmpty()) {
             if (state.value == State.UPSTREAM_COMPLETED) {
                 callbacks.onComplete()
                 return false
@@ -77,7 +76,7 @@ private class ConcatMapObserver<in T, in R>(
             state.value = State.IDLE
         } else {
             @Suppress("UNCHECKED_CAST")
-            subscribe(queue.poll() as T)
+            subscribe(queue.removeFirst())
         }
 
         return true
@@ -85,7 +84,7 @@ private class ConcatMapObserver<in T, in R>(
 
     private fun onUpstreamValue(value: T): Boolean {
         if (state.value == State.INNER_ACTIVE) {
-            queue.offer(value)
+            queue.addLast(value)
         } else {
             state.value = State.INNER_ACTIVE
             subscribe(value)

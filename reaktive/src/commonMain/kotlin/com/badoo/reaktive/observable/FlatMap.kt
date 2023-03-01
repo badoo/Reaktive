@@ -10,7 +10,6 @@ import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.lock.Lock
 import com.badoo.reaktive.utils.lock.synchronized
-import com.badoo.reaktive.utils.queue.SharedQueue
 
 /**
  * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Observable].
@@ -119,7 +118,7 @@ private class FlatMapQueue<in T : Any>(
 
     private val lock = Lock()
     private val count = AtomicInt(limit)
-    private val queue = SharedQueue<T>()
+    private val queue = ArrayDeque<T>()
 
     private val _isDisposed = AtomicBoolean(false)
     override val isDisposed: Boolean get() = _isDisposed.value
@@ -138,7 +137,7 @@ private class FlatMapQueue<in T : Any>(
                 count.value--
                 value
             } else {
-                queue.offer(value)
+                queue.addLast(value)
                 null
             }
         }?.also(callback)
@@ -146,7 +145,7 @@ private class FlatMapQueue<in T : Any>(
 
     fun poll() {
         sync {
-            val next = queue.poll()
+            val next = queue.removeFirstOrNull()
             if (next == null) {
                 count.value++
             }
