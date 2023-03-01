@@ -4,7 +4,6 @@ import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.test.single.DefaultSingleObserver
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,7 +18,7 @@ class DoOnBeforeErrorTest
 
     @Test
     fun calls_action_before_failing() {
-        val callOrder = SharedList<Pair<String, Throwable>>()
+        val callOrder = ArrayList<Pair<String, Throwable>>()
         val exception = Throwable()
 
         upstream

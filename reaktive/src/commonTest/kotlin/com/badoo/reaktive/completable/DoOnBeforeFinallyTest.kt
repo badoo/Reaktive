@@ -8,7 +8,6 @@ import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
@@ -30,7 +29,7 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_before_completion() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         upstream
             .doOnBeforeFinally {
@@ -51,7 +50,7 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_before_failing() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
         val exception = Exception()
 
         upstream
@@ -73,7 +72,7 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_before_disposing_upstream() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         completableUnsafe { observer ->
             observer.onSubscribe(

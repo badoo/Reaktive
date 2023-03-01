@@ -4,7 +4,6 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.getValue
 import com.badoo.reaktive.utils.atomic.setValue
@@ -196,7 +195,7 @@ class UsingTest :
             sourceSupplier = sourceSupplier,
         )
 
-    private class Disposables : MutableList<Disposable> by SharedList() {
+    private class Disposables : MutableList<Disposable> by ArrayList() {
         fun acquire(): Disposable =
             Disposable().also {
                 add(it)

@@ -10,7 +10,6 @@ import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertNotSame
@@ -166,7 +165,7 @@ class CombineLatestTest {
 
     @Test
     fun supplies_different_list_instances_WHEN_mapper_called() {
-        val lists = SharedList<List<String?>>()
+        val lists = ArrayList<List<String?>>()
 
         mapper.value =
             {

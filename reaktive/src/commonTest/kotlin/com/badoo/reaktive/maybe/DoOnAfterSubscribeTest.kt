@@ -5,7 +5,6 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,7 +14,7 @@ class DoOnAfterSubscribeTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOn
 
     @Test
     fun calls_action_after_downstream_onSubscribe_WHEN_action_does_not_throw_exception() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         maybeUnsafe<Nothing> {}
             .doOnAfterSubscribe {
@@ -34,7 +33,7 @@ class DoOnAfterSubscribeTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOn
 
     @Test
     fun delegates_error_to_downstream_after_downstream_onSubscribe_WHEN_action_throws_exception() {
-        val callOrder = SharedList<Any>()
+        val callOrder = ArrayList<Any>()
         val exception = Exception()
 
         maybeUnsafe<Nothing> {}
