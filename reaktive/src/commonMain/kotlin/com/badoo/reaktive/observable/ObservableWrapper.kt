@@ -12,14 +12,12 @@ open class ObservableWrapper<out T : Any>(inner: Observable<T>) : Observable<T> 
 
     @UseReturnValue
     fun subscribe(
-        isThreadLocal: Boolean = false,
         onSubscribe: ((Disposable) -> Unit)? = null,
         onError: ((Throwable) -> Unit)? = null,
         onComplete: (() -> Unit)? = null,
         onNext: ((T) -> Unit)? = null
     ): Disposable =
         subscribeRx(
-            isThreadLocal = isThreadLocal,
             onSubscribe = onSubscribe,
             onError = onError,
             onComplete = onComplete,
@@ -31,35 +29,29 @@ open class ObservableWrapper<out T : Any>(inner: Observable<T>) : Observable<T> 
 
     @UseReturnValue
     fun subscribe(
-        isThreadLocal: Boolean = false,
         onNext: (T) -> Unit
     ): Disposable =
         subscribeRx(
-            isThreadLocal = isThreadLocal,
             onNext = onNext
         )
 
     @UseReturnValue
     fun subscribe(
-        isThreadLocal: Boolean = false,
         onComplete: () -> Unit,
         onNext: (T) -> Unit
     ): Disposable =
         subscribeRx(
-            isThreadLocal = isThreadLocal,
             onComplete = onComplete,
             onNext = onNext
         )
 
     @UseReturnValue
     fun subscribe(
-        isThreadLocal: Boolean = false,
         onError: (Throwable) -> Unit,
         onComplete: () -> Unit,
         onNext: (T) -> Unit
     ): Disposable =
         subscribeRx(
-            isThreadLocal = isThreadLocal,
             onError = onError,
             onComplete = onComplete,
             onNext = onNext

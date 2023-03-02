@@ -5,7 +5,6 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,7 +16,7 @@ class DoOnAfterSubscribeTest :
 
     @Test
     fun calls_action_after_downstream_onSubscribe_WHEN_action_does_not_throw_exception() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         observableUnsafe<Nothing> {}
             .doOnAfterSubscribe {
@@ -36,7 +35,7 @@ class DoOnAfterSubscribeTest :
 
     @Test
     fun delegates_error_to_downstream_after_downstream_onSubscribe_WHEN_action_throws_exception() {
-        val callOrder = SharedList<Any>()
+        val callOrder = ArrayList<Any>()
         val exception = Exception()
 
         observableUnsafe<Nothing> {}

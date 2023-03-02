@@ -11,12 +11,9 @@ import com.badoo.reaktive.utils.handleReaktiveError
  * Subscribes to the [Maybe] and provides event callbacks.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#subscribe-io.reactivex.functions.Consumer-io.reactivex.functions.Consumer-io.reactivex.functions.Action-).
- *
- * @param isThreadLocal see [Maybe.threadLocal]
  */
 @UseReturnValue
 fun <T> Maybe<T>.subscribe(
-    isThreadLocal: Boolean = false,
     onSubscribe: ((Disposable) -> Unit)? = null,
     onError: ((Throwable) -> Unit)? = null,
     onComplete: (() -> Unit)? = null,
@@ -36,9 +33,7 @@ fun <T> Maybe<T>.subscribe(
         return serialDisposable
     }
 
-    val source = if (isThreadLocal) threadLocal() else this
-
-    source.subscribeSafe(
+    subscribeSafe(
         object : MaybeObserver<T> {
             override fun onSubscribe(disposable: Disposable) {
                 serialDisposable.set(disposable)

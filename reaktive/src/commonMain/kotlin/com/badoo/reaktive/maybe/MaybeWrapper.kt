@@ -12,14 +12,12 @@ open class MaybeWrapper<out T : Any>(inner: Maybe<T>) : Maybe<T> by inner {
 
     @UseReturnValue
     fun subscribe(
-        isThreadLocal: Boolean = false,
         onSubscribe: ((Disposable) -> Unit)? = null,
         onError: ((Throwable) -> Unit)? = null,
         onComplete: (() -> Unit)? = null,
         onSuccess: ((T) -> Unit)? = null
     ): Disposable =
         subscribeRx(
-            isThreadLocal = isThreadLocal,
             onSubscribe = onSubscribe,
             onError = onError,
             onComplete = onComplete,
@@ -31,35 +29,29 @@ open class MaybeWrapper<out T : Any>(inner: Maybe<T>) : Maybe<T> by inner {
 
     @UseReturnValue
     fun subscribe(
-        isThreadLocal: Boolean = false,
         onSuccess: (T) -> Unit
     ): Disposable =
         subscribeRx(
-            isThreadLocal = isThreadLocal,
             onSuccess = onSuccess
         )
 
     @UseReturnValue
     fun subscribe(
-        isThreadLocal: Boolean = false,
         onComplete: () -> Unit,
         onSuccess: (T) -> Unit
     ): Disposable =
         subscribeRx(
-            isThreadLocal = isThreadLocal,
             onComplete = onComplete,
             onSuccess = onSuccess
         )
 
     @UseReturnValue
     fun subscribe(
-        isThreadLocal: Boolean = false,
         onError: (Throwable) -> Unit,
         onComplete: () -> Unit,
         onSuccess: (T) -> Unit
     ): Disposable =
         subscribeRx(
-            isThreadLocal = isThreadLocal,
             onError = onError,
             onComplete = onComplete,
             onSuccess = onSuccess

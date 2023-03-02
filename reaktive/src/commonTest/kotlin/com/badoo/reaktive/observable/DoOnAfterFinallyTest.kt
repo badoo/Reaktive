@@ -7,7 +7,6 @@ import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
@@ -31,7 +30,7 @@ class DoOnAfterFinallyTest :
 
     @Test
     fun calls_action_after_completion() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         upstream
             .doOnAfterFinally {
@@ -52,7 +51,7 @@ class DoOnAfterFinallyTest :
 
     @Test
     fun calls_action_after_failing() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
         val exception = Exception()
 
         upstream
@@ -74,7 +73,7 @@ class DoOnAfterFinallyTest :
 
     @Test
     fun calls_action_after_disposing_upstream() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         observableUnsafe<Unit> { observer ->
             observer.onSubscribe(

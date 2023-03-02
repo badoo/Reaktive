@@ -4,7 +4,6 @@ import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.single.DefaultSingleObserver
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,7 +16,7 @@ class DoOnAfterSuccessTest : SingleToSingleTests by SingleToSingleTestsImpl({ do
 
     @Test
     fun calls_action_after_success() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         upstream
             .doOnAfterSuccess {
