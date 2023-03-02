@@ -1,8 +1,6 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.PairReference
-import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.lock.Lock
 import com.badoo.reaktive.utils.lock.synchronized
 
@@ -21,24 +19,31 @@ fun <T> Single<T>.blockingGet(): T {
     val lock = Lock()
     val condition = lock.newCondition()
 
+    var successResult: T? = null
+    var errorResult: Throwable? = null
+    var isFinished = false
+    var disposableRef: Disposable? = null
+
     val observer =
-        object : PairReference<Any?, Disposable?>(Uninitialized, null), SingleObserver<T> {
+        object : SingleObserver<T> {
             override fun onSubscribe(disposable: Disposable) {
                 lock.synchronized {
-                    second = disposable
+                    disposableRef = disposable
                 }
             }
 
             override fun onSuccess(value: T) {
                 lock.synchronized {
-                    first = value
+                    successResult = value
+                    isFinished = true
                     condition.signal()
                 }
             }
 
             override fun onError(error: Throwable) {
                 lock.synchronized {
-                    first = BlockingGetError(error)
+                    errorResult = error
+                    isFinished = true
                     condition.signal()
                 }
             }
@@ -47,26 +52,20 @@ fun <T> Single<T>.blockingGet(): T {
     subscribe(observer)
 
     lock.synchronized {
-        while (observer.first === Uninitialized) {
+        while (!isFinished) {
             try {
                 condition.await()
             } catch (e: Throwable) {
-                observer.second?.dispose()
+                disposableRef?.dispose()
                 throw e
             }
         }
     }
 
-    return observer
-        .first
-        .let {
-            if (it is BlockingGetError) {
-                throw it.error
-            }
+    errorResult?.also {
+        throw it
+    }
 
-            @Suppress("UNCHECKED_CAST")
-            it as T
-        }
+    @Suppress("UNCHECKED_CAST") // successResult is guaranteed to be assigned
+    return successResult as T
 }
-
-private class BlockingGetError(val error: Throwable)
