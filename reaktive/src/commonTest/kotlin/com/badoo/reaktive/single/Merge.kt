@@ -8,7 +8,6 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observable
 import com.badoo.reaktive.observable.serialize
-import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
 fun <T> Iterable<Single<T>>.merge(): Observable<T> =
@@ -21,16 +20,18 @@ fun <T> Iterable<Single<T>>.merge(): Observable<T> =
         forEach { upstream ->
             activeSourceCount.addAndGet(1)
             upstream.subscribe(
-                object : ObjectReference<Disposable?>(null), SingleObserver<T>, ErrorCallback by serializedEmitter {
+                object : SingleObserver<T>, ErrorCallback by serializedEmitter {
+                    private var disposableRef: Disposable? = null
+
                     override fun onSubscribe(disposable: Disposable) {
-                        value = disposable
+                        disposableRef = disposable
                         disposables += disposable
                     }
 
                     override fun onSuccess(value: T) {
                         serializedEmitter.onNext(value)
 
-                        disposables -= requireNotNull(this.value)
+                        disposables -= requireNotNull(disposableRef)
                         if (activeSourceCount.addAndGet(-1) == 0) {
                             emitter.onComplete()
                         }

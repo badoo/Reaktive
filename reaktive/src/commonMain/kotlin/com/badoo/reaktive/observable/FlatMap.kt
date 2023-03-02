@@ -6,7 +6,6 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.addTo
-import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.lock.Lock
@@ -94,18 +93,19 @@ private class FlatMapObserver<in T, in R>(
     }
 
     private inner class InnerObserver :
-        ObjectReference<Disposable?>(null),
         ObservableObserver<R>,
         ErrorCallback by callbacks,
         ValueCallback<R> by callbacks {
 
+        private var disposableRef: Disposable? = null
+
         override fun onSubscribe(disposable: Disposable) {
-            value = disposable
+            disposableRef = disposable
             add(disposable)
         }
 
         override fun onComplete() {
-            remove(value!!)
+            remove(requireNotNull(disposableRef))
             queue?.poll()
             this@FlatMapObserver.onComplete()
         }

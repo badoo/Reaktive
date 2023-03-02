@@ -2,7 +2,6 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.Uninitialized
 
 /**
@@ -28,11 +27,11 @@ fun <T, R> Observable<T>.distinctUntilChanged(
     observable { emitter ->
         subscribe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
-                val cache = ObjectReference<Any?>(Uninitialized)
+                private var cache: Any? = Uninitialized
 
                 override fun onNext(value: T) {
-                    val previous = cache.value
-                    cache.value = value
+                    val previous = cache
+                    cache = value
 
                     val next =
                         try {

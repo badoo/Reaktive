@@ -5,7 +5,6 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.atomic.AtomicInt
 
 /**
@@ -23,14 +22,16 @@ fun Iterable<Completable>.merge(): Completable =
         forEach { upstream ->
             activeSourceCount.addAndGet(1)
             upstream.subscribe(
-                object : ObjectReference<Disposable?>(null), CompletableObserver, ErrorCallback by serializedEmitter {
+                object : CompletableObserver, ErrorCallback by serializedEmitter {
+                    private var disposableRef: Disposable? = null
+
                     override fun onSubscribe(disposable: Disposable) {
-                        value = disposable
+                        disposableRef = disposable
                         disposables += disposable
                     }
 
                     override fun onComplete() {
-                        disposables -= requireNotNull(value)
+                        disposables -= requireNotNull(disposableRef)
                         if (activeSourceCount.addAndGet(-1) == 0) {
                             emitter.onComplete()
                         }

@@ -4,7 +4,6 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 /**
@@ -41,9 +40,11 @@ private class AmbObserver<in T>(
     private val disposables: CompositeDisposable,
     private val hasWinner: AtomicBoolean,
     private val emitter: ObservableEmitter<T>
-) : ObjectReference<Disposable?>(null), ObservableObserver<T> {
+) : ObservableObserver<T> {
+    private var disposableRef: Disposable? = null
+
     override fun onSubscribe(disposable: Disposable) {
-        this.value = disposable
+        disposableRef = disposable
         disposables += disposable
     }
 
@@ -60,13 +61,13 @@ private class AmbObserver<in T>(
     }
 
     private inline fun race(block: () -> Unit) {
-        val disposable: Disposable? = this.value
+        val disposable: Disposable? = disposableRef
         if (disposable == null) {
             // This Observable is already a winner
             block()
         } else if (hasWinner.compareAndSet(false, true)) {
             // Only one Observable can win the race
-            this.value = null
+            disposableRef = null
             disposables -= disposable
             disposables.dispose()
             emitter.setDisposable(disposable)
