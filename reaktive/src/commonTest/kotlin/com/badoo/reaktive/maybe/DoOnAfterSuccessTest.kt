@@ -4,7 +4,6 @@ import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,7 +16,7 @@ class DoOnAfterSuccessTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ doOnAf
 
     @Test
     fun calls_action_after_success() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         upstream
             .doOnAfterSuccess {

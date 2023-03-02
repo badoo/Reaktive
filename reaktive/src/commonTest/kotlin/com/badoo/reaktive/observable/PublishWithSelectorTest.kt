@@ -4,7 +4,6 @@ import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -28,7 +27,7 @@ class PublishWithSelectorTest : ObservableToObservableTests by ObservableToObser
 
     @Test
     fun subscribes_to_selected_stream_before_subscribe_to_upstream() {
-        val events = SharedList<String>()
+        val events = ArrayList<String>()
         val upstream = observableUnsafe<Nothing> { events += "upstream_subscribed" }
         val selected = observableUnsafe<Nothing> { events += "selected_subscribed" }
         val published = upstream.publish { selected }

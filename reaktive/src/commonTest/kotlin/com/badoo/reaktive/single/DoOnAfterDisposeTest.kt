@@ -5,7 +5,6 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
@@ -25,7 +24,7 @@ class DoOnAfterDisposeTest : SingleToSingleTests by SingleToSingleTestsImpl({ do
 
     @Test
     fun calls_action_after_disposing_upstream() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         singleUnsafe<Nothing> { observer ->
             observer.onSubscribe(

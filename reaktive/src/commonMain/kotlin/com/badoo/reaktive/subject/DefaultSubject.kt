@@ -2,13 +2,12 @@ package com.badoo.reaktive.subject
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.ObservableObserver
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.serializer.serializer
 
 internal open class DefaultSubject<T> : Subject<T> {
 
-    private val observers = SharedList<ObservableObserver<T>>()
+    private val observers = ArrayList<ObservableObserver<T>>()
     private val serializer = serializer(onValue = ::onSerializedValue)
 
     private val _status = AtomicReference<Subject.Status>(Subject.Status.Active)

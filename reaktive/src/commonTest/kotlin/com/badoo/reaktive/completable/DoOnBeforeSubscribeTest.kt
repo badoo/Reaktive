@@ -5,7 +5,6 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,7 +15,7 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun calls_action_before_downstream_onSubscribe_WHEN_action_does_not_throw_exception() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         completableUnsafe {}
             .doOnBeforeSubscribe {
@@ -35,7 +34,7 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun delegates_error_to_downstream_after_downstream_onSubscribe_WHEN_action_throws_exception() {
-        val callOrder = SharedList<Any>()
+        val callOrder = ArrayList<Any>()
         val exception = Exception()
 
         completableUnsafe {}

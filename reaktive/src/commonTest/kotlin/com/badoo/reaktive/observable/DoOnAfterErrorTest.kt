@@ -5,7 +5,6 @@ import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,7 +20,7 @@ class DoOnAfterErrorTest :
 
     @Test
     fun calls_action_after_failing() {
-        val callOrder = SharedList<Pair<String, Throwable>>()
+        val callOrder = ArrayList<Pair<String, Throwable>>()
         val exception = Throwable()
 
         upstream

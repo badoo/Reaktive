@@ -6,7 +6,6 @@ import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import kotlin.test.Test
@@ -113,7 +112,7 @@ class RefCountTest {
 
     @Test
     fun subscription_to_upstream_happens_before_connection_to_upstream() {
-        val events = SharedList<String>()
+        val events = ArrayList<String>()
         val upstream = testUpstream(connect = { events += "connect" }, subscribe = { events += "subscribe" })
         val refCount = upstream.refCount(subscriberCount = 1)
 
@@ -135,7 +134,7 @@ class RefCountTest {
 
     @Test
     fun unsubscribes_from_upstream_for_each_unsubscribe_by_downstream() {
-        val upstreamDisposables = SharedList<Disposable>()
+        val upstreamDisposables = ArrayList<Disposable>()
 
         val upstream =
             testUpstream(
@@ -158,7 +157,7 @@ class RefCountTest {
 
     @Test
     fun delivers_all_values_in_original_order_to_all_subscribes() {
-        val upstreamObservers = SharedList<ObservableObserver<Int?>>()
+        val upstreamObservers = ArrayList<ObservableObserver<Int?>>()
         val upstream = testUpstream(subscribe = { upstreamObservers.add(it) })
         val refCount = upstream.refCount(subscriberCount = 2)
         val downstreamObservers = listOf(refCount.test(), refCount.test())
@@ -174,7 +173,7 @@ class RefCountTest {
 
     @Test
     fun delivers_completion_to_all_subscribes() {
-        val upstreamObservers = SharedList<ObservableObserver<Int?>>()
+        val upstreamObservers = ArrayList<ObservableObserver<Int?>>()
         val upstream = testUpstream(subscribe = { upstreamObservers.add(it) })
         val refCount = upstream.refCount(subscriberCount = 2)
         val downstreamObservers = listOf(refCount.test(), refCount.test())
@@ -188,7 +187,7 @@ class RefCountTest {
 
     @Test
     fun delivers_error_to_all_subscribes() {
-        val upstreamObservers = SharedList<ObservableObserver<Int?>>()
+        val upstreamObservers = ArrayList<ObservableObserver<Int?>>()
         val upstream = testUpstream(subscribe = { upstreamObservers.add(it) })
         val refCount = upstream.refCount(subscriberCount = 2)
         val downstreamObservers = listOf(refCount.test(), refCount.test())

@@ -5,7 +5,6 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
@@ -27,7 +26,7 @@ class DoOnBeforeDisposeTest
 
     @Test
     fun calls_action_before_disposing_upstream() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         completableUnsafe { observer ->
             observer.onSubscribe(

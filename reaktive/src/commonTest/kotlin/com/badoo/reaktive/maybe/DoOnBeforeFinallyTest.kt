@@ -8,7 +8,6 @@ import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
-import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
@@ -30,7 +29,7 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_before_completion() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         upstream
             .doOnBeforeFinally {
@@ -51,7 +50,7 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_before_success() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         upstream
             .doOnBeforeFinally {
@@ -72,7 +71,7 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_before_failing() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
         val exception = Exception()
 
         upstream
@@ -94,7 +93,7 @@ class DoOnBeforeFinallyTest
 
     @Test
     fun calls_action_before_disposing_upstream() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         maybeUnsafe<Unit> { observer ->
             observer.onSubscribe(
