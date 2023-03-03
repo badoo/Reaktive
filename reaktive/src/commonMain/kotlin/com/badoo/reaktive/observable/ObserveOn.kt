@@ -19,7 +19,6 @@ fun <T> Observable<T>.observeOn(scheduler: Scheduler): Observable<T> =
         val executor = scheduler.newExecutor()
         disposables += executor
         val bufferedExecutor = BufferedExecutor(executor, emitter::onNext)
-        disposables += bufferedExecutor
 
         subscribe(
             object : ObservableObserver<T> {
