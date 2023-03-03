@@ -7,7 +7,6 @@ import com.badoo.reaktive.subject.isActive
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndSet
-import com.badoo.reaktive.utils.queue.SharedQueue
 
 /**
  * Create a new instance of [UnicastSubject].
@@ -20,7 +19,7 @@ import com.badoo.reaktive.utils.queue.SharedQueue
 fun <T> UnicastSubject(bufferSize: Int = Int.MAX_VALUE, onTerminate: () -> Unit = {}): UnicastSubject<T> =
     object : DefaultSubject<T>(), UnicastSubject<T> {
         private val hasSubscribers = AtomicBoolean()
-        private val queue = AtomicReference<SharedQueue<T>?>(SharedQueue())
+        private val queue = AtomicReference<ArrayDeque<T>?>(ArrayDeque())
 
         override fun onSubscribed(observer: ObservableObserver<T>): Boolean {
             val isFirstObserver = hasSubscribers.compareAndSet(false, true)
@@ -41,9 +40,9 @@ fun <T> UnicastSubject(bufferSize: Int = Int.MAX_VALUE, onTerminate: () -> Unit 
 
             queue.value?.apply {
                 if (size >= bufferSize) {
-                    poll()
+                    removeFirst()
                 }
-                offer(value)
+                addLast(value)
             }
         }
 
