@@ -3,7 +3,6 @@ package com.badoo.reaktive.test.completable
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.test.assert.assertFalse
 import com.badoo.reaktive.test.assert.assertTrue
-import com.badoo.reaktive.utils.freeze
 
 fun TestCompletableObserver.assertComplete(): TestCompletableObserver {
     assertTrue(isComplete, "Completable did not complete")
@@ -17,11 +16,6 @@ fun TestCompletableObserver.assertNotComplete(): TestCompletableObserver {
     return this
 }
 
-fun Completable.test(autoFreeze: Boolean = true): TestCompletableObserver {
-    if (autoFreeze) {
-        freeze()
-    }
-
-    return TestCompletableObserver(autoFreeze = autoFreeze)
+fun Completable.test(): TestCompletableObserver =
+    TestCompletableObserver()
         .also(::subscribe)
-}

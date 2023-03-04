@@ -4,7 +4,6 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
-import com.badoo.reaktive.utils.freeze
 
 /**
  * Signals all events of the [Maybe] on the specified [Scheduler].
@@ -37,8 +36,6 @@ fun <T> Maybe<T>.observeOn(scheduler: Scheduler): Maybe<T> =
                 }
 
                 override fun onError(error: Throwable) {
-                    error.freeze()
-
                     executor.submit {
                         emitter.onError(error)
                     }

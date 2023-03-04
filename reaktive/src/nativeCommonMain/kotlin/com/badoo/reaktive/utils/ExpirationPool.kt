@@ -2,7 +2,6 @@ package com.badoo.reaktive.utils
 
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
-import kotlin.native.concurrent.freeze
 
 /*
  * Not cancellable nor destroyable, implement when needed. Currently used only as singleton.
@@ -16,7 +15,6 @@ internal class ExpirationPool<T : Any>(
     private val queue = DelayQueue<T>()
 
     init {
-        freeze()
         Worker.start(true).execute(TransferMode.SAFE, { this }) { it.drainQueue() }
     }
 

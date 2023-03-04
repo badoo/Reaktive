@@ -3,7 +3,6 @@ package com.badoo.reaktive.utils
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
 import kotlin.system.getTimeMillis
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -12,11 +11,6 @@ import kotlin.test.assertTrue
 class DelayQueueTest {
 
     private val queue = DelayQueue<Int>()
-
-    @BeforeTest
-    fun before() {
-        queue.freeze()
-    }
 
     @Test
     fun provides_item_with_delay() {

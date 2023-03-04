@@ -1,7 +1,6 @@
 package com.badoo.reaktive.utils.lock
 
 import com.badoo.reaktive.utils.NANOS_IN_SECOND
-import com.badoo.reaktive.utils.freeze
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.UnsafeNumber
@@ -44,7 +43,7 @@ actual class Lock {
 
     @Suppress("unused") // Must be stored in a property
     @OptIn(ExperimentalStdlibApi::class)
-    private val cleaner = createCleaner(Resources(arena, attr, mutex).freeze(), Resources::destroy)
+    private val cleaner = createCleaner(Resources(arena, attr, mutex), Resources::destroy)
 
     init {
         pthread_mutexattr_init(attr.ptr)
@@ -84,7 +83,7 @@ actual class Lock {
 
         @Suppress("unused") // Must be stored in a property
         @OptIn(ExperimentalStdlibApi::class)
-        private val cleaner = createCleaner(Resources(arena, attr, cond).freeze(), Resources::destroy)
+        private val cleaner = createCleaner(Resources(arena, attr, cond), Resources::destroy)
 
         init {
             pthread_condattr_init(attr.ptr)

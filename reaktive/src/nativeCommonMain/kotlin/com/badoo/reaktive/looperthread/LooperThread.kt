@@ -3,7 +3,6 @@ package com.badoo.reaktive.looperthread
 import com.badoo.reaktive.utils.DelayQueue
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
-import kotlin.native.concurrent.freeze
 
 internal class LooperThread {
 
@@ -11,7 +10,6 @@ internal class LooperThread {
     private val worker = Worker.start(true)
 
     init {
-        freeze()
         worker.execute(TransferMode.SAFE, { this }) { it.loop() }
     }
 

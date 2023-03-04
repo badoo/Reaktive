@@ -6,7 +6,7 @@ import kotlin.test.Test
 class TestObservableObserverTest {
 
     @Test
-    fun collects_values_if_not_frozen() {
+    fun collects_values() {
         val observer = TestObservableObserver<Int?>()
         observer.onSubscribe(Disposable())
 
