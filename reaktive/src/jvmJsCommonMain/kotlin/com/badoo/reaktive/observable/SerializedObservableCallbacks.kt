@@ -1,15 +1,13 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.utils.Uninitialized
-import com.badoo.reaktive.utils.queue.ArrayQueue
-import com.badoo.reaktive.utils.queue.Queue
 import com.badoo.reaktive.utils.synchronizedCompat
 
 internal actual open class SerializedObservableCallbacks<in T> actual constructor(
     private val delegate: ObservableCallbacks<T>
 ) : ObservableCallbacks<T> {
 
-    private var queue: Queue<T>? = null
+    private var queue: ArrayDeque<T>? = null
     private var isComplete: Boolean = false
     private var error: Throwable? = null
     private var isDraining = false
@@ -23,8 +21,8 @@ internal actual open class SerializedObservableCallbacks<in T> actual constructo
             }
 
             if (isDraining) {
-                val q = queue ?: ArrayQueue<T>().also { queue = it }
-                q.offer(value)
+                val q = queue ?: ArrayDeque<T>().also { queue = it }
+                q.addLast(value)
                 isEmpty = false
                 return
             }
@@ -83,7 +81,7 @@ internal actual open class SerializedObservableCallbacks<in T> actual constructo
                         return
                     }
 
-                    queue?.isEmpty == false -> sendItem = queue!!.poll()
+                    queue?.isEmpty() == false -> sendItem = queue!!.removeFirst()
 
                     !isComplete && (error == null) -> {
                         isEmpty = true

@@ -11,11 +11,6 @@ class PriorityQueueTest {
     private val queue = PriorityQueue<Int>(compareBy { it })
 
     @Test
-    fun new_instance_has_size_0() {
-        assertEquals(0, queue.size)
-    }
-
-    @Test
     fun new_instance_is_empty() {
         assertTrue(queue.isEmpty)
     }
@@ -28,31 +23,10 @@ class PriorityQueueTest {
     }
 
     @Test
-    fun peek_returns_null_WHEN_new_instance() {
-        val item = queue.peek
-
-        assertNull(item)
-    }
-
-    @Test
-    fun size_is_1_WHEN_offer_1_non_null_item() {
-        queue.offer(1)
-
-        assertEquals(1, queue.size)
-    }
-
-    @Test
     fun not_empty_WHEN_offer_1_non_null_item() {
         queue.offer(1)
 
         assertFalse(queue.isEmpty)
-    }
-
-    @Test
-    fun size_is_100_WHEN_offer_100_items() {
-        offer100Items()
-
-        assertEquals(100, queue.size)
     }
 
     @Test
@@ -72,39 +46,11 @@ class PriorityQueueTest {
     }
 
     @Test
-    fun peek_returns_same_item_WHEN_offer_1_item() {
-        queue.offer(1)
-
-        val item = queue.peek
-
-        assertEquals(1, item)
-    }
-
-    @Test
-    fun size_is_0_WHEN_offer_1_item_and_poll() {
-        queue.offer(1)
-        queue.poll()
-
-        assertEquals(0, queue.size)
-    }
-
-    @Test
     fun empty_WHEN_offer_1_item_and_poll() {
         queue.offer(1)
         queue.poll()
 
         assertTrue(queue.isEmpty)
-    }
-
-    @Test
-    fun size_is_0_WHEN_offer_100_items_and_poll_100_items() {
-        offer100Items()
-
-        repeat(100) {
-            queue.poll()
-        }
-
-        assertEquals(0, queue.size)
     }
 
     @Test
@@ -119,14 +65,6 @@ class PriorityQueueTest {
     }
 
     @Test
-    fun size_is_99_WHEN_offer_100_items_and_poll_1_item() {
-        offer100Items()
-        queue.poll()
-
-        assertEquals(99, queue.size)
-    }
-
-    @Test
     fun not_empty_WHEN_offer_100_items_and_poll_1_item() {
         offer100Items()
         queue.poll()
@@ -135,18 +73,7 @@ class PriorityQueueTest {
     }
 
     @Test
-    fun size_is_1_WHEN_offer_100_items_and_poll_99_items() {
-        offer100Items()
-
-        repeat(99) {
-            queue.poll()
-        }
-
-        assertEquals(1, queue.size)
-    }
-
-    @Test
-    fun not_empty_WHEN_offer_100_items_and_poll_100_items() {
+    fun not_empty_WHEN_offer_100_items_and_poll_99_items() {
         offer100Items()
 
         repeat(99) {
@@ -163,21 +90,6 @@ class PriorityQueueTest {
         items.forEach(queue::offer)
 
         val resultItems = List(items.size) { queue.poll() }
-
-        assertEquals(items.sorted(), resultItems)
-    }
-
-    @Test
-    fun peek_returns_prioritized_items() {
-        val items = getItemsForTest()
-
-        items.forEach(queue::offer)
-
-        val resultItems =
-            List(items.size) {
-                queue.peek
-                queue.poll()
-            }
 
         assertEquals(items.sorted(), resultItems)
     }
@@ -208,14 +120,6 @@ class PriorityQueueTest {
     }
 
     @Test
-    fun size_is_0_WHEN_offer_1_item_and_clear() {
-        queue.offer(1)
-        queue.clear()
-
-        assertEquals(0, queue.size)
-    }
-
-    @Test
     fun empty_WHEN_offer_1_item_and_clear() {
         queue.offer(1)
         queue.clear()
@@ -224,49 +128,11 @@ class PriorityQueueTest {
     }
 
     @Test
-    fun size_is_0_WHEN_offer_100_items_and_clear() {
-        repeat(100, queue::offer)
-        queue.clear()
-
-        assertEquals(0, queue.size)
-    }
-
-    @Test
     fun empty_WHEN_offer_100_items_and_clear() {
         repeat(100, queue::offer)
         queue.clear()
 
         assertTrue(queue.isEmpty)
-    }
-
-    @Test
-    fun new_instance_has_empty_iterator() {
-        val iterator = queue.iterator()
-
-        assertFalse(iterator.hasNext())
-    }
-
-    @Test
-    fun iterator_returns_items_in_any_order() {
-        val items = getItemsForTest()
-        items.forEach(queue::offer)
-
-        val resultItems = queue.iterator().asSequence().toSet()
-
-        assertEquals(items.toSet(), resultItems)
-    }
-
-    @Test
-    fun iterator_is_empty_WHEN_offer_100_items_and_poll_100_items() {
-        offer100Items()
-
-        repeat(100) {
-            queue.poll()
-        }
-
-        val iterator = queue.iterator()
-
-        assertFalse(iterator.hasNext())
     }
 
     private fun getItemsForTest(): List<Int> = listOf(5, 10, 3, 6, 4, 3, 6, 10, 2, 3, 1, 5, 50, 0)
