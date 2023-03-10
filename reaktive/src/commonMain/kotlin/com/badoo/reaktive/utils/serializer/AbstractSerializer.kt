@@ -1,29 +1,30 @@
 package com.badoo.reaktive.utils.serializer
 
+import com.badoo.reaktive.utils.SynchronizedObject
 import com.badoo.reaktive.utils.atomic.AtomicInt
-import com.badoo.reaktive.utils.queue.Queue
-import com.badoo.reaktive.utils.synchronizedCompat
-import kotlin.jvm.Volatile
+import com.badoo.reaktive.utils.atomic.updateAndGet
 
 /*
- * Derived from RxJava SerializedEmitter
+ * Derived from RxJava SerializedEmitter.
  */
-internal abstract class SerializerImpl<in T>(
-    private val queue: Queue<T>
-) : Serializer<T> {
+internal abstract class AbstractSerializer<T> : SynchronizedObject(), Serializer<T> {
 
-    @Volatile
-    private var isDone = false
     private val counter = AtomicInt()
 
-    override fun accept(value: T) {
-        if (isDone) {
-            return
-        }
+    protected abstract fun addLast(value: T)
 
+    protected abstract fun clearQueue()
+
+    protected abstract fun isEmpty(): Boolean
+
+    protected abstract fun removeFirst(): T
+
+    protected abstract fun onValue(value: T): Boolean
+
+    override fun accept(value: T) {
         if (counter.compareAndSet(0, 1)) {
             if (!onValue(value)) {
-                isDone = true
+                counter.value = -1
                 return
             }
 
@@ -31,11 +32,15 @@ internal abstract class SerializerImpl<in T>(
                 return
             }
         } else {
-            synchronizedCompat(queue) {
-                queue.offer(value)
+            if (counter.value < 0) {
+                return
             }
 
-            if (counter.addAndGet(1) > 1) {
+            synchronized {
+                addLast(value)
+            }
+
+            if (counter.updateAndGet { if (it >= 0) it + 1 else it } != 1) {
                 return
             }
         }
@@ -44,10 +49,8 @@ internal abstract class SerializerImpl<in T>(
     }
 
     override fun clear() {
-        synchronizedCompat(queue, queue::clear)
+        synchronized(::clearQueue)
     }
-
-    abstract fun onValue(value: T): Boolean
 
     private fun drainLoop() {
         var missed = 1
@@ -56,10 +59,10 @@ internal abstract class SerializerImpl<in T>(
                 var isEmpty = false
                 var value: T? = null
 
-                synchronizedCompat(queue) {
-                    isEmpty = queue.isEmpty
+                synchronized {
+                    isEmpty = isEmpty()
                     if (!isEmpty) {
-                        value = queue.poll()
+                        value = removeFirst()
                     }
                 }
 
@@ -69,7 +72,7 @@ internal abstract class SerializerImpl<in T>(
 
                 @Suppress("UNCHECKED_CAST")
                 if (!onValue(value as T)) {
-                    isDone = true
+                    counter.value = -1
                     return
                 }
             }

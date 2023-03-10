@@ -2,17 +2,15 @@
 
 package com.badoo.reaktive.utils.queue
 
-internal actual class PriorityQueue<T> actual constructor(
+internal class PriorityQueue<T>(
     private val comparator: Comparator<in T>
-) : Queue<T> {
+) {
 
     private var array: Array<T?>? = null
     private var _size: Int = 0
-    override val peek: T? get() = array?.takeUnless { isEmpty }?.get(0)
-    override val size: Int get() = _size
-    override val isEmpty: Boolean get() = _size == 0
+    val isEmpty: Boolean get() = _size == 0
 
-    override fun offer(item: T) {
+    fun offer(item: T) {
         var arr: Array<T?>? = array
         if (arr == null) {
             arr = newArray()
@@ -27,7 +25,7 @@ internal actual class PriorityQueue<T> actual constructor(
         (arr as Array<T>).heapifyUp(lastIndex, comparator)
     }
 
-    override fun poll(): T? {
+    fun poll(): T? {
         val arr = array
         if ((arr == null) || isEmpty) {
             return null
@@ -43,32 +41,10 @@ internal actual class PriorityQueue<T> actual constructor(
         return item
     }
 
-    override fun clear() {
+    fun clear() {
         array = null
         _size = 0
     }
-
-    /**
-     * The doc is derived from Java PriorityQueue.
-     *
-     * Returns an iterator over the elements in this queue. The
-     * iterator does not return the elements in any particular order.
-     *
-     * @return an iterator over the elements in this queue
-     */
-    override fun iterator(): Iterator<T> =
-        object : Iterator<T> {
-            private var index = 0
-
-            override fun hasNext(): Boolean = index < _size
-
-            @Suppress("UNCHECKED_CAST")
-            override fun next(): T {
-                val arr = array?.takeIf { index < _size } ?: throw NoSuchElementException()
-
-                return arr[index++] as T
-            }
-        }
 
     private companion object {
         private const val INITIAL_CAPACITY = 8

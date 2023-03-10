@@ -4,15 +4,15 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class SerializerTest {
+class PrioritySerializerTest {
 
     private val values = arrayListOf<Int?>()
-    private val comparator = Comparator<Int> { a, b -> a.compareTo(b) }
+    private val comparator = compareBy<Int?> { it }
 
     @Test
     fun value_emitted_WHEN_sent() {
         val serializer =
-            serializer<Int> {
+            serializer(comparator) {
                 values += it
                 true
             }
@@ -25,7 +25,7 @@ class SerializerTest {
     @Test
     fun all_values_emitted_in_the_same_order_WHEN_sent_sequentially() {
         val serializer =
-            serializer<Int?> {
+            serializer(comparator) {
                 values += it
                 true
             }
@@ -58,7 +58,7 @@ class SerializerTest {
 
         lateinit var serializer: Serializer<Int>
         serializer =
-            serializer {
+            serializer(comparator) {
                 count++
                 if (it == 1) {
                     serializer.accept(2)
@@ -76,7 +76,7 @@ class SerializerTest {
     fun all_values_are_emitted_WHEN_some_are_sent_from_callback() {
         lateinit var serializer: Serializer<Int?>
         serializer =
-            serializer {
+            serializer(comparator) {
                 values += it
                 if (it == 1) {
                     serializer.accept(null)
@@ -94,7 +94,7 @@ class SerializerTest {
     fun only_first_value_is_emitted_WHEN_more_values_sent_from_callback_and_false_returned() {
         lateinit var serializer: Serializer<Int>
         serializer =
-            serializer { value ->
+            serializer(comparator) { value ->
                 values += value
 
                 if (value == 1) {
@@ -137,7 +137,7 @@ class SerializerTest {
 
         lateinit var serializer: Serializer<Int>
         serializer =
-            serializer { value ->
+            serializer(comparator) { value ->
                 count++
                 if (value == 1) {
                     serializer.accept(2)
