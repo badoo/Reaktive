@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - mt-coroutines
+      - version-2.0
   pull_request:
 
 jobs:
@@ -36,6 +37,8 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: gradle/gradle-build-action@v2
         with:
+          gradle-home-cache-cleanup: true
+          cache-read-only: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/version-2.0' }}
           arguments: |
             build
             -Ptarget=all_linux_hosted
@@ -43,6 +46,8 @@ jobs:
         if: matrix.os == 'macOS-latest'
         uses: gradle/gradle-build-action@v2
         with:
+          gradle-home-cache-cleanup: true
+          cache-read-only: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/version-2.0' }}
           arguments: |
             :reaktive-annotations:build
             :utils:build
