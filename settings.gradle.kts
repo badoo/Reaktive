@@ -2,12 +2,10 @@ pluginManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         gradlePluginPortal()
     }
 }
 
-includeBuild("includedBuild/dependencies")
 includeBuild("includedBuild/gradleConfiguration")
 
 if (!startParameter.projectProperties.containsKey("check_publication")) {

@@ -1,5 +1,3 @@
-import com.badoo.reaktive.dependencies.Deps
-
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
@@ -18,10 +16,9 @@ android {
 }
 
 dependencies {
-    implementation Deps.kotlin.stdlib.jdk7
-    implementation Deps.android.androidx.appcompat
-    implementation Deps.android.androidx.constraintLayout
-    implementation Deps.android.androidx.exifinterface
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.constraintLayout
+    implementation libs.androidx.exifinterface
     implementation project(':reaktive')
     implementation project(':sample-mpp-module')
 }
