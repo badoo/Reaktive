@@ -11,6 +11,6 @@ actual class Lock {
     }
 
     actual fun newCondition(): Condition {
-        throw IllegalStateException("Condition is not supported in JavaScript")
+        error("Condition is not supported in JavaScript")
     }
 }
