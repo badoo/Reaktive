@@ -17,7 +17,7 @@ open class TestObserver : Observer, Disposable, ErrorCallback {
     private val isDisposeCalled = AtomicBoolean()
 
     override fun onSubscribe(disposable: Disposable) {
-        check(this.disposable != null) { "Already subscribed" }
+        check(this.disposable == null) { "Already subscribed" }
 
         _disposable.value = disposable
     }
