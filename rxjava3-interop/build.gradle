@@ -1,5 +1,3 @@
-import com.badoo.reaktive.dependencies.Deps
-
 plugins {
     id 'org.jetbrains.kotlin.jvm'
     id 'publish-configuration'
@@ -19,7 +17,6 @@ publishing {
 }
 
 dependencies {
-    implementation Deps.kotlin.stdlib.jdk7
     implementation project(':reaktive')
-    implementation Deps.rxjava3
+    implementation libs.rxjava3
 }

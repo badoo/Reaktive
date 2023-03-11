@@ -76,8 +76,6 @@ actual class Lock {
         private val arena = Arena()
         private val cond = arena.alloc<pthread_cond_t>()
 
-        private val resources = Resources(arena, cond)
-
         @Suppress("unused") // Must be stored in a property
         @OptIn(ExperimentalStdlibApi::class)
         private val cleaner = createCleaner(Resources(arena, cond), Resources::destroy)

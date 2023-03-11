@@ -1,5 +1,3 @@
-import com.badoo.reaktive.dependencies.Deps
-
 plugins {
     id 'mpp-configuration'
     id 'publish-configuration'
@@ -12,7 +10,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation Deps.kotlinx.coroutines.core
+                implementation libs.kotlinx.coroutines.core
                 implementation project(':reaktive')
                 implementation project(':utils')
             }
@@ -26,7 +24,7 @@ kotlin {
 
         jvmCommonTest {
             dependencies {
-                implementation Deps.kotlinx.coroutines.test
+                implementation libs.kotlinx.coroutines.test
             }
         }
     }

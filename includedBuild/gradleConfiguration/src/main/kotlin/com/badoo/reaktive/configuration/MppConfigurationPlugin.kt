@@ -1,7 +1,7 @@
 package com.badoo.reaktive.configuration
 
 import com.android.build.gradle.BaseExtension
-import com.badoo.reaktive.dependencies.Deps
+import com.badoo.reaktive.getLibrary
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -23,10 +23,10 @@ class MppConfigurationPlugin : Plugin<Project> {
         target.version = target.findProperty("reaktive_version") as Any
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
             sourceSets {
-                maybeCreate("commonMain").dependencies { implementation(Deps.kotlin.stdlib.common) }
+                maybeCreate("commonMain").dependencies { implementation(target.getLibrary("kotlin-stdlib-common")) }
                 maybeCreate("commonTest").dependencies {
-                    implementation(Deps.kotlin.test.common)
-                    implementation(Deps.kotlin.test.annotationsCommon)
+                    implementation(target.getLibrary("kotlin-test-common"))
+                    implementation(target.getLibrary("kotlin-test-annotations"))
                 }
             }
         }
@@ -137,8 +137,8 @@ class MppConfigurationPlugin : Plugin<Project> {
                 disableIfUndefined(Target.JVM)
             }
             sourceSets {
-                maybeCreate("androidMain").dependencies { implementation(Deps.kotlin.stdlib) }
-                maybeCreate("androidTest").dependencies { implementation(Deps.kotlin.test.junit) }
+                maybeCreate("androidMain").dependencies { implementation(project.getLibrary("kotlin-stdlib")) }
+                maybeCreate("androidTest").dependencies { implementation(project.getLibrary("kotlin-test-junit")) }
             }
         }
     }
@@ -149,8 +149,8 @@ class MppConfigurationPlugin : Plugin<Project> {
                 disableIfUndefined(Target.JVM)
             }
             sourceSets {
-                maybeCreate("jvmMain").dependencies { implementation(Deps.kotlin.stdlib) }
-                maybeCreate("jvmTest").dependencies { implementation(Deps.kotlin.test.junit) }
+                maybeCreate("jvmMain").dependencies { implementation(project.getLibrary("kotlin-stdlib")) }
+                maybeCreate("jvmTest").dependencies { implementation(project.getLibrary("kotlin-test-junit")) }
             }
         }
     }
