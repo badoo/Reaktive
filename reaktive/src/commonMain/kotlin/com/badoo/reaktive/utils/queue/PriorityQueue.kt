@@ -4,11 +4,14 @@ package com.badoo.reaktive.utils.queue
 
 internal class PriorityQueue<T>(
     private val comparator: Comparator<in T>
-) {
+) : Iterable<T> {
 
     private var array: Array<T?>? = null
     private var _size: Int = 0
     val isEmpty: Boolean get() = _size == 0
+
+    fun peek(): T? =
+        array?.takeUnless { isEmpty }?.get(0)
 
     fun offer(item: T) {
         var arr: Array<T?>? = array
@@ -45,6 +48,28 @@ internal class PriorityQueue<T>(
         array = null
         _size = 0
     }
+
+    /**
+     * The doc is derived from Java PriorityQueue.
+     *
+     * Returns an iterator over the elements in this queue. The
+     * iterator does not return the elements in any particular order.
+     *
+     * @return an iterator over the elements in this queue
+     */
+    override fun iterator(): Iterator<T> =
+        object : Iterator<T> {
+            private var index = 0
+
+            override fun hasNext(): Boolean = index < _size
+
+            @Suppress("UNCHECKED_CAST")
+            override fun next(): T {
+                val arr = array?.takeIf { index < _size } ?: throw NoSuchElementException()
+
+                return arr[index++] as T
+            }
+        }
 
     private companion object {
         private const val INITIAL_CAPACITY = 8

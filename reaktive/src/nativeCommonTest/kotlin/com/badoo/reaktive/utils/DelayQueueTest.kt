@@ -87,4 +87,18 @@ class DelayQueueTest {
 
         assertNull(value)
     }
+
+    @Test
+    fun removeIf_removes_items() {
+        queue.offer(value = 0, timeoutMillis = 0L)
+        queue.offer(value = 1, timeoutMillis = 0L)
+        queue.offer(value = 2, timeoutMillis = 0L)
+        queue.offer(value = 3, timeoutMillis = 0L)
+
+        queue.removeIf { (it == 1) || (it == 3) }
+
+        val values = listOf(queue.take(), queue.take())
+
+        assertEquals(listOf(0, 2), values)
+    }
 }

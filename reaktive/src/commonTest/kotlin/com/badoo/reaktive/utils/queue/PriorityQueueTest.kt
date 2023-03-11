@@ -23,6 +23,13 @@ class PriorityQueueTest {
     }
 
     @Test
+    fun peek_returns_null_WHEN_new_instance() {
+        val item = queue.peek()
+
+        assertNull(item)
+    }
+
+    @Test
     fun not_empty_WHEN_offer_1_non_null_item() {
         queue.offer(1)
 
@@ -41,6 +48,15 @@ class PriorityQueueTest {
         queue.offer(1)
 
         val item = queue.poll()
+
+        assertEquals(1, item)
+    }
+
+    @Test
+    fun peek_returns_same_item_WHEN_offer_1_item() {
+        queue.offer(1)
+
+        val item = queue.peek()
 
         assertEquals(1, item)
     }
@@ -95,6 +111,21 @@ class PriorityQueueTest {
     }
 
     @Test
+    fun peek_returns_prioritized_items() {
+        val items = getItemsForTest()
+
+        items.forEach(queue::offer)
+
+        val resultItems =
+            List(items.size) {
+                queue.peek()
+                queue.poll()
+            }
+
+        assertEquals(items.sorted(), resultItems)
+    }
+
+    @Test
     fun poll_returns_prioritized_items_WHEN_offer_items_and_poll_half_of_the_items_and_offer_items() {
         val fullItems = getItemsForTest()
         val fullSize = fullItems.size
@@ -133,6 +164,36 @@ class PriorityQueueTest {
         queue.clear()
 
         assertTrue(queue.isEmpty)
+    }
+
+    @Test
+    fun new_instance_has_empty_iterator() {
+        val iterator = queue.iterator()
+
+        assertFalse(iterator.hasNext())
+    }
+
+    @Test
+    fun iterator_returns_items_in_any_order() {
+        val items = getItemsForTest()
+        items.forEach(queue::offer)
+
+        val resultItems = queue.iterator().asSequence().toSet()
+
+        assertEquals(items.toSet(), resultItems)
+    }
+
+    @Test
+    fun iterator_is_empty_WHEN_offer_100_items_and_poll_100_items() {
+        offer100Items()
+
+        repeat(100) {
+            queue.poll()
+        }
+
+        val iterator = queue.iterator()
+
+        assertFalse(iterator.hasNext())
     }
 
     private fun getItemsForTest(): List<Int> = listOf(5, 10, 3, 6, 4, 3, 6, 10, 2, 3, 1, 5, 50, 0)

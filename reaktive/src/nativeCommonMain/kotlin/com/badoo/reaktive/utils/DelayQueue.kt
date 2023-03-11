@@ -1,8 +1,8 @@
 package com.badoo.reaktive.utils
 
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.lock.Lock
 import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.queue.PriorityQueue
 import kotlin.native.concurrent.AtomicLong
 import kotlin.system.getTimeMillis
 
@@ -10,7 +10,7 @@ internal class DelayQueue<T : Any> {
 
     private val lock = Lock()
     private val condition = lock.newCondition()
-    private val queueRef: AtomicReference<List<Holder<T>>?> = AtomicReference(emptyList())
+    private var queue: PriorityQueue<Holder<T>>? = PriorityQueue(HolderComparator)
 
     /**
      * Terminates the queue. Any currently waiting [take] methods will immediately return null.
@@ -18,20 +18,17 @@ internal class DelayQueue<T : Any> {
      */
     fun terminate() {
         lock.synchronized {
-            queueRef.value = null
+            queue = null
             condition.signal()
         }
     }
 
     fun removeFirst(): T? =
-        doSynchronizedIfNotTerminated { queue ->
-            queue
-                .firstOrNull()
-                ?.value
-                ?.also {
-                    queueRef.value = queue.drop(1)
-                    condition.signal()
-                }
+        lock.synchronized {
+            val queue = queue ?: return@synchronized null
+            val holder = queue.poll()
+            condition.signal()
+            holder?.value
         }
 
     /**
@@ -43,8 +40,8 @@ internal class DelayQueue<T : Any> {
         lock.acquire()
         try {
             while (true) {
-                val queue = queueRef.value ?: return null
-                val item: Holder<T>? = queue.firstOrNull()
+                val queue = queue ?: return null
+                val item: Holder<T>? = queue.peek()
 
                 if (item == null) {
                     condition.await()
@@ -52,7 +49,7 @@ internal class DelayQueue<T : Any> {
                     val timeoutNanos = (item.endTimeMillis - getTimeMillis()) * NANOS_IN_MILLI
 
                     if (timeoutNanos <= 0L) {
-                        queueRef.value = queue.drop(1)
+                        queue.poll()
 
                         return item.value
                     }
@@ -70,35 +67,26 @@ internal class DelayQueue<T : Any> {
     }
 
     fun offerAt(value: T, timeMillis: Long) {
-        val holder = Holder(value, timeMillis)
-        doSynchronizedIfNotTerminated { queue ->
-            queueRef.value = queue.plusSorted(holder, HolderComparator)
+        lock.synchronized {
+            val queue = queue ?: return
+            queue.offer(Holder(value, timeMillis))
             condition.signal()
         }
     }
 
-    fun clear() {
-        doSynchronizedIfNotTerminated { queue ->
-            if (queue.isNotEmpty()) {
-                queueRef.value = emptyList()
-                condition.signal()
-            }
-        }
-    }
-
     fun removeIf(predicate: (T) -> Boolean) {
-        doSynchronizedIfNotTerminated { queue ->
-            if (queue.isNotEmpty()) {
-                queueRef.value = queue.filterNot { predicate(it.value) }
-                condition.signal()
+        lock.synchronized {
+            val oldQueue = queue?.takeUnless { it.isEmpty } ?: return
+            val newQueue = PriorityQueue<Holder<T>>(HolderComparator)
+            this.queue = newQueue
+
+            oldQueue.forEach { holder ->
+                if (!predicate(holder.value)) {
+                    newQueue.offer(holder)
+                }
             }
         }
     }
-
-    private inline fun <R> doSynchronizedIfNotTerminated(block: (queue: List<Holder<T>>) -> R): R? =
-        lock.synchronized {
-            queueRef.value?.let(block)
-        }
 
     private data class Holder<out T>(
         val value: T,
