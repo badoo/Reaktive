@@ -33,12 +33,12 @@ class SampleTest :
 
         upstream.onNext(4)
         timer.advanceBy(100L)
-        upstream.onNext(null)
-        timer.advanceBy(100L)
         upstream.onNext(5)
         timer.advanceBy(100L)
+        upstream.onNext(null)
+        timer.advanceBy(100L)
 
-        observer.assertValues(1, 3, 5)
+        observer.assertValues(1, 3, null)
     }
 
     @Test
@@ -60,6 +60,19 @@ class SampleTest :
         upstream.onNext(0)
         upstream.onComplete()
         scheduler.timer.advanceBy(1000L)
+
+        observer.assertNoValues()
+    }
+
+    @Test
+    fun does_not_emit_same_value_WHEN_timeout_reached_second_time() {
+        val scheduler = TestScheduler()
+        val observer = upstream.sample(windowMillis = 100L, scheduler = scheduler).test()
+        upstream.onNext(0)
+        scheduler.timer.advanceBy(100L)
+        observer.reset()
+
+        scheduler.timer.advanceBy(100L)
 
         observer.assertNoValues()
     }

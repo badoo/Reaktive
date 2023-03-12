@@ -5,6 +5,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.getAndUpdate
 
 /**
  * Returns an [Observable] that emits the most recently emitted element (if any)
@@ -27,10 +28,9 @@ fun <T> Observable<T>.sample(windowMillis: Long, scheduler: Scheduler): Observab
                     disposables += disposable
 
                     executor.submitRepeating(startDelayMillis = windowMillis, periodMillis = windowMillis) {
-                        lastValue
-                            .value
-                            ?.value
-                            ?.also(emitter::onNext)
+                        lastValue.getAndUpdate { null }?.also {
+                            emitter.onNext(it.value)
+                        }
                     }
                 }
 
