@@ -8,8 +8,6 @@ import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
@@ -19,9 +17,8 @@ import kotlin.test.assertTrue
 
 class CompletableByEmitterTest {
 
-    private val emitterRef = AtomicReference<CompletableEmitter?>(null)
-    private val emitter: CompletableEmitter get() = requireNotNull(emitterRef.value)
-    private val completable = completable { emitterRef.value = it }
+    private lateinit var emitter: CompletableEmitter
+    private val completable = completable { emitter = it }
     private val observer = completable.test()
 
     @Test
@@ -186,17 +183,17 @@ class CompletableByEmitterTest {
 
     @Test
     fun does_not_complete_recursively_WHEN_completing() {
-        val isCompletedRecursively = AtomicBoolean()
-        val isCompleted = AtomicBoolean()
+        var isCompletedRecursively = false
+        var isCompleted = false
 
         completable.subscribe(
             observer(
                 onComplete = {
-                    if (!isCompleted.value) {
-                        isCompleted.value = true
+                    if (!isCompleted) {
+                        isCompleted = true
                         emitter.onComplete()
                     } else {
-                        isCompletedRecursively.value = true
+                        isCompletedRecursively = true
                     }
                 }
             )
@@ -204,54 +201,54 @@ class CompletableByEmitterTest {
 
         emitter.onComplete()
 
-        assertFalse(isCompletedRecursively.value)
+        assertFalse(isCompletedRecursively)
     }
 
     @Test
     fun does_not_complete_recursively_WHEN_producing_error() {
-        val isCompletedRecursively = AtomicBoolean()
+        var isCompletedRecursively = false
 
         completable.subscribe(
             observer(
-                onComplete = { isCompletedRecursively.value = true },
+                onComplete = { isCompletedRecursively = true },
                 onError = { emitter.onComplete() }
             )
         )
 
         emitter.onError(Exception())
 
-        assertFalse(isCompletedRecursively.value)
+        assertFalse(isCompletedRecursively)
     }
 
     @Test
     fun does_not_produce_error_recursively_WHEN_completing() {
-        val isErrorRecursively = AtomicBoolean()
+        var isErrorRecursively = false
 
         completable.subscribe(
             observer(
                 onComplete = { emitter.onError(Exception()) },
-                onError = { isErrorRecursively.value = true }
+                onError = { isErrorRecursively = true }
             )
         )
 
         emitter.onComplete()
 
-        assertFalse(isErrorRecursively.value)
+        assertFalse(isErrorRecursively)
     }
 
     @Test
     fun does_not_produce_error_recursively_WHEN_producing_error() {
-        val isErrorRecursively = AtomicBoolean()
-        val hasError = AtomicBoolean()
+        var isErrorRecursively = false
+        var hasError = false
 
         completable.subscribe(
             observer(
                 onError = {
-                    if (!hasError.value) {
-                        hasError.value = true
+                    if (!hasError) {
+                        hasError = true
                         emitter.onError(Exception())
                     } else {
-                        isErrorRecursively.value = true
+                        isErrorRecursively = true
                     }
                 }
             )
@@ -259,7 +256,7 @@ class CompletableByEmitterTest {
 
         emitter.onError(Exception())
 
-        assertFalse(isErrorRecursively.value)
+        assertFalse(isErrorRecursively)
     }
 
     private fun observer(

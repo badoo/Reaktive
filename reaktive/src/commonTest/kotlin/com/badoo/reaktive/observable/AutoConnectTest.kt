@@ -6,8 +6,6 @@ import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -17,69 +15,69 @@ class AutoConnectTest {
 
     @Test
     fun does_not_connect_WHEN_subscriber_count_1_and_not_subscribed() {
-        val isConnected = AtomicBoolean()
-        val upstream = testUpstream(connect = { isConnected.value = true })
+        var isConnected = false
+        val upstream = testUpstream(connect = { isConnected = true })
 
         upstream.autoConnect(subscriberCount = 1)
 
-        assertFalse(isConnected.value)
+        assertFalse(isConnected)
     }
 
     @Test
     fun connects_to_upstream_synchronously_WHEN_subscriber_count_0() {
-        val isConnected = AtomicBoolean()
-        val upstream = testUpstream(connect = { isConnected.value = true })
+        var isConnected = false
+        val upstream = testUpstream(connect = { isConnected = true })
 
         upstream.autoConnect(subscriberCount = 0)
 
-        assertTrue(isConnected.value)
+        assertTrue(isConnected)
     }
 
     @Test
     fun connects_to_upstream_WHEN_subscriber_count_1_is_reached() {
-        val isConnected = AtomicBoolean()
-        val upstream = testUpstream(connect = { isConnected.value = true })
+        var isConnected = false
+        val upstream = testUpstream(connect = { isConnected = true })
         val autoConnect = upstream.autoConnect(subscriberCount = 1)
 
         autoConnect.test()
 
-        assertTrue(isConnected.value)
+        assertTrue(isConnected)
     }
 
     @Test
     fun does_not_connect_WHEN_subscriber_count_2_is_not_reached() {
-        val isConnected = AtomicBoolean()
-        val upstream = testUpstream(connect = { isConnected.value = true })
+        var isConnected = false
+        val upstream = testUpstream(connect = { isConnected = true })
         val autoConnect = upstream.autoConnect(subscriberCount = 2)
 
         autoConnect.test()
 
-        assertFalse(isConnected.value)
+        assertFalse(isConnected)
     }
 
     @Test
     fun connects_to_upstream_WHEN_subscriber_count_2_is_reached() {
-        val isConnected = AtomicBoolean()
-        val upstream = testUpstream(connect = { isConnected.value = true })
+        var isConnected = false
+        val upstream = testUpstream(connect = { isConnected = true })
         val autoConnect = upstream.autoConnect(subscriberCount = 2)
 
         autoConnect.test()
         autoConnect.test()
 
-        assertTrue(isConnected.value)
+        assertTrue(isConnected)
     }
 
     @Test
     fun does_not_connect_second_time_WHEN_subscriberCount_is_1_and_subscribed_second_time() {
-        val isConnected = AtomicBoolean()
-        val upstream = testUpstream(connect = { isConnected.value = true })
+        var isConnected = false
+        val upstream = testUpstream(connect = { isConnected = true })
         val autoConnect = upstream.autoConnect(subscriberCount = 1)
         autoConnect.test()
 
-        isConnected.value = false
+        isConnected = false
         autoConnect.test()
 
-        assertFalse(isConnected.value)
+        assertFalse(isConnected)
     }
 
     @Test
@@ -144,13 +142,13 @@ class AutoConnectTest {
 
     @Test
     fun subscribes_to_upstream_for_each_subscription_from_downstream() {
-        val subscribeCount = AtomicInt()
-        val upstream = testUpstream(subscribe = { subscribeCount.addAndGet(1) })
+        var subscribeCount = 0
+        val upstream = testUpstream(subscribe = { subscribeCount++ })
         val autoConnect = upstream.autoConnect()
 
         repeat(3) { autoConnect.test() }
 
-        assertEquals(3, subscribeCount.value)
+        assertEquals(3, subscribeCount)
     }
 
     @Test

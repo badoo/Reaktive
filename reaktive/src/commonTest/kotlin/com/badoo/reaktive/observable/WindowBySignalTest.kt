@@ -4,9 +4,14 @@ import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
-import com.badoo.reaktive.test.observable.*
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.update
+import com.badoo.reaktive.test.observable.TestObservable
+import com.badoo.reaktive.test.observable.TestObservableObserver
+import com.badoo.reaktive.test.observable.assertComplete
+import com.badoo.reaktive.test.observable.assertNoValues
+import com.badoo.reaktive.test.observable.assertNotComplete
+import com.badoo.reaktive.test.observable.assertValues
+import com.badoo.reaktive.test.observable.onNext
+import com.badoo.reaktive.test.observable.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -807,20 +812,20 @@ class WindowBySignalTest :
     private fun <T> TestObservableObserver<T>.lastValue(): T = values.last()
 
     private class Closings {
-        private val map = AtomicReference(emptyMap<Int, TestCompletable>())
+        private val map = HashMap<Int, TestCompletable>()
 
         fun create(value: Int): TestCompletable {
-            assertFalse(value in map.value)
+            assertFalse(value in map)
             val closing = TestCompletable()
-            map.update { it + (value to closing) }
+            map[value] = closing
 
             return closing
         }
 
         operator fun get(value: Int): TestCompletable {
-            assertTrue(value in map.value)
+            assertTrue(value in map)
 
-            return map.value.getValue(value)
+            return map.getValue(value)
         }
     }
 }

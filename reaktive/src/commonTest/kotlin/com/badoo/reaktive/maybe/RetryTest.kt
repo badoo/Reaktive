@@ -8,7 +8,6 @@ import com.badoo.reaktive.test.maybe.assertComplete
 import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.utils.atomic.AtomicLong
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -74,17 +73,17 @@ class RetryTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ retry() }) {
     fun predicate_receives_valid_throwable_WHEN_upstream_produces_error() {
         val throwable1 = Throwable()
         val throwable2 = Throwable()
-        val throwableRef = AtomicReference<Throwable?>(null)
+        var throwableRef: Throwable? = null
         upstream
             .retry { _, throwable ->
-                throwableRef.value = throwable
+                throwableRef = throwable
                 true
             }
             .test()
         upstream.onError(throwable1)
-        assertSame(throwable1, throwableRef.value)
+        assertSame(throwable1, throwableRef)
         upstream.onError(throwable2)
-        assertSame(throwable2, throwableRef.value)
+        assertSame(throwable2, throwableRef)
     }
 
     @Test

@@ -8,8 +8,6 @@ import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.single.assertNotSuccess
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.atomicList
 import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
@@ -19,9 +17,8 @@ import kotlin.test.assertTrue
 
 class SingleByEmitterTest {
 
-    private val emitterRef = AtomicReference<SingleEmitter<Int?>?>(null)
-    private val emitter: SingleEmitter<Int?> get() = requireNotNull(emitterRef.value)
-    private val single = single { emitterRef.value = it }
+    private lateinit var emitter: SingleEmitter<Int?>
+    private val single = single { emitter = it }
     private val observer = single.test()
 
     @Test
@@ -200,17 +197,17 @@ class SingleByEmitterTest {
 
     @Test
     fun does_not_success_recursively_WHEN_succeeding() {
-        val isSucceededRecursively = AtomicBoolean()
-        val isSucceeded = AtomicBoolean()
+        var isSucceededRecursively = false
+        var isSucceeded = false
 
         single.subscribe(
             observer(
                 onSuccess = {
-                    if (!isSucceeded.value) {
-                        isSucceeded.value = true
+                    if (!isSucceeded) {
+                        isSucceeded = true
                         emitter.onSuccess(0)
                     } else {
-                        isSucceededRecursively.value = true
+                        isSucceededRecursively = true
                     }
                 }
             )
@@ -218,54 +215,54 @@ class SingleByEmitterTest {
 
         emitter.onSuccess(0)
 
-        assertFalse(isSucceededRecursively.value)
+        assertFalse(isSucceededRecursively)
     }
 
     @Test
     fun does_not_success_recursively_WHEN_producing_error() {
-        val isSucceededRecursively = AtomicBoolean()
+        var isSucceededRecursively = false
 
         single.subscribe(
             observer(
-                onSuccess = { isSucceededRecursively.value = true },
+                onSuccess = { isSucceededRecursively = true },
                 onError = { emitter.onSuccess(0) }
             )
         )
 
         emitter.onError(Exception())
 
-        assertFalse(isSucceededRecursively.value)
+        assertFalse(isSucceededRecursively)
     }
 
     @Test
     fun does_not_produce_error_recursively_WHEN_succeeding() {
-        val isErrorRecursively = AtomicBoolean()
+        var isErrorRecursively = false
 
         single.subscribe(
             observer(
                 onSuccess = { emitter.onError(Exception()) },
-                onError = { isErrorRecursively.value = true }
+                onError = { isErrorRecursively = true }
             )
         )
 
         emitter.onSuccess(0)
 
-        assertFalse(isErrorRecursively.value)
+        assertFalse(isErrorRecursively)
     }
 
     @Test
     fun does_not_produce_error_recursively_WHEN_producing_error() {
-        val isErrorRecursively = AtomicBoolean()
-        val hasError = AtomicBoolean()
+        var isErrorRecursively = false
+        var hasError = false
 
         single.subscribe(
             observer(
                 onError = {
-                    if (!hasError.value) {
-                        hasError.value = true
+                    if (!hasError) {
+                        hasError = true
                         emitter.onError(Exception())
                     } else {
-                        isErrorRecursively.value = true
+                        isErrorRecursively = true
                     }
                 }
             )
@@ -273,7 +270,7 @@ class SingleByEmitterTest {
 
         emitter.onError(Exception())
 
-        assertFalse(isErrorRecursively.value)
+        assertFalse(isErrorRecursively)
     }
 
     private fun observer(

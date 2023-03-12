@@ -9,7 +9,6 @@ import com.badoo.reaktive.test.scheduler.TestScheduler
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -23,7 +22,7 @@ class TimeoutTest : SingleToSingleTests by SingleToSingleTestsImpl({ timeout(100
 
     @Test
     fun does_not_produce_error_WHEN_timeout_reached_while_succeeding() {
-        val errorRef = AtomicReference<Throwable?>(null)
+        var errorRef: Throwable? = null
 
         upstream
             .timeout(1000L, scheduler)
@@ -37,14 +36,14 @@ class TimeoutTest : SingleToSingleTests by SingleToSingleTestsImpl({ timeout(100
                     }
 
                     override fun onError(error: Throwable) {
-                        errorRef.value = error
+                        errorRef = error
                     }
                 }
             )
 
         upstream.onSuccess(0)
 
-        assertNull(errorRef.value)
+        assertNull(errorRef)
     }
 
     @Test

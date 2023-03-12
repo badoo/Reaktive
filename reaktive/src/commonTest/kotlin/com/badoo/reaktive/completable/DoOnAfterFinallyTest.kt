@@ -7,8 +7,6 @@ import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -91,80 +89,72 @@ class DoOnAfterFinallyTest : CompletableToCompletableTests by CompletableToCompl
 
     @Test
     fun does_not_call_action_WHEN_disposed_before_upstream_onSubscribe() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         completableUnsafe {}
-            .doOnAfterFinally { isCalled.value = true }
+            .doOnAfterFinally { isCalled = true }
             .test()
             .dispose()
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test
     fun does_not_call_action_second_time_WHEN_downstream_disposed_and_upstream_completed() {
-        val count = AtomicInt()
+        var count = 0
 
         upstream
-            .doOnAfterFinally {
-                count.addAndGet(1)
-            }
+            .doOnAfterFinally { count++ }
             .test()
             .dispose()
 
         upstream.onComplete()
 
-        assertEquals(1, count.value)
+        assertEquals(1, count)
     }
 
     @Test
     fun does_not_call_action_second_time_WHEN_downstream_disposed_and_upstream_produced_error() {
-        val count = AtomicInt()
+        var count = 0
 
         upstream
-            .doOnAfterFinally {
-                count.addAndGet(1)
-            }
+            .doOnAfterFinally { count++ }
             .test()
             .dispose()
 
         upstream.onError(Throwable())
 
-        assertEquals(1, count.value)
+        assertEquals(1, count)
     }
 
     @Test
     fun does_not_call_action_second_time_WHEN_upstream_completed_and_downstream_disposed() {
-        val count = AtomicInt()
+        var count = 0
 
         val observer =
             upstream
-                .doOnAfterFinally {
-                    count.addAndGet(1)
-                }
+                .doOnAfterFinally { count++ }
                 .test()
 
         upstream.onComplete()
         observer.dispose()
 
-        assertEquals(1, count.value)
+        assertEquals(1, count)
     }
 
     @Test
     fun does_not_call_action_second_time_WHEN_upstream_produced_error_and_downstream_disposed() {
-        val count = AtomicInt()
+        var count = 0
 
         val observer =
             upstream
-                .doOnAfterFinally {
-                    count.addAndGet(1)
-                }
+                .doOnAfterFinally { count++ }
                 .test()
 
         upstream.onError(Throwable())
         observer.dispose()
 
-        assertEquals(1, count.value)
+        assertEquals(1, count)
     }
 
     @Test

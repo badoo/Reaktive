@@ -8,8 +8,6 @@ import com.badoo.reaktive.test.base.hasSubscribers
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.TestCompletableObserver
 import com.badoo.reaktive.test.completable.assertComplete
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.reaktiveUncaughtErrorHandler
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
@@ -80,14 +78,14 @@ class SubscribeTest {
     @Test
     fun calls_onError_WHEN_onSubscribe_thrown_exception() {
         val exception = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
+        var caughtException: Throwable? = null
 
         upstream.subscribe(
             onSubscribe = { throw exception },
-            onError = { caughtException.value = it }
+            onError = { caughtException = it }
         )
 
-        assertSame(exception, caughtException.value)
+        assertSame(exception, caughtException)
     }
 
     @Test
@@ -117,29 +115,29 @@ class SubscribeTest {
     fun does_not_call_onError_WHEN_onComplete_thrown_exception() {
         val exception = Exception()
         reaktiveUncaughtErrorHandler = {}
-        val isOnErrorCalled = AtomicBoolean()
+        var isOnErrorCalled = false
 
         upstream.subscribe(
-            onError = { isOnErrorCalled.value = true },
+            onError = { isOnErrorCalled = true },
             onComplete = { throw exception }
         )
         upstream.onComplete()
 
-        assertFalse(isOnErrorCalled.value)
+        assertFalse(isOnErrorCalled)
     }
 
     @Test
     fun calls_uncaught_exception_handler_with_CompositeException_WHEN_onError_thrown_exception() {
         val exception1 = Exception()
         val exception2 = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
-        reaktiveUncaughtErrorHandler = { caughtException.value = it }
+        var caughtException: Throwable? = null
+        reaktiveUncaughtErrorHandler = { caughtException = it }
 
         upstream.subscribe(onError = { throw exception2 })
         upstream.onError(exception1)
 
-        assertTrue(caughtException.value is CompositeException)
-        val compositeException = caughtException.value as CompositeException
+        assertTrue(caughtException is CompositeException)
+        val compositeException = caughtException as CompositeException
         assertSame(exception1, compositeException.cause1)
         assertSame(exception2, compositeException.cause2)
     }

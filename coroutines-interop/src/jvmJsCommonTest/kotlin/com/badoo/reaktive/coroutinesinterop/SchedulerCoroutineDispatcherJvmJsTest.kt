@@ -1,8 +1,6 @@
 package com.badoo.reaktive.coroutinesinterop
 
 import com.badoo.reaktive.test.scheduler.TestScheduler
-import com.badoo.reaktive.utils.atomic.AtomicInt
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Runnable
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.test.Test
@@ -31,18 +29,18 @@ class SchedulerCoroutineDispatcherJvmJsTest {
     }
 
     private class TestRunnable : Runnable {
-        private val runCount = AtomicInt()
+        private var runCount = 0
 
         override fun run() {
-            runCount.addAndGet(1)
+            runCount++
         }
 
         fun assertNotExecuted() {
-            assertEquals(0, runCount.value)
+            assertEquals(0, runCount)
         }
 
         fun assertExecutedOnce() {
-            assertEquals(1, runCount.value)
+            assertEquals(1, runCount)
         }
     }
 }
