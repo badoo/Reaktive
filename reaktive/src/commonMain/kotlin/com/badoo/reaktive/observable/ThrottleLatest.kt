@@ -11,8 +11,6 @@ import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.Uninitialized
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
 
@@ -56,8 +54,8 @@ private class ThrottleLatest<T>(
 ) {
 
     private val actor = serializer(onValue = ::processEvent)
-    private val lastValue = AtomicReference<Any?>(Uninitialized)
-    private val isTimeoutActive = AtomicBoolean()
+    private var lastValue: Any? = Uninitialized
+    private var isTimeoutActive = false
     private val timeoutObserver = TimeoutObserver(actor)
 
     init {
@@ -83,17 +81,17 @@ private class ThrottleLatest<T>(
         }
 
     private fun onTimeout(): Boolean {
-        val value = lastValue.value
-        lastValue.value = Uninitialized
-        isTimeoutActive.value = false
+        val value = lastValue
+        lastValue = Uninitialized
+        isTimeoutActive = false
 
         @Suppress("UNCHECKED_CAST")
         return (value === Uninitialized) || startTimeout(value as T)
     }
 
     private fun onUpstreamCompleted(): Boolean {
-        val value = lastValue.value
-        lastValue.value = Uninitialized
+        val value = lastValue
+        lastValue = Uninitialized
         if (emitLast && (value !== Uninitialized)) {
             @Suppress("UNCHECKED_CAST")
             emitter.onNext(value as T)
@@ -111,15 +109,15 @@ private class ThrottleLatest<T>(
     }
 
     private fun onValue(value: T): Boolean =
-        if (isTimeoutActive.value) {
-            lastValue.value = value
+        if (isTimeoutActive) {
+            lastValue = value
             true
         } else {
             startTimeout(value)
         }
 
     private fun startTimeout(value: T): Boolean {
-        isTimeoutActive.value = true
+        isTimeoutActive = true
 
         emitter.onNext(value)
 
@@ -170,9 +168,4 @@ private class ThrottleLatest<T>(
             actor.accept(Event.Timeout)
         }
     }
-}
-
-private sealed class ThrottleLatestValue {
-    object None : ThrottleLatestValue()
-    object Initial : ThrottleLatestValue()
 }

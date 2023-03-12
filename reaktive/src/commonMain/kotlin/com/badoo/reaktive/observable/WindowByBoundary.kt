@@ -9,9 +9,6 @@ import com.badoo.reaktive.single.repeat
 import com.badoo.reaktive.single.singleOf
 import com.badoo.reaktive.subject.unicast.UnicastSubject
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicLong
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndSet
 import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
 
@@ -66,15 +63,15 @@ private class WindowByBoundary<T>(
     private val restartOnLimit: Boolean,
     private val emitter: ObservableEmitter<Observable<T>>
 ) {
-    private val window: AtomicReference<UnicastSubject<T>?>
+    private var window: UnicastSubject<T>? = null
     private val actor = serializer(onValue = ::processEvent)
     private val upstreamObserver = UpstreamObserver<T>(actor)
     private val boundariesObserver = BoundaryObserver(actor)
-    private val valueCount = AtomicLong()
+    private var valueCount = 0L
 
     init {
         val firstWindow = UnicastSubject<T>()
-        window = AtomicReference(firstWindow)
+        window = firstWindow
         startWindow(firstWindow)
         emitter.setCancellable { actor.accept(Event.DownstreamDisposed) }
         upstream.subscribe(upstreamObserver)
@@ -119,8 +116,12 @@ private class WindowByBoundary<T>(
     }
 
     private fun onWindowDisposed(subject: UnicastSubject<T>): Boolean {
-        if (window.compareAndSet(subject, null) && boundariesObserver.isDisposed) {
-            upstreamObserver.dispose()
+        if (subject == window) {
+            window = null
+
+            if (boundariesObserver.isDisposed) {
+                upstreamObserver.dispose()
+            }
         }
 
         return true
@@ -129,7 +130,7 @@ private class WindowByBoundary<T>(
     private fun onDownstreamDisposed(): Boolean {
         boundariesObserver.dispose()
 
-        if (window.value == null) {
+        if (window == null) {
             upstreamObserver.dispose()
         }
 
@@ -137,12 +138,12 @@ private class WindowByBoundary<T>(
     }
 
     private fun onValue(value: T): Boolean {
-        val windowSubject = window.value ?: return true
+        val windowSubject = window ?: return true
 
         windowSubject.onNext(value)
 
-        val newCount = valueCount.addAndGet(1)
-        if (newCount == limit) {
+        valueCount++
+        if (valueCount == limit) {
             replaceWindow(if (restartOnLimit) UnicastSubject() else null, UnicastSubject<*>::onComplete)
         }
 
@@ -150,7 +151,12 @@ private class WindowByBoundary<T>(
     }
 
     private inline fun replaceWindow(newWindow: UnicastSubject<T>?, finishWindow: (UnicastSubject<T>) -> Unit) {
-        window.getAndSet(newWindow)?.also(finishWindow)
+        val oldWindow = window
+        window = newWindow
+
+        if (oldWindow != null) {
+            finishWindow(oldWindow)
+        }
 
         if (newWindow != null) {
             startWindow(newWindow)
@@ -158,7 +164,7 @@ private class WindowByBoundary<T>(
     }
 
     private fun startWindow(window: UnicastSubject<T>) {
-        valueCount.value = 0
+        valueCount = 0
         val windowWrapper = WindowWrapper(window.doOnBeforeDispose { actor.accept(Event.WindowDisposed(window)) })
         emitter.onNext(windowWrapper)
 

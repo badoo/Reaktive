@@ -3,7 +3,6 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.ValueCallback
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.serializer.serializer
 
 /**
@@ -21,7 +20,7 @@ fun <T> Observable<T>.repeat(times: Long = Long.MAX_VALUE): Observable<T> {
     return observable { emitter ->
         val observer =
             object : ObservableObserver<T>, ValueCallback<T> by emitter, ErrorCallback by emitter {
-                private val counter: AtomicLong? = if (times < Long.MAX_VALUE) AtomicLong(times) else null
+                private var counter = times
 
                 // Prevents recursive subscriptions
                 private val serializer =
@@ -35,7 +34,7 @@ fun <T> Observable<T>.repeat(times: Long = Long.MAX_VALUE): Observable<T> {
                 }
 
                 override fun onComplete() {
-                    if ((counter == null) || (counter.addAndGet(-1) > 0)) {
+                    if ((counter == Long.MAX_VALUE) || (--counter > 0)) {
                         if (!emitter.isDisposed) {
                             subscribeToUpstream()
                         }

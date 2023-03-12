@@ -4,9 +4,6 @@ import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.subject.DefaultSubject
 import com.badoo.reaktive.subject.Subject
 import com.badoo.reaktive.subject.isActive
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndSet
 
 /**
  * Create a new instance of [UnicastSubject].
@@ -18,27 +15,24 @@ import com.badoo.reaktive.utils.atomic.getAndSet
 @Suppress("FunctionName")
 fun <T> UnicastSubject(bufferSize: Int = Int.MAX_VALUE, onTerminate: () -> Unit = {}): UnicastSubject<T> =
     object : DefaultSubject<T>(), UnicastSubject<T> {
-        private val hasSubscribers = AtomicBoolean()
-        private val queue = AtomicReference<ArrayDeque<T>?>(ArrayDeque())
+        private var queue: ArrayDeque<T>? = ArrayDeque()
 
         override fun onSubscribed(observer: ObservableObserver<T>): Boolean {
-            val isFirstObserver = hasSubscribers.compareAndSet(false, true)
-
-            if (isFirstObserver) {
-                queue
-                    .getAndSet(null)
-                    ?.forEach(observer::onNext)
-            } else {
-                observer.onError(IllegalStateException("Only a single observer allowed for UnicastSubject"))
+            queue?.also {
+                queue = null
+                it.forEach(observer::onNext)
+                return true
             }
 
-            return isFirstObserver
+            observer.onError(IllegalStateException("Only a single observer allowed for UnicastSubject"))
+
+            return false
         }
 
         override fun onBeforeNext(value: T) {
             super.onBeforeNext(value)
 
-            queue.value?.apply {
+            queue?.apply {
                 if (size >= bufferSize) {
                     removeFirst()
                 }

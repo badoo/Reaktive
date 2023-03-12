@@ -1,7 +1,6 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.scheduler.Scheduler
-import com.badoo.reaktive.utils.atomic.AtomicLong
 
 /**
  * Returns an [Observable] that emits `0L` after [startDelayMillis] and
@@ -16,8 +15,8 @@ fun observableInterval(periodMillis: Long, startDelayMillis: Long = periodMillis
         val executor = scheduler.newExecutor()
         emitter.setDisposable(executor)
 
-        val count = AtomicLong(-1L)
+        var count = 0L
         executor.submitRepeating(startDelayMillis, periodMillis) {
-            emitter.onNext(count.addAndGet(1L))
+            emitter.onNext(count++)
         }
     }
