@@ -11,8 +11,6 @@ import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
-import com.badoo.reaktive.utils.atomic.AtomicInt
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -36,7 +34,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_produce_error_WHEN_timeout_reached_while_emitting_value() {
-        val errorRef = AtomicReference<Throwable?>(null)
+        var errorRef: Throwable? = null
 
         upstream
             .timeout(1000L, scheduler)
@@ -53,7 +51,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
                     }
 
                     override fun onError(error: Throwable) {
-                        errorRef.value = error
+                        errorRef = error
                     }
                 }
             )
@@ -61,7 +59,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
         upstream.onNext(0)
         upstream.onNext(1)
 
-        assertNull(errorRef.value)
+        assertNull(errorRef)
     }
 
     @Test
@@ -211,24 +209,24 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_subscribe_to_other_second_time_WHEN_timeout_reached_after_second_value_and_has_other() {
-        val upstreamObserver = AtomicReference<ObservableObserver<Int>?>(null)
+        var upstreamObserver: ObservableObserver<Int>? = null
         val upstream =
-            observableUnsafe<Int> {
-                upstreamObserver.value = it
+            observableUnsafe {
+                upstreamObserver = it
                 it.onSubscribe(Disposable())
             }
 
-        val otherSubscribeCount = AtomicInt()
-        val other = observable<Int> { otherSubscribeCount.addAndGet(1) }
+        var otherSubscribeCount = 0
+        val other = observable<Int> { otherSubscribeCount++ }
 
         upstream.timeout(1000L, scheduler, other).test()
 
-        upstreamObserver.value!!.onNext(0)
+        requireNotNull(upstreamObserver).onNext(0)
         scheduler.timer.advanceBy(1000L)
-        upstreamObserver.value!!.onNext(1)
+        requireNotNull(upstreamObserver).onNext(1)
         scheduler.timer.advanceBy(1000L)
 
-        assertEquals(1, otherSubscribeCount.value)
+        assertEquals(1, otherSubscribeCount)
     }
 
     @Test

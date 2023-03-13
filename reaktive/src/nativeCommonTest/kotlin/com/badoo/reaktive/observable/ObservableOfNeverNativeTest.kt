@@ -4,24 +4,23 @@ import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.doInBackgroundBlocking
 import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 
 class ObservableOfNeverNativeTest {
 
     @Test
     fun works_from_background_threads() {
-        val observer1 = AtomicReference<TestObservableObserver<Int>?>(null)
-        val observer2 = AtomicReference<TestObservableObserver<Int>?>(null)
+        var observer1: TestObservableObserver<Int>? = null
+        var observer2: TestObservableObserver<Int>? = null
 
         doInBackgroundBlocking {
-            observer1.value = observableOfNever<Int>().test()
+            observer1 = observableOfNever<Int>().test()
         }
         doInBackgroundBlocking {
-            observer2.value = observableOfNever<Int>().test()
+            observer2 = observableOfNever<Int>().test()
         }
 
-        observer1.value!!.assertSubscribed()
-        observer2.value!!.assertSubscribed()
+        requireNotNull(observer1).assertSubscribed()
+        requireNotNull(observer2).assertSubscribed()
     }
 }

@@ -5,7 +5,6 @@ import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -62,17 +61,15 @@ class DoOnAfterTerminateTest :
 
     @Test
     fun does_not_call_action_WHEN_upstream_emitted_value() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnAfterTerminate {
-                isCalled.value = true
-            }
+            .doOnAfterTerminate { isCalled = true }
             .test()
 
         upstream.onNext(0)
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test

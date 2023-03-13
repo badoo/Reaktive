@@ -4,7 +4,6 @@ import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -40,17 +39,15 @@ class DoOnBeforeErrorTest
 
     @Test
     fun does_not_call_action_WHEN_completed() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnBeforeError {
-                isCalled.value = true
-            }
+            .doOnBeforeError { isCalled = true }
             .test()
 
         upstream.onComplete()
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test

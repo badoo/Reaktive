@@ -5,7 +5,6 @@ import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.single.DefaultSingleObserver
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -40,17 +39,15 @@ class DoOnAfterErrorTest : SingleToSingleTests by SingleToSingleTestsImpl({ doOn
 
     @Test
     fun does_not_call_action_WHEN_upstream_succeeded() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnAfterError {
-                isCalled.value = true
-            }
+            .doOnAfterError { isCalled = true }
             .test()
 
         upstream.onSuccess(0)
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test

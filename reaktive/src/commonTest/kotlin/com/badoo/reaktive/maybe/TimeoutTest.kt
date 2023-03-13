@@ -10,7 +10,6 @@ import com.badoo.reaktive.test.maybe.assertComplete
 import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -24,7 +23,7 @@ class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, 
 
     @Test
     fun does_not_produce_error_WHEN_timeout_reached_while_succeeding() {
-        val errorRef = AtomicReference<Throwable?>(null)
+        var errorRef: Throwable? = null
 
         upstream
             .timeout(1000L, scheduler)
@@ -41,14 +40,14 @@ class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, 
                     }
 
                     override fun onError(error: Throwable) {
-                        errorRef.value = error
+                        errorRef = error
                     }
                 }
             )
 
         upstream.onSuccess(0)
 
-        assertNull(errorRef.value)
+        assertNull(errorRef)
     }
 
     @Test

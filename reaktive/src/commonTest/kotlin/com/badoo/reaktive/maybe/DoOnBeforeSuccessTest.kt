@@ -4,7 +4,6 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -37,32 +36,28 @@ class DoOnBeforeSuccessTest
 
     @Test
     fun does_not_call_action_WHEN_completed() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnBeforeSuccess {
-                isCalled.value = true
-            }
+            .doOnBeforeSuccess { isCalled = true }
             .test()
 
         upstream.onComplete()
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test
     fun does_not_call_action_WHEN_produced_error() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnBeforeSuccess {
-                isCalled.value = true
-            }
+            .doOnBeforeSuccess { isCalled = true }
             .test()
 
         upstream.onError(Throwable())
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test

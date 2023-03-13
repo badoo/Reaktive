@@ -5,7 +5,6 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -68,52 +67,48 @@ class DoOnBeforeSubscribeTest
 
     @Test
     fun does_not_call_action_WHEN_onSubscribe_received_from_upstream() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         completableUnsafe { observer ->
-            isCalled.value = false
+            isCalled = false
             observer.onSubscribe(Disposable())
         }
             .doOnBeforeSubscribe {
-                isCalled.value = true
+                isCalled = true
             }
             .test()
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test
     fun does_not_call_action_WHEN_completed() {
-        val isCalled = AtomicBoolean()
+        var isCalled: Boolean
         val upstream = TestCompletable()
 
         upstream
-            .doOnBeforeSubscribe {
-                isCalled.value = true
-            }
+            .doOnBeforeSubscribe { isCalled = true }
             .test()
 
-        isCalled.value = false
+        isCalled = false
         upstream.onComplete()
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
 
     @Test
     fun does_not_call_action_WHEN_produced_error() {
-        val isCalled = AtomicBoolean()
+        var isCalled: Boolean
         val upstream = TestCompletable()
 
         upstream
-            .doOnBeforeSubscribe {
-                isCalled.value = true
-            }
+            .doOnBeforeSubscribe { isCalled = true }
             .test()
 
-        isCalled.value = false
+        isCalled = false
         upstream.onError(Throwable())
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 }

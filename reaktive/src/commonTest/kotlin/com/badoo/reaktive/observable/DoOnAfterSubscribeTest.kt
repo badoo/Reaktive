@@ -5,7 +5,6 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -69,69 +68,61 @@ class DoOnAfterSubscribeTest :
 
     @Test
     fun does_not_call_action_WHEN_onSubscribe_received_from_upstream() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         observableUnsafe<Nothing> { observer ->
-            isCalled.value = false
+            isCalled = false
             observer.onSubscribe(Disposable())
         }
-            .doOnAfterSubscribe {
-                isCalled.value = true
-            }
+            .doOnAfterSubscribe { isCalled = true }
             .test()
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test
     fun does_not_call_action_WHEN_upstream_emitted_value() {
-        val isCalled = AtomicBoolean()
+        var isCalled: Boolean
         val upstream = TestObservable<Int>()
 
         upstream
-            .doOnAfterSubscribe {
-                isCalled.value = true
-            }
+            .doOnAfterSubscribe { isCalled = true }
             .test()
 
-        isCalled.value = false
+        isCalled = false
         upstream.onNext(0)
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test
     fun does_not_call_action_WHEN_upstream_completed() {
-        val isCalled = AtomicBoolean()
+        var isCalled: Boolean
         val upstream = TestObservable<Nothing>()
 
         upstream
-            .doOnAfterSubscribe {
-                isCalled.value = true
-            }
+            .doOnAfterSubscribe { isCalled = true }
             .test()
 
-        isCalled.value = false
+        isCalled = false
         upstream.onComplete()
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
 
     @Test
     fun does_not_call_action_WHEN_upstream_produced_error() {
-        val isCalled = AtomicBoolean()
+        var isCalled: Boolean
         val upstream = TestObservable<Nothing>()
 
         upstream
-            .doOnAfterSubscribe {
-                isCalled.value = true
-            }
+            .doOnAfterSubscribe { isCalled = true }
             .test()
 
-        isCalled.value = false
+        isCalled = false
         upstream.onError(Throwable())
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 }

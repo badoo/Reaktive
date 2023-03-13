@@ -9,17 +9,11 @@ import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getValue
-import com.badoo.reaktive.utils.atomic.setValue
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
-import kotlin.test.asserter
 
 class WindowByBoundaryTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ window(TestObservable<Unit>()) }) {
 
@@ -238,7 +232,7 @@ class WindowByBoundaryTest : ObservableToObservableTests by ObservableToObservab
 
     @Test
     fun first_window_emits_all_values_from_upstream_in_order_for_first_subscription_WHEN_subscribed_twice_and_upstream_produced_values() {
-        var windowObserver by AtomicReference<TestObservableObserver<Int?>?>(null)
+        var windowObserver: TestObservableObserver<Int?>? = null
 
         val observer = window { windowObserver = it.test() }
         observer.lastValue().test()

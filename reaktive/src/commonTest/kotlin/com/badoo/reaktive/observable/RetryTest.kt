@@ -9,7 +9,6 @@ import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.utils.atomic.AtomicLong
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -75,17 +74,17 @@ class RetryTest : ObservableToObservableTests by ObservableToObservableTestsImpl
     fun predicate_receives_valid_throwable_WHEN_upstream_produces_error() {
         val throwable1 = Throwable()
         val throwable2 = Throwable()
-        val throwableRef = AtomicReference<Throwable?>(null)
+        var throwableRef: Throwable? = null
         upstream
             .retry { _, throwable ->
-                throwableRef.value = throwable
+                throwableRef = throwable
                 true
             }
             .test()
         upstream.onError(throwable1)
-        assertSame(throwable1, throwableRef.value)
+        assertSame(throwable1, throwableRef)
         upstream.onError(throwable2)
-        assertSame(throwable2, throwableRef.value)
+        assertSame(throwable2, throwableRef)
     }
 
     @Test

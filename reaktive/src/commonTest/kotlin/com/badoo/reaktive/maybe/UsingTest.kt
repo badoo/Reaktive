@@ -4,9 +4,6 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.test.maybe.DefaultMaybeObserver
 import com.badoo.reaktive.test.maybe.TestMaybe
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.getValue
-import com.badoo.reaktive.utils.atomic.setValue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -39,7 +36,7 @@ class UsingTest :
 
     @Test
     fun disposes_resource_before_upstream_disposed_WHEN_eager_true_and_downstream_disposed() {
-        var isResourceDisposedBeforeUpstreamDisposed by AtomicBoolean()
+        var isResourceDisposedBeforeUpstreamDisposed = false
         val observer =
             maybeUsing(eager = true) { resource ->
                 maybeUnsafe { observer ->
@@ -55,7 +52,7 @@ class UsingTest :
 
     @Test
     fun disposes_resource_after_upstream_disposed_WHEN_eager_false_and_downstream_disposed() {
-        var isResourceDisposedBeforeUpstreamDisposed by AtomicBoolean()
+        var isResourceDisposedBeforeUpstreamDisposed = false
 
         val observer =
             maybeUsing(eager = false) { resource ->
@@ -72,7 +69,7 @@ class UsingTest :
 
     @Test
     fun disposes_resource_before_downstream_signalled_onComplete_WHEN_eager_true_and_upstream_completed() {
-        var isResourceDisposedBeforeDownstreamOnComplete by AtomicBoolean()
+        var isResourceDisposedBeforeDownstreamOnComplete = false
         val upstream = TestMaybe<Int>()
 
         maybeUsing(eager = true, sourceSupplier = { upstream }).subscribe(
@@ -91,7 +88,7 @@ class UsingTest :
 
     @Test
     fun disposes_resource_before_downstream_signalled_onSuccess_WHEN_eager_true_and_upstream_succeeded() {
-        var isResourceDisposedBeforeDownstreamOnSuccess by AtomicBoolean()
+        var isResourceDisposedBeforeDownstreamOnSuccess = false
         val upstream = TestMaybe<Int>()
 
         maybeUsing(eager = true, sourceSupplier = { upstream }).subscribe(
@@ -110,7 +107,7 @@ class UsingTest :
 
     @Test
     fun disposes_resource_before_downstream_signalled_onError_WHEN_eager_true_and_upstream_produced_error() {
-        var isResourceDisposedBeforeDownstreamOnError by AtomicBoolean()
+        var isResourceDisposedBeforeDownstreamOnError = false
         val upstream = TestMaybe<Int>()
 
         maybeUsing(eager = true, sourceSupplier = { upstream }).subscribe(
@@ -129,7 +126,7 @@ class UsingTest :
 
     @Test
     fun disposes_resource_after_downstream_signalled_onComplete_WHEN_eager_false_and_upstream_completed() {
-        var isResourceDisposedBeforeDownstreamOnComplete by AtomicBoolean()
+        var isResourceDisposedBeforeDownstreamOnComplete = false
         val upstream = TestMaybe<Int>()
 
         maybeUsing(eager = false, sourceSupplier = { upstream }).subscribe(
@@ -148,7 +145,7 @@ class UsingTest :
 
     @Test
     fun disposes_resource_after_downstream_signalled_onSuccess_WHEN_eager_false_and_upstream_succeeded() {
-        var isResourceDisposedBeforeDownstreamOnSuccess by AtomicBoolean()
+        var isResourceDisposedBeforeDownstreamOnSuccess = false
         val upstream = TestMaybe<Int>()
 
         maybeUsing(eager = false, sourceSupplier = { upstream }).subscribe(
@@ -167,7 +164,7 @@ class UsingTest :
 
     @Test
     fun disposes_resource_after_downstream_signalled_onError_WHEN_eager_false_and_upstream_produced_error() {
-        var isResourceDisposedBeforeDownstreamOnError by AtomicBoolean()
+        var isResourceDisposedBeforeDownstreamOnError = false
         val upstream = TestMaybe<Int>()
 
         maybeUsing(eager = false, sourceSupplier = { upstream }).subscribe(

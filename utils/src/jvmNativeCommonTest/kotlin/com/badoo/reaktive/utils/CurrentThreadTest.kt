@@ -1,6 +1,5 @@
 package com.badoo.reaktive.utils
 
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.test.doInBackgroundBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,14 +20,13 @@ class CurrentThreadTest {
 
     @Test
     fun currentThreadId_returns_same_value_for_worker_thread() {
-        val ids = AtomicReference<Array<Long>?>(null)
+        var ids: Array<Long>? = null
 
         doInBackgroundBlocking {
-            ids.value = Array(3) { currentThreadId }
+            ids = Array(3) { currentThreadId }
         }
 
-        assertNotNull(ids.value)
-        val (id1, id2, id3) = ids.value!!
+        val (id1, id2, id3) = assertNotNull(ids)
         assertEquals(id1, id2)
         assertEquals(id2, id3)
     }
@@ -36,31 +34,31 @@ class CurrentThreadTest {
     @Test
     fun currentThreadId_returns_different_values_for_main_and_worker_thread() {
         val mainThreadId = currentThreadId
-        val workerThreadId = AtomicReference<Long?>(null)
+        var workerThreadId: Long? = null
 
         doInBackgroundBlocking {
-            workerThreadId.value = currentThreadId
+            workerThreadId = currentThreadId
         }
 
-        assertNotNull(workerThreadId.value)
-        assertNotEquals(mainThreadId, workerThreadId.value)
+        assertNotNull(workerThreadId)
+        assertNotEquals(mainThreadId, workerThreadId)
     }
 
     @Test
     fun currentThreadId_returns_different_values_for_different_worker_threads() {
-        val workerThreadId1 = AtomicReference<Long?>(null)
-        val workerThreadId2 = AtomicReference<Long?>(null)
+        var workerThreadId1: Long? = null
+        var workerThreadId2: Long? = null
 
         doInBackgroundBlocking {
-            workerThreadId1.value = currentThreadId
+            workerThreadId1 = currentThreadId
         }
 
         doInBackgroundBlocking {
-            workerThreadId2.value = currentThreadId
+            workerThreadId2 = currentThreadId
         }
 
-        assertNotNull(workerThreadId1.value)
-        assertNotNull(workerThreadId2.value)
-        assertNotEquals(workerThreadId1.value, workerThreadId2.value)
+        assertNotNull(workerThreadId1)
+        assertNotNull(workerThreadId2)
+        assertNotEquals(workerThreadId1, workerThreadId2)
     }
 }

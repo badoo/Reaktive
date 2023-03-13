@@ -5,39 +5,37 @@ import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableEmitter
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.observable.observable
-import com.badoo.reaktive.utils.atomic.AtomicReference
 
 class TestObservableRelay<T> : Observable<T>, ObservableEmitter<T> {
 
-    private val emitterRef = AtomicReference<ObservableEmitter<T>?>(null)
-    private val emitter: ObservableEmitter<T> get() = requireNotNull(emitterRef.value)
+    private var emitter: ObservableEmitter<T>? = null
 
     private val observable =
-        observable<T> {
-            check(emitterRef.compareAndSet(null, it)) {
-                "Already subscribed"
-            }
+        observable {
+            check(emitter == null) { "Already subscribed" }
+
+            emitter = it
         }
 
     override fun subscribe(observer: ObservableObserver<T>) {
         observable.subscribe(observer)
     }
 
-    override val isDisposed: Boolean get() = emitter.isDisposed
+    override val isDisposed: Boolean get() = requireNotNull(emitter).isDisposed
 
     override fun setDisposable(disposable: Disposable?) {
-        emitter.setDisposable(disposable)
+        requireNotNull(emitter).setDisposable(disposable)
     }
 
     override fun onNext(value: T) {
-        emitter.onNext(value)
+        requireNotNull(emitter).onNext(value)
     }
 
     override fun onComplete() {
-        emitter.onComplete()
+        requireNotNull(emitter).onComplete()
     }
 
     override fun onError(error: Throwable) {
-        emitter.onError(error)
+        requireNotNull(emitter).onError(error)
     }
 }

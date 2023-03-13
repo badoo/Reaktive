@@ -15,7 +15,6 @@ import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -271,20 +270,20 @@ class DebounceWithSelectorTest :
     fun disposes_previous_inner_source_disposable_IF_it_is_provided_after_new_source_disposable() {
         val source = TestObservable<Int>()
 
-        val innerObserver1 = AtomicReference<CompletableObserver?>(null)
-        val inner1 = completableUnsafe { observer -> innerObserver1.value = observer }
+        var innerObserver1: CompletableObserver? = null
+        val inner1 = completableUnsafe { observer -> innerObserver1 = observer }
         val innerDisposable1 = Disposable()
 
-        val innerObserver2 = AtomicReference<CompletableObserver?>(null)
-        val inner2 = completableUnsafe { observer -> innerObserver2.value = observer }
+        var innerObserver2: CompletableObserver? = null
+        val inner2 = completableUnsafe { observer -> innerObserver2 = observer }
 
         val inners = listOf(inner1, inner2)
         source.debounce { inners[it] }.test()
 
         source.onNext(0)
         source.onNext(1)
-        innerObserver2.value!!.onSubscribe(Disposable())
-        innerObserver1.value!!.onSubscribe(innerDisposable1)
+        requireNotNull(innerObserver2).onSubscribe(Disposable())
+        requireNotNull(innerObserver1).onSubscribe(innerDisposable1)
 
         assertTrue(innerDisposable1.isDisposed)
     }
@@ -293,11 +292,11 @@ class DebounceWithSelectorTest :
     fun does_not_dispose_new_inner_source_disposable_WHEN_previous_inner_source_disposable_is_provided_after_new_one() {
         val source = TestObservable<Int>()
 
-        val innerObserver1 = AtomicReference<CompletableObserver?>(null)
-        val inner1 = completableUnsafe { observer -> innerObserver1.value = observer }
+        var innerObserver1: CompletableObserver? = null
+        val inner1 = completableUnsafe { observer -> innerObserver1 = observer }
 
-        val innerObserver2 = AtomicReference<CompletableObserver?>(null)
-        val inner2 = completableUnsafe { observer -> innerObserver2.value = observer }
+        var innerObserver2: CompletableObserver? = null
+        val inner2 = completableUnsafe { observer -> innerObserver2 = observer }
         val innerDisposable2 = Disposable()
 
         val inners = listOf(inner1, inner2)
@@ -305,8 +304,8 @@ class DebounceWithSelectorTest :
 
         source.onNext(0)
         source.onNext(1)
-        innerObserver2.value!!.onSubscribe(innerDisposable2)
-        innerObserver1.value!!.onSubscribe(Disposable())
+        requireNotNull(innerObserver2).onSubscribe(innerDisposable2)
+        requireNotNull(innerObserver1).onSubscribe(Disposable())
 
         assertFalse(innerDisposable2.isDisposed)
     }
@@ -317,5 +316,4 @@ class DebounceWithSelectorTest :
 
     private fun createInnerSources(count: Int): List<TestCompletable> =
         List(count) { TestCompletable() }
-
 }

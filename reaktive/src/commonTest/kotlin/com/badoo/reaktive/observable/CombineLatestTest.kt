@@ -10,7 +10,6 @@ import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertNotSame
 
@@ -19,15 +18,12 @@ class CombineLatestTest {
     private val relay1 = TestObservableRelay<String?>()
     private val relay2 = TestObservableRelay<String?>()
     private val relay3 = TestObservableRelay<String?>()
-    private val mapper = AtomicReference<(List<String?>) -> String?> { it.joinToString(separator = ",") }
-    private val observer = createAndSubscribe(sources = listOf(relay1, relay2, relay3), mapper = mapper)
+    private var mapper: (List<String?>) -> String? = { it.joinToString(separator = ",") }
+    private val observer = createAndSubscribe(sources = listOf(relay1, relay2, relay3))
 
-    private fun createAndSubscribe(
-        sources: Iterable<Observable<String?>>,
-        mapper: AtomicReference<(List<String?>) -> String?>
-    ): TestObservableObserver<String?> =
+    private fun createAndSubscribe(sources: Iterable<Observable<String?>>): TestObservableObserver<String?> =
         sources
-            .combineLatest { mapper.value(it) }
+            .combineLatest { mapper(it) }
             .test()
 
     @Test
@@ -69,7 +65,7 @@ class CombineLatestTest {
 
     @Test
     fun null_values_to_downstream_are_allowed() {
-        mapper.value = { null }
+        mapper = { null }
         relay1.onNext(null)
         relay3.onNext(null)
         relay2.onNext(null)
@@ -158,7 +154,7 @@ class CombineLatestTest {
 
     @Test
     fun completed_WHEN_sources_are_empty() {
-        val observer = createAndSubscribe(sources = emptyList(), mapper = mapper)
+        val observer = createAndSubscribe(sources = emptyList())
 
         observer.assertComplete()
     }
@@ -167,7 +163,7 @@ class CombineLatestTest {
     fun supplies_different_list_instances_WHEN_mapper_called() {
         val lists = ArrayList<List<String?>>()
 
-        mapper.value =
+        mapper =
             {
                 lists += it
                 it.joinToString()

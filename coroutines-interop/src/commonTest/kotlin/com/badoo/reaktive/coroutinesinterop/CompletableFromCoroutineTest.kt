@@ -3,9 +3,6 @@ package com.badoo.reaktive.coroutinesinterop
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.completable.assertComplete
 import com.badoo.reaktive.test.completable.test
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getValue
-import com.badoo.reaktive.utils.atomic.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -45,7 +42,7 @@ class CompletableFromCoroutineTest {
 
     @Test
     fun cancels_coroutine_WHEN_disposable_is_disposed() {
-        var scope by AtomicReference<CoroutineScope?>(null)
+        var scope: CoroutineScope? = null
         val observer = completableFromCoroutine { scope = this }.test()
 
         observer.dispose()

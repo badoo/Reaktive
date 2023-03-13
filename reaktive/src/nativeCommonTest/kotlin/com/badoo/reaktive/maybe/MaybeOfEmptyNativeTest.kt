@@ -4,24 +4,23 @@ import com.badoo.reaktive.test.doInBackgroundBlocking
 import com.badoo.reaktive.test.maybe.TestMaybeObserver
 import com.badoo.reaktive.test.maybe.assertComplete
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 
 class MaybeOfEmptyNativeTest {
 
     @Test
     fun works_from_background_threads() {
-        val observer1 = AtomicReference<TestMaybeObserver<Int>?>(null)
-        val observer2 = AtomicReference<TestMaybeObserver<Int>?>(null)
+        var observer1: TestMaybeObserver<Int>? = null
+        var observer2: TestMaybeObserver<Int>? = null
 
         doInBackgroundBlocking {
-            observer1.value = maybeOfEmpty<Int>().test()
+            observer1 = maybeOfEmpty<Int>().test()
         }
         doInBackgroundBlocking {
-            observer2.value = maybeOfEmpty<Int>().test()
+            observer2 = maybeOfEmpty<Int>().test()
         }
 
-        observer1.value!!.assertComplete()
-        observer2.value!!.assertComplete()
+        requireNotNull(observer1).assertComplete()
+        requireNotNull(observer2).assertComplete()
     }
 }

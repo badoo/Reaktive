@@ -4,9 +4,6 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getValue
-import com.badoo.reaktive.utils.atomic.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
@@ -73,7 +70,7 @@ class FlowAsObservableTest {
 
     @Test
     fun cancels_flow_WHEN_disposable_is_disposed() {
-        var scope by AtomicReference<CoroutineScope?>(null)
+        var scope: CoroutineScope? = null
 
         val observer =
             channelFlow<Nothing> {

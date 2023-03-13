@@ -1,7 +1,6 @@
 package com.badoo.reaktive.coroutinesinterop
 
 import com.badoo.reaktive.utils.NANOS_IN_MILLI
-import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.clock.Clock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -245,22 +244,22 @@ class CoroutineContextSchedulerJvmTest {
     }
 
     private class TestTask {
-        private val runCount = AtomicInt()
+        private var runCount = 0
 
         fun run() {
-            runCount.addAndGet(1)
+            runCount++
         }
 
         fun assertDidNotRun() {
-            assertEquals(0, runCount.value)
+            assertEquals(0, runCount)
         }
 
         fun assertSingleRun() {
-            assertEquals(1, runCount.value)
+            assertEquals(1, runCount)
         }
 
         fun reset() {
-            runCount.value = 0
+            runCount = 0
         }
     }
 }
