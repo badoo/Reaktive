@@ -6,7 +6,6 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.addTo
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.lock.Lock
 import com.badoo.reaktive.utils.lock.synchronized
@@ -117,24 +116,23 @@ private class FlatMapQueue<in T : Any>(
 ) : Disposable {
 
     private val lock = Lock()
-    private val count = AtomicInt(limit)
+    private var count = limit
     private val queue = ArrayDeque<T>()
 
-    private val _isDisposed = AtomicBoolean(false)
-    override val isDisposed: Boolean get() = _isDisposed.value
+    override var isDisposed: Boolean = false
 
     override fun dispose() {
         lock.synchronized {
-            _isDisposed.value = true
-            count.value = 0
+            isDisposed = true
+            count = 0
             queue.clear()
         }
     }
 
     fun offer(value: T) {
         sync {
-            if (count.value > 0) {
-                count.value--
+            if (count > 0) {
+                count--
                 value
             } else {
                 queue.addLast(value)
@@ -147,7 +145,7 @@ private class FlatMapQueue<in T : Any>(
         sync {
             val next = queue.removeFirstOrNull()
             if (next == null) {
-                count.value++
+                count++
             }
             next
         }?.also(callback)
@@ -155,6 +153,6 @@ private class FlatMapQueue<in T : Any>(
 
     private inline fun <T> sync(block: () -> T): T? =
         lock.synchronized {
-            if (_isDisposed.value) null else block()
+            if (isDisposed) null else block()
         }
 }

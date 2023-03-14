@@ -5,7 +5,6 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observable
-import com.badoo.reaktive.utils.atomic.AtomicInt
 
 /**
  * When the [Single] signals `onSuccess`, re-subscribes to the [Single] if the [predicate] function returns `false`.
@@ -16,7 +15,7 @@ fun <T> Single<T>.repeatUntil(predicate: (T) -> Boolean): Observable<T> =
     observable { emitter ->
         val observer =
             object : SingleObserver<T>, ErrorCallback by emitter {
-                private val recursiveGuard = AtomicInt()
+                private var recursiveGuard = 0
 
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -39,10 +38,10 @@ fun <T> Single<T>.repeatUntil(predicate: (T) -> Boolean): Observable<T> =
 
                 fun subscribeToUpstream() {
                     // Prevents recursive subscriptions
-                    if (recursiveGuard.addAndGet(1) == 1) {
+                    if (++recursiveGuard == 1) {
                         do {
                             subscribe(this)
-                        } while (recursiveGuard.addAndGet(-1) > 0)
+                        } while (--recursiveGuard > 0)
                     }
                 }
             }

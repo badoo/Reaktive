@@ -5,7 +5,6 @@ import com.badoo.reaktive.base.subscribeSafe
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.SerialDisposable
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 
 /**
  * Returns an [Observable] that emits the elements emitted by the source [Observable],
@@ -29,19 +28,19 @@ fun <T> Observable<T>.switchIfEmpty(otherObservable: () -> Observable<T>): Obser
 
         subscribe(
             object : ObservableObserver<T>, ErrorCallback by emitter {
-                private val isEmpty = AtomicBoolean(true)
+                private var isEmpty = true
 
                 override fun onSubscribe(disposable: Disposable) {
                     serialDisposable.set(disposable)
                 }
 
                 override fun onNext(value: T) {
-                    isEmpty.value = false
+                    isEmpty = false
                     emitter.onNext(value)
                 }
 
                 override fun onComplete() {
-                    if (isEmpty.value) {
+                    if (isEmpty) {
                         emitter.tryCatch(otherObservable) {
                             it.subscribeSafe(
                                 object : ObservableObserver<T>, ObservableCallbacks<T> by emitter {

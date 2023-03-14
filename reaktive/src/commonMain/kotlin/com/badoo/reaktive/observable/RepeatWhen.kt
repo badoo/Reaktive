@@ -8,7 +8,6 @@ import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.MaybeObserver
-import com.badoo.reaktive.utils.atomic.AtomicInt
 
 /**
  * Returns an [Observable] that calls the [handler] when this [Observable] completes,
@@ -22,8 +21,8 @@ fun <T> Observable<T>.repeatWhen(handler: (attempt: Int) -> Maybe<*>): Observabl
     observable { emitter ->
         val observer =
             object : ObservableObserver<T>, ValueCallback<T> by emitter, ErrorCallback by emitter {
-                private val repeatNumber = AtomicInt()
-                private val recursiveGuard = AtomicInt()
+                private var repeatNumber = 0
+                private var recursiveGuard = 0
 
                 private val repeatObserver: MaybeObserver<Any?> =
                     object : MaybeObserver<Any?>, Observer by this, CompletableCallbacks by emitter {
@@ -38,16 +37,17 @@ fun <T> Observable<T>.repeatWhen(handler: (attempt: Int) -> Maybe<*>): Observabl
 
                 override fun onComplete() {
                     emitter.tryCatch {
-                        handler(repeatNumber.addAndGet(1)).subscribe(repeatObserver)
+                        repeatNumber++
+                        handler(repeatNumber).subscribe(repeatObserver)
                     }
                 }
 
                 fun subscribeToUpstream() {
                     // Prevents recursive subscriptions
-                    if (recursiveGuard.addAndGet(1) == 1) {
+                    if (++recursiveGuard == 1) {
                         do {
                             subscribe(this)
-                        } while (recursiveGuard.addAndGet(-1) > 0)
+                        } while (--recursiveGuard > 0)
                     }
                 }
             }

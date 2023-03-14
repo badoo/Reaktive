@@ -4,7 +4,6 @@ import com.badoo.reaktive.base.ErrorCallback
 import com.badoo.reaktive.base.ValueCallback
 import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.atomic.AtomicInt
 
 /**
  * Returns an [Observable] that calls the [predicate] when this [Observable] completes
@@ -16,7 +15,7 @@ fun <T> Observable<T>.repeatUntil(predicate: () -> Boolean): Observable<T> =
     observable { emitter ->
         val observer =
             object : ObservableObserver<T>, ValueCallback<T> by emitter, ErrorCallback by emitter {
-                private val recursiveGuard = AtomicInt()
+                private var recursiveGuard = 0
 
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -39,10 +38,10 @@ fun <T> Observable<T>.repeatUntil(predicate: () -> Boolean): Observable<T> =
 
                 fun subscribeToUpstream() {
                     // Prevents recursive subscriptions
-                    if (recursiveGuard.addAndGet(1) == 1) {
+                    if (++recursiveGuard == 1) {
                         do {
                             subscribe(this)
-                        } while (recursiveGuard.addAndGet(-1) > 0)
+                        } while (--recursiveGuard > 0)
                     }
                 }
             }
