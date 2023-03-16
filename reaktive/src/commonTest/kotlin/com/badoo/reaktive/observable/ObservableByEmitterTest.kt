@@ -10,8 +10,6 @@ import com.badoo.reaktive.test.observable.assertNoValues
 import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -196,24 +194,24 @@ class ObservableByEmitterTest {
 
     @Test
     fun assigned_disposable_is_disposed_AFTER_onComplete_is_signalled() {
-        val events = atomicList<String>()
+        val events = ArrayList<String>()
         observable.subscribe(observer(onComplete = { events += "onComplete" }))
         emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onComplete()
 
-        assertEquals(listOf("onComplete", "dispose"), events.value)
+        assertEquals(listOf("onComplete", "dispose"), events)
     }
 
     @Test
     fun assigned_disposable_is_disposed_AFTER_onError_is_signalled() {
-        val events = atomicList<String>()
+        val events = ArrayList<String>()
         observable.subscribe(observer(onError = { events += "onError" }))
         emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onError(Throwable())
 
-        assertEquals(listOf("onError", "dispose"), events.value)
+        assertEquals(listOf("onError", "dispose"), events)
     }
 
     @Test

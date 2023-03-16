@@ -10,8 +10,6 @@ import com.badoo.reaktive.test.maybe.assertNotComplete
 import com.badoo.reaktive.test.maybe.assertNotSuccess
 import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -219,35 +217,35 @@ class MaybeByEmitterTest {
 
     @Test
     fun assigned_disposable_is_disposed_AFTER_onSuccess_is_signalled() {
-        val events = atomicList<String>()
+        val events = ArrayList<String>()
         maybe.subscribe(observer(onSuccess = { events += "onSuccess" }))
         emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onSuccess(0)
 
-        assertEquals(listOf("onSuccess", "dispose"), events.value)
+        assertEquals(listOf("onSuccess", "dispose"), events)
     }
 
     @Test
     fun assigned_disposable_is_disposed_WHEN_onComplete_is_signalled() {
-        val events = atomicList<String>()
+        val events = ArrayList<String>()
         maybe.subscribe(observer(onComplete = { events += "onComplete" }))
         emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onComplete()
 
-        assertEquals(listOf("onComplete", "dispose"), events.value)
+        assertEquals(listOf("onComplete", "dispose"), events)
     }
 
     @Test
     fun assigned_disposable_is_disposed_WHEN_onError_is_signalled() {
-        val events = atomicList<String>()
+        val events = ArrayList<String>()
         maybe.subscribe(observer(onError = { events += "onError" }))
         emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onError(Throwable())
 
-        assertEquals(listOf("onError", "dispose"), events.value)
+        assertEquals(listOf("onError", "dispose"), events)
     }
 
     @Test

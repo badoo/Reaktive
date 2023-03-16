@@ -12,8 +12,6 @@ import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.single.TestSingle
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.math.max
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -95,7 +93,7 @@ class RepeatWhenTest : SingleToObservableTests by SingleToObservableTestsImpl({ 
     fun calls_handler_with_upstream_values() {
         val upstream = TestSingle<Int?>()
         val handlerMaybe = TestMaybe<Unit>()
-        val values = atomicList<Int?>()
+        val values = ArrayList<Int?>()
 
         upstream
             .repeatWhen { _, value ->
@@ -110,7 +108,7 @@ class RepeatWhenTest : SingleToObservableTests by SingleToObservableTestsImpl({ 
         handlerMaybe.onSuccess(Unit)
         upstream.onSuccess(1)
 
-        assertEquals(listOf(0, null, 1), values.value)
+        assertEquals(listOf(0, null, 1), values)
     }
 
     @Test

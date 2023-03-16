@@ -8,8 +8,6 @@ import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.single.assertNotSuccess
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -149,24 +147,24 @@ class SingleByEmitterTest {
 
     @Test
     fun assigned_disposable_is_disposed_WHEN_onSuccess_is_signalled() {
-        val events = atomicList<String>()
+        val events = ArrayList<String>()
         single.subscribe(observer(onSuccess = { events += "onSuccess" }))
         emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onSuccess(0)
 
-        assertEquals(listOf("onSuccess", "dispose"), events.value)
+        assertEquals(listOf("onSuccess", "dispose"), events)
     }
 
     @Test
     fun assigned_disposable_is_disposed_WHEN_onError_is_signalled() {
-        val events = atomicList<String>()
+        val events = ArrayList<String>()
         single.subscribe(observer(onError = { events += "onError" }))
         emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onError(Throwable())
 
-        assertEquals(listOf("onError", "dispose"), events.value)
+        assertEquals(listOf("onError", "dispose"), events)
     }
 
     @Test
