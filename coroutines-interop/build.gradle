@@ -12,7 +12,7 @@ kotlin {
             dependencies {
                 implementation libs.kotlinx.coroutines.core
                 implementation project(':reaktive')
-                implementation project(':utils')
+                implementation project(':utils-internal')
             }
         }
 

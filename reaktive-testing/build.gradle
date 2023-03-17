@@ -9,7 +9,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation project(':reaktive')
-                implementation project(':utils')
+                implementation project(':utils-internal')
             }
         }
     }
