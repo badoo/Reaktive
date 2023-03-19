@@ -1,10 +1,5 @@
 package com.badoo.reaktive.subject.unicast
 
-import com.badoo.reaktive.observable.ObservableObserver
-import com.badoo.reaktive.subject.DefaultSubject
-import com.badoo.reaktive.subject.Subject
-import com.badoo.reaktive.subject.isActive
-
 /**
  * Create a new instance of [UnicastSubject].
  *
@@ -13,46 +8,11 @@ import com.badoo.reaktive.subject.isActive
  * @param onTerminate called when the returned [UnicastSubject] receives a terminal event (`onComplete` or `onError`)
  */
 @Suppress("FunctionName")
-fun <T> UnicastSubject(bufferSize: Int = Int.MAX_VALUE, onTerminate: () -> Unit = {}): UnicastSubject<T> =
-    object : DefaultSubject<T>(), UnicastSubject<T> {
-        private var queue: ArrayDeque<T>? = ArrayDeque()
+fun <T> UnicastSubject(bufferSize: Int = Int.MAX_VALUE, onTerminate: () -> Unit = {}): UnicastSubject<T> {
+    require(bufferSize > 0) { "Buffer size must be a positive value" }
 
-        override fun onSubscribed(observer: ObservableObserver<T>): Boolean {
-            queue?.also {
-                queue = null
-                it.forEach(observer::onNext)
-                return true
-            }
-
-            observer.onError(IllegalStateException("Only a single observer allowed for UnicastSubject"))
-
-            return false
-        }
-
-        override fun onBeforeNext(value: T) {
-            super.onBeforeNext(value)
-
-            queue?.apply {
-                if (size >= bufferSize) {
-                    removeFirst()
-                }
-                addLast(value)
-            }
-        }
-
-        override fun onAfterUnsubscribe(observer: ObservableObserver<T>) {
-            super.onAfterUnsubscribe(observer)
-
-            if (isActive) {
-                status = Subject.Status.Completed
-            }
-        }
-
-        override fun onStatusChanged(status: Subject.Status) {
-            super.onStatusChanged(status)
-
-            if (!status.isActive) {
-                onTerminate()
-            }
-        }
-    }
+    return UnicastSubjectImpl(
+        bufferLimit = bufferSize,
+        onTerminate = onTerminate,
+    )
+}

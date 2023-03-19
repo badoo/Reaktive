@@ -1,10 +1,12 @@
 package com.badoo.reaktive.subject
 
+import com.badoo.reaktive.observable.subscribe
 import com.badoo.reaktive.subject.replay.ReplaySubject
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 
 class ReplaySubjectTest : SubjectGenericTests by SubjectGenericTests(ReplaySubject()) {
 
@@ -83,5 +85,44 @@ class ReplaySubjectTest : SubjectGenericTests by SubjectGenericTests(ReplaySubje
         val observer = subject.test()
 
         observer.assertValues(1, null, 2)
+    }
+
+    @Test
+    fun emits_initial_value_synchronously_WHEN_subscribed_recursively() {
+        var emittedValues: List<Int?>? = null
+
+        subject.subscribe {
+            if (it == 2) {
+                emittedValues = subject.test().values
+            }
+        }
+
+        subject.onNext(1)
+        subject.onNext(null)
+        subject.onNext(2)
+
+        assertContentEquals(listOf(1, null, 2), emittedValues)
+    }
+
+    @Test
+    fun emits_all_queued_values_WHEN_subscribed_recursively() {
+        var emittedValues: List<Int?>? = null
+
+        var isSubscribedRecursively = false
+        subject.subscribe {
+            if ((it == 2) && !isSubscribedRecursively) {
+                isSubscribedRecursively = true
+                subject.onNext(3)
+                subject.onNext(null)
+                subject.onNext(4)
+                emittedValues = subject.test().values
+            }
+        }
+
+        subject.onNext(1)
+        subject.onNext(null)
+        subject.onNext(2)
+
+        assertContentEquals(listOf(1, null, 2, 3, null, 4), emittedValues)
     }
 }

@@ -1,13 +1,16 @@
 package com.badoo.reaktive.subject
 
+import com.badoo.reaktive.observable.subscribe
 import com.badoo.reaktive.subject.unicast.UnicastSubject
 import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertNoValues
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class UnicastSubjectTest : SubjectGenericTests by SubjectGenericTests(UnicastSubject(), 1) {
 
@@ -44,6 +47,19 @@ class UnicastSubjectTest : SubjectGenericTests by SubjectGenericTests(UnicastSub
         val observer = subject.test()
 
         observer.assertError { it is IllegalStateException }
+    }
+
+    @Test
+    fun produces_IllegalStateException_WHEN_second_subscriber_recursively() {
+        var observer: TestObservableObserver<*>? = null
+
+        subject.subscribe {
+            observer = subject.test()
+        }
+
+        subject.onNext(0)
+
+        assertNotNull(observer).assertError { it is IllegalStateException }
     }
 
     @Test

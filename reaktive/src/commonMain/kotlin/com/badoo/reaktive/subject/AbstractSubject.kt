@@ -1,11 +1,13 @@
 package com.badoo.reaktive.subject
 
+import com.badoo.reaktive.base.Observer
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.serializer.serializer
 
-internal open class DefaultSubject<T> : Subject<T> {
+internal abstract class AbstractSubject<T, S> : Subject<T> {
 
     private val observers = ArrayList<ObservableObserver<T>>()
     private val serializer = serializer(onValue = ::onSerializedValue)
@@ -17,10 +19,6 @@ internal open class DefaultSubject<T> : Subject<T> {
             _status.value = value
             onStatusChanged(value)
         }
-
-    override fun subscribe(observer: ObservableObserver<T>) {
-        serializer.accept(Event.OnSubscribe(observer))
-    }
 
     override fun onNext(value: T) {
         serializer.accept(value)
@@ -34,9 +32,18 @@ internal open class DefaultSubject<T> : Subject<T> {
         serializer.accept(Event.OnError(error))
     }
 
-    protected open fun onSubscribed(observer: ObservableObserver<T>): Boolean = true
+    protected fun onSubscribe(observer: ObservableObserver<T>, disposable: SerialDisposable, token: S) {
+        serializer.accept(Event.OnSubscribe(observer, disposable, token))
+    }
 
-    protected open fun onAfterSubscribe(observer: ObservableObserver<T>) {
+    protected fun Observer.onSubscribe(): SerialDisposable? {
+        val disposable = SerialDisposable()
+        onSubscribe(disposable)
+
+        return disposable.takeUnless(SerialDisposable::isDisposed)
+    }
+
+    protected open fun onAfterSubscribe(observer: ObservableObserver<T>, token: S) {
     }
 
     protected open fun onAfterUnsubscribe(observer: ObservableObserver<T>) {
@@ -49,11 +56,11 @@ internal open class DefaultSubject<T> : Subject<T> {
     }
 
     private fun onSerializedValue(value: Any?): Boolean {
-        if (value is Event<*>) {
+        if (value is Event<*, *>) {
             @Suppress("UNCHECKED_CAST") // Either Event<T> or T, to avoid unnecessary allocations
-            val event = value as Event<T>
+            val event = value as Event<T, S>
             when (event) {
-                is Event.OnSubscribe -> onSerializedSubscribe(event.observer)
+                is Event.OnSubscribe -> onSerializedSubscribe(event.observer, event.disposable, event.token)
                 is Event.OnUnsubscribe -> onSerializedUnsubscribe(event.observer)
                 is Event.OnComplete -> onSerializedComplete()
                 is Event.OnError -> onSerializedError(event.error)
@@ -66,39 +73,22 @@ internal open class DefaultSubject<T> : Subject<T> {
         return true
     }
 
-    private fun onSerializedSubscribe(observer: ObservableObserver<T>) {
-        val disposable = Disposable { serializer.accept(Event.OnUnsubscribe(observer)) }
-
-        observer.onSubscribe(disposable)
-
+    private fun onSerializedSubscribe(observer: ObservableObserver<T>, disposable: SerialDisposable, token: S) {
         if (disposable.isDisposed) {
             return
         }
 
-        if (!onSubscribed(observer)) {
-            return
-        }
+        disposable.set(Disposable { serializer.accept(Event.OnUnsubscribe(observer)) })
 
-        status.also {
-            when (it) {
-                is Subject.Status.Completed -> {
-                    observer.onComplete()
-                    return
-                }
-
-                is Subject.Status.Error -> {
-                    observer.onError(it.error)
-                    return
-                }
-
-                is Subject.Status.Active -> {
-                }
+        when (val status = status) {
+            Subject.Status.Active -> {
+                observers += observer
+                onAfterSubscribe(observer, token)
             }
+
+            Subject.Status.Completed -> observer.onComplete()
+            is Subject.Status.Error -> observer.onError(status.error)
         }
-
-        observers += observer
-
-        onAfterSubscribe(observer)
     }
 
     private fun onSerializedUnsubscribe(observer: ObservableObserver<T>) {
@@ -127,10 +117,15 @@ internal open class DefaultSubject<T> : Subject<T> {
         }
     }
 
-    private sealed class Event<out T> {
-        class OnSubscribe<T>(val observer: ObservableObserver<T>) : Event<T>()
-        class OnUnsubscribe<T>(val observer: ObservableObserver<T>) : Event<T>()
-        object OnComplete : Event<Nothing>()
-        class OnError(val error: Throwable) : Event<Nothing>()
+    private sealed class Event<out T, out S> {
+        class OnSubscribe<T, out S>(
+            val observer: ObservableObserver<T>,
+            val disposable: SerialDisposable,
+            val token: S,
+        ) : Event<T, S>()
+
+        class OnUnsubscribe<T>(val observer: ObservableObserver<T>) : Event<T, Nothing>()
+        object OnComplete : Event<Nothing, Nothing>()
+        class OnError(val error: Throwable) : Event<Nothing, Nothing>()
     }
 }
