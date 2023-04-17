@@ -1,11 +1,13 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.subject.publish.PublishSubject
 import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.test.single.test
 import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
@@ -111,6 +113,18 @@ class RefCountTest {
         assertFalse(disposable.isDisposed)
     }
 
+    // @Test
+    // fun does_not_disconnect_from_upstream_WHEN_subscriberCount_is_1_and_first_or_error_with_replay() {
+    //     val disposable = Disposable()
+    //     val upstream = PublishSubject<Int>()
+    //     val refCount = upstream.replay(1).refCount(subscriberCount = 1)
+    //     refCount.test()
+    //     upstream.onNext(1)
+    //     refCount.firstOrError().test()
+    //
+    //     assertFalse(disposable.isDisposed)
+    // }
+
     @Test
     fun subscription_to_upstream_happens_before_connection_to_upstream() {
         val events = SharedList<String>()
@@ -214,4 +228,5 @@ class RefCountTest {
                 subscribe.invoke(observer)
             }
         }
+
 }
