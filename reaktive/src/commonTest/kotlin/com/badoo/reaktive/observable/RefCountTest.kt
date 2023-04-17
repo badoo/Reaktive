@@ -245,5 +245,4 @@ class RefCountTest {
                 subscribe.invoke(observer)
             }
         }
-
 }
