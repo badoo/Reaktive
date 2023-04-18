@@ -1,5 +1,8 @@
 package com.badoo.reaktive.utils.atomic
 
+import com.badoo.reaktive.utils.InternalReaktiveApi
+
+@InternalReaktiveApi
 actual class AtomicInt actual constructor(initialValue: Int) {
 
     private val delegate = kotlin.native.concurrent.AtomicInt(initialValue)

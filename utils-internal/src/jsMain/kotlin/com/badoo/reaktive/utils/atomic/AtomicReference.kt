@@ -1,5 +1,8 @@
 package com.badoo.reaktive.utils.atomic
 
+import com.badoo.reaktive.utils.InternalReaktiveApi
+
+@InternalReaktiveApi
 actual class AtomicReference<T> actual constructor(initialValue: T) {
 
     actual var value: T = initialValue

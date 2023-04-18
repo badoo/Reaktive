@@ -12,6 +12,8 @@ class BinaryCompatibilityConfigurationPlugin : Plugin<Project> {
         if (Target.shouldDefineTarget(target, Target.ALL_LINUX_HOSTED)) {
             target.apply(plugin = "binary-compatibility-validator")
             target.extensions.configure(ApiValidationExtension::class) {
+                nonPublicMarkers += "com.badoo.reaktive.utils.InternalReaktiveApi"
+
                 if (target.hasProperty("check_publication")) {
                     ignoredProjects.add("check-publication")
                 } else {

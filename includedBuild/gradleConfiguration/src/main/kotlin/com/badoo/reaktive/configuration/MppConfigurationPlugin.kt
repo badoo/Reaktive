@@ -41,6 +41,12 @@ class MppConfigurationPlugin : Plugin<Project> {
 
         project.kotlin {
             sourceSets {
+                all {
+                    languageSettings {
+                        optIn("com.badoo.reaktive.utils.InternalReaktiveApi")
+                    }
+                }
+
                 maybeCreate("jvmJsCommonMain").dependsOn(getByName("commonMain"))
                 maybeCreate("jvmJsCommonTest").dependsOn(getByName("commonTest"))
 

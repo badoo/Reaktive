@@ -1,5 +1,8 @@
 package com.badoo.reaktive.utils.atomic
 
+import com.badoo.reaktive.utils.InternalReaktiveApi
+
+@InternalReaktiveApi
 actual class AtomicBoolean actual constructor(initialValue: Boolean) {
 
     private val delegate = java.util.concurrent.atomic.AtomicBoolean(initialValue)

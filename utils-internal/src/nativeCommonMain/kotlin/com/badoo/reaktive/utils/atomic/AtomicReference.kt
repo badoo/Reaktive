@@ -1,9 +1,11 @@
 package com.badoo.reaktive.utils.atomic
 
+import com.badoo.reaktive.utils.InternalReaktiveApi
 import kotlin.native.concurrent.FreezableAtomicReference
 import kotlin.native.concurrent.freeze
 import kotlin.native.concurrent.isFrozen
 
+@InternalReaktiveApi
 actual class AtomicReference<T> actual constructor(initialValue: T) {
 
     private val delegate = FreezableAtomicReference(initialValue)

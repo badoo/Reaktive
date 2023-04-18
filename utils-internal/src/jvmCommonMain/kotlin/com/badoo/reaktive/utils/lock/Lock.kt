@@ -1,5 +1,8 @@
 package com.badoo.reaktive.utils.lock
 
+import com.badoo.reaktive.utils.InternalReaktiveApi
+
+@InternalReaktiveApi
 actual class Lock {
 
     private val delegate = java.util.concurrent.locks.ReentrantLock()

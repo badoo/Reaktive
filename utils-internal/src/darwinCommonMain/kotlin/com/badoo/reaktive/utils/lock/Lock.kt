@@ -1,5 +1,6 @@
 package com.badoo.reaktive.utils.lock
 
+import com.badoo.reaktive.utils.InternalReaktiveApi
 import com.badoo.reaktive.utils.NANOS_IN_MICRO
 import com.badoo.reaktive.utils.NANOS_IN_SECOND
 import kotlinx.cinterop.Arena
@@ -31,6 +32,7 @@ import platform.posix.timespec
 import platform.posix.timeval
 import kotlin.native.internal.createCleaner
 
+@InternalReaktiveApi
 actual class Lock {
 
     private val arena = Arena()
