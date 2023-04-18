@@ -32,6 +32,8 @@ fun <T> ConnectableObservable<T>.refCount(subscriberCount: Int = 1): Observable<
                 }
             }
 
+        val shouldConnect = subscribeCount.addAndGet(1) == subscriberCount
+
         this@refCount.subscribe(
             object : ObservableObserver<T>, ObservableCallbacks<T> by emitter {
                 override fun onSubscribe(disposable: Disposable) {
@@ -40,7 +42,7 @@ fun <T> ConnectableObservable<T>.refCount(subscriberCount: Int = 1): Observable<
             }
         )
 
-        if (subscribeCount.addAndGet(1) == subscriberCount) {
+        if (shouldConnect) {
             this@refCount.connect {
                 disposable.value = it
             }

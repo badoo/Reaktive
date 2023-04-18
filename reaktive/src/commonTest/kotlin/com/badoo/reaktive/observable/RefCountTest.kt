@@ -1,14 +1,18 @@
 package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.subject.publish.PublishSubject
 import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
+import com.badoo.reaktive.test.single.test
 import com.badoo.reaktive.utils.SharedList
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
+import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -108,6 +112,33 @@ class RefCountTest {
 
         observer1.dispose()
 
+        assertFalse(disposable.isDisposed)
+    }
+
+    @Test
+    fun does_not_disconnect_WHEN_connected_and_new_observer_disposed_synchronously_on_emission() {
+        val disposable = Disposable()
+        val upstream =
+            testUpstream(
+                connect = { onConnect -> onConnect?.invoke(disposable) },
+                subscribe = { observer ->
+                    observer.onSubscribe(Disposable())
+                    observer.onNext(1)
+                }
+            )
+        val refCount = upstream.refCount(subscriberCount = 1)
+        refCount.test() // First subscription
+        refCount.subscribe(
+            object : DefaultObservableObserver<Int?> {
+                private var disposableRef = AtomicReference<Disposable?>(null)
+                override fun onSubscribe(disposable: Disposable) {
+                    disposableRef.value = disposable
+                }
+                override fun onNext(value: Int?) {
+                    requireNotNull(disposableRef.value).dispose()
+                }
+            }
+        )
         assertFalse(disposable.isDisposed)
     }
 
