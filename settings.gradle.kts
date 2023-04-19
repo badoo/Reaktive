@@ -9,7 +9,7 @@ pluginManagement {
 includeBuild("includedBuild/gradleConfiguration")
 
 if (!startParameter.projectProperties.containsKey("check_publication")) {
-    include(":utils")
+    include(":utils-internal")
     include(":reaktive")
     include(":reaktive-testing")
     include(":reaktive-annotations")

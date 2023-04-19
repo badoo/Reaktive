@@ -8,7 +8,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation project(':utils')
+                implementation project(':utils-internal')
                 implementation project(':reaktive-annotations')
             }
         }
