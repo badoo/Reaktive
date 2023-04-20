@@ -7,8 +7,8 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndUpdate
-import com.badoo.reaktive.utils.atomic.update
+import com.badoo.reaktive.utils.atomic.change
+import com.badoo.reaktive.utils.atomic.getAndChange
 
 /**
  * Returns an [Observable] that mirrors the source [Observable], but drops elements
@@ -38,7 +38,7 @@ fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Obser
                     executor.cancel()
 
                     executor.submit(timeoutMillis) {
-                        pendingValue.update {
+                        pendingValue.change {
                             if (it === newPendingValue) null else it
                         }
 
@@ -50,7 +50,7 @@ fun <T> Observable<T>.debounce(timeoutMillis: Long, scheduler: Scheduler): Obser
                     executor.cancel()
 
                     executor.submit {
-                        pendingValue.getAndUpdate { null }?.let { emitter.onNext(it.value) }
+                        pendingValue.getAndChange { null }?.let { emitter.onNext(it.value) }
                         emitter.onComplete()
                     }
                 }

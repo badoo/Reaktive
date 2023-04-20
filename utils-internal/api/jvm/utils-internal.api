@@ -4,13 +4,7 @@ public final class com/badoo/reaktive/utils/ConstantsKt {
 public abstract interface annotation class com/badoo/reaktive/utils/InternalReaktiveApi : java/lang/annotation/Annotation {
 }
 
-public final class com/badoo/reaktive/utils/atomic/AtomicBooleanExtKt {
-}
-
 public final class com/badoo/reaktive/utils/atomic/AtomicIntExtKt {
-}
-
-public final class com/badoo/reaktive/utils/atomic/AtomicLongExtKt {
 }
 
 public final class com/badoo/reaktive/utils/atomic/AtomicReferenceExtKt {

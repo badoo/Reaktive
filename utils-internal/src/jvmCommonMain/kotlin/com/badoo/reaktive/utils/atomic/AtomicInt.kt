@@ -3,18 +3,16 @@ package com.badoo.reaktive.utils.atomic
 import com.badoo.reaktive.utils.InternalReaktiveApi
 
 @InternalReaktiveApi
-actual class AtomicInt actual constructor(initialValue: Int) {
-
-    private val delegate = java.util.concurrent.atomic.AtomicInteger(initialValue)
+actual class AtomicInt actual constructor(initialValue: Int) : java.util.concurrent.atomic.AtomicInteger(initialValue) {
 
     actual var value: Int
-        get() = delegate.get()
+        get() = super.get()
         set(value) {
-            delegate.set(value)
+            super.set(value)
         }
 
-    actual fun addAndGet(delta: Int): Int = delegate.addAndGet(delta)
-
-    actual fun compareAndSet(expectedValue: Int, newValue: Int): Boolean =
-        delegate.compareAndSet(expectedValue, newValue)
+    // See KT-16087
+    override fun toByte(): Byte = value.toByte()
+    override fun toChar(): Char = value.toChar()
+    override fun toShort(): Short = value.toShort()
 }
