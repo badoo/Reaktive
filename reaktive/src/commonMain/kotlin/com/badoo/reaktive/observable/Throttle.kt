@@ -30,7 +30,7 @@ fun <T> Observable<T>.throttle(windowMillis: Long, scheduler: Scheduler = comput
                 }
 
                 override fun onNext(value: T) {
-                    if (gate.compareAndSet(expectedValue = false, newValue = true)) {
+                    if (gate.compareAndSet(false, true)) {
                         emitter.onNext(value)
                         executor.submit(delayMillis = windowMillis) { gate.value = false }
                     }

@@ -1,13 +1,9 @@
 package com.badoo.reaktive.utils.atomic
 
 import com.badoo.reaktive.utils.InternalReaktiveApi
-import kotlin.reflect.KProperty
 
 @InternalReaktiveApi
-fun <T> AtomicReference<T>.getAndSet(value: T): T = getAndUpdate { value }
-
-@InternalReaktiveApi
-inline fun <T> AtomicReference<T>.getAndUpdate(update: (T) -> T): T {
+inline fun <T> AtomicReference<T>.getAndChange(update: (T) -> T): T {
     var prev: T
     do {
         prev = value
@@ -17,7 +13,7 @@ inline fun <T> AtomicReference<T>.getAndUpdate(update: (T) -> T): T {
 }
 
 @InternalReaktiveApi
-inline fun <T, R : T> AtomicReference<T>.updateAndGet(update: (T) -> R): R {
+inline fun <T, R : T> AtomicReference<T>.changeAndGet(update: (T) -> R): R {
     var next: R
     do {
         val prev = value
@@ -28,14 +24,6 @@ inline fun <T, R : T> AtomicReference<T>.updateAndGet(update: (T) -> R): R {
 }
 
 @InternalReaktiveApi
-inline fun <T> AtomicReference<T>.update(update: (T) -> T) {
-    getAndUpdate(update)
-}
-
-@InternalReaktiveApi
-operator fun <T> AtomicReference<T>.getValue(thisRef: Any?, property: KProperty<*>): T = value
-
-@InternalReaktiveApi
-operator fun <T> AtomicReference<T>.setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-    this.value = value
+inline fun <T> AtomicReference<T>.change(update: (T) -> T) {
+    getAndChange(update)
 }

@@ -5,8 +5,7 @@ import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndSet
-import com.badoo.reaktive.utils.atomic.getAndUpdate
+import com.badoo.reaktive.utils.atomic.getAndChange
 import com.badoo.reaktive.utils.clock.Clock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -63,7 +62,7 @@ internal class CoroutineContextScheduler(
 
         override fun cancel() {
             channelRef
-                .getAndUpdate {
+                .getAndChange {
                     it?.let { ChannelHolder() }
                 }
                 ?.cancel()

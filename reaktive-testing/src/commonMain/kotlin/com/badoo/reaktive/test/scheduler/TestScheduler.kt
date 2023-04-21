@@ -5,8 +5,8 @@ import com.badoo.reaktive.scheduler.Scheduler.Executor
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndUpdate
-import com.badoo.reaktive.utils.atomic.update
+import com.badoo.reaktive.utils.atomic.change
+import com.badoo.reaktive.utils.atomic.getAndChange
 
 class TestScheduler(
     isManualProcessing: Boolean = false
@@ -31,14 +31,14 @@ class TestScheduler(
 
     override fun newExecutor(): Executor {
         val executor = ExecutorImpl()
-        _executors.update { it + executor }
+        _executors.change { it + executor }
 
         return executor
     }
 
     override fun destroy() {
         _executors
-            .getAndUpdate { emptyList() }
+            .getAndChange { emptyList() }
             .forEach(Executor::dispose)
     }
 
@@ -80,7 +80,7 @@ class TestScheduler(
     }
 
     private inline fun updateTasks(block: MutableList<Task>.() -> Unit) {
-        tasks.update {
+        tasks.change {
             it.toMutableList().also(block)
         }
     }

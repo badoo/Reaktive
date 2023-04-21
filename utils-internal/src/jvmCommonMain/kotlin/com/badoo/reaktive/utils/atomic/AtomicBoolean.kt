@@ -3,16 +3,11 @@ package com.badoo.reaktive.utils.atomic
 import com.badoo.reaktive.utils.InternalReaktiveApi
 
 @InternalReaktiveApi
-actual class AtomicBoolean actual constructor(initialValue: Boolean) {
-
-    private val delegate = java.util.concurrent.atomic.AtomicBoolean(initialValue)
+actual class AtomicBoolean actual constructor(initialValue: Boolean) : java.util.concurrent.atomic.AtomicBoolean(initialValue) {
 
     actual var value: Boolean
-        get() = delegate.get()
+        get() = super.get()
         set(value) {
-            delegate.set(value)
+            super.set(value)
         }
-
-    actual fun compareAndSet(expectedValue: Boolean, newValue: Boolean): Boolean =
-        delegate.compareAndSet(expectedValue, newValue)
 }

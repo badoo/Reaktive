@@ -1,29 +1,21 @@
 package com.badoo.reaktive.utils.atomic
 
 import com.badoo.reaktive.utils.InternalReaktiveApi
-import kotlin.native.concurrent.FreezableAtomicReference
-import kotlin.native.concurrent.freeze
-import kotlin.native.concurrent.isFrozen
 
 @InternalReaktiveApi
 actual class AtomicReference<T> actual constructor(initialValue: T) {
 
-    private val delegate = FreezableAtomicReference(initialValue)
+    private val delegate = kotlin.native.concurrent.AtomicReference(initialValue)
 
     actual var value: T
         get() = delegate.value
         set(value) {
-            delegate.value = value.freezeIfNeeded()
+            delegate.value = value
         }
+
+    actual fun getAndSet(newValue: T): T =
+        getAndChange { newValue }
 
     actual fun compareAndSet(expectedValue: T, newValue: T): Boolean =
-        delegate.compareAndSet(expectedValue, newValue.freezeIfNeeded())
-
-    private fun T.freezeIfNeeded(): T {
-        if (delegate.isFrozen) {
-            freeze()
-        }
-
-        return this
-    }
+        delegate.compareAndSet(expectedValue, newValue)
 }

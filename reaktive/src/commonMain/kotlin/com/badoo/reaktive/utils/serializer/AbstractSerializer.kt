@@ -2,7 +2,7 @@ package com.badoo.reaktive.utils.serializer
 
 import com.badoo.reaktive.utils.SynchronizedObject
 import com.badoo.reaktive.utils.atomic.AtomicInt
-import com.badoo.reaktive.utils.atomic.updateAndGet
+import com.badoo.reaktive.utils.atomic.changeAndGet
 
 /*
  * Derived from RxJava SerializedEmitter.
@@ -40,7 +40,7 @@ internal abstract class AbstractSerializer<T> : SynchronizedObject(), Serializer
                 addLast(value)
             }
 
-            if (counter.updateAndGet { if (it >= 0) it + 1 else it } != 1) {
+            if (counter.changeAndGet { if (it >= 0) it + 1 else it } != 1) {
                 return
             }
         }

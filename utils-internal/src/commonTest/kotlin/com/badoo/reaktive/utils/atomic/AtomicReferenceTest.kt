@@ -43,7 +43,7 @@ class AtomicReferenceTest {
     @Test
     fun getAndUpdate() {
         val ref = AtomicReference(VALUE_1)
-        val result = ref.getAndUpdate { VALUE_2 }
+        val result = ref.getAndChange { VALUE_2 }
         assertSame(VALUE_1, result)
         assertSame(VALUE_2, ref.value)
     }
@@ -51,7 +51,7 @@ class AtomicReferenceTest {
     @Test
     fun updateAndGet() {
         val ref = AtomicReference(VALUE_1)
-        val result = ref.updateAndGet { VALUE_2 }
+        val result = ref.changeAndGet { VALUE_2 }
         assertSame(VALUE_2, result)
         assertSame(VALUE_2, ref.value)
     }
@@ -67,7 +67,7 @@ class AtomicReferenceTest {
     @Test
     fun update() {
         val ref = AtomicReference(VALUE_1)
-        ref.update { VALUE_2 }
+        ref.change { VALUE_2 }
         assertSame(VALUE_2, ref.value)
     }
 
