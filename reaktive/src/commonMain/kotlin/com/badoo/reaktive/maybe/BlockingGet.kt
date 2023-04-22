@@ -1,7 +1,7 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.lock.Lock
+import com.badoo.reaktive.utils.lock.ConditionLock
 import com.badoo.reaktive.utils.lock.synchronized
 
 /**
@@ -14,52 +14,49 @@ import com.badoo.reaktive.utils.lock.synchronized
  * from the `reaktive-testing` module.
  */
 fun <T> Maybe<T>.blockingGet(): T? {
-    val lock = Lock()
-    val condition = lock.newCondition()
-
     var successResult: T? = null
     var errorResult: Throwable? = null
     var isFinished = false
     var disposableRef: Disposable? = null
 
     val observer =
-        object : MaybeObserver<T> {
+        object : ConditionLock(), MaybeObserver<T> {
             override fun onSubscribe(disposable: Disposable) {
-                lock.synchronized {
+                synchronized {
                     disposableRef = disposable
                 }
             }
 
             override fun onSuccess(value: T) {
-                lock.synchronized {
+                synchronized {
                     successResult = value
                     isFinished = true
-                    condition.signal()
+                    signal()
                 }
             }
 
             override fun onComplete() {
-                lock.synchronized {
+                synchronized {
                     isFinished = true
-                    condition.signal()
+                    signal()
                 }
             }
 
             override fun onError(error: Throwable) {
-                lock.synchronized {
+                synchronized {
                     errorResult = error
                     isFinished = true
-                    condition.signal()
+                    signal()
                 }
             }
         }
 
     subscribe(observer)
 
-    lock.synchronized {
+    observer.synchronized {
         while (!isFinished) {
             try {
-                condition.await()
+                observer.await()
             } catch (e: Throwable) {
                 disposableRef?.dispose()
                 throw e

@@ -10,13 +10,6 @@ public final class com/badoo/reaktive/utils/atomic/AtomicIntExtKt {
 public final class com/badoo/reaktive/utils/atomic/AtomicReferenceExtKt {
 }
 
-public final class com/badoo/reaktive/utils/lock/Condition$DefaultImpls {
-	public static synthetic fun await$default (Lcom/badoo/reaktive/utils/lock/Condition;JILjava/lang/Object;)V
-}
-
-public final class com/badoo/reaktive/utils/lock/ConditionExtKt {
-}
-
-public final class com/badoo/reaktive/utils/lock/LockExtKt {
+public final class com/badoo/reaktive/utils/lock/ConditionLockExtKt {
 }
 

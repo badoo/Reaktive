@@ -1,15 +1,15 @@
 package com.badoo.reaktive.utils
 
-import com.badoo.reaktive.utils.lock.Lock
+import com.badoo.reaktive.utils.lock.ConditionLock
 import com.badoo.reaktive.utils.lock.synchronized
 import com.badoo.reaktive.utils.queue.PriorityQueue
 import kotlin.native.concurrent.AtomicLong
 import kotlin.system.getTimeMillis
+import kotlin.time.Duration.Companion.milliseconds
 
 internal class DelayQueue<T : Any> {
 
-    private val lock = Lock()
-    private val condition = lock.newCondition()
+    private val lock = ConditionLock()
     private var queue: PriorityQueue<Holder<T>>? = PriorityQueue(HolderComparator)
 
     /**
@@ -19,7 +19,7 @@ internal class DelayQueue<T : Any> {
     fun terminate() {
         lock.synchronized {
             queue = null
-            condition.signal()
+            lock.signal()
         }
     }
 
@@ -27,7 +27,7 @@ internal class DelayQueue<T : Any> {
         lock.synchronized {
             val queue = queue ?: return@synchronized null
             val holder = queue.poll()
-            condition.signal()
+            lock.signal()
             holder?.value
         }
 
@@ -37,28 +37,25 @@ internal class DelayQueue<T : Any> {
      */
     @Suppress("NestedBlockDepth")
     fun take(): T? {
-        lock.acquire()
-        try {
+        lock.synchronized {
             while (true) {
                 val queue = queue ?: return null
                 val item: Holder<T>? = queue.peek()
 
                 if (item == null) {
-                    condition.await()
+                    lock.await()
                 } else {
-                    val timeoutNanos = (item.endTimeMillis - getTimeMillis()) * NANOS_IN_MILLI
+                    val timeout = (item.endTimeMillis - getTimeMillis()).milliseconds
 
-                    if (timeoutNanos <= 0L) {
+                    if (!timeout.isPositive()) {
                         queue.poll()
 
                         return item.value
                     }
 
-                    condition.await(timeoutNanos)
+                    lock.await(timeout)
                 }
             }
-        } finally {
-            lock.release()
         }
     }
 
@@ -70,7 +67,7 @@ internal class DelayQueue<T : Any> {
         lock.synchronized {
             val queue = queue ?: return
             queue.offer(Holder(value, timeMillis))
-            condition.signal()
+            lock.signal()
         }
     }
 

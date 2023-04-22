@@ -1,13 +1,13 @@
 package com.badoo.reaktive.utils.serializer
 
-import com.badoo.reaktive.utils.SynchronizedObject
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.changeAndGet
+import com.badoo.reaktive.utils.lock.Lock
 
 /*
  * Derived from RxJava SerializedEmitter.
  */
-internal abstract class AbstractSerializer<T> : SynchronizedObject(), Serializer<T> {
+internal abstract class AbstractSerializer<T> : Lock(), Serializer<T> {
 
     private val counter = AtomicInt()
 

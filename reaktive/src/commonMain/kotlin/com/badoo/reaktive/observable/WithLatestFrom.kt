@@ -7,7 +7,6 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.lock.Lock
-import com.badoo.reaktive.utils.lock.synchronized
 
 /**
  * Combines the elements emitted by the source [Observable] with the latest emitted elements emitted by the

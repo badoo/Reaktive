@@ -1,11 +1,11 @@
 package com.badoo.reaktive.coroutinesinterop
 
-import com.badoo.reaktive.coroutinesinterop.test.waitForOrFail
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.clock.DefaultClock
-import com.badoo.reaktive.utils.lock.Lock
+import com.badoo.reaktive.utils.lock.ConditionLock
 import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.lock.waitForOrFail
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -20,19 +20,18 @@ class SchedulerCoroutineDispatcherJvmTest {
         val dispatcher = SchedulerCoroutineDispatcher(scheduler = scheduler)
         val startTimeMillis = DefaultClock.uptimeMillis
         val endTimeMillis = AtomicLong()
-        val lock = Lock()
-        val condition = lock.newCondition()
+        val lock = ConditionLock()
 
         GlobalScope.launch(dispatcher) {
             delay(500L)
             lock.synchronized {
                 endTimeMillis.value = DefaultClock.uptimeMillis
-                condition.signal()
+                lock.signal()
             }
         }
 
         lock.synchronized {
-            condition.waitForOrFail {
+            lock.waitForOrFail {
                 endTimeMillis.value > 0L
             }
         }
