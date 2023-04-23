@@ -1,7 +1,6 @@
 package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.utils.lock.Lock
-import com.badoo.reaktive.utils.lock.synchronized
 
 internal actual class BufferedExecutor<in T> actual constructor(
     private val executor: Scheduler.Executor,
