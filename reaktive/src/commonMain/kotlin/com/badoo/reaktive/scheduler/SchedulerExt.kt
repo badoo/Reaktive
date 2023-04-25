@@ -1,22 +1,16 @@
 package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.disposable.Disposable
+import kotlin.time.Duration
 
-fun Scheduler.submit(delayMillis: Long = 0L, task: () -> Unit): Disposable {
+fun Scheduler.submit(
+    delay: Duration = Duration.ZERO,
+    period: Duration = Duration.INFINITE,
+    task: () -> Unit,
+): Disposable {
     val executor = newExecutor()
 
-    executor.submit(delayMillis = delayMillis) {
-        task()
-        executor.dispose()
-    }
-
-    return executor
-}
-
-fun Scheduler.submitRepeating(startDelayMillis: Long = 0L, periodMillis: Long, task: () -> Unit): Disposable {
-    val executor = newExecutor()
-
-    executor.submitRepeating(startDelayMillis = startDelayMillis, periodMillis = periodMillis) {
+    executor.submit(delay = delay, period = period) {
         task()
         executor.dispose()
     }

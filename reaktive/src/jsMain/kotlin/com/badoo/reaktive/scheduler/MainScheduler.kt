@@ -4,6 +4,8 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.global.external.globalThis
+import com.badoo.reaktive.utils.coerceAtLeastZero
+import kotlin.time.Duration
 
 internal class MainScheduler : Scheduler {
 
@@ -19,25 +21,61 @@ internal class MainScheduler : Scheduler {
 
         private var _isDisposed = false
 
-        private val timeoutIds = mutableListOf<dynamic>()
-        private val intervalIds = mutableListOf<dynamic>()
+        private val timeoutIds = mutableSetOf<dynamic>()
+        private val intervalIds = mutableSetOf<dynamic>()
 
         init {
             disposables += this
         }
 
-        override fun submit(delayMillis: Long, task: () -> Unit) {
-            timeoutIds.add(globalThis.setTimeout(task, delayMillis.toInt()))
+        override fun submit(delay: Duration, period: Duration, task: () -> Unit) {
+            if (isDisposed) {
+                return
+            }
+
+            if (period.isInfinite()) {
+                setTimeout(delay = delay, task = task)
+                return
+            }
+
+            if (delay.isPositive()) {
+                setTimeout(delay = delay) {
+                    setInterval(period = period, task)
+                }
+                return
+            }
+
+            setInterval(period = period, task)
         }
 
-        override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
-            if (startDelayMillis != 0L) {
-                timeoutIds.add(globalThis.setTimeout({
-                    intervalIds.add(globalThis.setInterval(task, periodMillis.toInt()))
-                }, startDelayMillis.toInt()))
-            } else {
-                intervalIds.add(globalThis.setInterval(task, periodMillis.toInt()))
-            }
+        private fun setTimeout(delay: Duration, task: () -> Unit) {
+            var id: dynamic = undefined
+
+            id =
+                globalThis.setTimeout(
+                    {
+                        timeoutIds.remove(id)
+                        task()
+                    },
+                    delay.coerceAtLeastZero().inWholeMilliseconds.toInt(),
+                )
+
+            timeoutIds.add(id)
+        }
+
+        private fun setInterval(period: Duration, task: () -> Unit) {
+            var id: dynamic = undefined
+
+            id =
+                globalThis.setInterval(
+                    {
+                        intervalIds.remove(id)
+                        task()
+                    },
+                    period.coerceAtLeastZero().inWholeMilliseconds.toInt(),
+                )
+
+            intervalIds.add(id)
         }
 
         override fun cancel() {

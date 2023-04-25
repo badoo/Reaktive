@@ -5,6 +5,7 @@ import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 
 fun io.reactivex.Scheduler.asReaktiveScheduler(): Scheduler =
     object : Scheduler {
@@ -36,22 +37,21 @@ private fun io.reactivex.Scheduler.Worker.asExecutor(disposables: CompositeDispo
             disposables -= this
         }
 
-        override fun submit(delayMillis: Long, task: () -> Unit) {
+        override fun submit(delay: Duration, period: Duration, task: () -> Unit) {
+            if (isDisposed) {
+                return
+            }
+
             taskDisposables.purge()
 
-            taskDisposables +=
-                this@asExecutor
-                    .schedule(task, delayMillis, TimeUnit.MILLISECONDS)
-                    .asReaktiveDisposable()
-        }
+            val disposable =
+                if (period.isInfinite()) {
+                    schedule(task, delay.inWholeNanoseconds, TimeUnit.NANOSECONDS)
+                } else {
+                    schedulePeriodically(task, delay.inWholeNanoseconds, period.inWholeNanoseconds, TimeUnit.NANOSECONDS)
+                }
 
-        override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
-            taskDisposables.purge()
-
-            taskDisposables +=
-                this@asExecutor
-                    .schedulePeriodically(task, startDelayMillis, periodMillis, TimeUnit.MILLISECONDS)
-                    .asReaktiveDisposable()
+            taskDisposables += disposable.asReaktiveDisposable()
         }
 
         override fun cancel() {

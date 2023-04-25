@@ -17,7 +17,7 @@ internal actual class BufferedExecutor<in T> actual constructor(
             queue.addLast(value)
             if (!isDraining) {
                 isDraining = true
-                executor.submit(0, drainFunction)
+                executor.submit(task = drainFunction)
             }
         }
     }
