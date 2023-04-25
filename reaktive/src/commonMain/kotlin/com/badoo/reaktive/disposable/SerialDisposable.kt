@@ -15,6 +15,14 @@ expect open class SerialDisposable() : Disposable {
     override fun dispose()
 
     /**
+     * Atomically removes any existing [Disposable] and disposes this [SerialDisposable].
+     * Does not dispose the removed [Disposable].
+     *
+     * @return the removed [Disposable] if any.
+     */
+    internal fun clearAndDispose(): Disposable?
+
+    /**
      * Atomically either replaces any existing [Disposable]
      * with the specified one or disposes it if wrapper is already disposed.
      * Also disposes any replaced [Disposable].
