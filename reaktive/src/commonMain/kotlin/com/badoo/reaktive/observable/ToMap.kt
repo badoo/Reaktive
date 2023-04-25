@@ -26,9 +26,8 @@ fun <T, K> Observable<T>.toMap(keySelector: (T) -> K): Single<Map<K, T>> =
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#toMap-io.reactivex.functions.Function-io.reactivex.functions.Function-).
  */
 fun <T, K, V> Observable<T>.toMap(keySelector: (T) -> K, valueSelector: (T) -> V): Single<Map<K, V>> =
-    collect(LinkedHashMap()) { map, item ->
+    collect(::LinkedHashMap) { map, item ->
         val key = keySelector(item)
         val value = valueSelector(item)
         map[key] = value
-        map
     }

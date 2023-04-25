@@ -7,20 +7,17 @@ import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.single
 
 /**
- * Collects elements emitted by the **finite** source [Observable] into a data structure [C]
- * and returns a [Single] that emits this structure. The data structure can be mutable or immutable.
- * The [accumulator] should either mutate the structure and return the same reference,
- * or copy the structure and return a reference to the new copy.
- *
- * Please be aware that the structure may become [frozen](https://github.com/badoo/Reaktive#kotlin-native-pitfalls) in Kotlin/Native.
+ * Collects elements emitted by the **finite** source [Observable] into a mutable data structure [C]
+ * and returns a [Single] that emits this structure. The [accumulator] should mutate the structure
+ * adding elements into it.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#collectInto-U-io.reactivex.functions.BiConsumer-).
  */
-fun <T, C> Observable<T>.collect(initialCollection: C, accumulator: (C, T) -> C): Single<C> =
+fun <T, C> Observable<T>.collect(collectionSupplier: () -> C, accumulator: (C, T) -> Unit): Single<C> =
     single { emitter ->
         subscribe(
             object : ObservableObserver<T>, ErrorCallback by emitter {
-                private var collection = initialCollection
+                private val collection = collectionSupplier()
 
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
@@ -28,7 +25,7 @@ fun <T, C> Observable<T>.collect(initialCollection: C, accumulator: (C, T) -> C)
 
                 override fun onNext(value: T) {
                     emitter.tryCatch {
-                        collection = accumulator(collection, value)
+                        accumulator(collection, value)
                     }
                 }
 

@@ -12,7 +12,4 @@ import com.badoo.reaktive.single.Single
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#toList--).
  */
 fun <T> Observable<T>.toList(): Single<List<T>> =
-    collect(ArrayList()) { list, item ->
-        list += item
-        list
-    }
+    collect(::ArrayList) { list, item -> list += item }
