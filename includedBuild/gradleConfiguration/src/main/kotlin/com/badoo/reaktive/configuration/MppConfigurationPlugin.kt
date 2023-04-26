@@ -7,6 +7,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.invoke
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class MppConfigurationPlugin : Plugin<Project> {
@@ -153,6 +154,11 @@ class MppConfigurationPlugin : Plugin<Project> {
         project.kotlin {
             jvm {
                 disableIfUndefined(Target.JVM)
+                compilations.getByName("main").apply {
+                    compilerOptions.configure {
+                        jvmTarget.set(JvmTarget.JVM_1_8)
+                    }
+                }
             }
             sourceSets {
                 maybeCreate("jvmMain").dependencies { implementation(project.getLibrary("kotlin-stdlib")) }

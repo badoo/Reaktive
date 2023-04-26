@@ -10,6 +10,10 @@ dependencies {
     implementation libs.kotlinx.coroutines.core
 }
 
+kotlin {
+    jvmToolchain(11)
+}
+
 jmh {
     benchmarkMode = ['avgt']
     timeUnit = 'ms'
