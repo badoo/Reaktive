@@ -589,7 +589,7 @@ public final class com/badoo/reaktive/observable/BufferKt {
 }
 
 public final class com/badoo/reaktive/observable/CollectKt {
-	public static final fun collect (Lcom/badoo/reaktive/observable/Observable;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/single/Single;
+	public static final fun collect (Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/single/Single;
 }
 
 public final class com/badoo/reaktive/observable/CombineLatestKt {
