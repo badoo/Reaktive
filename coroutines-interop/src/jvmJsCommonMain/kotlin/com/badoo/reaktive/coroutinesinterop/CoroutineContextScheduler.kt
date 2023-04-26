@@ -86,7 +86,7 @@ internal class CoroutineContextScheduler(
             channelRef.value?.channel?.apply {
                 trySend(
                     Task(
-                        startAtMillis = clock.uptimeMillis + startDelayMillis,
+                        startAtMillis = clock.uptime.inWholeMilliseconds + startDelayMillis,
                         periodMillis = periodMillis,
                         task = task
                     )
@@ -95,7 +95,7 @@ internal class CoroutineContextScheduler(
         }
 
         private suspend fun execute(scope: CoroutineScope, task: Task) {
-            if (clock.uptimeMillis < task.startAtMillis) {
+            if (clock.uptime.inWholeMilliseconds < task.startAtMillis) {
                 scope.launch {
                     delayUntilStart(task.startAtMillis)
                     repeatTask(task.periodMillis, task.task)
@@ -107,7 +107,7 @@ internal class CoroutineContextScheduler(
 
         private suspend fun repeatTask(periodMillis: Long, task: () -> Unit) {
             while (true) {
-                val nextStartAtMillis = clock.uptimeMillis + periodMillis
+                val nextStartAtMillis = clock.uptime.inWholeMilliseconds + periodMillis
 
                 mutex.lock()
                 try {
@@ -125,7 +125,7 @@ internal class CoroutineContextScheduler(
         }
 
         private suspend fun delayUntilStart(startAtMillis: Long) {
-            val uptimeMillis = clock.uptimeMillis
+            val uptimeMillis = clock.uptime.inWholeMilliseconds
             if (uptimeMillis < startAtMillis) {
                 delay(startAtMillis - uptimeMillis)
             }

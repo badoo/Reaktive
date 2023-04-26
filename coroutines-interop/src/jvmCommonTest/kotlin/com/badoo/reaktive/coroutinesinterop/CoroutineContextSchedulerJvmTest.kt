@@ -1,12 +1,12 @@
 package com.badoo.reaktive.coroutinesinterop
 
-import com.badoo.reaktive.utils.NANOS_IN_MILLI
-import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.clock.Clock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CoroutineContextSchedulerJvmTest {
@@ -229,17 +229,15 @@ class CoroutineContextSchedulerJvmTest {
     }
 
     private fun advanceTimeBy(millis: Long) {
-        clock.advanceBy(millis)
+        clock.advanceBy(millis.milliseconds)
         dispatcher.advanceTimeBy(millis)
     }
 
     private class TestClock : Clock {
-        private val _uptimeMillis = AtomicLong()
-        override val uptimeMillis: Long get() = _uptimeMillis.value
-        override val uptimeNanos: Long get() = uptimeMillis * NANOS_IN_MILLI
+        override var uptime: Duration = Duration.ZERO
 
-        fun advanceBy(millis: Long) {
-            _uptimeMillis.addAndGet(millis)
+        fun advanceBy(duration: Duration) {
+            uptime += duration
         }
     }
 
