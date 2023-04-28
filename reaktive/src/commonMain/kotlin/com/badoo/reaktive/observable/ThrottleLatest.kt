@@ -13,20 +13,19 @@ import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.Uninitialized
 import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
+import kotlin.time.Duration
 
 /**
- * Emits a first element from the source [Observable] and opens a time window specified by [timeoutMillis].
+ * Emits a first element from the source [Observable] and opens a time window specified by [timeout].
  * Then does not emit any elements from the source [Observable] while the time window is open, and only emits a
  * most recent element when the time window closes.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#throttleLatest-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-boolean-)
  */
-fun <T> Observable<T>.throttleLatest(timeoutMillis: Long, scheduler: Scheduler, emitLast: Boolean = false): Observable<T> {
-    require(timeoutMillis >= 0L) { "Timeout must not be negative" }
+fun <T> Observable<T>.throttleLatest(timeout: Duration, scheduler: Scheduler, emitLast: Boolean = false): Observable<T> {
+    val timeoutTimer = completableTimer(timeout, scheduler)
 
-    val timeout = completableTimer(timeoutMillis, scheduler)
-
-    return throttleLatest(timeout = { timeout }, emitLast = emitLast)
+    return throttleLatest(timeout = { timeoutTimer }, emitLast = emitLast)
 }
 
 /**

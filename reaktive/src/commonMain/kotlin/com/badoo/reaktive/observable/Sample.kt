@@ -6,6 +6,7 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.getAndChange
+import kotlin.time.Duration
 
 /**
  * Returns an [Observable] that emits the most recently emitted element (if any)
@@ -13,7 +14,7 @@ import com.badoo.reaktive.utils.atomic.getAndChange
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#sample-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-).
  */
-fun <T> Observable<T>.sample(windowMillis: Long, scheduler: Scheduler): Observable<T> =
+fun <T> Observable<T>.sample(window: Duration, scheduler: Scheduler): Observable<T> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
@@ -27,7 +28,7 @@ fun <T> Observable<T>.sample(windowMillis: Long, scheduler: Scheduler): Observab
                 override fun onSubscribe(disposable: Disposable) {
                     disposables += disposable
 
-                    executor.submitRepeating(startDelayMillis = windowMillis, periodMillis = windowMillis) {
+                    executor.submit(delay = window, period = window) {
                         lastValue.getAndChange { null }?.also {
                             emitter.onNext(it.value)
                         }
@@ -51,6 +52,6 @@ fun <T> Observable<T>.sample(windowMillis: Long, scheduler: Scheduler): Observab
         )
     }
 
-private class SampleLastValue<T>(
+private class SampleLastValue<out T>(
     val value: T
 )

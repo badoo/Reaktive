@@ -16,8 +16,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 
-class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ timeout(1000L, TestScheduler()) }) {
+class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ timeout(1.seconds, TestScheduler()) }) {
 
     private val upstream = TestObservable<Int?>()
     private val other = TestObservable<Int?>()
@@ -25,7 +26,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun emits_all_values_in_the_same_order() {
-        val observer = upstream.timeout(1000L, scheduler).test()
+        val observer = upstream.timeout(1.seconds, scheduler).test()
 
         upstream.onNext(0, null, 1, null, 2)
 
@@ -37,7 +38,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
         var errorRef: Throwable? = null
 
         upstream
-            .timeout(1000L, scheduler)
+            .timeout(1.seconds, scheduler)
             .subscribe(
                 object : ObservableObserver<Int?> {
                     override fun onSubscribe(disposable: Disposable) {
@@ -64,7 +65,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_produce_error_WHEN_timeout_not_reached_after_first_value() {
-        val observer = upstream.timeout(1000L, scheduler).test()
+        val observer = upstream.timeout(1.seconds, scheduler).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(999L)
@@ -74,7 +75,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun produces_error_WHEN_timeout_reached_after_first_value() {
-        val observer = upstream.timeout(1000L, scheduler).test()
+        val observer = upstream.timeout(1.seconds, scheduler).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(1000L)
@@ -84,7 +85,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_produce_error_WHEN_timeout_not_reached_after_second_value() {
-        val observer = upstream.timeout(1000L, scheduler).test()
+        val observer = upstream.timeout(1.seconds, scheduler).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(999L)
@@ -96,7 +97,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun produces_error_WHEN_timeout_reached_after_second_value() {
-        val observer = upstream.timeout(1000L, scheduler).test()
+        val observer = upstream.timeout(1.seconds, scheduler).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(999L)
@@ -108,7 +109,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_subscribe_to_other_WHEN_timeout_not_reached_after_first_value() {
-        upstream.timeout(1000L, scheduler, other).test()
+        upstream.timeout(1.seconds, scheduler, other).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(999L)
@@ -118,7 +119,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun subscribes_to_other_WHEN_timeout_reached_after_first_value() {
-        upstream.timeout(1000L, scheduler, other).test()
+        upstream.timeout(1.seconds, scheduler, other).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(1000L)
@@ -128,7 +129,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_produce_error_WHEN_timeout_reached_after_first_value_and_has_other() {
-        val observer = upstream.timeout(1000L, scheduler, other).test()
+        val observer = upstream.timeout(1.seconds, scheduler, other).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(1000L)
@@ -138,7 +139,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_subscribe_to_other_WHEN_timeout_not_reached_after_second_value() {
-        upstream.timeout(1000L, scheduler, other).test()
+        upstream.timeout(1.seconds, scheduler, other).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(999L)
@@ -150,7 +151,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun subscribes_to_other_WHEN_timeout_reached_after_second_value() {
-        upstream.timeout(1000L, scheduler, other).test()
+        upstream.timeout(1.seconds, scheduler, other).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(999L)
@@ -162,7 +163,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_produce_error_WHEN_timeout_reached_after_second_value_and_has_other() {
-        val observer = upstream.timeout(1000L, scheduler, other).test()
+        val observer = upstream.timeout(1.seconds, scheduler, other).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(999L)
@@ -174,7 +175,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun emits_all_values_in_correct_order_from_other() {
-        val observer = upstream.timeout(1000L, scheduler, other).test()
+        val observer = upstream.timeout(1.seconds, scheduler, other).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(1000L)
@@ -186,7 +187,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun completes_WHEN_other_completed() {
-        val observer = upstream.timeout(1000L, scheduler, other).test()
+        val observer = upstream.timeout(1.seconds, scheduler, other).test()
 
         upstream.onNext(0)
         scheduler.timer.advanceBy(1000L)
@@ -197,7 +198,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun produces_error_WHEN_other_produced_error() {
-        val observer = upstream.timeout(1000L, scheduler, other).test()
+        val observer = upstream.timeout(1.seconds, scheduler, other).test()
         val error = Exception()
 
         upstream.onNext(0)
@@ -219,7 +220,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
         var otherSubscribeCount = 0
         val other = observable<Int> { otherSubscribeCount++ }
 
-        upstream.timeout(1000L, scheduler, other).test()
+        upstream.timeout(1.seconds, scheduler, other).test()
 
         requireNotNull(upstreamObserver).onNext(0)
         scheduler.timer.advanceBy(1000L)
@@ -231,7 +232,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_produce_error_WHEN_timeout_not_reached_after_subscribe() {
-        val observer = upstream.timeout(1000L, scheduler).test()
+        val observer = upstream.timeout(1.seconds, scheduler).test()
 
         scheduler.timer.advanceBy(999L)
 
@@ -240,7 +241,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun produces_error_WHEN_timeout_reached_after_subscribe() {
-        val observer = upstream.timeout(1000L, scheduler).test()
+        val observer = upstream.timeout(1.seconds, scheduler).test()
 
         scheduler.timer.advanceBy(1000L)
 
@@ -249,7 +250,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_subscribe_to_other_WHEN_timeout_not_reached_after_subscribe() {
-        upstream.timeout(1000L, scheduler, other).test()
+        upstream.timeout(1.seconds, scheduler, other).test()
 
         scheduler.timer.advanceBy(999L)
 
@@ -258,7 +259,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun subscribes_to_other_WHEN_timeout_reached_after_subscribe() {
-        upstream.timeout(1000L, scheduler, other).test()
+        upstream.timeout(1.seconds, scheduler, other).test()
 
         scheduler.timer.advanceBy(1000L)
 
@@ -267,7 +268,7 @@ class TimeoutTest : ObservableToObservableTests by ObservableToObservableTestsIm
 
     @Test
     fun does_not_produce_error_WHEN_timeout_reached_after_subscribe_and_has_other() {
-        val observer = upstream.timeout(1000L, scheduler, other).test()
+        val observer = upstream.timeout(1.seconds, scheduler, other).test()
 
         scheduler.timer.advanceBy(1000L)
 

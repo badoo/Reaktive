@@ -16,6 +16,7 @@ import com.badoo.reaktive.subject.unicast.UnicastSubject
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
+import kotlin.time.Duration
 
 /**
  * Returns an [Observable] that emits possibly overlapping windows of elements it collects from the source [Observable].
@@ -24,18 +25,18 @@ import com.badoo.reaktive.utils.serializer.serializer
  * [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-long-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-).
  */
 fun <T> Observable<T>.window(
-    spanMillis: Long,
-    skipMillis: Long,
+    span: Duration,
+    skip: Duration,
     scheduler: Scheduler,
     limit: Long = Long.MAX_VALUE,
     restartOnLimit: Boolean = false
 ): Observable<Observable<T>> {
-    require(spanMillis > 0) { "spanMillis must by positive" }
-    require(skipMillis > 0) { "skipMillis must by positive" }
+    require(span.isPositive()) { "Span duration must by positive" }
+    require(skip.isPositive()) { "Skip duration must by positive" }
 
     return window(
-        opening = singleOf(Unit).repeatWhen { _, _ -> maybeTimer(skipMillis, scheduler) },
-        closing = { completableTimer(spanMillis, scheduler) },
+        opening = singleOf(Unit).repeatWhen { _, _ -> maybeTimer(skip, scheduler) },
+        closing = { completableTimer(span, scheduler) },
         limit = limit,
         restartOnLimit = restartOnLimit
     )

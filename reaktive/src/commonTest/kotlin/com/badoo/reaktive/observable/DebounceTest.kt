@@ -8,13 +8,15 @@ import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class DebounceTest
-    : ObservableToObservableTests by ObservableToObservableTestsImpl({ debounce(0L, TestScheduler()) }) {
+    : ObservableToObservableTests by ObservableToObservableTestsImpl({ debounce(0.seconds, TestScheduler()) }) {
 
     private val upstream = TestObservable<Int?>()
     private val scheduler = TestScheduler()
-    private val observer = upstream.debounce(100L, scheduler).test()
+    private val observer = upstream.debounce(100.milliseconds, scheduler).test()
 
     @Test
     fun does_not_emit_WHEN_timeout_not_reached() {

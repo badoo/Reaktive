@@ -18,9 +18,11 @@ import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class DebounceWithSelectorTest :
-    ObservableToObservableTests by ObservableToObservableTestsImpl({ debounce { completableTimer(0L, TestScheduler()) } }) {
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ debounce { completableTimer(0.seconds, TestScheduler()) } }) {
 
     private val upstream = TestObservable<String?>()
     private val scheduler = TestScheduler()
@@ -311,7 +313,7 @@ class DebounceWithSelectorTest :
     }
 
     private fun createDefaultObserver(): TestObservableObserver<String?> = upstream.debounce { value ->
-        if (value.isNullOrEmpty()) completableOfEmpty() else completableTimer(100L, scheduler)
+        if (value.isNullOrEmpty()) completableOfEmpty() else completableTimer(100.milliseconds, scheduler)
     }.test()
 
     private fun createInnerSources(count: Int): List<TestCompletable> =

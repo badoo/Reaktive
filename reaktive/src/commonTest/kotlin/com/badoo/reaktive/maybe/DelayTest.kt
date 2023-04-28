@@ -10,9 +10,11 @@ import com.badoo.reaktive.test.maybe.assertSuccess
 import com.badoo.reaktive.test.maybe.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class DelayTest :
-    MaybeToMaybeTests by MaybeToMaybeTestsImpl({ delay(0L, TestScheduler()) }),
+    MaybeToMaybeTests by MaybeToMaybeTestsImpl({ delay(0.milliseconds, TestScheduler()) }),
     DelayErrorTests by DelayErrorTests<TestMaybe<Int>>(
         TestMaybe(),
         { delayMillis, scheduler, delayError -> delay(delayMillis, scheduler, delayError).test() }
@@ -21,7 +23,7 @@ class DelayTest :
     private val upstream = TestMaybe<Int?>()
     private val scheduler = TestScheduler()
     private val timer = scheduler.timer
-    private val observer = upstream.delay(1000L, scheduler).test()
+    private val observer = upstream.delay(1.seconds, scheduler).test()
 
     @Test
     fun does_not_succeed_IF_timeout_not_reached() {

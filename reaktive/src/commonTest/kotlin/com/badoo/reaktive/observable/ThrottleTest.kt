@@ -8,13 +8,14 @@ import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.milliseconds
 
-class ThrottleTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ throttle(100L) }) {
+class ThrottleTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ throttle(100.milliseconds) }) {
 
     private val upstream = TestObservable<Int>()
     private val scheduler = TestScheduler()
     private val timer = scheduler.timer
-    private val observer = upstream.throttle(windowMillis = 100L, scheduler = scheduler).test()
+    private val observer = upstream.throttle(window = 100.milliseconds, scheduler = scheduler).test()
 
     @Test
     fun emits_first_value_WHEN_current_time_is_0L() {
@@ -100,7 +101,7 @@ class ThrottleTest : ObservableToObservableTests by ObservableToObservableTestsI
     @Test
     fun emits_all_values_without_closing_window_WHEN_window_is_0() {
         scheduler.isManualProcessing = true
-        val observer = upstream.throttle(windowMillis = 0L, scheduler = scheduler).test()
+        val observer = upstream.throttle(window = 0.milliseconds, scheduler = scheduler).test()
 
         upstream.onNext(0, 1)
 

@@ -13,15 +13,15 @@ import com.badoo.reaktive.test.scheduler.TestScheduler
 import com.badoo.reaktive.test.scheduler.assertAllExecutorsDisposed
 import kotlin.test.Test
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 
 class IntervalTest {
 
     private val scheduler = TestScheduler()
     private val timer = scheduler.timer
     private val upstream = observableInterval(
-        periodMillis = 100L,
-        startDelayMillis = 50L,
+        period = 100.milliseconds,
+        startDelay = 50.milliseconds,
         scheduler = scheduler
     )
     private val observer = upstream.test()

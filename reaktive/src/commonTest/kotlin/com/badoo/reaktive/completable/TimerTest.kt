@@ -11,12 +11,13 @@ import com.badoo.reaktive.test.scheduler.TestScheduler
 import com.badoo.reaktive.test.scheduler.assertAllExecutorsDisposed
 import kotlin.test.Test
 import kotlin.test.assertFalse
+import kotlin.time.Duration.Companion.seconds
 
 class TimerTest {
 
     private val scheduler = TestScheduler()
     private val timer = scheduler.timer
-    private val upstream = completableTimer(1000L, scheduler)
+    private val upstream = completableTimer(1.seconds, scheduler)
     private val observer = upstream.test()
 
     @Test
@@ -94,5 +95,4 @@ class TimerTest {
         observer.dispose()
         observer.assertNotError()
     }
-
 }

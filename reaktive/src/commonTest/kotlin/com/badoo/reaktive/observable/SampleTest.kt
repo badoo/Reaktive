@@ -6,9 +6,10 @@ import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.milliseconds
 
 class SampleTest :
-    ObservableToObservableTests by ObservableToObservableTestsImpl({ sample(windowMillis = 100L, scheduler = TestScheduler()) }) {
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ sample(window = 100.milliseconds, scheduler = TestScheduler()) }) {
 
     private val upstream = TestObservable<Int?>()
 
@@ -16,7 +17,7 @@ class SampleTest :
     fun emits_last_values_WHEN_every_timeout_reached() {
         val scheduler = TestScheduler()
         val timer = scheduler.timer
-        val observer = upstream.sample(windowMillis = 300L, scheduler = scheduler).test()
+        val observer = upstream.sample(window = 300.milliseconds, scheduler = scheduler).test()
 
         upstream.onNext(0)
         timer.advanceBy(100L)
@@ -44,7 +45,7 @@ class SampleTest :
     @Test
     fun does_not_emit_value_WHEN_upstream_produced_value_right_after_subscription() {
         val scheduler = TestScheduler(isManualProcessing = true)
-        val observer = upstream.sample(windowMillis = 300L, scheduler = scheduler).test()
+        val observer = upstream.sample(window = 300.milliseconds, scheduler = scheduler).test()
 
         upstream.onNext(0)
         scheduler.process()
@@ -55,7 +56,7 @@ class SampleTest :
     @Test
     fun does_not_emit_value_WHEN_upstream_produced_value_and_upstream_completed_and_timeout_reached() {
         val scheduler = TestScheduler()
-        val observer = upstream.sample(windowMillis = 300L, scheduler = scheduler).test()
+        val observer = upstream.sample(window = 300.milliseconds, scheduler = scheduler).test()
 
         upstream.onNext(0)
         upstream.onComplete()
@@ -67,7 +68,7 @@ class SampleTest :
     @Test
     fun does_not_emit_same_value_WHEN_timeout_reached_second_time() {
         val scheduler = TestScheduler()
-        val observer = upstream.sample(windowMillis = 100L, scheduler = scheduler).test()
+        val observer = upstream.sample(window = 100.milliseconds, scheduler = scheduler).test()
         upstream.onNext(0)
         scheduler.timer.advanceBy(100L)
         observer.reset()
