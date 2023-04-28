@@ -19,12 +19,14 @@ actual open class SerialDisposable actual constructor() : Disposable {
      * Any future [Disposable] will be immediately disposed.
      */
     actual override fun dispose() {
+        clearAndDispose()?.dispose()
+    }
+
+    internal actual fun clearAndDispose(): Disposable? =
         synchronizedCompat(this) {
             _isDisposed = true
             swapDisposable(null)
         }
-            ?.dispose()
-    }
 
     /**
      * Atomically either replaces any existing [Disposable]

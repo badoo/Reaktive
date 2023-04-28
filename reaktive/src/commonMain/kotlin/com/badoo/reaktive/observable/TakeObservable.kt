@@ -2,7 +2,6 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.disposable.SerialDisposable
 
 /**
  * Emit only the first [limit] elements emitted by source [Observable].
@@ -13,15 +12,12 @@ fun <T> Observable<T>.take(limit: Int): Observable<T> {
     require(limit >= 0) { "count >= 0 required but it was $limit" }
 
     return observable { emitter ->
-        val serialDisposable = SerialDisposable()
-        emitter.setDisposable(serialDisposable)
-
         subscribe(
             object : ObservableObserver<T>, CompletableCallbacks by emitter {
                 private var remaining = limit
 
                 override fun onSubscribe(disposable: Disposable) {
-                    serialDisposable.set(disposable)
+                    emitter.setDisposable(disposable)
 
                     if (remaining == 0) {
                         onComplete()

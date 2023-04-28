@@ -104,6 +104,7 @@ public abstract interface class com/badoo/reaktive/completable/Completable : com
 
 public final class com/badoo/reaktive/completable/CompletableByEmitterKt {
 	public static final fun completable (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
+	public static final fun onSubscribeCompletable (Lcom/badoo/reaktive/completable/CompletableObserver;)Lcom/badoo/reaktive/completable/CompletableEmitter;
 }
 
 public abstract interface class com/badoo/reaktive/completable/CompletableCallbacks : com/badoo/reaktive/base/CompleteCallback, com/badoo/reaktive/base/ErrorCallback {
@@ -424,6 +425,7 @@ public abstract interface class com/badoo/reaktive/maybe/Maybe : com/badoo/reakt
 
 public final class com/badoo/reaktive/maybe/MaybeByEmitterKt {
 	public static final fun maybe (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/maybe/Maybe;
+	public static final fun onSubscribeMaybe (Lcom/badoo/reaktive/maybe/MaybeObserver;)Lcom/badoo/reaktive/maybe/MaybeEmitter;
 }
 
 public abstract interface class com/badoo/reaktive/maybe/MaybeCallbacks : com/badoo/reaktive/base/SuccessCallback, com/badoo/reaktive/completable/CompletableCallbacks {
@@ -778,6 +780,7 @@ public abstract interface class com/badoo/reaktive/observable/Observable : com/b
 
 public final class com/badoo/reaktive/observable/ObservableByEmitterKt {
 	public static final fun observable (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun onSubscribeObservable (Lcom/badoo/reaktive/observable/ObservableObserver;)Lcom/badoo/reaktive/observable/ObservableEmitter;
 }
 
 public abstract interface class com/badoo/reaktive/observable/ObservableCallbacks : com/badoo/reaktive/base/ValueCallback, com/badoo/reaktive/completable/CompletableCallbacks {
@@ -1258,6 +1261,7 @@ public abstract interface class com/badoo/reaktive/single/Single : com/badoo/rea
 }
 
 public final class com/badoo/reaktive/single/SingleByEmitterKt {
+	public static final fun onSubscribeSingle (Lcom/badoo/reaktive/single/SingleObserver;)Lcom/badoo/reaktive/single/SingleEmitter;
 	public static final fun single (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/single/Single;
 }
 
