@@ -106,4 +106,29 @@ class SerialDisposableTest {
 
         assertTrue(serialDisposable.isDisposed)
     }
+
+    @Test
+    fun returns_existing_disposable_WHEN_clearAndDispose() {
+        serialDisposable.set(disposable)
+
+        val result = serialDisposable.clearAndDispose()
+
+        assertSame(disposable, result)
+    }
+
+    @Test
+    fun does_not_dispose_existing_disposable_WHEN_clearAndDispose() {
+        serialDisposable.set(disposable)
+
+        serialDisposable.clearAndDispose()
+
+        assertFalse(disposable.isDisposed)
+    }
+
+    @Test
+    fun isDisposed_returns_true_WHEN_clearAndDispose() {
+        serialDisposable.clearAndDispose()
+
+        assertTrue(serialDisposable.isDisposed)
+    }
 }

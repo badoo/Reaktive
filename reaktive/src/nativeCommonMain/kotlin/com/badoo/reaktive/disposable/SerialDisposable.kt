@@ -17,10 +17,11 @@ actual open class SerialDisposable actual constructor() : Disposable {
      * Any future [Disposable] will be immediately disposed.
      */
     actual override fun dispose() {
-        ref
-            .getAndSet(disposed)
-            ?.dispose()
+        clearAndDispose()?.dispose()
     }
+
+    internal actual fun clearAndDispose(): Disposable? =
+        ref.getAndSet(disposed)
 
     /**
      * Atomically either replaces any existing [Disposable]
