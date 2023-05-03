@@ -1,13 +1,13 @@
 package com.badoo.reaktive.utils.clock
 
 import com.badoo.reaktive.utils.InternalReaktiveApi
-import kotlin.system.getTimeMillis
 import kotlin.system.getTimeNanos
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.nanoseconds
 
 @InternalReaktiveApi
 actual object DefaultClock : Clock {
 
-    override val uptimeMillis: Long get() = getTimeMillis()
-
-    override val uptimeNanos: Long get() = getTimeNanos()
+    override val uptime: Duration
+        get() = getTimeNanos().nanoseconds
 }

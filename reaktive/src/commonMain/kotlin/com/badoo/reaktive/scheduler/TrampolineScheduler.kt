@@ -56,7 +56,7 @@ internal class TrampolineScheduler(
         }
 
         private fun submit(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
-            submit(Task(clock.uptimeMillis + startDelayMillis, periodMillis, task))
+            submit(Task(clock.uptime.inWholeMilliseconds + startDelayMillis, periodMillis, task))
         }
 
         private fun submit(task: Task) {
@@ -70,7 +70,7 @@ internal class TrampolineScheduler(
                 return false
             }
 
-            val delay = task.startTime - clock.uptimeMillis
+            val delay = task.startTime - clock.uptime.inWholeMilliseconds
             if ((delay > 0) && !sleep(delay)) {
                 return false
             }
@@ -79,7 +79,7 @@ internal class TrampolineScheduler(
                 return false
             }
 
-            val nextStartMillis = if (task.periodMillis >= 0L) clock.uptimeMillis + task.periodMillis else -1L
+            val nextStartMillis = if (task.periodMillis >= 0L) clock.uptime.inWholeMilliseconds + task.periodMillis else -1L
 
             task.task()
 
