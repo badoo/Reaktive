@@ -1,13 +1,16 @@
 package com.badoo.reaktive.utils
 
+import com.badoo.reaktive.utils.clock.Clock
+import com.badoo.reaktive.utils.clock.DefaultClock
 import com.badoo.reaktive.utils.lock.ConditionLock
 import com.badoo.reaktive.utils.lock.synchronized
 import com.badoo.reaktive.utils.queue.PriorityQueue
 import kotlin.native.concurrent.AtomicLong
-import kotlin.system.getTimeMillis
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration
 
-internal class DelayQueue<T : Any> {
+internal class DelayQueue<T : Any>(
+    private val clock: Clock = DefaultClock,
+) {
 
     private val lock = ConditionLock()
     private var queue: PriorityQueue<Holder<T>>? = PriorityQueue(HolderComparator)
@@ -45,7 +48,7 @@ internal class DelayQueue<T : Any> {
                 if (item == null) {
                     lock.await()
                 } else {
-                    val timeout = (item.endTimeMillis - getTimeMillis()).milliseconds
+                    val timeout = item.endTime - clock.uptime
 
                     if (!timeout.isPositive()) {
                         queue.poll()
@@ -59,14 +62,14 @@ internal class DelayQueue<T : Any> {
         }
     }
 
-    fun offer(value: T, timeoutMillis: Long) {
-        offerAt(value, getTimeMillis() + timeoutMillis)
+    fun offer(value: T, timeout: Duration) {
+        offerAt(value, clock.uptime + timeout)
     }
 
-    fun offerAt(value: T, timeMillis: Long) {
+    fun offerAt(value: T, time: Duration) {
         lock.synchronized {
             val queue = queue ?: return
-            queue.offer(Holder(value, timeMillis))
+            queue.offer(Holder(value, time))
             lock.signal()
         }
     }
@@ -87,7 +90,7 @@ internal class DelayQueue<T : Any> {
 
     private data class Holder<out T>(
         val value: T,
-        val endTimeMillis: Long
+        val endTime: Duration,
     ) {
         val sequenceNumber = sequencer.addAndGet(1L)
 
@@ -101,11 +104,11 @@ internal class DelayQueue<T : Any> {
             if (a === b) {
                 0
             } else {
-                var diff = a.endTimeMillis - b.endTimeMillis
-                if (diff == 0L) {
-                    diff = a.sequenceNumber - b.sequenceNumber
+                var diff = a.endTime.compareTo(b.endTime)
+                if (diff == 0) {
+                    diff = a.sequenceNumber.compareTo(b.sequenceNumber)
                 }
-                diff.coerceIn(-1, 1).toInt()
+                diff
             }
     }
 }

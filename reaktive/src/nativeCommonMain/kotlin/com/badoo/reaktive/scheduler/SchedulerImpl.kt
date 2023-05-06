@@ -6,6 +6,7 @@ import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.looperthread.LooperThreadStrategy
 import kotlin.native.concurrent.AtomicInt
 import kotlin.system.getTimeMillis
+import kotlin.time.Duration.Companion.milliseconds
 
 internal class SchedulerImpl(
     private val looperThreadStrategy: LooperThreadStrategy
@@ -42,7 +43,7 @@ internal class SchedulerImpl(
 
         override fun submit(delayMillis: Long, task: () -> Unit) {
             if (!isDisposed) {
-                looperThread.schedule(this, getStartTimeMillis(delayMillis), task)
+                looperThread.schedule(this, getStartTimeMillis(delayMillis).milliseconds, task)
             }
         }
 
@@ -53,12 +54,12 @@ internal class SchedulerImpl(
                     val nextStartTimeMillis = getStartTimeMillis(periodMillis)
                     task()
                     if (!isDisposed) {
-                        looperThread.schedule(this, nextStartTimeMillis, t)
+                        looperThread.schedule(this, nextStartTimeMillis.milliseconds, t)
                     }
                 }
             }
             if (!isDisposed) {
-                looperThread.schedule(this, getStartTimeMillis(startDelayMillis), t)
+                looperThread.schedule(this, getStartTimeMillis(startDelayMillis).milliseconds, t)
             }
         }
 
