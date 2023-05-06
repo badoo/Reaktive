@@ -2,6 +2,7 @@ package com.badoo.reaktive.utils
 
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
+import kotlin.time.Duration
 
 /*
  * Not cancellable nor destroyable, implement when needed. Currently used only as singleton.
@@ -20,8 +21,8 @@ internal class ExpirationPool<T : Any>(
 
     fun acquire(): T? = queue.removeFirst()
 
-    fun release(item: T, timeoutMillis: Long) {
-        queue.offer(item, timeoutMillis)
+    fun release(item: T, timeout: Duration) {
+        queue.offer(item, timeout)
     }
 
     private fun drainQueue() {
