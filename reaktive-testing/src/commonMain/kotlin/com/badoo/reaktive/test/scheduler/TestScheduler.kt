@@ -7,6 +7,9 @@ import com.badoo.reaktive.utils.atomic.AtomicLong
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.atomic.change
 import com.badoo.reaktive.utils.atomic.getAndChange
+import com.badoo.reaktive.utils.coerceAtLeastZero
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 class TestScheduler(
     isManualProcessing: Boolean = false
@@ -54,23 +57,23 @@ class TestScheduler(
 
     private fun processActual() {
         while (true) {
-            val task = tasks.value.firstOrNull()?.takeIf { it.startMillis <= _timer.targetMillis } ?: break
+            val task = tasks.value.firstOrNull()?.takeIf { it.startTime <= _timer.targetTime } ?: break
             updateTasks {
                 removeAt(0)
-                if (task.periodMillis >= 0L) {
-                    add(task.copy(startMillis = task.startMillis + task.periodMillis))
+                if (!task.period.isNegative()) {
+                    add(task.copy(startTime = task.startTime + task.period))
                     sort()
                 }
             }
 
-            _timer.millis = task.startMillis
+            _timer.time = task.startTime
 
             if (!task.executor.isDisposed) {
                 task.task()
             }
         }
 
-        _timer.millis = _timer.targetMillis
+        _timer.time = _timer.targetTime
     }
 
     private fun processIfNeeded() {
@@ -86,26 +89,31 @@ class TestScheduler(
     }
 
     interface Timer {
-        val millis: Long
+        val time: Duration
 
-        fun advanceBy(millis: Long)
+        fun advanceBy(duration: Duration)
+
+        fun advanceBy(millis: Long) {
+            advanceBy(millis.milliseconds)
+        }
     }
 
     private inner class TimerImpl : Timer {
-        private val _millis = AtomicLong()
-        override var millis: Long
-            get() = _millis.value
+        private val _time = AtomicReference(Duration.ZERO)
+
+        override var time: Duration
+            get() = _time.value
             set(value) {
-                _millis.value = value
+                _time.value = value
             }
 
-        private val _requestedMillis = AtomicLong()
-        val targetMillis: Long get() = _requestedMillis.value
+        private val _targetTime = AtomicReference(Duration.ZERO)
+        val targetTime: Duration get() = _targetTime.value
 
-        override fun advanceBy(millis: Long) {
-            require(millis >= 0L) { "Millis must not be negative" }
+        override fun advanceBy(duration: Duration) {
+            require(!duration.isNegative()) { "Duration must not be negative" }
 
-            _requestedMillis.addAndGet(millis)
+            _targetTime.change { it + duration }
             processIfNeeded()
         }
     }
@@ -114,22 +122,21 @@ class TestScheduler(
         private val _isDisposed = AtomicBoolean()
         override val isDisposed: Boolean get() = _isDisposed.value
 
-        override fun submit(delayMillis: Long, task: () -> Unit) {
-            addTask(startDelayMillis = delayMillis, task = task)
+        override fun submit(delay: Duration, period: Duration, task: () -> Unit) {
+            if (isDisposed) {
+                return
+            }
+
+            addTask(startDelay = delay.coerceAtLeastZero(), period = period.coerceAtLeastZero(), task = task)
             processIfNeeded()
         }
 
-        override fun submitRepeating(startDelayMillis: Long, periodMillis: Long, task: () -> Unit) {
-            addTask(startDelayMillis = startDelayMillis, periodMillis = periodMillis, task = task)
-            processIfNeeded()
-        }
-
-        private fun addTask(startDelayMillis: Long, periodMillis: Long = -1L, task: () -> Unit) {
+        private fun addTask(startDelay: Duration, period: Duration, task: () -> Unit) {
             updateTasks {
                 add(
                     Task(
-                        startMillis = timer.millis + startDelayMillis,
-                        periodMillis = periodMillis,
+                        startTime = timer.time + startDelay,
+                        period = period,
                         executor = this@ExecutorImpl,
                         task = task
                     )
@@ -151,8 +158,8 @@ class TestScheduler(
     }
 
     private data class Task(
-        val startMillis: Long,
-        val periodMillis: Long,
+        val startTime: Duration,
+        val period: Duration,
         val executor: Executor,
         val task: () -> Unit
     ) : Comparable<Task> {
@@ -162,8 +169,8 @@ class TestScheduler(
             if (this === other) {
                 0
             } else {
-                startMillis
-                    .compareTo(other.startMillis)
+                startTime
+                    .compareTo(other.startTime)
                     .takeUnless { it == 0 }
                     ?: sequenceNumber.compareTo(other.sequenceNumber)
             }

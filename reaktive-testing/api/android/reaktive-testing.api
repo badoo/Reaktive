@@ -170,7 +170,12 @@ public final class com/badoo/reaktive/test/scheduler/TestScheduler : com/badoo/r
 
 public abstract interface class com/badoo/reaktive/test/scheduler/TestScheduler$Timer {
 	public abstract fun advanceBy (J)V
-	public abstract fun getMillis ()J
+	public abstract fun advanceBy-LRDsOJo (J)V
+	public abstract fun getTime-UwyO8pc ()J
+}
+
+public final class com/badoo/reaktive/test/scheduler/TestScheduler$Timer$DefaultImpls {
+	public static fun advanceBy (Lcom/badoo/reaktive/test/scheduler/TestScheduler$Timer;J)V
 }
 
 public final class com/badoo/reaktive/test/scheduler/TestSchedulerExtKt {
