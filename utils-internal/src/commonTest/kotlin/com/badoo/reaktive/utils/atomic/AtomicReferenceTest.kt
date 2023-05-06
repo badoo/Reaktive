@@ -49,11 +49,27 @@ class AtomicReferenceTest {
     }
 
     @Test
+    fun getAndUpdate_with_large_primitives() {
+        val ref = AtomicReference(1000)
+        val result = ref.getAndChange { it + 1 }
+        assertEquals(1000, result)
+        assertEquals(1001, ref.value)
+    }
+
+    @Test
     fun updateAndGet() {
         val ref = AtomicReference(VALUE_1)
         val result = ref.changeAndGet { VALUE_2 }
         assertSame(VALUE_2, result)
         assertSame(VALUE_2, ref.value)
+    }
+
+    @Test
+    fun updateAndGet_with_large_primitives() {
+        val ref = AtomicReference(1000)
+        val result = ref.changeAndGet { it + 1 }
+        assertEquals(1001, result)
+        assertEquals(1001, ref.value)
     }
 
     @Test
@@ -65,10 +81,17 @@ class AtomicReferenceTest {
     }
 
     @Test
-    fun update() {
+    fun change() {
         val ref = AtomicReference(VALUE_1)
         ref.change { VALUE_2 }
         assertSame(VALUE_2, ref.value)
+    }
+
+    @Test
+    fun change_with_large_primitives() {
+        val ref = AtomicReference(1000)
+        ref.change { it + 1 }
+        assertEquals(1001, ref.value)
     }
 
     private companion object {
