@@ -14,8 +14,9 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 
-class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, TestScheduler()) }) {
+class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1.seconds, TestScheduler()) }) {
 
     private val upstream = TestMaybe<Int?>()
     private val other = TestMaybe<Int?>()
@@ -26,7 +27,7 @@ class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, 
         var errorRef: Throwable? = null
 
         upstream
-            .timeout(1000L, scheduler)
+            .timeout(1.seconds, scheduler)
             .subscribe(
                 object : MaybeObserver<Int?> {
                     override fun onSubscribe(disposable: Disposable) {
@@ -52,7 +53,7 @@ class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, 
 
     @Test
     fun succeeds_WHEN_other_succeeds() {
-        val observer = upstream.timeout(1000L, scheduler, other).test()
+        val observer = upstream.timeout(1.seconds, scheduler, other).test()
 
         scheduler.timer.advanceBy(1000L)
         observer.reset()
@@ -63,7 +64,7 @@ class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, 
 
     @Test
     fun completes_WHEN_other_completed() {
-        val observer = upstream.timeout(1000L, scheduler, other).test()
+        val observer = upstream.timeout(1.seconds, scheduler, other).test()
 
         scheduler.timer.advanceBy(1000L)
         other.onComplete()
@@ -73,7 +74,7 @@ class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, 
 
     @Test
     fun produces_error_WHEN_other_produced_error() {
-        val observer = upstream.timeout(1000L, scheduler, other).test()
+        val observer = upstream.timeout(1.seconds, scheduler, other).test()
         val error = Exception()
 
         scheduler.timer.advanceBy(1000L)
@@ -84,7 +85,7 @@ class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, 
 
     @Test
     fun does_not_produce_error_WHEN_timeout_not_reached_after_subscribe() {
-        val observer = upstream.timeout(1000L, scheduler).test()
+        val observer = upstream.timeout(1.seconds, scheduler).test()
 
         scheduler.timer.advanceBy(999L)
 
@@ -93,7 +94,7 @@ class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, 
 
     @Test
     fun produces_error_WHEN_timeout_reached_after_subscribe() {
-        val observer = upstream.timeout(1000L, scheduler).test()
+        val observer = upstream.timeout(1.seconds, scheduler).test()
 
         scheduler.timer.advanceBy(1000L)
 
@@ -102,7 +103,7 @@ class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, 
 
     @Test
     fun does_not_subscribe_to_other_WHEN_timeout_not_reached_after_subscribe() {
-        upstream.timeout(1000L, scheduler, other).test()
+        upstream.timeout(1.seconds, scheduler, other).test()
 
         scheduler.timer.advanceBy(999L)
 
@@ -111,7 +112,7 @@ class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, 
 
     @Test
     fun subscribes_to_other_WHEN_timeout_reached_after_subscribe() {
-        upstream.timeout(1000L, scheduler, other).test()
+        upstream.timeout(1.seconds, scheduler, other).test()
 
         scheduler.timer.advanceBy(1000L)
 
@@ -120,7 +121,7 @@ class TimeoutTest : MaybeToMaybeTests by MaybeToMaybeTestsImpl({ timeout(1000L, 
 
     @Test
     fun does_not_produce_error_WHEN_timeout_reached_after_subscribe_and_has_other() {
-        val observer = upstream.timeout(1000L, scheduler, other).test()
+        val observer = upstream.timeout(1.seconds, scheduler, other).test()
 
         scheduler.timer.advanceBy(1000L)
 

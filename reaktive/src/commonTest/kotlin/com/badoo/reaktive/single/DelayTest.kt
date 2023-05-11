@@ -8,9 +8,10 @@ import com.badoo.reaktive.test.single.assertNotSuccess
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.seconds
 
 class DelayTest :
-    SingleToSingleTests by SingleToSingleTestsImpl({ delay(0L, TestScheduler()) }),
+    SingleToSingleTests by SingleToSingleTestsImpl({ delay(0.seconds, TestScheduler()) }),
     DelayErrorTests by DelayErrorTests<TestSingle<Int>>(
         TestSingle(),
         { delayMillis, scheduler, delayError -> delay(delayMillis, scheduler, delayError).test() }
@@ -19,7 +20,7 @@ class DelayTest :
     private val upstream = TestSingle<Int?>()
     private val scheduler = TestScheduler()
     private val timer = scheduler.timer
-    private val observer = upstream.delay(1000L, scheduler).test()
+    private val observer = upstream.delay(1.seconds, scheduler).test()
 
     @Test
     fun does_not_succeed_IF_timeout_not_reached() {

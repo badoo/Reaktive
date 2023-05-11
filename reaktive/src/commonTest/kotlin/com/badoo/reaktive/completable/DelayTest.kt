@@ -8,18 +8,20 @@ import com.badoo.reaktive.test.completable.assertNotComplete
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class DelayTest :
-    CompletableToCompletableTests by CompletableToCompletableTestsImpl({ delay(0L, TestScheduler()) }),
+    CompletableToCompletableTests by CompletableToCompletableTestsImpl({ delay(0.milliseconds, TestScheduler()) }),
     DelayErrorTests by DelayErrorTests(
         TestCompletable(),
-        { delayMillis, scheduler, delayError -> delay(delayMillis, scheduler, delayError).test() }
+        { delay, scheduler, delayError -> delay(delay, scheduler, delayError).test() }
     ) {
 
     private val upstream = TestCompletable()
     private val scheduler = TestScheduler()
     private val timer = scheduler.timer
-    private val observer = upstream.delay(1000L, scheduler).test()
+    private val observer = upstream.delay(1.seconds, scheduler).test()
 
     @Test
     fun does_not_complete_synchronously() {

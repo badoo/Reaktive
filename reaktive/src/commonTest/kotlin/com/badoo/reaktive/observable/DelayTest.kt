@@ -9,9 +9,10 @@ import com.badoo.reaktive.test.observable.assertValue
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.seconds
 
 class DelayTest :
-    ObservableToObservableTests by ObservableToObservableTestsImpl({ delay(0L, TestScheduler()) }),
+    ObservableToObservableTests by ObservableToObservableTestsImpl({ delay(0.seconds, TestScheduler()) }),
     DelayErrorTests by DelayErrorTests<TestObservable<Int>>(
         TestObservable(),
         { delayMillis, scheduler, delayError -> delay(delayMillis, scheduler, delayError).test() }
@@ -20,7 +21,7 @@ class DelayTest :
     private val upstream = TestObservable<Int?>()
     private val scheduler = TestScheduler()
     private val timer = scheduler.timer
-    private val observer = upstream.delay(1000L, scheduler).test()
+    private val observer = upstream.delay(1.seconds, scheduler).test()
 
     @Test
     fun does_not_emit_values_IF_timeout_not_reached() {

@@ -11,6 +11,7 @@ import com.badoo.reaktive.subject.unicast.UnicastSubject
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
+import kotlin.time.Duration
 
 /**
  * Returns an [Observable] that emits non-overlapping windows of elements it collects from the source [Observable].
@@ -18,15 +19,15 @@ import com.badoo.reaktive.utils.serializer.serializer
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-long-boolean-).
  */
 fun <T> Observable<T>.window(
-    spanMillis: Long,
+    span: Duration,
     scheduler: Scheduler,
     limit: Long = Long.MAX_VALUE,
     restartOnLimit: Boolean = false
 ): Observable<Observable<T>> {
-    require(spanMillis > 0) { "spanMillis must by positive" }
+    require(span.isPositive()) { "Span duration must by positive" }
 
     return window(
-        boundaries = singleOf(Unit).delay(spanMillis, scheduler).repeat(),
+        boundaries = singleOf(Unit).delay(span, scheduler).repeat(),
         limit = limit,
         restartOnLimit = restartOnLimit
     )

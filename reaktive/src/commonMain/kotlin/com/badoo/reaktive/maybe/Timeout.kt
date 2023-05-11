@@ -5,14 +5,15 @@ import com.badoo.reaktive.base.exceptions.TimeoutException
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.scheduler.Scheduler
+import kotlin.time.Duration
 
 /**
- * Disposes the current [Maybe] if it does not signal within the [timeoutMillis] timeout,
+ * Disposes the current [Maybe] if it does not signal within the [timeout],
  * and subscribes to [other] [Maybe] if provided.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#timeout-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-io.reactivex.MaybeSource-).
  */
-fun <T> Maybe<T>.timeout(timeoutMillis: Long, scheduler: Scheduler, other: Maybe<T>? = null): Maybe<T> =
+fun <T> Maybe<T>.timeout(timeout: Duration, scheduler: Scheduler, other: Maybe<T>? = null): Maybe<T> =
     maybe { emitter ->
         val onTimeout: () -> Unit =
             {
@@ -40,7 +41,7 @@ fun <T> Maybe<T>.timeout(timeoutMillis: Long, scheduler: Scheduler, other: Maybe
                 }
 
                 fun startTimeout() {
-                    executor.submit(timeoutMillis, onTimeout)
+                    executor.submit(delay = timeout, task = onTimeout)
                 }
             }
 

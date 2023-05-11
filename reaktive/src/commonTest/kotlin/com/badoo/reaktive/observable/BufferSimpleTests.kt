@@ -7,6 +7,8 @@ import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class BufferSimpleTests {
 
@@ -16,7 +18,7 @@ class BufferSimpleTests {
     fun buffer_spanMillis_emits_correct_values() {
         val scheduler = TestScheduler()
         val timer = scheduler.timer
-        val observer = upstream.buffer(spanMillis = 1000L, scheduler = scheduler, limit = 3).test()
+        val observer = upstream.buffer(span = 1.seconds, scheduler = scheduler, limit = 3).test()
 
         upstream.onNext(1, 2)
         timer.advanceBy(999L)
@@ -75,7 +77,7 @@ class BufferSimpleTests {
     fun buffer_spanMillis_skipMillis_emits_correct_values() {
         val scheduler = TestScheduler()
         val timer = scheduler.timer
-        val observer = upstream.buffer(spanMillis = 1000L, skipMillis = 600L, scheduler = scheduler, limit = 13).test()
+        val observer = upstream.buffer(span = 1.seconds, skip = 600.milliseconds, scheduler = scheduler, limit = 13).test()
 
         upstream.onNext(1, 2)
         timer.advanceBy(599L)
