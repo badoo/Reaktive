@@ -1,6 +1,5 @@
 package com.badoo.reaktive.observable
 
-import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.plugin.onAssembleObservable
 import kotlin.native.concurrent.SharedImmutable
@@ -10,7 +9,6 @@ import kotlin.native.concurrent.SharedImmutable
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#unsafeCreate-io.reactivex.ObservableSource-).
  */
-@OptIn(ExperimentalReaktiveApi::class)
 inline fun <T> observableUnsafe(crossinline onSubscribe: (observer: ObservableObserver<T>) -> Unit): Observable<T> =
     onAssembleObservable(
         object : Observable<T> {
