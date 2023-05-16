@@ -26,10 +26,10 @@ fun <T> Observable<T>.buffer(
  */
 fun <T> Observable<T>.buffer(
     boundaries: Observable<*>,
-    limit: Long = Long.MAX_VALUE,
+    limit: Int = Int.MAX_VALUE,
     restartOnLimit: Boolean = false
 ): Observable<List<T>> =
-    window(boundaries = boundaries, limit = limit, restartOnLimit = restartOnLimit)
+    window(boundaries = boundaries, limit = limit.toLong(), restartOnLimit = restartOnLimit)
         .flatMapSingle { it.toList() }
 
 /**
@@ -41,10 +41,10 @@ fun <T> Observable<T>.buffer(
     span: Duration,
     skip: Duration,
     scheduler: Scheduler,
-    limit: Long = Long.MAX_VALUE,
+    limit: Int = Int.MAX_VALUE,
     restartOnLimit: Boolean = false
 ): Observable<List<T>> =
-    window(span = span, skip = skip, scheduler = scheduler, limit = limit, restartOnLimit = restartOnLimit)
+    window(span = span, skip = skip, scheduler = scheduler, limit = limit.toLong(), restartOnLimit = restartOnLimit)
         .flatMapSingle { it.toList() }
 
 /**
@@ -57,8 +57,8 @@ fun <T> Observable<T>.buffer(
 fun <T, S> Observable<T>.buffer(
     opening: Observable<S>,
     closing: (S) -> Completable,
-    limit: Long = Long.MAX_VALUE,
+    limit: Int = Int.MAX_VALUE,
     restartOnLimit: Boolean = false
 ): Observable<List<T>> =
-    window(opening = opening, closing = closing, limit = limit, restartOnLimit = restartOnLimit)
+    window(opening = opening, closing = closing, limit = limit.toLong(), restartOnLimit = restartOnLimit)
         .flatMapSingle { it.toList() }
