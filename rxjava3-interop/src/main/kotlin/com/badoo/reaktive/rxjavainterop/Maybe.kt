@@ -5,11 +5,6 @@ import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.MaybeObserver
 import com.badoo.reaktive.maybe.maybeUnsafe
 
-fun <T : Any> Maybe<T>.asRxJava3MaybeSource(): io.reactivex.rxjava3.core.MaybeSource<T> =
-    io.reactivex.rxjava3.core.MaybeSource { observer ->
-        subscribe(observer.asReaktiveMaybeObserver())
-    }
-
 fun <T : Any> Maybe<T>.asRxJava3Maybe(): io.reactivex.rxjava3.core.Maybe<T> =
     object : io.reactivex.rxjava3.core.Maybe<T>() {
         override fun subscribeActual(observer: io.reactivex.rxjava3.core.MaybeObserver<in T>) {

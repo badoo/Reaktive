@@ -5,11 +5,6 @@ import com.badoo.reaktive.completable.CompletableObserver
 import com.badoo.reaktive.completable.completableUnsafe
 import com.badoo.reaktive.disposable.Disposable
 
-fun Completable.asRxJava3CompletableSource(): io.reactivex.rxjava3.core.CompletableSource =
-    io.reactivex.rxjava3.core.CompletableSource { observer ->
-        subscribe(observer.asReaktiveCompletableObserver())
-    }
-
 fun Completable.asRxJava3Completable(): io.reactivex.rxjava3.core.Completable =
     object : io.reactivex.rxjava3.core.Completable() {
         override fun subscribeActual(observer: io.reactivex.rxjava3.core.CompletableObserver) {
