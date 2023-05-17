@@ -5,11 +5,6 @@ import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.observable.observableUnsafe
 
-fun <T : Any> Observable<T>.asRxJava2ObservableSource(): io.reactivex.ObservableSource<T> =
-    io.reactivex.ObservableSource { observer ->
-        subscribe(observer.asReaktiveObservableObserver())
-    }
-
 fun <T : Any> Observable<T>.asRxJava2Observable(): io.reactivex.Observable<T> =
     object : io.reactivex.Observable<T>() {
         override fun subscribeActual(observer: io.reactivex.Observer<in T>) {

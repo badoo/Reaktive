@@ -5,11 +5,6 @@ import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.SingleObserver
 import com.badoo.reaktive.single.singleUnsafe
 
-fun <T : Any> Single<T>.asRxJava3SingleSource(): io.reactivex.rxjava3.core.SingleSource<T> =
-    io.reactivex.rxjava3.core.SingleSource { observer ->
-        subscribe(observer.asReaktiveSingleObserver())
-    }
-
 fun <T : Any> Single<T>.asRxJava3Single(): io.reactivex.rxjava3.core.Single<T> =
     object : io.reactivex.rxjava3.core.Single<T>() {
         override fun subscribeActual(observer: io.reactivex.rxjava3.core.SingleObserver<in T>) {
