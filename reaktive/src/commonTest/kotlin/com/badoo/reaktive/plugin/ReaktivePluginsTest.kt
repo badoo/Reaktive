@@ -1,6 +1,5 @@
 package com.badoo.reaktive.plugin
 
-import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.completable.completableUnsafe
 import com.badoo.reaktive.maybe.Maybe
@@ -16,7 +15,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalReaktiveApi::class)
 class ReaktivePluginsTest {
 
     @AfterTest
