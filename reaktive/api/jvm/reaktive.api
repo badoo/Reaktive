@@ -580,12 +580,12 @@ public final class com/badoo/reaktive/observable/BufferCountSkipKt {
 }
 
 public final class com/badoo/reaktive/observable/BufferKt {
-	public static final fun buffer (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;JZ)Lcom/badoo/reaktive/observable/Observable;
-	public static final fun buffer (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;JZ)Lcom/badoo/reaktive/observable/Observable;
-	public static synthetic fun buffer$default (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
-	public static synthetic fun buffer$default (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
-	public static final fun buffer-FbhrOv8 (Lcom/badoo/reaktive/observable/Observable;JJLcom/badoo/reaktive/scheduler/Scheduler;JZ)Lcom/badoo/reaktive/observable/Observable;
-	public static synthetic fun buffer-FbhrOv8$default (Lcom/badoo/reaktive/observable/Observable;JJLcom/badoo/reaktive/scheduler/Scheduler;JZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun buffer (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;IZ)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun buffer (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;IZ)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun buffer$default (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;IZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun buffer$default (Lcom/badoo/reaktive/observable/Observable;Lcom/badoo/reaktive/observable/Observable;Lkotlin/jvm/functions/Function1;IZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
+	public static final fun buffer-FbhrOv8 (Lcom/badoo/reaktive/observable/Observable;JJLcom/badoo/reaktive/scheduler/Scheduler;IZ)Lcom/badoo/reaktive/observable/Observable;
+	public static synthetic fun buffer-FbhrOv8$default (Lcom/badoo/reaktive/observable/Observable;JJLcom/badoo/reaktive/scheduler/Scheduler;IZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 	public static final fun buffer-WPwdCS8 (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;IZ)Lcom/badoo/reaktive/observable/Observable;
 	public static synthetic fun buffer-WPwdCS8$default (Lcom/badoo/reaktive/observable/Observable;JLcom/badoo/reaktive/scheduler/Scheduler;IZILjava/lang/Object;)Lcom/badoo/reaktive/observable/Observable;
 }
