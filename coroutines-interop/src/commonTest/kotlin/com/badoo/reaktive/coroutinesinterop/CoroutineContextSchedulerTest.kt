@@ -2,17 +2,17 @@ package com.badoo.reaktive.coroutinesinterop
 
 import com.badoo.reaktive.utils.clock.Clock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalCoroutinesApi::class)
-class CoroutineContextSchedulerJvmTest {
+@OptIn(ExperimentalCoroutinesApi::class) // UnconfinedTestDispatcher is experimental
+class CoroutineContextSchedulerTest {
 
-    private val dispatcher = TestCoroutineDispatcher()
+    private val dispatcher = UnconfinedTestDispatcher()
     private val clock = TestClock()
     private val scheduler = CoroutineContextScheduler(context = dispatcher, clock = TestClock())
     private val executor = scheduler.newExecutor()
@@ -231,7 +231,8 @@ class CoroutineContextSchedulerJvmTest {
 
     private fun advanceTimeBy(millis: Long) {
         clock.advanceBy(millis.milliseconds)
-        dispatcher.advanceTimeBy(millis)
+        dispatcher.scheduler.advanceTimeBy(millis)
+        dispatcher.scheduler.runCurrent()
     }
 
     private class TestClock : Clock {
