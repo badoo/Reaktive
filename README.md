@@ -10,7 +10,7 @@ Kotlin multiplatform implementation of Reactive Extensions.
 Should you have any questions or feedback welcome to the **Kotlin Slack channel**: 
 [#reaktive](https://kotlinlang.slack.com/archives/CU05HB31A)
 
-### Setup
+## Setup
 
 There are a number of modules published to Maven Central:
 
@@ -22,7 +22,7 @@ There are a number of modules published to Maven Central:
 - `rxjava2-interop` - RxJava v2 interoperability helpers (JVM and Android)
 - `rxjava3-interop` - RxJava v3 interoperability helpers (JVM and Android)
 
-#### Configuring dependencies
+### Configuring dependencies
 
 ```groovy
 kotlin {
@@ -46,9 +46,9 @@ kotlin {
 }
 ```
 
-### Features:
+## Features:
 
-* Multiplatform: JVM, Android, iOS, macOS, watchOS, tvOS, JavaScript, Linux X64, Linux ARM 32 hfp
+* Multiplatform: JVM, Android, iOS, macOS, watchOS, tvOS, JavaScript, Linux X64
 * Schedulers support: 
   * `computationScheduler` - fixed thread pool equal to a number of cores
   * `ioScheduler` - unbound thread pool with caching policy
@@ -56,17 +56,27 @@ kotlin {
   * `singleScheduler` - executes tasks on a single shared background thread
   * `trampolineScheduler` - queues tasks and executes them on one of the participating threads
   * `mainScheduler` - executes tasks on main thread
-* True multithreading for Kotlin/Native (there are some [limitations](https://kotlinlang.org/docs/reference/native/concurrency.html#object-transfer-and-freezing))
-* Thread local subscriptions without freezing for Kotlin/Native
+* True multithreading for Kotlin/Native (since v2.0 only the [new memory model](https://kotlinlang.org/docs/native-memory-manager.html) is supported)
 * Supported sources: `Observable`, `Maybe`, `Single`, `Completable`
 * Subjects: `PublishSubject`, `BehaviorSubject`, `ReplaySubject`, `UnicastSubject`
-* Interoperability with Kotlin Coroutines: conversions between coroutines (including Flow) and Reaktive
-* Interoperability with RxJava2 and RxJava3: conversion of sources between Reaktive and RxJava, ability to reuse RxJava's schedulers
+* Interoperability with Kotlin Coroutines
+  * Convert `suspend` functions to/from `Single`, `Maybe` and `Completable`
+  * Convert `Flow` to/from `Observable`
+  * Convert `CoroutineContext` to `Scheduler`
+  * Convert `Scheduler` to `CoroutineDispatcher`
+* Interoperability with RxJava2 and RxJava3
+  * Conversion of sources and schedulers between Reaktive and RxJava
 
-### Reaktive and the old (strict) Kotlin/Native memory model
+## Reaktive and Kotlin/Native 
+
+Since version 2.x, Reaktive only works with the [new memory model](https://kotlinlang.org/docs/native-memory-manager.html).
+
+<details>
+    <summary><b>Reaktive 1.x and the old (strict) memory model</b></summary>
 
 The old (strict) Kotlin Native memory model and concurrency are very special. In general shared mutable state between threads is not allowed.
 Since Reaktive supports multithreading in Kotlin Native, please read the following documents before using it:
+
 * [Concurrency](https://kotlinlang.org/docs/reference/native/concurrency.html#object-transfer-and-freezing)
 * [Immutability](https://kotlinlang.org/docs/reference/native/immutability.html)
 
@@ -87,6 +97,7 @@ Sometimes freezing is not acceptable, e.g. we might want to load some data in ba
 Obviously UI can not be frozen. With Reaktive it is possible to achieve such a behaviour in two ways:
 
 Use `threadLocal` operator:
+
 ```kotlin
 val values = mutableListOf<Any>()
 var isFinished = false
@@ -103,6 +114,7 @@ observable<Any> { emitter ->
 ```
 
 Set `isThreadLocal` flag to `true` in `subscribe` operator:
+
 ```kotlin
 val values = mutableListOf<Any>()
 var isComplete = false
@@ -121,57 +133,37 @@ observable<Any> { emitter ->
 
 In both cases subscription (`subscribe` call) **must** be performed on the Main thread.
 
-### Reaktive and the new (relaxed) Kotlin/Native memory model
+</details>
 
-The new (relaxed) Kotlin/Native [memory model](https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md)
-allows passing objects between threads without freezing. When using this memory model, there is no need
-to use the `threadLocal` operator/argument anymore. Please make sure that you also **disabled freezing**
-as [described in the documentation](https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md#unexpected-object-freezing).
+## Coroutines interop
 
-### Coroutines interop
+This functionality is provided by the `coroutines-interop` module. Please mind some [known problems](https://github.com/Kotlin/kotlinx.coroutines/blob/native-mt/kotlin-native-sharing.md#known-problems) with multi-threaded coroutines on Kotlin/Native.
 
-This functionality is provided by the `coroutines-interop` module which is published in two versions:
-
-- `coroutines-interop:<version>` is based on stable `kotlinx.coroutines` - use this variant with the stable version of coroutines **and** with the old (strict) memory model.
-- `coroutines-interop:<version>-nmtc` is based on [work-in-progress](https://github.com/Kotlin/kotlinx.coroutines/pull/1648) multi-threaded `kotlinx.coroutines` - use this variant with either the multi-threaded version of coroutines **or** the new (relaxed) memory model.
-
-#### Coroutines interop based on stable kotlinx.coroutines
-
-There are few important limitations:
-
-- Neither `Job` nor `CoroutineContext` can be frozen (until release of the multi-threaded coroutines).
-- Because of the first limitation all `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed inside `runBlocking` block in Kotlin/Native and should be subscribed on a background `Scheduler`.
-
-Consider the following example for `coroutines-interop`:
+### Examples
 
 ```kotlin
-singleFromCoroutine {
-    // This block will be executed inside `runBlocking` in Kotlin/Native
-}
-    .subscribeOn(ioScheduler) // Switching to a background thread is necessary
-    .observeOn(mainScheduler)
-    .subscribe { /* Get the result here */ }
+val flow: Flow<Int> = observableOf(1, 2, 3).asFlow()
+val observable: Observable<Int> = flowOf(1, 2, 3).asObservable()
 ```
 
-Please note that Ktor uses multi-threaded coroutines by default. If you are using Ktor, please use `coroutines-interop` module based on multi-threaded coroutines and proceed to the next Readme section.
+```kotlin
+fun doSomething() {
+    singleFromCoroutine { getSomething() }
+        .subscribe { println(it) }
+}
 
+suspend fun getSomething(): String {
+    delay(1.seconds)
+    return "something"
+}
+```
 
-#### Coroutines interop based on multi-threaded kotlinx.coroutines
+```kotlin
+val defaultScheduler = Dispatchers.Default.asScheduler()
+val computationDispatcher = computationScheduler.asCoroutineDispatcher()
+```
 
-The multi-threaded `kotlinx.coroutines` variant lifts some unpleasant restrictions - both `Job` and `CoroutineContext` can be frozen.
-
-So there is one crucial difference - all `xxxFromCoroutine {}` builders and `Flow.asObservable()` converter are executed asynchronously in all targets (including Kotlin/Native), so can be subscribed on any scheduler.
-
-Notes:
-
-- Because multi-threaded coroutines are work-in-progress, there are possible [issues](https://github.com/Kotlin/kotlinx.coroutines/blob/native-mt/kotlin-native-sharing.md#known-problems).
-- Ktor can be used out of the box without any known limitations
-
-##### Coroutines interop general limitations
-
-Converters `Scheduler.asCoroutineDispatcher()` and `CoroutineContext.asScheduler()` are available only in JVM and JS currently.
-
-### Subscription management with DisposableScope
+## Subscription management with DisposableScope
 
 Reaktive provides an easy way to manage subscriptions: [DisposableScope](https://github.com/badoo/Reaktive/blob/master/reaktive/src/commonMain/kotlin/com/badoo/reaktive/disposable/scope/DisposableScope.kt).
 
@@ -228,11 +220,11 @@ class MyActivity : AppCompatActivity(), DisposableScope by DisposableScope() {
 }
 ```
 
-### Reaktive and Swift interoperability
+## Reaktive and Swift interoperability
 
 Please see the corresponding documentation page: [Reaktive and Swift interoperability](docs/SwiftInterop.md).
 
-### Plugins
+## Plugins
 
 Reaktive provides Plugin API, something similar to [RxJava plugins](https://github.com/ReactiveX/RxJava/wiki/Plugins). The Plugin API provides a way to decorate Reaktive sources. A plugin should implement the [ReaktivePlugin](https://github.com/badoo/Reaktive/blob/master/reaktive/src/commonMain/kotlin/com/badoo/reaktive/plugin/ReaktivePlugin.kt) interface, and can be registered using the `registerReaktivePlugin` function and unregistered using the `unregisterReaktivePlugin` function.
 
@@ -273,7 +265,8 @@ object MyPlugin : ReaktivePlugin {
 }
 ```
 
-### Samples:
+## Samples:
+
 * [MPP module](https://github.com/badoo/Reaktive/tree/master/sample-mpp-module)
 * [Android app](https://github.com/badoo/Reaktive/tree/master/sample-android-app)
 * [iOS app](https://github.com/badoo/Reaktive/tree/master/sample-ios-app)
