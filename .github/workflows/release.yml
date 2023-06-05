@@ -108,8 +108,11 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           cache-read-only: true
+          # Exclude kotlinStoreYarnLock because publication check project has different from the main project
+          # dependencies, and the task fails the build. Ignoring it looks fine.
           arguments: |
             :tools:check-publication:build
+            --exclude-task kotlinStoreYarnLock
             -Ptarget=all_linux_hosted
             -Pcheck_publication
             -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
@@ -136,8 +139,11 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           cache-read-only: true
+          # Exclude kotlinStoreYarnLock because publication check project has different from the main project
+          # dependencies, and the task fails the build. Ignoring it looks fine.
           arguments: |
             :tools:check-publication:build
+            --exclude-task kotlinStoreYarnLock
             -Ptarget=all_macos_hosted
             -Pcheck_publication
             -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
