@@ -3,6 +3,10 @@ plugins {
     id 'detekt-configuration'
 }
 
+android {
+    namespace "com.badoo.reaktive.samplemppmodule"
+}
+
 kotlin {
     def configureFrameworks = { target ->
         target.binaries {

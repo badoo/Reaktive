@@ -4,7 +4,6 @@ import com.badoo.reaktive.test.scheduler.TestScheduler
 import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.clock.DefaultClock
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -40,7 +39,6 @@ class SchedulerCoroutineDispatcherTest {
         runnable.assertExecutedOnce()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class) // runTest is experimental
     @Test
     fun executes_with_delay() = runTest {
         val scheduler = TestScheduler(isManualProcessing = false)

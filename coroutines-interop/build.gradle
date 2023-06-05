@@ -6,6 +6,10 @@ plugins {
 
 version = "${property("reaktive_version")}-nmtc"
 
+android {
+    namespace "com.badoo.reaktive.coroutinesinterop"
+}
+
 kotlin {
     sourceSets {
         commonMain {

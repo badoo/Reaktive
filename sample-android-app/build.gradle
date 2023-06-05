@@ -4,6 +4,7 @@ plugins {
 }
 
 android {
+    namespace "com.badoo.reaktive.sample.android"
     compileSdk 31
 
     defaultConfig {

@@ -3,3 +3,7 @@ plugins {
     id 'publish-configuration'
     id 'detekt-configuration'
 }
+
+android {
+    namespace "com.badoo.reaktive.annotations"
+}
