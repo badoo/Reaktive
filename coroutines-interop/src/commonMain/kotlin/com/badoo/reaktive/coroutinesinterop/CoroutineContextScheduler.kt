@@ -9,11 +9,9 @@ import com.badoo.reaktive.utils.atomic.getAndChange
 import com.badoo.reaktive.utils.clock.Clock
 import com.badoo.reaktive.utils.coerceAtLeastZero
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -23,7 +21,6 @@ import kotlinx.coroutines.sync.withLock
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration
 
-@ExperimentalCoroutinesApi // Channels are experimental
 internal class CoroutineContextScheduler(
     private val context: CoroutineContext,
     private val clock: Clock
@@ -37,31 +34,15 @@ internal class CoroutineContextScheduler(
         disposables.dispose()
     }
 
-    @OptIn(ObsoleteCoroutinesApi::class) // Replace channels with SharedFlow
     private class ExecutorImpl(
-        context: CoroutineContext,
+        private val context: CoroutineContext,
         private val clock: Clock,
-        private val disposables: CompositeDisposable
+        private val disposables: CompositeDisposable,
     ) : Scheduler.Executor {
 
         private val channelRef = AtomicReference<ChannelHolder?>(ChannelHolder())
         private val mutex = Mutex()
-        override val isDisposed: Boolean get() = !job.isActive
-
-        private val job =
-            GlobalScope.launch(context) {
-                while (true) {
-                    val receiveChannel = channelRef.value?.receiveChannel ?: break
-                    try {
-                        val iterator = receiveChannel.iterator()
-                        while (!receiveChannel.isClosedForReceive && iterator.hasNext()) {
-                            execute(this, iterator.next())
-                        }
-                    } finally {
-                        receiveChannel.cancel()
-                    }
-                }
-            }
+        override val isDisposed: Boolean get() = channelRef.value == null
 
         init {
             disposables += this
@@ -69,39 +50,37 @@ internal class CoroutineContextScheduler(
 
         override fun cancel() {
             channelRef
-                .getAndChange {
-                    it?.let { ChannelHolder() }
-                }
+                .getAndChange { if (it != null) ChannelHolder() else null }
+                ?.scope
                 ?.cancel()
         }
 
         override fun dispose() {
             channelRef
                 .getAndSet(null)
+                ?.scope
                 ?.cancel()
-
-            job.cancel()
 
             disposables -= this
         }
 
         override fun submit(delay: Duration, period: Duration, task: () -> Unit) {
-            channelRef.value?.channel?.apply {
-                trySend(
-                    Task(
-                        startTime = clock.uptime + delay.coerceAtLeastZero(),
-                        period = period.coerceAtLeastZero(),
-                        task = task
-                    )
+            channelRef.value?.channel?.trySend(
+                Task(
+                    startTime = clock.uptime + delay.coerceAtLeastZero(),
+                    period = period.coerceAtLeastZero(),
+                    task = task,
                 )
-            }
+            )
         }
 
-        private suspend fun execute(scope: CoroutineScope, task: Task) {
+        private suspend fun execute(task: Task) {
             if (clock.uptime < task.startTime) {
-                scope.launch {
-                    delayUntilStart(task.startTime)
-                    executeAndRepeatIfNeeded(task.period, task.task)
+                coroutineScope {
+                    launch {
+                        delayUntilStart(task.startTime)
+                        executeAndRepeatIfNeeded(task.period, task.task)
+                    }
                 }
             } else {
                 executeAndRepeatIfNeeded(task.period, task.task)
@@ -130,13 +109,16 @@ internal class CoroutineContextScheduler(
             }
         }
 
-        private class ChannelHolder {
-            val channel = BroadcastChannel<Task>(Channel.BUFFERED)
-            val receiveChannel = channel.openSubscription()
+        private inner class ChannelHolder {
+            val channel: Channel<Task> = Channel(capacity = Channel.UNLIMITED)
+            val scope: CoroutineScope = CoroutineScope(context)
 
-            fun cancel() {
-                receiveChannel.cancel()
-                channel.cancel()
+            init {
+                scope.launch {
+                    channel.consumeEach { task ->
+                        execute(task)
+                    }
+                }
             }
         }
 

@@ -19,11 +19,6 @@ kotlin {
         commonTest {
             dependencies {
                 implementation project(':reaktive-testing')
-            }
-        }
-
-        jvmCommonTest {
-            dependencies {
                 implementation libs.kotlinx.coroutines.test
             }
         }
