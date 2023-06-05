@@ -55,8 +55,17 @@ jobs:
             :reaktive:build
             :coroutines-interop:build
             :sample-mpp-module:build
-            :sample-ios-app:build
             -Ptarget=all_macos_hosted
+      # Do not invoke from Gradle, it creates circular dependency (Gradle invokes XCode invokes Gradle).
+      - name: Build iOS app
+        if: matrix.os == 'macOS-latest'
+        working-directory: sample-ios-app
+        run: >
+          xcodebuild
+          -project sample-ios-app.xcodeproj
+          -scheme "sample-ios-app"
+          -sdk "iphonesimulator"
+          -arch "x86_64"
       - name: Bundle the build report
         if: failure()
         run: find . -type d -name 'reports' | zip -@ -r build-reports.zip

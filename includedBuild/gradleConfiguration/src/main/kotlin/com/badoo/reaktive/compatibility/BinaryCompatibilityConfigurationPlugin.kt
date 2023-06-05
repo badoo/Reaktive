@@ -25,7 +25,6 @@ class BinaryCompatibilityConfigurationPlugin : Plugin<Project> {
                             "sample-android-app",
                             "sample-js-browser-app",
                             "sample-linuxx64-app",
-                            "sample-ios-app",
                         )
                     )
                 }
