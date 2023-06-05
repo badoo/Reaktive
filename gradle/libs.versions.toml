@@ -1,6 +1,6 @@
 [versions]
-kotlin = "1.8.0"
-kotlinx-coroutines = "1.6.3-native-mt"
+kotlin = "1.8.21"
+kotlinx-coroutines = "1.7.1"
 detekt = "1.22.0"
 
 [libraries]

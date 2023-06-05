@@ -67,7 +67,7 @@ class MppConfigurationPlugin : Plugin<Project> {
                 maybeCreate("jvmTest").dependsOn(getByName("jvmCommonTest"))
 
                 maybeCreate("androidMain").dependsOn(getByName("jvmCommonMain"))
-                maybeCreate("androidTest").dependsOn(getByName("jvmCommonTest"))
+                maybeCreate("androidUnitTest").dependsOn(getByName("jvmCommonTest"))
 
                 maybeCreate("jsMain").dependsOn(getByName("jvmJsCommonMain"))
                 maybeCreate("jsTest").dependsOn(getByName("jvmJsCommonTest"))
@@ -145,7 +145,7 @@ class MppConfigurationPlugin : Plugin<Project> {
             }
             sourceSets {
                 maybeCreate("androidMain").dependencies { implementation(project.getLibrary("kotlin-stdlib")) }
-                maybeCreate("androidTest").dependencies { implementation(project.getLibrary("kotlin-test-junit")) }
+                maybeCreate("androidUnitTest").dependencies { implementation(project.getLibrary("kotlin-test-junit")) }
             }
         }
     }

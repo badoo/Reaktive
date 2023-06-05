@@ -4,6 +4,10 @@ plugins {
     id 'detekt-configuration'
 }
 
+android {
+    namespace "com.badoo.reaktive.utils"
+}
+
 kotlin {
     sourceSets {
         commonTest {
