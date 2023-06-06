@@ -4,6 +4,6 @@ plugins {
     id 'detekt-configuration'
 }
 
-configuration {
-    enableLinuxArm32Hfp()
+android {
+    namespace "com.badoo.reaktive.annotations"
 }

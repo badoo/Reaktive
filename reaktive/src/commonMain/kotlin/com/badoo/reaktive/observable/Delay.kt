@@ -4,6 +4,7 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
+import kotlin.time.Duration
 
 /**
  * Delays `onNext` and `onComplete` signals from the current [Observable] for the specified time.
@@ -11,7 +12,7 @@ import com.badoo.reaktive.scheduler.Scheduler
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#delay-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-boolean-).
  */
-fun <T> Observable<T>.delay(delayMillis: Long, scheduler: Scheduler, delayError: Boolean = false): Observable<T> =
+fun <T> Observable<T>.delay(delay: Duration, scheduler: Scheduler, delayError: Boolean = false): Observable<T> =
     observable { emitter ->
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
@@ -25,18 +26,18 @@ fun <T> Observable<T>.delay(delayMillis: Long, scheduler: Scheduler, delayError:
                 }
 
                 override fun onNext(value: T) {
-                    executor.submit(delayMillis) {
+                    executor.submit(delay = delay) {
                         emitter.onNext(value)
                     }
                 }
 
                 override fun onComplete() {
-                    executor.submit(delayMillis, emitter::onComplete)
+                    executor.submit(delay = delay, task = emitter::onComplete)
                 }
 
                 override fun onError(error: Throwable) {
                     if (delayError) {
-                        executor.submit(delayMillis) {
+                        executor.submit(delay = delay) {
                             emitter.onError(error)
                         }
                     } else {

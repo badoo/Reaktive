@@ -7,8 +7,6 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.addTo
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.queue.SharedQueue
 import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
 
@@ -32,8 +30,8 @@ private class ConcatMapObserver<in T, in R>(
 
     private val actor = serializer(::processEvent)
     private val innerObserver = InnerObserver(callbacks, actor).addTo(this)
-    private val queue = SharedQueue<T>()
-    private val state = AtomicReference(State.IDLE)
+    private val queue = ArrayDeque<T>()
+    private var state = State.IDLE
 
     override fun onSubscribe(disposable: Disposable) {
         add(disposable)
@@ -56,8 +54,8 @@ private class ConcatMapObserver<in T, in R>(
         }
 
     private fun onUpstreamCompleted(): Boolean {
-        val oldState = state.value
-        state.value = State.UPSTREAM_COMPLETED
+        val oldState = state
+        state = State.UPSTREAM_COMPLETED
 
         if (oldState == State.IDLE) {
             callbacks.onComplete()
@@ -68,26 +66,26 @@ private class ConcatMapObserver<in T, in R>(
     }
 
     private fun onInnerCompleted(): Boolean {
-        if (queue.isEmpty) {
-            if (state.value == State.UPSTREAM_COMPLETED) {
+        if (queue.isEmpty()) {
+            if (state == State.UPSTREAM_COMPLETED) {
                 callbacks.onComplete()
                 return false
             }
 
-            state.value = State.IDLE
+            state = State.IDLE
         } else {
             @Suppress("UNCHECKED_CAST")
-            subscribe(queue.poll() as T)
+            subscribe(queue.removeFirst())
         }
 
         return true
     }
 
     private fun onUpstreamValue(value: T): Boolean {
-        if (state.value == State.INNER_ACTIVE) {
-            queue.offer(value)
+        if (state == State.INNER_ACTIVE) {
+            queue.addLast(value)
         } else {
-            state.value = State.INNER_ACTIVE
+            state = State.INNER_ACTIVE
             subscribe(value)
         }
 

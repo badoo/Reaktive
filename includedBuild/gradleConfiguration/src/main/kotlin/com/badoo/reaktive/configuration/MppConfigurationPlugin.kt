@@ -1,12 +1,13 @@
 package com.badoo.reaktive.configuration
 
 import com.android.build.gradle.BaseExtension
-import com.badoo.reaktive.dependencies.Deps
+import com.badoo.reaktive.getLibrary
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.invoke
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class MppConfigurationPlugin : Plugin<Project> {
@@ -23,10 +24,10 @@ class MppConfigurationPlugin : Plugin<Project> {
         target.version = target.findProperty("reaktive_version") as Any
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
             sourceSets {
-                maybeCreate("commonMain").dependencies { implementation(Deps.kotlin.stdlib.common) }
+                maybeCreate("commonMain").dependencies { implementation(target.getLibrary("kotlin-stdlib-common")) }
                 maybeCreate("commonTest").dependencies {
-                    implementation(Deps.kotlin.test.common)
-                    implementation(Deps.kotlin.test.annotationsCommon)
+                    implementation(target.getLibrary("kotlin-test-common"))
+                    implementation(target.getLibrary("kotlin-test-annotations"))
                 }
             }
         }
@@ -41,6 +42,12 @@ class MppConfigurationPlugin : Plugin<Project> {
 
         project.kotlin {
             sourceSets {
+                all {
+                    languageSettings {
+                        optIn("com.badoo.reaktive.utils.InternalReaktiveApi")
+                    }
+                }
+
                 maybeCreate("jvmJsCommonMain").dependsOn(getByName("commonMain"))
                 maybeCreate("jvmJsCommonTest").dependsOn(getByName("commonTest"))
 
@@ -60,7 +67,7 @@ class MppConfigurationPlugin : Plugin<Project> {
                 maybeCreate("jvmTest").dependsOn(getByName("jvmCommonTest"))
 
                 maybeCreate("androidMain").dependsOn(getByName("jvmCommonMain"))
-                maybeCreate("androidTest").dependsOn(getByName("jvmCommonTest"))
+                maybeCreate("androidUnitTest").dependsOn(getByName("jvmCommonTest"))
 
                 maybeCreate("jsMain").dependsOn(getByName("jvmJsCommonMain"))
                 maybeCreate("jsTest").dependsOn(getByName("jvmJsCommonTest"))
@@ -110,9 +117,6 @@ class MppConfigurationPlugin : Plugin<Project> {
                 maybeCreate("macosArm64Main").dependsOn(getByName("darwinCommonMain"))
                 maybeCreate("macosArm64Test").dependsOn(getByName("darwinCommonTest"))
 
-                maybeCreate("iosArm32Main").dependsOn(getByName("darwinCommonMain"))
-                maybeCreate("iosArm32Test").dependsOn(getByName("darwinCommonTest"))
-
                 maybeCreate("iosArm64Main").dependsOn(getByName("darwinCommonMain"))
                 maybeCreate("iosArm64Test").dependsOn(getByName("darwinCommonTest"))
 
@@ -140,8 +144,8 @@ class MppConfigurationPlugin : Plugin<Project> {
                 disableIfUndefined(Target.JVM)
             }
             sourceSets {
-                maybeCreate("androidMain").dependencies { implementation(Deps.kotlin.stdlib) }
-                maybeCreate("androidTest").dependencies { implementation(Deps.kotlin.test.junit) }
+                maybeCreate("androidMain").dependencies { implementation(project.getLibrary("kotlin-stdlib")) }
+                maybeCreate("androidUnitTest").dependencies { implementation(project.getLibrary("kotlin-test-junit")) }
             }
         }
     }
@@ -150,10 +154,15 @@ class MppConfigurationPlugin : Plugin<Project> {
         project.kotlin {
             jvm {
                 disableIfUndefined(Target.JVM)
+                compilations.getByName("main").apply {
+                    compilerOptions.configure {
+                        jvmTarget.set(JvmTarget.JVM_1_8)
+                    }
+                }
             }
             sourceSets {
-                maybeCreate("jvmMain").dependencies { implementation(Deps.kotlin.stdlib) }
-                maybeCreate("jvmTest").dependencies { implementation(Deps.kotlin.test.junit) }
+                maybeCreate("jvmMain").dependencies { implementation(project.getLibrary("kotlin-stdlib")) }
+                maybeCreate("jvmTest").dependencies { implementation(project.getLibrary("kotlin-test-junit")) }
             }
         }
     }
@@ -166,18 +175,6 @@ class MppConfigurationPlugin : Plugin<Project> {
         project.kotlin {
             linuxX64 {
                 disableIfUndefined(Target.LINUX)
-            }
-        }
-    }
-
-    fun setupLinuxArm32HfpTarget(project: Project) {
-        project.kotlin {
-            linuxArm32Hfp {
-                disableIfUndefined(Target.LINUX)
-            }
-            sourceSets {
-                maybeCreate("linuxArm32HfpMain").dependsOn(getByName("linuxCommonMain"))
-                maybeCreate("linuxArm32HfpTest").dependsOn(getByName("linuxCommonTest"))
             }
         }
     }

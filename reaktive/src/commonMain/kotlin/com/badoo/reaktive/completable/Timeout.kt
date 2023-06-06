@@ -5,13 +5,14 @@ import com.badoo.reaktive.base.exceptions.TimeoutException
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.scheduler.Scheduler
+import kotlin.time.Duration
 
 /**
- * Disposes the current [Completable] if it does not signal within the [timeoutMillis] timeout, and subscribes to [other] [Completable] if provided.
+ * Disposes the current [Completable] if it does not signal within the [timeout], and subscribes to [other] [Completable] if provided.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#timeout-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-io.reactivex.CompletableSource-).
  */
-fun Completable.timeout(timeoutMillis: Long, scheduler: Scheduler, other: Completable? = null): Completable =
+fun Completable.timeout(timeout: Duration, scheduler: Scheduler, other: Completable? = null): Completable =
     completable { emitter ->
         val onTimeout: () -> Unit =
             {
@@ -38,7 +39,7 @@ fun Completable.timeout(timeoutMillis: Long, scheduler: Scheduler, other: Comple
         scheduler
             .newExecutor()
             .addTo(upstreamObserver)
-            .submit(timeoutMillis, onTimeout)
+            .submit(delay = timeout, task = onTimeout)
 
         subscribe(upstreamObserver)
     }

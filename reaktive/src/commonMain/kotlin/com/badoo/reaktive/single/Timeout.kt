@@ -5,14 +5,15 @@ import com.badoo.reaktive.base.exceptions.TimeoutException
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.scheduler.Scheduler
+import kotlin.time.Duration
 
 /**
- * Disposes the current [Single] if it does not signal within the [timeoutMillis] timeout,
+ * Disposes the current [Single] if it does not signal within the [timeout],
  * and subscribes to [other] [Single] if provided.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#timeout-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-io.reactivex.SingleSource-).
  */
-fun <T> Single<T>.timeout(timeoutMillis: Long, scheduler: Scheduler, other: Single<T>? = null): Single<T> =
+fun <T> Single<T>.timeout(timeout: Duration, scheduler: Scheduler, other: Single<T>? = null): Single<T> =
     single { emitter ->
         val onTimeout: () -> Unit =
             {
@@ -40,7 +41,7 @@ fun <T> Single<T>.timeout(timeoutMillis: Long, scheduler: Scheduler, other: Sing
                 }
 
                 fun startTimeout() {
-                    executor.submit(timeoutMillis, onTimeout)
+                    executor.submit(delay = timeout, task = onTimeout)
                 }
             }
 

@@ -4,7 +4,6 @@ import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.scheduler.Scheduler
-import com.badoo.reaktive.utils.freeze
 
 /**
  * Signals all events of the [Single] on the specified [Scheduler].
@@ -31,8 +30,6 @@ fun <T> Single<T>.observeOn(scheduler: Scheduler): Single<T> =
                 }
 
                 override fun onError(error: Throwable) {
-                    error.freeze()
-
                     executor.submit {
                         emitter.onError(error)
                     }

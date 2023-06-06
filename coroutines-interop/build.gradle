@@ -1,30 +1,29 @@
-import com.badoo.reaktive.dependencies.Deps
-
 plugins {
     id 'mpp-configuration'
     id 'publish-configuration'
     id 'detekt-configuration'
 }
 
+version = "${property("reaktive_version")}-nmtc"
+
+android {
+    namespace "com.badoo.reaktive.coroutinesinterop"
+}
+
 kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation Deps.kotlinx.coroutines.core
+                implementation libs.kotlinx.coroutines.core
                 implementation project(':reaktive')
-                implementation project(':utils')
+                implementation project(':utils-internal')
             }
         }
 
         commonTest {
             dependencies {
                 implementation project(':reaktive-testing')
-            }
-        }
-
-        jvmCommonTest {
-            dependencies {
-                implementation Deps.kotlinx.coroutines.test
+                implementation libs.kotlinx.coroutines.test
             }
         }
     }

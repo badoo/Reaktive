@@ -8,16 +8,17 @@ import com.badoo.reaktive.test.scheduler.assertAllExecutorsDisposed
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.time.Duration.Companion.milliseconds
 
 class DelaySubscriptionTest :
-    CompletableToCompletableTests by CompletableToCompletableTestsImpl({ delaySubscription(0L, TestScheduler()) }) {
+    CompletableToCompletableTests by CompletableToCompletableTestsImpl({ delaySubscription(0.milliseconds, TestScheduler()) }) {
 
     private val upstream = TestCompletable()
     private val scheduler = TestScheduler()
 
     @Test
     fun does_not_subscribe_to_upstream_WHEN_timeout_not_reached() {
-        upstream.delaySubscription(delayMillis = 10L, scheduler = scheduler).test()
+        upstream.delaySubscription(delay = 10.milliseconds, scheduler = scheduler).test()
 
         scheduler.timer.advanceBy(9L)
 
@@ -26,7 +27,7 @@ class DelaySubscriptionTest :
 
     @Test
     fun subscribes_to_upstream_only_once_WHEN_timeout_reached() {
-        upstream.delaySubscription(delayMillis = 10L, scheduler = scheduler).test()
+        upstream.delaySubscription(delay = 10.milliseconds, scheduler = scheduler).test()
 
         scheduler.timer.advanceBy(10L)
 
@@ -35,7 +36,7 @@ class DelaySubscriptionTest :
 
     @Test
     fun disposes_executor_WHEN_timeout_reached() {
-        upstream.delaySubscription(delayMillis = 10L, scheduler = scheduler).test()
+        upstream.delaySubscription(delay = 10.milliseconds, scheduler = scheduler).test()
 
         scheduler.timer.advanceBy(10L)
 
@@ -44,7 +45,7 @@ class DelaySubscriptionTest :
 
     @Test
     fun disposes_executor_WHEN_disposed() {
-        val observer = upstream.delaySubscription(delayMillis = 10L, scheduler = scheduler).test()
+        val observer = upstream.delaySubscription(delay = 10.milliseconds, scheduler = scheduler).test()
 
         observer.dispose()
 

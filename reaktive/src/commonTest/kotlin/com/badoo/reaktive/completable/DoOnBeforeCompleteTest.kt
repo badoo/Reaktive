@@ -4,8 +4,6 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
-import com.badoo.reaktive.utils.SharedList
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -17,7 +15,7 @@ class DoOnBeforeCompleteTest
 
     @Test
     fun calls_action_before_completion() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         upstream
             .doOnBeforeComplete {
@@ -38,17 +36,15 @@ class DoOnBeforeCompleteTest
 
     @Test
     fun does_not_call_action_WHEN_produced_error() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnBeforeComplete {
-                isCalled.value = true
-            }
+            .doOnBeforeComplete { isCalled = true }
             .test()
 
         upstream.onError(Throwable())
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test

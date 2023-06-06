@@ -10,7 +10,7 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndUpdate
+import com.badoo.reaktive.utils.atomic.getAndChange
 
 /**
  * Returns an [Observable] that mirrors the source [Observable], but drops elements
@@ -64,7 +64,7 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
                             }
 
                             override fun onComplete() {
-                                pendingValue.getAndUpdate { if (it === newPendingValue) null else it }
+                                pendingValue.getAndChange { if (it === newPendingValue) null else it }
                                     ?.takeIf { it === newPendingValue }
                                     ?.let { serializedEmitter.onNext(it.value) }
                             }
@@ -74,7 +74,7 @@ fun <T> Observable<T>.debounce(debounceSelector: (T) -> Completable): Observable
                 }
 
                 override fun onComplete() {
-                    pendingValue.getAndUpdate { null }
+                    pendingValue.getAndChange { null }
                         ?.let { serializedEmitter.onNext(it.value) }
                     serializedEmitter.onComplete()
                 }

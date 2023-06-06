@@ -7,6 +7,8 @@ import com.badoo.reaktive.test.base.assertError
 import com.badoo.reaktive.test.base.assertNotError
 import com.badoo.reaktive.test.scheduler.TestScheduler
 import kotlin.test.Test
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 interface DelayErrorTests {
 
@@ -28,12 +30,12 @@ interface DelayErrorTests {
     companion object {
         operator fun <S : ErrorCallback> invoke(
             upstream: S,
-            delay: S.(delayMillis: Long, scheduler: Scheduler, delayError: Boolean) -> TestObserver
+            delay: S.(delay: Duration, scheduler: Scheduler, delayError: Boolean) -> TestObserver
         ): DelayErrorTests =
             object : DelayErrorTests {
                 override fun does_not_produce_error_synchronously_with_delayError_false_WHEN_upstream_produced_error() {
                     val scheduler = TestScheduler(isManualProcessing = true)
-                    val observer = upstream.delay(1000L, scheduler, false)
+                    val observer = upstream.delay(1.seconds, scheduler, false)
 
                     upstream.onError(Exception())
 
@@ -42,7 +44,7 @@ interface DelayErrorTests {
 
                 override fun produces_error_without_delay_with_delayError_false_WHEN_upstream_produced_error() {
                     val scheduler = TestScheduler()
-                    val observer = upstream.delay(1000L, scheduler, false)
+                    val observer = upstream.delay(1.seconds, scheduler, false)
                     val error = Exception()
 
                     upstream.onError(error)
@@ -52,7 +54,7 @@ interface DelayErrorTests {
 
                 override fun does_not_produce_error_synchronously_with_delayError_true_WHEN_upstream_produced_error() {
                     val scheduler = TestScheduler(isManualProcessing = true)
-                    val observer = upstream.delay(1000L, scheduler, true)
+                    val observer = upstream.delay(1.seconds, scheduler, true)
 
                     upstream.onError(Exception())
 
@@ -61,7 +63,7 @@ interface DelayErrorTests {
 
                 override fun does_not_produce_error_with_delayError_true_WHEN_upstream_produced_error_and_timeout_not_reached() {
                     val scheduler = TestScheduler()
-                    val observer = upstream.delay(1000L, scheduler, true)
+                    val observer = upstream.delay(1.seconds, scheduler, true)
 
                     upstream.onError(Exception())
                     scheduler.timer.advanceBy(999L)
@@ -71,7 +73,7 @@ interface DelayErrorTests {
 
                 override fun produces_error_with_delayError_is_true_WHEN_upstream_produced_error_and_timeout_reached() {
                     val scheduler = TestScheduler()
-                    val observer = upstream.delay(1000L, scheduler, true)
+                    val observer = upstream.delay(1.seconds, scheduler, true)
                     val error = Exception()
 
                     upstream.onError(error)

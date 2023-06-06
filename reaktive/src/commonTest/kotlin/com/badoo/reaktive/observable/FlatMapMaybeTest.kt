@@ -175,7 +175,7 @@ class FlatMapMaybeTest
         flatMapUpstreamAndSubscribe { innerSources[it!!] }
 
     private fun flatMapUpstreamAndSubscribe(mapper: (Int?) -> Maybe<Int?>): TestObservableObserver<Int?> =
-        upstream.flatMapMaybe(mapper).test()
+        upstream.flatMapMaybe(mapper = mapper).test()
 
     private fun createInnerSources(count: Int): List<TestMaybe<Int?>> =
         List(count) { TestMaybe<Int?>() }

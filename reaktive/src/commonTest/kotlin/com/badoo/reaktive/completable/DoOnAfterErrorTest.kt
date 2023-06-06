@@ -5,8 +5,6 @@ import com.badoo.reaktive.test.completable.DefaultCompletableObserver
 import com.badoo.reaktive.test.completable.TestCompletable
 import com.badoo.reaktive.test.completable.test
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
-import com.badoo.reaktive.utils.SharedList
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -19,7 +17,7 @@ class DoOnAfterErrorTest : CompletableToCompletableTests by CompletableToComplet
 
     @Test
     fun calls_action_after_failing() {
-        val callOrder = SharedList<Pair<String, Throwable>>()
+        val callOrder = ArrayList<Pair<String, Throwable>>()
         val exception = Throwable()
 
         upstream
@@ -41,17 +39,15 @@ class DoOnAfterErrorTest : CompletableToCompletableTests by CompletableToComplet
 
     @Test
     fun does_not_call_action_WHEN_upstream_completed() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnAfterError {
-                isCalled.value = true
-            }
+            .doOnAfterError { isCalled = true }
             .test()
 
         upstream.onComplete()
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test

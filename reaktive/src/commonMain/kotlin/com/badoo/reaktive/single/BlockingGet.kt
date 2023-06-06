@@ -1,10 +1,8 @@
 package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.PairReference
-import com.badoo.reaktive.utils.Uninitialized
+import com.badoo.reaktive.utils.lock.ConditionLock
 import com.badoo.reaktive.utils.lock.synchronized
-import com.badoo.reaktive.utils.lock.withLockAndCondition
 
 /**
  * Blocks current thread until the current [Single] succeeds with a value (which is returned) or
@@ -17,54 +15,54 @@ import com.badoo.reaktive.utils.lock.withLockAndCondition
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#blockingGet--).
  */
-fun <T> Single<T>.blockingGet(): T =
-    withLockAndCondition { lock, condition ->
-        val observer =
-            object : PairReference<Any?, Disposable?>(Uninitialized, null), SingleObserver<T> {
-                override fun onSubscribe(disposable: Disposable) {
-                    lock.synchronized {
-                        second = disposable
-                    }
-                }
+fun <T> Single<T>.blockingGet(): T {
+    var successResult: T? = null
+    var errorResult: Throwable? = null
+    var isFinished = false
+    var disposableRef: Disposable? = null
 
-                override fun onSuccess(value: T) {
-                    lock.synchronized {
-                        first = value
-                        condition.signal()
-                    }
-                }
-
-                override fun onError(error: Throwable) {
-                    lock.synchronized {
-                        first = BlockingGetError(error)
-                        condition.signal()
-                    }
+    val observer =
+        object : ConditionLock(), SingleObserver<T> {
+            override fun onSubscribe(disposable: Disposable) {
+                synchronized {
+                    disposableRef = disposable
                 }
             }
 
-        subscribe(observer)
+            override fun onSuccess(value: T) {
+                synchronized {
+                    successResult = value
+                    isFinished = true
+                    signal()
+                }
+            }
 
-        lock.synchronized {
-            while (observer.first === Uninitialized) {
-                try {
-                    condition.await()
-                } catch (e: Throwable) {
-                    observer.second?.dispose()
-                    throw e
+            override fun onError(error: Throwable) {
+                synchronized {
+                    errorResult = error
+                    isFinished = true
+                    signal()
                 }
             }
         }
 
-        observer
-            .first
-            .let {
-                if (it is BlockingGetError) {
-                    throw it.error
-                }
+    subscribe(observer)
 
-                @Suppress("UNCHECKED_CAST")
-                it as T
+    observer.synchronized {
+        while (!isFinished) {
+            try {
+                observer.await()
+            } catch (e: Throwable) {
+                disposableRef?.dispose()
+                throw e
             }
+        }
     }
 
-private class BlockingGetError(val error: Throwable)
+    errorResult?.also {
+        throw it
+    }
+
+    @Suppress("UNCHECKED_CAST") // successResult is guaranteed to be assigned
+    return successResult as T
+}

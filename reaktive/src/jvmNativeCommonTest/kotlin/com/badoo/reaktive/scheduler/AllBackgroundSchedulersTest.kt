@@ -1,14 +1,11 @@
 package com.badoo.reaktive.scheduler
 
-import com.badoo.reaktive.test.waitForOrFail
-import com.badoo.reaktive.utils.NANOS_IN_SECOND
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
-import com.badoo.reaktive.utils.atomic.getValue
-import com.badoo.reaktive.utils.atomic.setValue
-import com.badoo.reaktive.utils.lock.Lock
+import com.badoo.reaktive.utils.lock.ConditionLock
 import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.lock.waitForOrFail
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.seconds
 
 class AllBackgroundSchedulersTest {
 
@@ -36,15 +33,14 @@ class AllBackgroundSchedulersTest {
         val executors = List(EXECUTOR_COUNT) { scheduler.newExecutor() }
 
         val counter = AtomicInt()
-        var isFinished by AtomicBoolean()
-        val lock = Lock()
-        val condition = lock.newCondition()
+        var isFinished = false
+        val lock = ConditionLock()
 
         fun executeTask() {
             if (counter.addAndGet(1) == TASK_TOTAL_COUNT) {
                 lock.synchronized {
                     isFinished = true
-                    condition.signal()
+                    lock.signal()
                 }
             }
         }
@@ -56,7 +52,7 @@ class AllBackgroundSchedulersTest {
         }
 
         lock.synchronized {
-            condition.waitForOrFail(20L * NANOS_IN_SECOND) { isFinished }
+            lock.waitForOrFail(20.seconds) { isFinished }
         }
     }
 

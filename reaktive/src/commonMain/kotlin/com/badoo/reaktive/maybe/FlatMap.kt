@@ -37,7 +37,7 @@ fun <T, R> Maybe<T>.flatMap(mapper: (T) -> Maybe<R>): Maybe<R> =
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Maybe.html#flatMap-io.reactivex.functions.Function-).
  */
-fun <T, U, R> Maybe<T>.flatMap(mapper: (T) -> Maybe<U>, resultSelector: (T, U) -> R): Maybe<R> =
+fun <T, U, R> Maybe<T>.flatMap(resultSelector: (T, U) -> R, mapper: (T) -> Maybe<U>): Maybe<R> =
     flatMap { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }

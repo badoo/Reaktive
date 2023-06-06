@@ -141,7 +141,7 @@ class FlatMapCompletableTest
         flatMapUpstreamAndSubscribe { innerSources[it!!] }
 
     private fun flatMapUpstreamAndSubscribe(mapper: (Int?) -> Completable): TestCompletableObserver =
-        upstream.flatMapCompletable(mapper).test()
+        upstream.flatMapCompletable(mapper = mapper).test()
 
     private fun createInnerSources(count: Int): List<TestCompletable> =
         List(count) { TestCompletable() }

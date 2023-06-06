@@ -2,6 +2,7 @@ package com.badoo.reaktive.observable
 
 import com.badoo.reaktive.completable.Completable
 import com.badoo.reaktive.scheduler.Scheduler
+import kotlin.time.Duration
 
 /**
  * Returns an [Observable] that emits non-overlapping windows of elements it collects from the source [Observable].
@@ -9,12 +10,12 @@ import com.badoo.reaktive.scheduler.Scheduler
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/3.x/javadoc/io/reactivex/rxjava3/core/Observable.html#buffer-long-java.util.concurrent.TimeUnit-io.reactivex.rxjava3.core.Scheduler-int-io.reactivex.rxjava3.functions.Supplier-boolean-).
  */
 fun <T> Observable<T>.buffer(
-    spanMillis: Long,
+    span: Duration,
     scheduler: Scheduler,
     limit: Int = Int.MAX_VALUE,
     restartOnLimit: Boolean = false
 ): Observable<List<T>> =
-    window(spanMillis = spanMillis, scheduler = scheduler, limit = limit.toLong(), restartOnLimit = restartOnLimit)
+    window(span = span, scheduler = scheduler, limit = limit.toLong(), restartOnLimit = restartOnLimit)
         .flatMapSingle { it.toList() }
 
 /**
@@ -25,10 +26,10 @@ fun <T> Observable<T>.buffer(
  */
 fun <T> Observable<T>.buffer(
     boundaries: Observable<*>,
-    limit: Long = Long.MAX_VALUE,
+    limit: Int = Int.MAX_VALUE,
     restartOnLimit: Boolean = false
 ): Observable<List<T>> =
-    window(boundaries = boundaries, limit = limit, restartOnLimit = restartOnLimit)
+    window(boundaries = boundaries, limit = limit.toLong(), restartOnLimit = restartOnLimit)
         .flatMapSingle { it.toList() }
 
 /**
@@ -37,13 +38,13 @@ fun <T> Observable<T>.buffer(
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/3.x/javadoc/io/reactivex/rxjava3/core/Observable.html#buffer-long-long-java.util.concurrent.TimeUnit-io.reactivex.rxjava3.core.Scheduler-).
  */
 fun <T> Observable<T>.buffer(
-    spanMillis: Long,
-    skipMillis: Long,
+    span: Duration,
+    skip: Duration,
     scheduler: Scheduler,
-    limit: Long = Long.MAX_VALUE,
+    limit: Int = Int.MAX_VALUE,
     restartOnLimit: Boolean = false
 ): Observable<List<T>> =
-    window(spanMillis = spanMillis, skipMillis = skipMillis, scheduler = scheduler, limit = limit, restartOnLimit = restartOnLimit)
+    window(span = span, skip = skip, scheduler = scheduler, limit = limit.toLong(), restartOnLimit = restartOnLimit)
         .flatMapSingle { it.toList() }
 
 /**
@@ -56,8 +57,8 @@ fun <T> Observable<T>.buffer(
 fun <T, S> Observable<T>.buffer(
     opening: Observable<S>,
     closing: (S) -> Completable,
-    limit: Long = Long.MAX_VALUE,
+    limit: Int = Int.MAX_VALUE,
     restartOnLimit: Boolean = false
 ): Observable<List<T>> =
-    window(opening = opening, closing = closing, limit = limit, restartOnLimit = restartOnLimit)
+    window(opening = opening, closing = closing, limit = limit.toLong(), restartOnLimit = restartOnLimit)
         .flatMapSingle { it.toList() }

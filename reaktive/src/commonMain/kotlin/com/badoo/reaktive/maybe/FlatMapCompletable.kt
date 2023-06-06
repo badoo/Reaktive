@@ -10,6 +10,6 @@ import com.badoo.reaktive.completable.asMaybe
  */
 fun <T> Maybe<T>.flatMapCompletable(mapper: (T) -> Completable): Completable =
     flatMap {
-        mapper(it).asMaybe<Nothing>()
+        mapper(it).asMaybe()
     }
         .asCompletable()

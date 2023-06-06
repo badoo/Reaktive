@@ -9,8 +9,8 @@ import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.SerialDisposable
 import com.badoo.reaktive.disposable.plusAssign
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.update
-import com.badoo.reaktive.utils.atomic.updateAndGet
+import com.badoo.reaktive.utils.atomic.change
+import com.badoo.reaktive.utils.atomic.changeAndGet
 
 /**
  * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Observable],
@@ -62,7 +62,7 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
 
                             override fun onComplete() {
                                 val actualState = state
-                                    .updateAndGet { previousState ->
+                                    .changeAndGet { previousState ->
                                         if (previousState.innerObserver == this) {
                                             previousState.copy(innerObserver = null)
                                         } else {
@@ -73,7 +73,7 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
                             }
                         }
 
-                    state.update { previousState ->
+                    state.change { previousState ->
                         previousState.copy(innerObserver = innerObserver)
                     }
                     observable.subscribeSafe(innerObserver)
@@ -81,7 +81,7 @@ fun <T, R> Observable<T>.switchMap(mapper: (T) -> Observable<R>): Observable<R> 
 
                 override fun onComplete() {
                     val actualState =
-                        state.updateAndGet { previousState -> previousState.copy(isUpstreamCompleted = true) }
+                        state.changeAndGet { previousState -> previousState.copy(isUpstreamCompleted = true) }
                     checkStateFinished(actualState)
                 }
 

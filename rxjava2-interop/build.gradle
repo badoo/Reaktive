@@ -1,4 +1,4 @@
-import com.badoo.reaktive.dependencies.Deps
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id 'org.jetbrains.kotlin.jvm'
@@ -8,6 +8,12 @@ plugins {
 
 group = reaktive_group_id
 version = reaktive_version
+
+compileKotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_1_8
+    }
+}
 
 publishing {
     publications {
@@ -19,7 +25,6 @@ publishing {
 }
 
 dependencies {
-    implementation Deps.kotlin.stdlib.jdk7
     implementation project(':reaktive')
-    implementation Deps.rxjava2
+    implementation libs.rxjava2
 }

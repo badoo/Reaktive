@@ -22,7 +22,7 @@ internal class FixedExecutorServiceStrategy(
             pool
                 ?.let { it[executorIndex++ % it.size] }
                 ?.value
-                ?: throw IllegalStateException("Scheduler $this is destroyed")
+                ?: error("Scheduler $this is destroyed")
         }
 
     override fun recycle(executorService: ScheduledExecutorService) {

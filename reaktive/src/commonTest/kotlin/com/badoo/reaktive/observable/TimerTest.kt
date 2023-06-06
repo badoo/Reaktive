@@ -13,13 +13,13 @@ import com.badoo.reaktive.test.scheduler.TestScheduler
 import com.badoo.reaktive.test.scheduler.assertAllExecutorsDisposed
 import kotlin.test.Test
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 
 class TimerTest {
 
     private val scheduler = TestScheduler()
     private val timer = scheduler.timer
-    private val upstream = observableTimer(1000L, scheduler)
+    private val upstream = observableTimer(1.seconds, scheduler)
     private val observer = upstream.test()
 
     @Test
@@ -58,7 +58,7 @@ class TimerTest {
     @Test
     fun emit_single_value_WHEN_timeout_reached() {
         timer.advanceBy(1000L)
-        observer.assertValue(1000L)
+        observer.assertValue(1.seconds)
     }
 
     @Test

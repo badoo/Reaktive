@@ -1,8 +1,7 @@
 package com.badoo.reaktive.disposable
 
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndSet
-import com.badoo.reaktive.utils.atomic.getAndUpdate
+import com.badoo.reaktive.utils.atomic.getAndChange
 
 /**
  * Thread-safe container of one [Disposable]
@@ -18,10 +17,11 @@ actual open class SerialDisposable actual constructor() : Disposable {
      * Any future [Disposable] will be immediately disposed.
      */
     actual override fun dispose() {
-        ref
-            .getAndSet(disposed)
-            ?.dispose()
+        clearAndDispose()?.dispose()
     }
+
+    internal actual fun clearAndDispose(): Disposable? =
+        ref.getAndSet(disposed)
 
     /**
      * Atomically either replaces any existing [Disposable]
@@ -44,7 +44,7 @@ actual open class SerialDisposable actual constructor() : Disposable {
      * @return replaced [Disposable] if any
      */
     actual fun replace(disposable: Disposable?): Disposable? {
-        val oldDisposable = ref.getAndUpdate { if (it === disposed) it else disposable }
+        val oldDisposable = ref.getAndChange { if (it === disposed) it else disposable }
 
         if (oldDisposable !== disposed) {
             return oldDisposable

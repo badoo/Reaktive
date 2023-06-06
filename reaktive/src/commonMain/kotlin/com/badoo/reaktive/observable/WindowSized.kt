@@ -7,7 +7,6 @@ import com.badoo.reaktive.subject.unicast.UnicastSubject
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicLong
-import com.badoo.reaktive.utils.queue.SharedQueue
 
 /**
  * Returns an [Observable] that emits windows of elements it collects from the source [Observable].
@@ -46,7 +45,7 @@ private class UpstreamObserver<T>(
     private val activeWindowsCount: AtomicInt,
     private val downstream: ObservableCallbacks<Observable<T>>
 ) : SerialDisposable(), ObservableObserver<T> {
-    private val windows = SharedQueue<UnicastSubject<T>>()
+    private val windows = ArrayDeque<UnicastSubject<T>>()
     private val skippedCount = AtomicLong()
     private val tailWindowValuesCount = AtomicLong()
     private val onWindowTerminate: () -> Unit = {
@@ -67,7 +66,7 @@ private class UpstreamObserver<T>(
             activeWindowsCount.addAndGet(1)
             val window = UnicastSubject<T>(onTerminate = onWindowTerminate)
             windowWrapper = WindowWrapper(window)
-            windows.offer(window)
+            windows.addLast(window)
             downstream.onNext(windowWrapper)
         } else {
             windowWrapper = null
@@ -78,7 +77,7 @@ private class UpstreamObserver<T>(
         skippedCount.value = (skipped + 1) % skip
 
         if (tailWindowValuesCount.value + 1 == count) {
-            requireNotNull(windows.poll()).onComplete()
+            windows.removeFirst().onComplete()
             tailWindowValuesCount.addAndGet(1 - skip)
         } else {
             tailWindowValuesCount.addAndGet(1)

@@ -11,7 +11,6 @@ import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicInt
 import kotlin.math.max
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -38,11 +37,11 @@ class RepeatWhenTest : ObservableToObservableTests by ObservableToObservableTest
 
     @Test
     fun emits_all_values_from_all_observers_in_order_WHEN_upstream_and_handler_are_synchronous() {
-        val number = AtomicInt()
+        var number = 0
         val upstream =
             observableUnsafe<Int?> { observer ->
                 observer.onSubscribe(Disposable())
-                observer.onNext(number.addAndGet(1))
+                observer.onNext(++number)
                 observer.onNext(null)
                 observer.onComplete()
             }
@@ -50,7 +49,7 @@ class RepeatWhenTest : ObservableToObservableTests by ObservableToObservableTest
         val observer =
             upstream
                 .repeatWhen { repeatNumber ->
-                    maybeUnsafe<Unit> { observer ->
+                    maybeUnsafe { observer ->
                         observer.onSubscribe(Disposable())
                         if (repeatNumber < 3) {
                             observer.onSuccess(Unit)
@@ -66,20 +65,20 @@ class RepeatWhenTest : ObservableToObservableTests by ObservableToObservableTest
 
     @Test
     fun does_not_subscribe_to_upstream_recursively() {
-        val subscribeCounter = AtomicInt()
-        val maxSubscribers = AtomicInt()
+        var subscribeCounter = 0
+        var maxSubscribers = 0
         val upstream =
             observableUnsafe<Int?> { observer ->
-                subscribeCounter.addAndGet(1)
-                maxSubscribers.value = max(maxSubscribers.value, subscribeCounter.value)
+                subscribeCounter++
+                maxSubscribers = max(maxSubscribers, subscribeCounter)
                 observer.onSubscribe(Disposable())
                 observer.onComplete()
-                subscribeCounter.addAndGet(-1)
+                subscribeCounter--
             }
 
         upstream
             .repeatWhen { repeatNumber ->
-                maybeUnsafe<Unit> { observer ->
+                maybeUnsafe { observer ->
                     observer.onSubscribe(Disposable())
                     if (repeatNumber == 1) {
                         observer.onSuccess(Unit)
@@ -90,7 +89,7 @@ class RepeatWhenTest : ObservableToObservableTests by ObservableToObservableTest
             }
             .test()
 
-        assertEquals(1, maxSubscribers.value)
+        assertEquals(1, maxSubscribers)
     }
 
     @Test
@@ -162,17 +161,17 @@ class RepeatWhenTest : ObservableToObservableTests by ObservableToObservableTest
     @Test
     fun predicate_receives_valid_attempt_WHEN_upstream_completes() {
         val upstream = TestObservable<Int?>()
-        val timeRef = AtomicInt()
+        var timeRef = 0
         upstream
             .repeatWhen { attempt ->
-                timeRef.value = attempt
+                timeRef = attempt
                 maybeOf(Unit)
             }
             .test()
 
         upstream.onComplete()
-        assertSame(timeRef.value, 1)
+        assertSame(timeRef, 1)
         upstream.onComplete()
-        assertSame(timeRef.value, 2)
+        assertSame(timeRef, 2)
     }
 }

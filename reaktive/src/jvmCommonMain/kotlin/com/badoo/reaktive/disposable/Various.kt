@@ -1,4 +1,5 @@
 @file:JvmName("VariousJvm")
+
 package com.badoo.reaktive.disposable
 
 import java.util.concurrent.atomic.AtomicBoolean

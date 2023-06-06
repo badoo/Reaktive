@@ -6,32 +6,19 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.addTo
-import com.badoo.reaktive.utils.ObjectReference
-import com.badoo.reaktive.utils.RefCounter
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.lock.Lock
-import com.badoo.reaktive.utils.lock.synchronized
-import com.badoo.reaktive.utils.queue.SharedQueue
-import com.badoo.reaktive.utils.use
-
-/**
- * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Observable].
- * Emits elements from inner [Observable]s. All inner [Observable]s are subscribed concurrently without any limits.
- *
- * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMap-io.reactivex.functions.Function-).
- */
-fun <T, R> Observable<T>.flatMap(mapper: (T) -> Observable<R>): Observable<R> =
-    flatMap(maxConcurrency = Int.MAX_VALUE, mapper = mapper)
 
 /**
  * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Observable].
  * Emits elements from inner [Observable]s. The maximum number of concurrently subscribed inner [Observable]s is
  * determined by the [maxConcurrency] argument.
  *
+ * By default, all inner [Observable]s are subscribed concurrently without any limits.
+ *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMap-io.reactivex.functions.Function-int-).
  */
-fun <T, R> Observable<T>.flatMap(maxConcurrency: Int, mapper: (T) -> Observable<R>): Observable<R> {
+fun <T, R> Observable<T>.flatMap(maxConcurrency: Int = Int.MAX_VALUE, mapper: (T) -> Observable<R>): Observable<R> {
     require(maxConcurrency > 0) { "maxConcurrency value must be positive" }
 
     return observable { emitter ->
@@ -44,22 +31,18 @@ fun <T, R> Observable<T>.flatMap(maxConcurrency: Int, mapper: (T) -> Observable<
 /**
  * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Observable].
  * For each element [U] emitted by an inner [Observable], calls [resultSelector] with the original source element [T]
- * and the inner element [U], and emits the result element [R]. All inner [Observable]s are subscribed concurrently without any limits.
- *
- * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMap-io.reactivex.functions.Function-io.reactivex.functions.BiFunction-).
- */
-fun <T, U, R> Observable<T>.flatMap(mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
-    flatMap(maxConcurrency = Int.MAX_VALUE, mapper = mapper, resultSelector = resultSelector)
-
-/**
- * Calls the [mapper] for each element emitted by the [Observable] and subscribes to the returned inner [Observable].
- * For each element [U] emitted by an inner [Observable], calls [resultSelector] with the original source element [T]
  * and the inner element [U], and emits the result element [R]. The maximum number of concurrently subscribed inner [Observable]s is
  * determined by the [maxConcurrency] argument.
  *
+ * By default, all inner [Observable]s are subscribed concurrently without any limits.
+ *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#flatMap-io.reactivex.functions.Function-io.reactivex.functions.BiFunction-int-).
  */
-fun <T, U, R> Observable<T>.flatMap(maxConcurrency: Int, mapper: (T) -> Observable<U>, resultSelector: (T, U) -> R): Observable<R> =
+fun <T, U, R> Observable<T>.flatMap(
+    resultSelector: (T, U) -> R,
+    maxConcurrency: Int = Int.MAX_VALUE,
+    mapper: (T) -> Observable<U>
+): Observable<R> =
     flatMap(maxConcurrency = maxConcurrency) { t ->
         mapper(t).map { u -> resultSelector(t, u) }
     }
@@ -107,18 +90,19 @@ private class FlatMapObserver<in T, in R>(
     }
 
     private inner class InnerObserver :
-        ObjectReference<Disposable?>(null),
         ObservableObserver<R>,
         ErrorCallback by callbacks,
         ValueCallback<R> by callbacks {
 
+        private var disposableRef: Disposable? = null
+
         override fun onSubscribe(disposable: Disposable) {
-            value = disposable
+            disposableRef = disposable
             add(disposable)
         }
 
         override fun onComplete() {
-            remove(value!!)
+            remove(requireNotNull(disposableRef))
             queue?.poll()
             this@FlatMapObserver.onComplete()
         }
@@ -131,32 +115,26 @@ private class FlatMapQueue<in T : Any>(
 ) : Disposable {
 
     private val lock = Lock()
-    private val count = AtomicInt(limit)
-    private val queue = SharedQueue<T>()
+    private var count = limit
+    private val queue = ArrayDeque<T>()
 
-    private val refCounter =
-        RefCounter {
-            lock.destroy()
-            count.value = 0
-            queue.clear()
-        }
-
-    private val _isDisposed = AtomicBoolean(false)
-    override val isDisposed: Boolean get() = _isDisposed.value
+    override var isDisposed: Boolean = false
 
     override fun dispose() {
-        if (_isDisposed.compareAndSet(expectedValue = false, newValue = true)) {
-            refCounter.release()
+        lock.synchronized {
+            isDisposed = true
+            count = 0
+            queue.clear()
         }
     }
 
     fun offer(value: T) {
         sync {
-            if (count.value > 0) {
-                count.value--
+            if (count > 0) {
+                count--
                 value
             } else {
-                queue.offer(value)
+                queue.addLast(value)
                 null
             }
         }?.also(callback)
@@ -164,16 +142,16 @@ private class FlatMapQueue<in T : Any>(
 
     fun poll() {
         sync {
-            val next = queue.poll()
+            val next = queue.removeFirstOrNull()
             if (next == null) {
-                count.value++
+                count++
             }
             next
         }?.also(callback)
     }
 
     private inline fun <T> sync(block: () -> T): T? =
-        refCounter.use {
-            lock.synchronized(block)
+        lock.synchronized {
+            if (isDisposed) null else block()
         }
 }

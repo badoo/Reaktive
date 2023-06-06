@@ -5,7 +5,6 @@ import com.badoo.reaktive.base.tryCatch
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.maybe.Maybe
 import com.badoo.reaktive.maybe.maybe
-import com.badoo.reaktive.utils.ObjectReference
 import com.badoo.reaktive.utils.Uninitialized
 
 /**
@@ -19,7 +18,9 @@ import com.badoo.reaktive.utils.Uninitialized
 fun <T> Observable<T>.reduce(reducer: (a: T, b: T) -> T): Maybe<T> =
     maybe { emitter ->
         subscribe(
-            object : ObjectReference<Any?>(Uninitialized), ObservableObserver<T>, ErrorCallback by emitter {
+            object : ObservableObserver<T>, ErrorCallback by emitter {
+                private var value: Any? = Uninitialized
+
                 override fun onSubscribe(disposable: Disposable) {
                     emitter.setDisposable(disposable)
                 }

@@ -9,9 +9,6 @@ import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
 import com.badoo.reaktive.test.single.TestSingle
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicInt
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -35,14 +32,14 @@ class RepeatUntilTest : SingleToObservableTests by SingleToObservableTestsImpl({
     @Test
     fun resubscribes_to_upstream_WHEN_upstream_completed_and_predicate_is_false() {
         val upstreams = List(2) { TestSingle<Int>() }
-        val index = AtomicInt(-1)
+        var index = -1
 
         val upstream =
-            singleUnsafe<Int> { observer ->
-                upstreams[index.addAndGet(1)].subscribe(observer)
+            singleUnsafe { observer ->
+                upstreams[++index].subscribe(observer)
             }
 
-        upstream.repeatUntil { index.value == 1 }.test()
+        upstream.repeatUntil { index == 1 }.test()
 
         upstreams[0].onSuccess(1)
         assertFalse(upstreams[0].hasSubscribers)
@@ -73,48 +70,48 @@ class RepeatUntilTest : SingleToObservableTests by SingleToObservableTestsImpl({
 
     @Test
     fun does_not_resubscribe_to_upstream_WHEN_disposed_and_upstream_completed_predicate_is_false() {
-        val isResubscribed = AtomicBoolean()
-        val upstreamObserver = AtomicReference<SingleObserver<Int>?>(null)
+        var isResubscribed = false
+        var upstreamObserver: SingleObserver<Int>? = null
 
         val upstream =
-            singleUnsafe<Int> { observer ->
-                if (upstreamObserver.value == null) {
+            singleUnsafe { observer ->
+                if (upstreamObserver == null) {
                     observer.onSubscribe(Disposable())
-                    upstreamObserver.value = observer
+                    upstreamObserver = observer
                 } else {
-                    isResubscribed.value = true
+                    isResubscribed = true
                 }
             }
 
         val downstreamObserver = upstream.repeatUntil { it == 1 }.test()
 
         downstreamObserver.dispose()
-        upstreamObserver.value!!.onSuccess(0)
+        requireNotNull(upstreamObserver).onSuccess(0)
 
-        assertFalse(isResubscribed.value)
+        assertFalse(isResubscribed)
     }
 
     @Test
     fun does_not_resubscribe_to_upstream_recursively_predicate_is_false() {
-        val isFirstIteration = AtomicBoolean(true)
-        val isFirstIterationFinished = AtomicBoolean()
-        val isSecondIterationRecursive = AtomicBoolean()
+        var isFirstIteration = true
+        var isFirstIterationFinished = false
+        var isSecondIterationRecursive = false
 
         val upstream =
-            singleUnsafe<Int> { observer ->
-                if (isFirstIteration.value) {
-                    isFirstIteration.value = false
+            singleUnsafe { observer ->
+                if (isFirstIteration) {
+                    isFirstIteration = false
                     observer.onSubscribe(Disposable())
                     observer.onSuccess(1)
-                    isFirstIterationFinished.value = true
+                    isFirstIterationFinished = true
                 } else {
-                    isSecondIterationRecursive.value = !isFirstIterationFinished.value
+                    isSecondIterationRecursive = !isFirstIterationFinished
                 }
             }
 
         upstream.repeatUntil { it == 1 }.test()
 
-        assertFalse(isSecondIterationRecursive.value)
+        assertFalse(isSecondIterationRecursive)
     }
 
     @Test

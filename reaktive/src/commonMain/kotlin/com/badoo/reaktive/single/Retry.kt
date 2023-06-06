@@ -10,7 +10,7 @@ import com.badoo.reaktive.disposable.Disposable
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#retry-io.reactivex.functions.BiPredicate-).
  */
-fun <T> Single<T>.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Single<T> =
+fun <T> Single<T>.retry(predicate: (attempt: Long, Throwable) -> Boolean = { _, _ -> true }): Single<T> =
     single { emitter ->
         subscribe(
             object : SingleObserver<T>, SuccessCallback<T> by emitter {

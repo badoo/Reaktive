@@ -19,7 +19,7 @@ import kotlin.test.assertTrue
 @ExperimentalCoroutinesApi
 class ObservableAsFlowTest {
 
-    private val upstream = TestObservable<Int?>(autoFreeze = false)
+    private val upstream = TestObservable<Int?>()
 
     @Test
     fun produces_values_in_correct_order_WHEN_upstream_produced_values() {

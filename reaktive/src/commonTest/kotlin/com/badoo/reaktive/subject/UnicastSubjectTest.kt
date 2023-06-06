@@ -1,14 +1,16 @@
 package com.badoo.reaktive.subject
 
+import com.badoo.reaktive.observable.subscribe
 import com.badoo.reaktive.subject.unicast.UnicastSubject
 import com.badoo.reaktive.test.base.assertError
+import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertNoValues
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicInt
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class UnicastSubjectTest : SubjectGenericTests by SubjectGenericTests(UnicastSubject(), 1) {
 
@@ -48,6 +50,19 @@ class UnicastSubjectTest : SubjectGenericTests by SubjectGenericTests(UnicastSub
     }
 
     @Test
+    fun produces_IllegalStateException_WHEN_second_subscriber_recursively() {
+        var observer: TestObservableObserver<*>? = null
+
+        subject.subscribe {
+            observer = subject.test()
+        }
+
+        subject.onNext(0)
+
+        assertNotNull(observer).assertError { it is IllegalStateException }
+    }
+
+    @Test
     fun emits_last_bufferSize_values() {
         subject.onNext(1)
         subject.onNext(2)
@@ -63,55 +78,55 @@ class UnicastSubjectTest : SubjectGenericTests by SubjectGenericTests(UnicastSub
 
     @Test
     fun calls_onTerminate_WHEN_not_subscribed_and_onComplete_called() {
-        val callCount = AtomicInt()
-        val subject = UnicastSubject<Int?> { callCount.addAndGet(1) }
+        var callCount = 0
+        val subject = UnicastSubject<Int?> { callCount++ }
 
         subject.onComplete()
 
-        assertEquals(1, callCount.value)
+        assertEquals(1, callCount)
     }
 
     @Test
     fun calls_onTerminate_WHEN_subscribed_and_onComplete_called() {
-        val callCount = AtomicInt()
-        val subject = UnicastSubject<Int?> { callCount.addAndGet(1) }
+        var callCount = 0
+        val subject = UnicastSubject<Int?> { callCount++ }
 
         subject.test()
         subject.onComplete()
 
-        assertEquals(1, callCount.value)
+        assertEquals(1, callCount)
     }
 
     @Test
     fun calls_onTerminate_WHEN_not_subscribed_and_onError_called() {
-        val callCount = AtomicInt()
-        val subject = UnicastSubject<Int?> { callCount.addAndGet(1) }
+        var callCount = 0
+        val subject = UnicastSubject<Int?> { callCount++ }
 
         subject.onError(Throwable())
 
-        assertEquals(1, callCount.value)
+        assertEquals(1, callCount)
     }
 
     @Test
     fun calls_onTerminate_WHEN_subscribed_and_onError_called() {
-        val callCount = AtomicInt()
-        val subject = UnicastSubject<Int?> { callCount.addAndGet(1) }
+        var callCount = 0
+        val subject = UnicastSubject<Int?> { callCount++ }
 
         subject.test()
         subject.onError(Throwable())
 
-        assertEquals(1, callCount.value)
+        assertEquals(1, callCount)
     }
 
     @Test
     fun calls_onTerminate_WHEN_observer_unsubscribed() {
-        val callCount = AtomicInt()
-        val subject = UnicastSubject<Int?> { callCount.addAndGet(1) }
+        var callCount = 0
+        val subject = UnicastSubject<Int?> { callCount++ }
         val observer = subject.test()
 
         observer.dispose()
 
-        assertEquals(1, callCount.value)
+        assertEquals(1, callCount)
     }
 
     @Test

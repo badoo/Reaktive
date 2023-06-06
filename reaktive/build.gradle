@@ -4,15 +4,15 @@ plugins {
     id 'detekt-configuration'
 }
 
-configuration {
-    enableLinuxArm32Hfp()
+android {
+    namespace "com.badoo.reaktive"
 }
 
 kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation project(':utils')
+                implementation project(':utils-internal')
                 implementation project(':reaktive-annotations')
             }
         }

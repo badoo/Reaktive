@@ -20,7 +20,6 @@ import org.openjdk.jmh.annotations.Benchmark
 import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.State
 import java.util.Collections
-import java.util.HashMap
 import java.util.TreeMap
 import kotlin.math.max
 
@@ -47,13 +46,12 @@ open class ScrabbleReaktive : ScrabbleBase() {
         }
 
         val histoOfLetters: (String) -> Single<HashMap<Int, LongWrapper>> = { word: String ->
-            toIntegerStream(word).collect(HashMap<Int, LongWrapper>()) { accumulator, value ->
+            toIntegerStream(word).collect(::HashMap) { accumulator, value ->
                 var newValue: LongWrapper? = accumulator[value]
                 if (newValue == null) {
                     newValue = LongWrapper.zero()
                 }
                 accumulator[value] = newValue.incAndSet()
-                accumulator
             }
         }
 
@@ -66,7 +64,7 @@ open class ScrabbleReaktive : ScrabbleBase() {
                 .flatMapObservable { map ->
                     map.entries.asObservable()
                 }
-                .flatMap(blank)
+                .flatMap(mapper = blank)
                 .reduce { a, b -> a + b }
         }
 
@@ -81,7 +79,7 @@ open class ScrabbleReaktive : ScrabbleBase() {
                 .flatMapObservable { map ->
                     map.entries.asObservable()
                 }
-                .flatMap(letterScore)
+                .flatMap(mapper = letterScore)
                 .reduce { a, b -> a + b }
         }
 
@@ -100,7 +98,7 @@ open class ScrabbleReaktive : ScrabbleBase() {
         // Bonus for double letter
         val bonusForDoubleLetter = { word: String ->
             toBeMaxed(word)
-                .flatMap(scoreOfALetter)
+                .flatMap(mapper = scoreOfALetter)
                 .reduce(::max)
         }
 
@@ -122,7 +120,7 @@ open class ScrabbleReaktive : ScrabbleBase() {
             shakespeareWords
                 .asObservable()
                 .filter { scrabbleWords.contains(it) && checkBlanks(it).blockingGet()!! }
-                .collect(TreeMap<Int, List<String>>(Collections.reverseOrder())) { acc, value ->
+                .collect(collectionSupplier = { TreeMap(Collections.reverseOrder()) }) { acc, value ->
                     val key = score(value).blockingGet()!!
                     var list = acc[key] as MutableList<String>?
                     if (list == null) {
@@ -130,7 +128,6 @@ open class ScrabbleReaktive : ScrabbleBase() {
                         acc[key] = list
                     }
                     list.add(value)
-                    acc
                 }
         }
 

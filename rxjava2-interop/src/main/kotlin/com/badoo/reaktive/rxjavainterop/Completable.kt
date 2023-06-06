@@ -5,18 +5,6 @@ import com.badoo.reaktive.completable.CompletableObserver
 import com.badoo.reaktive.completable.completableUnsafe
 import com.badoo.reaktive.disposable.Disposable
 
-fun Completable.asRxJava2CompletableSource(): io.reactivex.CompletableSource =
-    io.reactivex.CompletableSource { observer ->
-        subscribe(observer.asReaktiveCompletableObserver())
-    }
-
-@Deprecated(
-    message = "Use asRxJava2CompletableSource",
-    replaceWith = ReplaceWith("asRxJava2CompletableSource()"),
-    level = DeprecationLevel.ERROR
-)
-fun Completable.asRxJava2Source(): io.reactivex.CompletableSource = asRxJava2CompletableSource()
-
 fun Completable.asRxJava2Completable(): io.reactivex.Completable =
     object : io.reactivex.Completable() {
         override fun subscribeActual(observer: io.reactivex.CompletableObserver) {
@@ -24,24 +12,10 @@ fun Completable.asRxJava2Completable(): io.reactivex.Completable =
         }
     }
 
-@Deprecated(
-    message = "Use asRxJava2Completable",
-    replaceWith = ReplaceWith("asRxJava2Completable()"),
-    level = DeprecationLevel.ERROR
-)
-fun Completable.asRxJava2(): io.reactivex.Completable = asRxJava2Completable()
-
 fun io.reactivex.CompletableSource.asReaktiveCompletable(): Completable =
     completableUnsafe { observer ->
         subscribe(observer.asRxJava2CompletableObserver())
     }
-
-@Deprecated(
-    message = "Use asReaktiveCompletable",
-    replaceWith = ReplaceWith("asReaktiveCompletable()"),
-    level = DeprecationLevel.ERROR
-)
-fun io.reactivex.CompletableSource.asReaktive(): Completable = asReaktiveCompletable()
 
 fun io.reactivex.CompletableObserver.asReaktiveCompletableObserver(): CompletableObserver =
     object : CompletableObserver {
@@ -58,13 +32,6 @@ fun io.reactivex.CompletableObserver.asReaktiveCompletableObserver(): Completabl
         }
     }
 
-@Deprecated(
-    message = "Use asReaktiveCompletableObserver",
-    replaceWith = ReplaceWith("asReaktiveCompletableObserver()"),
-    level = DeprecationLevel.ERROR
-)
-fun io.reactivex.CompletableObserver.asReaktive(): CompletableObserver = asReaktiveCompletableObserver()
-
 fun CompletableObserver.asRxJava2CompletableObserver(): io.reactivex.CompletableObserver =
     object : io.reactivex.CompletableObserver {
         override fun onSubscribe(disposable: io.reactivex.disposables.Disposable) {
@@ -79,10 +46,3 @@ fun CompletableObserver.asRxJava2CompletableObserver(): io.reactivex.Completable
             this@asRxJava2CompletableObserver.onError(error)
         }
     }
-
-@Deprecated(
-    message = "Use asRxJava2CompletableObserver",
-    replaceWith = ReplaceWith("asRxJava2CompletableObserver()"),
-    level = DeprecationLevel.ERROR
-)
-fun CompletableObserver.asRxJava2(): io.reactivex.CompletableObserver = asRxJava2CompletableObserver()
