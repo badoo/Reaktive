@@ -7,7 +7,6 @@ import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -125,13 +124,14 @@ class RefCountTest {
         refCount.test() // First subscription
         refCount.subscribe(
             object : DefaultObservableObserver<Int?> {
-                private var disposableRef = AtomicReference<Disposable?>(null)
+                private var disposableRef: Disposable? = null
+
                 override fun onSubscribe(disposable: Disposable) {
-                    disposableRef.value = disposable
+                    disposableRef = disposable
                 }
 
                 override fun onNext(value: Int?) {
-                    requireNotNull(disposableRef.value).dispose()
+                    requireNotNull(disposableRef).dispose()
                 }
             }
         )
