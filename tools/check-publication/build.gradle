@@ -18,6 +18,10 @@ repositories {
     }
 }
 
+android {
+    namespace "com.badoo.reaktive.tools.checkpublication"
+}
+
 kotlin {
     sourceSets {
         commonMain {
@@ -25,7 +29,7 @@ kotlin {
                 implementation "com.badoo.reaktive:reaktive:$reaktive_version"
                 implementation "com.badoo.reaktive:reaktive-annotations:$reaktive_version"
                 implementation "com.badoo.reaktive:reaktive-testing:$reaktive_version"
-                implementation "com.badoo.reaktive:utils:$reaktive_version"
+                implementation "com.badoo.reaktive:utils-internal:$reaktive_version"
                 implementation "com.badoo.reaktive:coroutines-interop:$reaktive_version"
             }
         }
