@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-      - mt-coroutines
-      - version-2.0
   pull_request:
 
 jobs:
