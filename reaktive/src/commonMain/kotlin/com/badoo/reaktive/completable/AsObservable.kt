@@ -9,7 +9,7 @@ import com.badoo.reaktive.observable.observable
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#toObservable--).
  */
-fun <T> Completable.asObservable(): Observable<T> =
+fun Completable.asObservable(): Observable<Nothing> =
     observable { emitter ->
         subscribe(
             object : CompletableObserver, CompletableCallbacks by emitter {

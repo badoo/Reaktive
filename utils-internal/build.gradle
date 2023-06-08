@@ -1,0 +1,19 @@
+plugins {
+    id 'mpp-configuration'
+    id 'publish-configuration'
+    id 'detekt-configuration'
+}
+
+android {
+    namespace "com.badoo.reaktive.utils"
+}
+
+kotlin {
+    sourceSets {
+        commonTest {
+            dependencies {
+                implementation project(':reaktive-testing')
+            }
+        }
+    }
+}

@@ -11,13 +11,6 @@ fun Disposable.asRxJava3Disposable(): io.reactivex.rxjava3.disposables.Disposabl
         }
     }
 
-@Deprecated(
-    message = "Use asRxJava3Disposable",
-    replaceWith = ReplaceWith("asRxJava3Disposable()"),
-    level = DeprecationLevel.ERROR
-)
-fun Disposable.asRxJava3(): io.reactivex.rxjava3.disposables.Disposable = asRxJava3Disposable()
-
 fun io.reactivex.rxjava3.disposables.Disposable.asReaktiveDisposable(): Disposable =
     object : Disposable {
         override val isDisposed: Boolean get() = this@asReaktiveDisposable.isDisposed
@@ -26,10 +19,3 @@ fun io.reactivex.rxjava3.disposables.Disposable.asReaktiveDisposable(): Disposab
             this@asReaktiveDisposable.dispose()
         }
     }
-
-@Deprecated(
-    message = "Use asReaktiveDisposable",
-    replaceWith = ReplaceWith("asReaktiveDisposable()"),
-    level = DeprecationLevel.ERROR
-)
-fun io.reactivex.rxjava3.disposables.Disposable.asReaktive(): Disposable = asReaktiveDisposable()

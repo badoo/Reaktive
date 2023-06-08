@@ -13,7 +13,6 @@ class DarwinPlugin : Plugin<Project> {
 
     private fun configureDarwinCompilation(target: Project) {
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
-            iosArm32().disableIfUndefined(Target.IOS)
             iosArm64().disableIfUndefined(Target.IOS)
             iosX64().disableIfUndefined(Target.IOS)
             iosSimulatorArm64().disableIfUndefined(Target.IOS)

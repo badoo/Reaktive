@@ -8,10 +8,10 @@ import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicInt
-import com.badoo.reaktive.utils.atomic.AtomicReference
+import com.badoo.reaktive.utils.atomic.AtomicLong
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -74,22 +74,22 @@ class RetryTest : ObservableToObservableTests by ObservableToObservableTestsImpl
     fun predicate_receives_valid_throwable_WHEN_upstream_produces_error() {
         val throwable1 = Throwable()
         val throwable2 = Throwable()
-        val throwableRef = AtomicReference<Throwable?>(null)
+        var throwableRef: Throwable? = null
         upstream
             .retry { _, throwable ->
-                throwableRef.value = throwable
+                throwableRef = throwable
                 true
             }
             .test()
         upstream.onError(throwable1)
-        assertSame(throwable1, throwableRef.value)
+        assertSame(throwable1, throwableRef)
         upstream.onError(throwable2)
-        assertSame(throwable2, throwableRef.value)
+        assertSame(throwable2, throwableRef)
     }
 
     @Test
     fun predicate_receives_valid_counter_WHEN_upstream_produces_error() {
-        val timeRef = AtomicInt()
+        val timeRef = AtomicLong()
         upstream
             .retry { time, _ ->
                 timeRef.value = time
@@ -97,9 +97,9 @@ class RetryTest : ObservableToObservableTests by ObservableToObservableTestsImpl
             }
             .test()
         upstream.onError(Throwable())
-        assertSame(timeRef.value, 1)
+        assertEquals(1, timeRef.value)
         upstream.onError(Throwable())
-        assertSame(timeRef.value, 2)
+        assertEquals(2, timeRef.value)
     }
 
     @Test

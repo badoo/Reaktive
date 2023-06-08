@@ -9,7 +9,7 @@ import com.badoo.reaktive.disposable.Disposable
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#retry-io.reactivex.functions.BiPredicate-).
  */
-fun Completable.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -> true }): Completable =
+fun Completable.retry(predicate: (attempt: Long, Throwable) -> Boolean = { _, _ -> true }): Completable =
     completable { emitter ->
         subscribe(
             object : CompletableObserver, CompletableCallbacks by emitter {
@@ -31,5 +31,5 @@ fun Completable.retry(predicate: (attempt: Int, Throwable) -> Boolean = { _, _ -
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#retry-long-).
  */
-fun Completable.retry(times: Int): Completable =
+fun Completable.retry(times: Long): Completable =
     retry { attempt, _ -> attempt < times }

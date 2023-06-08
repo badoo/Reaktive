@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - mt-coroutines
+      - version-2.0
   pull_request:
 
 jobs:
@@ -36,24 +37,17 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: gradle/gradle-build-action@v2
         with:
+          gradle-home-cache-cleanup: true
+          cache-read-only: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/version-2.0' }}
           arguments: |
             build
-            linkDebugTestLinuxArm32Hfp
             -Ptarget=all_linux_hosted
-      - name: Test linuxArm32Hfp
-        if: matrix.os == 'ubuntu-latest'
-        uses: uraimo/run-on-arch-action@v2
-        with:
-          arch: armv7
-          distro: ubuntu20.04
-          run: |
-            ./utils/build/bin/linuxArm32Hfp/debugTest/test.kexe
-            ./reaktive/build/bin/linuxArm32Hfp/debugTest/test.kexe
-            ./reaktive-testing/build/bin/linuxArm32Hfp/debugTest/test.kexe
       - name: Build macOS
         if: matrix.os == 'macOS-latest'
         uses: gradle/gradle-build-action@v2
         with:
+          gradle-home-cache-cleanup: true
+          cache-read-only: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/version-2.0' }}
           arguments: |
             :reaktive-annotations:build
             :utils:build
@@ -61,8 +55,17 @@ jobs:
             :reaktive:build
             :coroutines-interop:build
             :sample-mpp-module:build
-            :sample-ios-app:build
             -Ptarget=all_macos_hosted
+      # Do not invoke from Gradle, it creates circular dependency (Gradle invokes XCode invokes Gradle).
+      - name: Build iOS app
+        if: matrix.os == 'macOS-latest'
+        working-directory: sample-ios-app
+        run: >
+          xcodebuild
+          -project sample-ios-app.xcodeproj
+          -scheme "sample-ios-app"
+          -sdk "iphonesimulator"
+          -arch "x86_64"
       - name: Bundle the build report
         if: failure()
         run: find . -type d -name 'reports' | zip -@ -r build-reports.zip

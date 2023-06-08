@@ -11,12 +11,9 @@ import com.badoo.reaktive.utils.handleReaktiveError
  * Subscribes to the [Completable] and provides event callbacks.
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#subscribe-io.reactivex.functions.Action-io.reactivex.functions.Consumer-).
- *
- * @param isThreadLocal see [Completable.threadLocal]
  */
 @UseReturnValue
 fun Completable.subscribe(
-    isThreadLocal: Boolean = false,
     onSubscribe: ((Disposable) -> Unit)? = null,
     onError: ((Throwable) -> Unit)? = null,
     onComplete: (() -> Unit)? = null
@@ -35,9 +32,7 @@ fun Completable.subscribe(
         return serialDisposable
     }
 
-    val source = if (isThreadLocal) threadLocal() else this
-
-    source.subscribeSafe(
+    subscribeSafe(
         object : CompletableObserver {
             override fun onSubscribe(disposable: Disposable) {
                 serialDisposable.set(disposable)

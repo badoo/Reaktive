@@ -1,16 +1,19 @@
 package com.badoo.reaktive.utils
 
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.lock.Lock
+import com.badoo.reaktive.utils.clock.Clock
+import com.badoo.reaktive.utils.clock.DefaultClock
+import com.badoo.reaktive.utils.lock.ConditionLock
 import com.badoo.reaktive.utils.lock.synchronized
+import com.badoo.reaktive.utils.queue.PriorityQueue
 import kotlin.native.concurrent.AtomicLong
-import kotlin.system.getTimeMillis
+import kotlin.time.Duration
 
-internal class DelayQueue<T : Any> {
+internal class DelayQueue<T : Any>(
+    private val clock: Clock = DefaultClock,
+) {
 
-    private val lock = Lock()
-    private val condition = lock.newCondition()
-    private val queueRef: AtomicReference<List<Holder<T>>?> = AtomicReference(emptyList())
+    private val lock = ConditionLock()
+    private var queue: PriorityQueue<Holder<T>>? = PriorityQueue(HolderComparator)
 
     /**
      * Terminates the queue. Any currently waiting [take] methods will immediately return null.
@@ -18,25 +21,17 @@ internal class DelayQueue<T : Any> {
      */
     fun terminate() {
         lock.synchronized {
-            queueRef.value = null
-            condition.signal()
+            queue = null
+            lock.signal()
         }
     }
 
-    fun destroy() {
-        condition.destroy()
-        lock.destroy()
-    }
-
     fun removeFirst(): T? =
-        doSynchronizedIfNotTerminated { queue ->
-            queue
-                .firstOrNull()
-                ?.value
-                ?.also {
-                    queueRef.value = queue.drop(1)
-                    condition.signal()
-                }
+        lock.synchronized {
+            val queue = queue ?: return@synchronized null
+            val holder = queue.poll()
+            lock.signal()
+            holder?.value
         }
 
     /**
@@ -45,69 +40,57 @@ internal class DelayQueue<T : Any> {
      */
     @Suppress("NestedBlockDepth")
     fun take(): T? {
-        lock.acquire()
-        try {
+        lock.synchronized {
             while (true) {
-                val queue = queueRef.value ?: return null
-                val item: Holder<T>? = queue.firstOrNull()
+                val queue = queue ?: return null
+                val item: Holder<T>? = queue.peek()
 
                 if (item == null) {
-                    condition.await()
+                    lock.await()
                 } else {
-                    val timeoutNanos = (item.endTimeMillis - getTimeMillis()) * NANOS_IN_MILLI
+                    val timeout = item.endTime - clock.uptime
 
-                    if (timeoutNanos <= 0L) {
-                        queueRef.value = queue.drop(1)
+                    if (!timeout.isPositive()) {
+                        queue.poll()
 
                         return item.value
                     }
 
-                    condition.await(timeoutNanos)
+                    lock.await(timeout)
                 }
             }
-        } finally {
-            lock.release()
         }
     }
 
-    fun offer(value: T, timeoutMillis: Long) {
-        offerAt(value, getTimeMillis() + timeoutMillis)
+    fun offer(value: T, timeout: Duration) {
+        offerAt(value, clock.uptime + timeout)
     }
 
-    fun offerAt(value: T, timeMillis: Long) {
-        val holder = Holder(value, timeMillis)
-        doSynchronizedIfNotTerminated { queue ->
-            queueRef.value = queue.plusSorted(holder, HolderComparator)
-            condition.signal()
-        }
-    }
-
-    fun clear() {
-        doSynchronizedIfNotTerminated { queue ->
-            if (queue.isNotEmpty()) {
-                queueRef.value = emptyList()
-                condition.signal()
-            }
+    fun offerAt(value: T, time: Duration) {
+        lock.synchronized {
+            val queue = queue ?: return
+            queue.offer(Holder(value, time))
+            lock.signal()
         }
     }
 
     fun removeIf(predicate: (T) -> Boolean) {
-        doSynchronizedIfNotTerminated { queue ->
-            if (queue.isNotEmpty()) {
-                queueRef.value = queue.filterNot { predicate(it.value) }
-                condition.signal()
+        lock.synchronized {
+            val oldQueue = queue?.takeUnless { it.isEmpty } ?: return
+            val newQueue = PriorityQueue<Holder<T>>(HolderComparator)
+            this.queue = newQueue
+
+            oldQueue.forEach { holder ->
+                if (!predicate(holder.value)) {
+                    newQueue.offer(holder)
+                }
             }
         }
     }
 
-    private inline fun <R> doSynchronizedIfNotTerminated(block: (queue: List<Holder<T>>) -> R): R? =
-        lock.synchronized {
-            queueRef.value?.let(block)
-        }
-
     private data class Holder<out T>(
         val value: T,
-        val endTimeMillis: Long
+        val endTime: Duration,
     ) {
         val sequenceNumber = sequencer.addAndGet(1L)
 
@@ -121,11 +104,11 @@ internal class DelayQueue<T : Any> {
             if (a === b) {
                 0
             } else {
-                var diff = a.endTimeMillis - b.endTimeMillis
-                if (diff == 0L) {
-                    diff = a.sequenceNumber - b.sequenceNumber
+                var diff = a.endTime.compareTo(b.endTime)
+                if (diff == 0) {
+                    diff = a.sequenceNumber.compareTo(b.sequenceNumber)
                 }
-                diff.coerceIn(-1, 1).toInt()
+                diff
             }
     }
 }

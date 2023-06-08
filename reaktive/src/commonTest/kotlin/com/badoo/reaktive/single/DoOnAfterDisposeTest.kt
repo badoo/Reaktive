@@ -5,8 +5,6 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.single.TestSingle
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.SharedList
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -25,7 +23,7 @@ class DoOnAfterDisposeTest : SingleToSingleTests by SingleToSingleTestsImpl({ do
 
     @Test
     fun calls_action_after_disposing_upstream() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         singleUnsafe<Nothing> { observer ->
             observer.onSubscribe(
@@ -45,44 +43,40 @@ class DoOnAfterDisposeTest : SingleToSingleTests by SingleToSingleTestsImpl({ do
 
     @Test
     fun does_not_calls_action_WHEN_disposed_before_upstream_onSubscribe() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         singleUnsafe<Nothing> {}
-            .doOnAfterDispose { isCalled.value = true }
+            .doOnAfterDispose { isCalled = true }
             .test()
             .dispose()
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test
     fun does_not_call_action_WHEN_upstream_succeeded() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnAfterDispose {
-                isCalled.value = true
-            }
+            .doOnAfterDispose { isCalled = true }
             .test()
 
         upstream.onSuccess(0)
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test
     fun does_not_call_action_WHEN_upstream_produced_error() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnAfterDispose {
-                isCalled.value = true
-            }
+            .doOnAfterDispose { isCalled = true }
             .test()
 
         upstream.onError(Throwable())
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test

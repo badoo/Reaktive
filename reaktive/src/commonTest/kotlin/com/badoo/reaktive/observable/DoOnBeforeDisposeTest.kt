@@ -5,8 +5,6 @@ import com.badoo.reaktive.test.base.assertDisposed
 import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.SharedList
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -28,7 +26,7 @@ class DoOnBeforeDisposeTest :
 
     @Test
     fun calls_action_before_disposing_upstream() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         observableUnsafe<Nothing> { observer ->
             observer.onSubscribe(
@@ -48,59 +46,53 @@ class DoOnBeforeDisposeTest :
 
     @Test
     fun calls_action_WHEN_disposed_before_upstream_onSubscribe() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         observableUnsafe<Nothing> {}
-            .doOnBeforeDispose { isCalled.value = true }
+            .doOnBeforeDispose { isCalled = true }
             .test()
             .dispose()
 
-        assertTrue(isCalled.value)
+        assertTrue(isCalled)
     }
 
     @Test
     fun does_not_call_action_WHEN_upstream_emitted_value() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnBeforeDispose {
-                isCalled.value = true
-            }
+            .doOnBeforeDispose { isCalled = true }
             .test()
 
         upstream.onNext(0)
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test
     fun does_not_call_action_WHEN_upstream_completed() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnBeforeDispose {
-                isCalled.value = true
-            }
+            .doOnBeforeDispose { isCalled = true }
             .test()
 
         upstream.onComplete()
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test
     fun does_not_call_action_WHEN_upstream_produced_error() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnBeforeDispose {
-                isCalled.value = true
-            }
+            .doOnBeforeDispose { isCalled = true }
             .test()
 
         upstream.onError(Throwable())
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test

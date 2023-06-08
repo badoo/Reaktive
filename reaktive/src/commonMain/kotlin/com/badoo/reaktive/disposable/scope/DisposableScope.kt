@@ -26,7 +26,6 @@ interface DisposableScope : Disposable {
      * Same as [Observable.subscribe][com.badoo.reaktive.observable.subscribe] but also adds the [Disposable] to the scope
      */
     fun <T> Observable<T>.subscribeScoped(
-        isThreadLocal: Boolean = false,
         onSubscribe: ((Disposable) -> Unit)? = null,
         onError: ((Throwable) -> Unit)? = null,
         onComplete: (() -> Unit)? = null,
@@ -37,7 +36,6 @@ interface DisposableScope : Disposable {
      * Same as [Single.subscribe][com.badoo.reaktive.single.subscribe] but also adds the [Disposable] to the scope
      */
     fun <T> Single<T>.subscribeScoped(
-        isThreadLocal: Boolean = false,
         onSubscribe: ((Disposable) -> Unit)? = null,
         onError: ((Throwable) -> Unit)? = null,
         onSuccess: ((T) -> Unit)? = null
@@ -47,7 +45,6 @@ interface DisposableScope : Disposable {
      * Same as [Maybe.subscribe][com.badoo.reaktive.maybe.subscribe] but also adds the [Disposable] to the scope
      */
     fun <T> Maybe<T>.subscribeScoped(
-        isThreadLocal: Boolean = false,
         onSubscribe: ((Disposable) -> Unit)? = null,
         onError: ((Throwable) -> Unit)? = null,
         onComplete: (() -> Unit)? = null,
@@ -58,7 +55,6 @@ interface DisposableScope : Disposable {
      * Same as [Completable.subscribe][com.badoo.reaktive.completable.subscribe] but also adds the [Disposable] to the scope
      */
     fun Completable.subscribeScoped(
-        isThreadLocal: Boolean = false,
         onSubscribe: ((Disposable) -> Unit)? = null,
         onError: ((Throwable) -> Unit)? = null,
         onComplete: (() -> Unit)? = null

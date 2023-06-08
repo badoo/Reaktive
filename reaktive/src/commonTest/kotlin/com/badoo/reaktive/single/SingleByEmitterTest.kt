@@ -8,12 +8,6 @@ import com.badoo.reaktive.test.base.assertSubscribed
 import com.badoo.reaktive.test.single.assertNotSuccess
 import com.badoo.reaktive.test.single.assertSuccess
 import com.badoo.reaktive.test.single.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
-import com.badoo.reaktive.utils.ensureNeverFrozen
-import com.badoo.reaktive.utils.freeze
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -21,14 +15,9 @@ import kotlin.test.assertTrue
 
 class SingleByEmitterTest {
 
-    private val emitterRef = AtomicReference<SingleEmitter<Int?>?>(null)
-    private val emitter: SingleEmitter<Int?> get() = requireNotNull(emitterRef.value)
-    private val single = createSingle(emitterRef)
+    private lateinit var emitter: SingleEmitter<Int?>
+    private val single = single { emitter = it }
     private val observer = single.test()
-
-    // To avoid freezing of the test class
-    private fun createSingle(emitterReference: AtomicReference<SingleEmitter<Int?>?>): Single<Int?> =
-        single { emitterReference.value = it }
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
@@ -158,24 +147,24 @@ class SingleByEmitterTest {
 
     @Test
     fun assigned_disposable_is_disposed_WHEN_onSuccess_is_signalled() {
-        val events = atomicList<String>()
+        val events = ArrayList<String>()
         single.subscribe(observer(onSuccess = { events += "onSuccess" }))
         emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onSuccess(0)
 
-        assertEquals(listOf("onSuccess", "dispose"), events.value)
+        assertEquals(listOf("onSuccess", "dispose"), events)
     }
 
     @Test
     fun assigned_disposable_is_disposed_WHEN_onError_is_signalled() {
-        val events = atomicList<String>()
+        val events = ArrayList<String>()
         single.subscribe(observer(onError = { events += "onError" }))
         emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onError(Throwable())
 
-        assertEquals(listOf("onError", "dispose"), events.value)
+        assertEquals(listOf("onError", "dispose"), events)
     }
 
     @Test
@@ -206,17 +195,17 @@ class SingleByEmitterTest {
 
     @Test
     fun does_not_success_recursively_WHEN_succeeding() {
-        val isSucceededRecursively = AtomicBoolean()
-        val isSucceeded = AtomicBoolean()
+        var isSucceededRecursively = false
+        var isSucceeded = false
 
         single.subscribe(
             observer(
                 onSuccess = {
-                    if (!isSucceeded.value) {
-                        isSucceeded.value = true
+                    if (!isSucceeded) {
+                        isSucceeded = true
                         emitter.onSuccess(0)
                     } else {
-                        isSucceededRecursively.value = true
+                        isSucceededRecursively = true
                     }
                 }
             )
@@ -224,54 +213,54 @@ class SingleByEmitterTest {
 
         emitter.onSuccess(0)
 
-        assertFalse(isSucceededRecursively.value)
+        assertFalse(isSucceededRecursively)
     }
 
     @Test
     fun does_not_success_recursively_WHEN_producing_error() {
-        val isSucceededRecursively = AtomicBoolean()
+        var isSucceededRecursively = false
 
         single.subscribe(
             observer(
-                onSuccess = { isSucceededRecursively.value = true },
+                onSuccess = { isSucceededRecursively = true },
                 onError = { emitter.onSuccess(0) }
             )
         )
 
         emitter.onError(Exception())
 
-        assertFalse(isSucceededRecursively.value)
+        assertFalse(isSucceededRecursively)
     }
 
     @Test
     fun does_not_produce_error_recursively_WHEN_succeeding() {
-        val isErrorRecursively = AtomicBoolean()
+        var isErrorRecursively = false
 
         single.subscribe(
             observer(
                 onSuccess = { emitter.onError(Exception()) },
-                onError = { isErrorRecursively.value = true }
+                onError = { isErrorRecursively = true }
             )
         )
 
         emitter.onSuccess(0)
 
-        assertFalse(isErrorRecursively.value)
+        assertFalse(isErrorRecursively)
     }
 
     @Test
     fun does_not_produce_error_recursively_WHEN_producing_error() {
-        val isErrorRecursively = AtomicBoolean()
-        val hasError = AtomicBoolean()
+        var isErrorRecursively = false
+        var hasError = false
 
         single.subscribe(
             observer(
                 onError = {
-                    if (!hasError.value) {
-                        hasError.value = true
+                    if (!hasError) {
+                        hasError = true
                         emitter.onError(Exception())
                     } else {
-                        isErrorRecursively.value = true
+                        isErrorRecursively = true
                     }
                 }
             )
@@ -279,28 +268,7 @@ class SingleByEmitterTest {
 
         emitter.onError(Exception())
 
-        assertFalse(isErrorRecursively.value)
-    }
-
-    @Test
-    fun does_not_freeze_observer_WHEN_disposable_is_frozen() {
-        single.subscribe(
-            object : SingleObserver<Int?> {
-                init {
-                    ensureNeverFrozen()
-                }
-
-                override fun onSubscribe(disposable: Disposable) {
-                    disposable.freeze()
-                }
-
-                override fun onSuccess(value: Int?) {
-                }
-
-                override fun onError(error: Throwable) {
-                }
-            }
-        )
+        assertFalse(isErrorRecursively)
     }
 
     private fun observer(

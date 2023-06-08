@@ -5,10 +5,6 @@ package com.badoo.reaktive.observable
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.SharedList
-import com.badoo.reaktive.utils.atomic.AtomicList
-import com.badoo.reaktive.utils.atomic.update
-import com.badoo.reaktive.utils.replace
 import com.badoo.reaktive.utils.serializer.serializer
 
 /**
@@ -30,8 +26,8 @@ fun <T, R> Iterable<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
         val disposables = CompositeDisposable()
         emitter.setDisposable(disposables)
 
-        val values = SharedList<SharedList<T>>(sources.size) { SharedList() }
-        val completed = AtomicList(List(sources.size) { false })
+        val values = List<ArrayList<T>>(sources.size) { ArrayList() }
+        val completed = BooleanArray(sources.size)
 
         val serializer =
             serializer<ZipEvent<T>> { event ->
@@ -61,7 +57,7 @@ fun <T, R> Iterable<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
 
                         // Complete if for any completed source there are no values left in the queue
                         values.forEachIndexed { index, queue ->
-                            if (queue.isEmpty() && completed.value[index]) {
+                            if (queue.isEmpty() && completed[index]) {
                                 emitter.onComplete()
                                 return@serializer false
                             }
@@ -71,9 +67,7 @@ fun <T, R> Iterable<Observable<T>>.zip(mapper: (List<T>) -> R): Observable<R> =
                     }
 
                     is ZipEvent.OnComplete -> {
-                        completed.update {
-                            it.replace(event.index, true)
-                        }
+                        completed[event.index] = true
 
                         // Complete if a source is completed and no values left in its queue
                         val isEmpty = values[event.index].isEmpty()

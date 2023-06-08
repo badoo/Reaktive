@@ -3,9 +3,8 @@ package com.badoo.reaktive.test.single
 import com.badoo.reaktive.single.SingleObserver
 import com.badoo.reaktive.test.base.TestObserver
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.freeze
 
-class TestSingleObserver<T>(autoFreeze: Boolean = true) : TestObserver(), SingleObserver<T> {
+class TestSingleObserver<T> : TestObserver(), SingleObserver<T> {
 
     private val _value = AtomicReference<Value<T>?>(null)
 
@@ -15,12 +14,6 @@ class TestSingleObserver<T>(autoFreeze: Boolean = true) : TestObserver(), Single
                 .value
 
     val isSuccess: Boolean get() = _value.value != null
-
-    init {
-        if (autoFreeze) {
-            freeze()
-        }
-    }
 
     override fun onSuccess(value: T) {
         checkActive()

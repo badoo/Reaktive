@@ -1,13 +1,11 @@
-import com.badoo.reaktive.dependencies.Deps
-
 plugins {
     id 'mpp-configuration'
     id 'publish-configuration'
     id 'detekt-configuration'
 }
 
-configuration {
-    enableLinuxArm32Hfp()
+android {
+    namespace "com.badoo.reaktive.test"
 }
 
 kotlin {
@@ -15,7 +13,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation project(':reaktive')
-                implementation project(':utils')
+                implementation project(':utils-internal')
             }
         }
     }

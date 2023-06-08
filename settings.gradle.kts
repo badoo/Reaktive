@@ -2,16 +2,14 @@ pluginManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         gradlePluginPortal()
     }
 }
 
-includeBuild("includedBuild/dependencies")
 includeBuild("includedBuild/gradleConfiguration")
 
 if (!startParameter.projectProperties.containsKey("check_publication")) {
-    include(":utils")
+    include(":utils-internal")
     include(":reaktive")
     include(":reaktive-testing")
     include(":reaktive-annotations")
@@ -23,7 +21,6 @@ if (!startParameter.projectProperties.containsKey("check_publication")) {
     include(":sample-android-app")
     include(":sample-js-browser-app")
     include(":sample-linuxx64-app")
-    include(":sample-ios-app")
 } else {
     include(":tools:check-publication")
 }

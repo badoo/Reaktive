@@ -1,10 +1,8 @@
 package com.badoo.reaktive.maybe
 
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.utils.PairReference
-import com.badoo.reaktive.utils.Uninitialized
+import com.badoo.reaktive.utils.lock.ConditionLock
 import com.badoo.reaktive.utils.lock.synchronized
-import com.badoo.reaktive.utils.lock.withLockAndCondition
 
 /**
  * Blocks current thread until the current `Maybe` succeeds with a value (which is returned),
@@ -15,64 +13,60 @@ import com.badoo.reaktive.utils.lock.withLockAndCondition
  * in JavaScript for testing purposes, then consider using `Single.testAwait()` extension
  * from the `reaktive-testing` module.
  */
-fun <T> Maybe<T>.blockingGet(): T? =
-    withLockAndCondition { lock, condition ->
-        val observer =
-            object : PairReference<Any?, Disposable?>(Uninitialized, null), MaybeObserver<T> {
-                override fun onSubscribe(disposable: Disposable) {
-                    lock.synchronized {
-                        second = disposable
-                    }
-                }
+fun <T> Maybe<T>.blockingGet(): T? {
+    var successResult: T? = null
+    var errorResult: Throwable? = null
+    var isFinished = false
+    var disposableRef: Disposable? = null
 
-                override fun onSuccess(value: T) {
-                    lock.synchronized {
-                        first = value
-                        condition.signal()
-                    }
-                }
-
-                override fun onComplete() {
-                    lock.synchronized {
-                        first = BlockingGetResult.Completed
-                        condition.signal()
-                    }
-                }
-
-                override fun onError(error: Throwable) {
-                    lock.synchronized {
-                        first = BlockingGetResult.Error(error)
-                        condition.signal()
-                    }
+    val observer =
+        object : ConditionLock(), MaybeObserver<T> {
+            override fun onSubscribe(disposable: Disposable) {
+                synchronized {
+                    disposableRef = disposable
                 }
             }
 
-        subscribe(observer)
+            override fun onSuccess(value: T) {
+                synchronized {
+                    successResult = value
+                    isFinished = true
+                    signal()
+                }
+            }
 
-        lock.synchronized {
-            while (observer.first === Uninitialized) {
-                try {
-                    condition.await()
-                } catch (e: Throwable) {
-                    observer.second?.dispose()
-                    throw e
+            override fun onComplete() {
+                synchronized {
+                    isFinished = true
+                    signal()
+                }
+            }
+
+            override fun onError(error: Throwable) {
+                synchronized {
+                    errorResult = error
+                    isFinished = true
+                    signal()
                 }
             }
         }
 
-        observer
-            .first
-            .let {
-                @Suppress("UNCHECKED_CAST")
-                when (it) {
-                    BlockingGetResult.Completed -> null
-                    is BlockingGetResult.Error -> throw it.error
-                    else -> it as T
-                }
+    subscribe(observer)
+
+    observer.synchronized {
+        while (!isFinished) {
+            try {
+                observer.await()
+            } catch (e: Throwable) {
+                disposableRef?.dispose()
+                throw e
             }
+        }
     }
 
-private sealed class BlockingGetResult<out T> {
-    object Completed : BlockingGetResult<Nothing>()
-    class Error(val error: Throwable) : BlockingGetResult<Nothing>()
+    errorResult?.also {
+        throw it
+    }
+
+    return successResult
 }

@@ -14,13 +14,9 @@ import com.badoo.reaktive.single.repeatWhen
 import com.badoo.reaktive.single.singleOf
 import com.badoo.reaktive.subject.unicast.UnicastSubject
 import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicLong
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndSet
-import com.badoo.reaktive.utils.atomic.update
-import com.badoo.reaktive.utils.atomic.updateAndGet
 import com.badoo.reaktive.utils.serializer.Serializer
 import com.badoo.reaktive.utils.serializer.serializer
+import kotlin.time.Duration
 
 /**
  * Returns an [Observable] that emits possibly overlapping windows of elements it collects from the source [Observable].
@@ -29,18 +25,18 @@ import com.badoo.reaktive.utils.serializer.serializer
  * [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Observable.html#window-long-long-java.util.concurrent.TimeUnit-io.reactivex.Scheduler-).
  */
 fun <T> Observable<T>.window(
-    spanMillis: Long,
-    skipMillis: Long,
+    span: Duration,
+    skip: Duration,
     scheduler: Scheduler,
     limit: Long = Long.MAX_VALUE,
     restartOnLimit: Boolean = false
 ): Observable<Observable<T>> {
-    require(spanMillis > 0) { "spanMillis must by positive" }
-    require(skipMillis > 0) { "skipMillis must by positive" }
+    require(span.isPositive()) { "Span duration must by positive" }
+    require(skip.isPositive()) { "Skip duration must by positive" }
 
     return window(
-        opening = singleOf(Unit).repeatWhen { _, _ -> maybeTimer(skipMillis, scheduler) },
-        closing = { completableTimer(spanMillis, scheduler) },
+        opening = singleOf(Unit).repeatWhen { _, _ -> maybeTimer(skip, scheduler) },
+        closing = { completableTimer(span, scheduler) },
         limit = limit,
         restartOnLimit = restartOnLimit
     )
@@ -84,7 +80,7 @@ private class WindowBySignal<T, S>(
     private val actor = serializer(onValue = ::processEvent)
     private val upstreamObserver = UpstreamObserver<T>(actor)
     private val openingObserver = OpeningObserver<S>(actor)
-    private val windows: AtomicReference<Set<ClosingObserver<T>>> = AtomicReference(emptySet())
+    private var windows: Set<ClosingObserver<T>> = HashSet() // Copy-on-write behaviour
 
     init {
         emitter.setCancellable { actor.accept(Event.DownstreamDisposed) }
@@ -126,7 +122,7 @@ private class WindowBySignal<T, S>(
 
         if (windowWrapper.isSubscribed.value) {
             val closingObserver = ClosingObserver(actor, closing, window)
-            windows.update { it + closingObserver }
+            windows += closingObserver
 
             try {
                 closing.subscribe(closingObserver)
@@ -142,7 +138,8 @@ private class WindowBySignal<T, S>(
     }
 
     private fun onClose(window: ClosingObserver<T>): Boolean {
-        val windowCount = windows.updateAndGet { it - window }.size
+        windows -= window
+        val windowCount = windows.size
         window.subject.onComplete()
 
         if ((windowCount == 0) && (upstreamObserver.isDone() || openingObserver.isDone())) {
@@ -160,7 +157,7 @@ private class WindowBySignal<T, S>(
         openingObserver.dispose()
 
         windows
-            .getAndSet(emptySet())
+            .also { windows = HashSet() }
             .forEach {
                 it.dispose()
                 it.subject.onComplete()
@@ -174,7 +171,7 @@ private class WindowBySignal<T, S>(
     private fun onOpeningCompleted(): Boolean {
         openingObserver.markCompleted()
 
-        if (windows.value.isEmpty()) {
+        if (windows.isEmpty()) {
             upstreamObserver.dispose()
             emitter.onComplete()
             return false
@@ -186,7 +183,7 @@ private class WindowBySignal<T, S>(
     private fun onDownstreamDisposed(): Boolean {
         openingObserver.dispose()
 
-        if (windows.value.isEmpty()) {
+        if (windows.isEmpty()) {
             upstreamObserver.dispose()
             return false
         }
@@ -200,7 +197,7 @@ private class WindowBySignal<T, S>(
         emitter.onError(error)
 
         windows
-            .getAndSet(emptySet())
+            .also { windows = HashSet() }
             .forEach {
                 it.dispose()
                 it.subject.onError(error)
@@ -210,13 +207,14 @@ private class WindowBySignal<T, S>(
     }
 
     private fun onValue(value: T): Boolean {
-        windows.value.forEach {
+        windows.forEach {
             it.subject.onNext(value)
 
-            if (it.count.addAndGet(1) == limit) {
+            it.count++
+            if (it.count == limit) {
                 onClose(it)
                 if (restartOnLimit) {
-                    it.count.value = 0
+                    it.count = 0
                     open(it.closing)
                 }
             }
@@ -265,7 +263,7 @@ private class WindowBySignal<T, S>(
         }
     }
 
-    private class UpstreamObserver<T>(
+    private class UpstreamObserver<in T>(
         private val actor: Serializer<Any?>
     ) : AbstractObserver(actor), ObservableObserver<T> {
         override fun onNext(value: T) {
@@ -277,7 +275,7 @@ private class WindowBySignal<T, S>(
         }
     }
 
-    private class OpeningObserver<S>(
+    private class OpeningObserver<in S>(
         private val actor: Serializer<Any?>
     ) : AbstractObserver(actor), ObservableObserver<S> {
         override fun onNext(value: S) {
@@ -294,7 +292,7 @@ private class WindowBySignal<T, S>(
         val closing: Completable,
         val subject: UnicastSubject<T>
     ) : AbstractObserver(actor), CompletableObserver {
-        var count = AtomicLong()
+        var count: Long = 0L
 
         override fun onComplete() {
             actor.accept(Event.Close(this))

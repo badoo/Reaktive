@@ -10,8 +10,6 @@ import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.TestObservableObserver
 import com.badoo.reaktive.test.observable.assertComplete
 import com.badoo.reaktive.test.observable.assertValues
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -79,7 +77,6 @@ class SubscribeTest {
         assertTrue(disposable.isDisposed)
     }
 
-
     @Test
     fun calls_onError_WHEN_upstream_produced_an_error() {
         observer.onSubscribe(Disposable())
@@ -103,14 +100,14 @@ class SubscribeTest {
     @Test
     fun calls_onError_WHEN_onSubscribe_thrown_exception() {
         val exception = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
+        var caughtException: Throwable? = null
 
         upstream.subscribe(
             onSubscribe = { throw exception },
-            onError = { caughtException.value = it }
+            onError = { caughtException = it }
         )
 
-        assertSame(exception, caughtException.value)
+        assertSame(exception, caughtException)
     }
 
     @Test
@@ -139,15 +136,15 @@ class SubscribeTest {
     @Test
     fun calls_onError_WHEN_onNext_thrown_exception() {
         val exception = Exception()
-        val caughtException: AtomicReference<Throwable?> = AtomicReference(null)
+        var caughtException: Throwable? = null
 
         upstream.subscribe(
-            onError = { caughtException.value = it },
+            onError = { caughtException = it },
             onNext = { throw exception }
         )
         upstream.onNext(0)
 
-        assertSame(exception, caughtException.value)
+        assertSame(exception, caughtException)
     }
 
     @Test
@@ -165,15 +162,15 @@ class SubscribeTest {
     fun does_not_call_onError_WHEN_onComplete_thrown_exception() {
         val exception = Exception()
         mockUncaughtExceptionHandler()
-        val isOnErrorCalled = AtomicBoolean()
+        var isOnErrorCalled = false
 
         upstream.subscribe(
-            onError = { isOnErrorCalled.value = true },
+            onError = { isOnErrorCalled = true },
             onComplete = { throw exception }
         )
         upstream.onComplete()
 
-        assertFalse(isOnErrorCalled.value)
+        assertFalse(isOnErrorCalled)
     }
 
     @Test

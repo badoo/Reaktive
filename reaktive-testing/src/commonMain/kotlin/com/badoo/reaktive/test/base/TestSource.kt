@@ -6,7 +6,7 @@ import com.badoo.reaktive.base.Source
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.update
+import com.badoo.reaktive.utils.atomic.change
 
 open class TestSource<O> : Source<O>, ErrorCallback where O : Observer, O : ErrorCallback {
 
@@ -21,8 +21,8 @@ open class TestSource<O> : Source<O>, ErrorCallback where O : Observer, O : Erro
 
     override fun subscribe(observer: O) {
         _subscriptionCount.addAndGet(1)
-        _observers.update { it + observer }
-        observer.onSubscribe(Disposable { _observers.update { it - observer } })
+        _observers.change { it + observer }
+        observer.onSubscribe(Disposable { _observers.change { it - observer } })
     }
 
     override fun onError(error: Throwable) {

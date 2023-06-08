@@ -11,7 +11,7 @@ import com.badoo.reaktive.observable.concatMap
  */
 fun Iterable<Completable>.concat(): Completable =
     asObservable()
-        .concatMap { it.asObservable<Nothing>() }
+        .concatMap { it.asObservable() }
         .asCompletable()
 
 /**

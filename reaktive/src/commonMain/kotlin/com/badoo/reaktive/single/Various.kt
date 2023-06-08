@@ -1,6 +1,5 @@
 package com.badoo.reaktive.single
 
-import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.plugin.onAssembleSingle
 import kotlin.native.concurrent.SharedImmutable
@@ -10,7 +9,6 @@ import kotlin.native.concurrent.SharedImmutable
  *
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Single.html#unsafeCreate-io.reactivex.SingleSource-).
  */
-@OptIn(ExperimentalReaktiveApi::class)
 inline fun <T> singleUnsafe(crossinline onSubscribe: (observer: SingleObserver<T>) -> Unit): Single<T> =
     onAssembleSingle(
         object : Single<T> {

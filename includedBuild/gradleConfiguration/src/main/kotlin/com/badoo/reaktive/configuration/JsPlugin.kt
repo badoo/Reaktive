@@ -1,11 +1,10 @@
 package com.badoo.reaktive.configuration
 
-import com.badoo.reaktive.dependencies.Deps
+import com.badoo.reaktive.getLibrary
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-@Suppress("UnstableApiUsage")
 class JsPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
@@ -14,7 +13,7 @@ class JsPlugin : Plugin<Project> {
 
     private fun configureJsCompilation(target: Project) {
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
-            js {
+            js(IR) {
                 browser {
                     testTask {
                         useKarma {
@@ -32,12 +31,12 @@ class JsPlugin : Plugin<Project> {
             }
             sourceSets.getByName("jsMain") {
                 dependencies {
-                    implementation(Deps.kotlin.stdlib.js)
+                    implementation(project.getLibrary("kotlin-stdlib-js"))
                 }
             }
             sourceSets.getByName("jsTest") {
                 dependencies {
-                    implementation(Deps.kotlin.test.js)
+                    implementation(project.getLibrary("kotlin-test-js"))
                 }
             }
         }

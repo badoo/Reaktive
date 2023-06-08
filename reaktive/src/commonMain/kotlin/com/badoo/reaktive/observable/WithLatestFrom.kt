@@ -6,10 +6,7 @@ import com.badoo.reaktive.completable.CompletableCallbacks
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.utils.Uninitialized
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.update
-import com.badoo.reaktive.utils.replace
+import com.badoo.reaktive.utils.lock.Lock
 
 /**
  * Combines the elements emitted by the source [Observable] with the latest emitted elements emitted by the
@@ -26,7 +23,9 @@ fun <T, U, R> Observable<T>.withLatestFrom(
         emitter.setDisposable(disposables)
 
         val otherSources = others.toList()
-        val otherValues = atomicList<Any?>(List(otherSources.size) { Uninitialized })
+        val otherValues = arrayOfNulls<Any?>(otherSources.size)
+        var otherValuesInitialised: BooleanArray? = if (otherSources.isNotEmpty()) BooleanArray(otherSources.size) else null
+        val lock = Lock()
 
         otherSources.forEachIndexed { index, source ->
             source.subscribe(
@@ -36,8 +35,15 @@ fun <T, U, R> Observable<T>.withLatestFrom(
                     }
 
                     override fun onNext(value: U) {
-                        otherValues.update {
-                            it.replace(index, value)
+                        lock.synchronized {
+                            otherValues[index] = value
+
+                            otherValuesInitialised?.takeUnless { it[index] }?.also { flags ->
+                                flags[index] = true
+                                if (flags.all { it }) {
+                                    otherValuesInitialised = null
+                                }
+                            }
                         }
                     }
 
@@ -55,15 +61,13 @@ fun <T, U, R> Observable<T>.withLatestFrom(
                 }
 
                 override fun onNext(value: T) {
+                    @Suppress("UNCHECKED_CAST")
                     val valueList =
-                        otherValues
-                            .value
-                            .takeUnless { it.contains(Uninitialized) }
-                            ?.let {
-                                @Suppress("UNCHECKED_CAST")
-                                it as List<U>
-                            }
-                            ?: return
+                        lock.synchronized {
+                            otherValues
+                                .takeIf { otherValuesInitialised == null }
+                                ?.toList() as List<U>?
+                        } ?: return
 
                     emitter.tryCatch(block = { mapper(value, valueList) }, onSuccess = emitter::onNext)
                 }

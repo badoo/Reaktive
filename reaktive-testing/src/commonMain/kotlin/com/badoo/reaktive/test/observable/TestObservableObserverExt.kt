@@ -4,7 +4,6 @@ import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.test.assert.assertEquals
 import com.badoo.reaktive.test.assert.assertFalse
 import com.badoo.reaktive.test.assert.assertTrue
-import com.badoo.reaktive.utils.freeze
 
 fun <T> TestObservableObserver<T>.assertValues(expectedValues: List<T>): TestObservableObserver<T> {
     assertEquals(expectedValues, values, "Observable values do not match")
@@ -42,11 +41,6 @@ fun <T> TestObservableObserver<T>.assertNotComplete(): TestObservableObserver<T>
     return this
 }
 
-fun <T> Observable<T>.test(autoFreeze: Boolean = true): TestObservableObserver<T> {
-    if (autoFreeze) {
-        freeze()
-    }
-
-    return TestObservableObserver<T>(autoFreeze = autoFreeze)
+fun <T> Observable<T>.test(): TestObservableObserver<T> =
+    TestObservableObserver<T>()
         .also(::subscribe)
-}

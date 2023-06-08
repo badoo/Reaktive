@@ -9,9 +9,6 @@ import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.onNext
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicInt
-import com.badoo.reaktive.utils.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -20,12 +17,12 @@ import kotlin.test.assertTrue
 class RepeatUntilTest : ObservableToObservableTests by ObservableToObservableTestsImpl({ repeatUntil { true } }) {
     @Test
     fun resubscribes_on_complete_till_predicate_is_true() {
-        val count = AtomicInt(0)
+        var count = 0
         val upstream = TestObservable<Int?>()
 
-        val observer = upstream.repeatUntil { count.value >= 2 }.test()
+        val observer = upstream.repeatUntil { count >= 2 }.test()
 
-        upstream.onNext(count.addAndGet(1), count.addAndGet(1))
+        upstream.onNext(++count, ++count)
         observer.assertValues(1, 2)
     }
 
@@ -46,14 +43,14 @@ class RepeatUntilTest : ObservableToObservableTests by ObservableToObservableTes
     @Test
     fun resubscribes_to_upstream_WHEN_upstream_completed_and_predicate_is_false() {
         val upstreams = List(2) { TestObservable<Int>() }
-        val index = AtomicInt(-1)
+        var index = -1
 
         val upstream =
-            observableUnsafe<Int> { observer ->
-                upstreams[index.addAndGet(1)].subscribe(observer)
+            observableUnsafe { observer ->
+                upstreams[++index].subscribe(observer)
             }
 
-        upstream.repeatUntil { index.value == 1 }.test()
+        upstream.repeatUntil { index == 1 }.test()
 
         upstreams[0].onComplete()
         assertFalse(upstreams[0].hasSubscribers)
@@ -62,28 +59,28 @@ class RepeatUntilTest : ObservableToObservableTests by ObservableToObservableTes
 
     @Test
     fun resubscribes_on_complete_multiple_emissions_predicate_is_false() {
-        val count = AtomicInt(0)
-        val upstream = observable<Int> {
+        var count = 0
+        val upstream = observable {
             for (i in 1..10) {
-                it.onNext(count.addAndGet(1))
+                it.onNext(++count)
             }
             it.onComplete()
         }
 
-        upstream.repeatUntil { count.value > 10 }.test()
+        upstream.repeatUntil { count > 10 }.test()
 
-        assertEquals(20, count.value)
+        assertEquals(20, count)
     }
 
     @Test
     fun completes_after_second_iteration_WHEN_predicate_changes_to_true() {
-        val count = AtomicInt(0)
+        var count = 0
         val upstream = TestObservable<Int?>()
-        val observer = upstream.repeatUntil { count.value > 1 }.test()
+        val observer = upstream.repeatUntil { count > 1 }.test()
 
-        upstream.onNext(count.addAndGet(1))
+        upstream.onNext(++count)
         upstream.onComplete()
-        upstream.onNext(count.addAndGet(1))
+        upstream.onNext(++count)
         upstream.onComplete()
 
         observer.assertComplete()
@@ -91,13 +88,13 @@ class RepeatUntilTest : ObservableToObservableTests by ObservableToObservableTes
 
     @Test
     fun does_not_completes_after_second_iteration_WHEN_predicate_is_still_false() {
-        val count = AtomicInt(0)
+        var count = 0
         val upstream = TestObservable<Int?>()
-        val observer = upstream.repeatUntil { count.value > 2 }.test()
+        val observer = upstream.repeatUntil { count > 2 }.test()
 
-        upstream.onNext(count.addAndGet(1))
+        upstream.onNext(++count)
         upstream.onComplete()
-        upstream.onNext(count.addAndGet(1))
+        upstream.onNext(++count)
         upstream.onComplete()
 
         observer.assertNotComplete()
@@ -105,52 +102,52 @@ class RepeatUntilTest : ObservableToObservableTests by ObservableToObservableTes
 
     @Test
     fun does_not_resubscribe_to_upstream_WHEN_disposed_and_upstream_completed_predicate_is_false() {
-        val count = AtomicInt(0)
-        val isResubscribed = AtomicBoolean()
-        val upstreamObserver = AtomicReference<ObservableObserver<Int>?>(null)
+        var count = 0
+        var isResubscribed = false
+        var upstreamObserver: ObservableObserver<Int>? = null
 
         val upstream =
             observableUnsafe<Int> { observer ->
-                if (upstreamObserver.value == null) {
+                if (upstreamObserver == null) {
                     observer.onSubscribe(Disposable())
-                    upstreamObserver.value = observer
+                    upstreamObserver = observer
                 } else {
-                    isResubscribed.value = true
+                    isResubscribed = true
                 }
             }
 
-        val downstreamObserver = upstream.repeatUntil { count.value == 2 }.test()
+        val downstreamObserver = upstream.repeatUntil { count == 2 }.test()
 
         downstreamObserver.dispose()
-        upstreamObserver.value!!.onNext(count.addAndGet(1))
-        upstreamObserver.value!!.onComplete()
+        requireNotNull(upstreamObserver).onNext(++count)
+        requireNotNull(upstreamObserver).onComplete()
 
-        assertFalse(isResubscribed.value)
+        assertFalse(isResubscribed)
     }
 
     @Test
     fun does_not_resubscribe_to_upstream_recursively_predicate_is_false() {
-        val count = AtomicInt(0)
-        val isFirstIteration = AtomicBoolean(true)
-        val isFirstIterationFinished = AtomicBoolean()
-        val isSecondIterationRecursive = AtomicBoolean()
+        var count = 0
+        var isFirstIteration = true
+        var isFirstIterationFinished = false
+        var isSecondIterationRecursive = false
 
         val upstream =
             observableUnsafe<Int> { observer ->
-                if (isFirstIteration.value) {
-                    isFirstIteration.value = false
+                if (isFirstIteration) {
+                    isFirstIteration = false
                     observer.onSubscribe(Disposable())
                     observer.onComplete()
-                    count.addAndGet(1)
-                    isFirstIterationFinished.value = true
+                    count++
+                    isFirstIterationFinished = true
                 } else {
-                    isSecondIterationRecursive.value = !isFirstIterationFinished.value
+                    isSecondIterationRecursive = !isFirstIterationFinished
                 }
             }
 
-        upstream.repeatUntil { count.value == 1 }.test()
+        upstream.repeatUntil { count == 1 }.test()
 
-        assertFalse(isSecondIterationRecursive.value)
+        assertFalse(isSecondIterationRecursive)
     }
 
     @Test

@@ -9,6 +9,6 @@ import com.badoo.reaktive.observable.repeatUntil
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#repeatUntil-io.reactivex.functions.BooleanSupplier-).
  */
 fun <T> Completable.repeatUntil(predicate: () -> Boolean): Completable =
-    asObservable<Nothing>()
+    asObservable()
         .repeatUntil(predicate)
         .asCompletable()

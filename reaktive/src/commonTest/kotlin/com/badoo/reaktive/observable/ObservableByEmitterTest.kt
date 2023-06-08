@@ -10,12 +10,6 @@ import com.badoo.reaktive.test.observable.assertNoValues
 import com.badoo.reaktive.test.observable.assertNotComplete
 import com.badoo.reaktive.test.observable.assertValues
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.atomicList
-import com.badoo.reaktive.utils.atomic.plusAssign
-import com.badoo.reaktive.utils.ensureNeverFrozen
-import com.badoo.reaktive.utils.freeze
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -23,14 +17,9 @@ import kotlin.test.assertTrue
 
 class ObservableByEmitterTest {
 
-    private val emitterRef = AtomicReference<ObservableEmitter<Int?>?>(null)
-    private val emitter: ObservableEmitter<Int?> get() = requireNotNull(emitterRef.value)
-    private val observable = createObservable(emitterRef)
+    private lateinit var emitter: ObservableEmitter<Int?>
+    private val observable = observable { emitter = it }
     private val observer = observable.test()
-
-    // To avoid freezing of the test class
-    private fun createObservable(emitterReference: AtomicReference<ObservableEmitter<Int?>?>): Observable<Int?> =
-        observable { emitterReference.value = it }
 
     @Test
     fun onSubscribe_called_WHEN_subscribe() {
@@ -205,24 +194,24 @@ class ObservableByEmitterTest {
 
     @Test
     fun assigned_disposable_is_disposed_AFTER_onComplete_is_signalled() {
-        val events = atomicList<String>()
+        val events = ArrayList<String>()
         observable.subscribe(observer(onComplete = { events += "onComplete" }))
         emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onComplete()
 
-        assertEquals(listOf("onComplete", "dispose"), events.value)
+        assertEquals(listOf("onComplete", "dispose"), events)
     }
 
     @Test
     fun assigned_disposable_is_disposed_AFTER_onError_is_signalled() {
-        val events = atomicList<String>()
+        val events = ArrayList<String>()
         observable.subscribe(observer(onError = { events += "onError" }))
         emitter.setDisposable(Disposable { events += "dispose" })
 
         emitter.onError(Throwable())
 
-        assertEquals(listOf("onError", "dispose"), events.value)
+        assertEquals(listOf("onError", "dispose"), events)
     }
 
     @Test
@@ -260,49 +249,49 @@ class ObservableByEmitterTest {
 
     @Test
     fun does_not_emit_values_recursively_WHEN_completing() {
-        val isEmittedRecursively = AtomicBoolean()
+        var isEmittedRecursively = false
 
         observable.subscribe(
             observer(
-                onNext = { isEmittedRecursively.value = true },
+                onNext = { isEmittedRecursively = true },
                 onComplete = { emitter.onNext(0) }
             )
         )
 
         emitter.onComplete()
 
-        assertFalse(isEmittedRecursively.value)
+        assertFalse(isEmittedRecursively)
     }
 
     @Test
     fun does_not_emit_values_recursively_WHEN_producing_error() {
-        val isEmittedRecursively = AtomicBoolean()
+        var isEmittedRecursively = false
 
         observable.subscribe(
             observer(
-                onNext = { isEmittedRecursively.value = true },
+                onNext = { isEmittedRecursively = true },
                 onError = { emitter.onNext(0) }
             )
         )
 
         emitter.onError(Exception())
 
-        assertFalse(isEmittedRecursively.value)
+        assertFalse(isEmittedRecursively)
     }
 
     @Test
     fun does_not_complete_recursively_WHEN_completing() {
-        val isCompletedRecursively = AtomicBoolean()
-        val isCompleted = AtomicBoolean()
+        var isCompletedRecursively = false
+        var isCompleted = false
 
         observable.subscribe(
             observer(
                 onComplete = {
-                    if (!isCompleted.value) {
-                        isCompleted.value = true
+                    if (!isCompleted) {
+                        isCompleted = true
                         emitter.onComplete()
                     } else {
-                        isCompletedRecursively.value = true
+                        isCompletedRecursively = true
                     }
                 }
             )
@@ -310,54 +299,54 @@ class ObservableByEmitterTest {
 
         emitter.onComplete()
 
-        assertFalse(isCompletedRecursively.value)
+        assertFalse(isCompletedRecursively)
     }
 
     @Test
     fun does_not_complete_recursively_WHEN_producing_error() {
-        val isCompletedRecursively = AtomicBoolean()
+        var isCompletedRecursively = false
 
         observable.subscribe(
             observer(
-                onComplete = { isCompletedRecursively.value = true },
+                onComplete = { isCompletedRecursively = true },
                 onError = { emitter.onComplete() }
             )
         )
 
         emitter.onError(Exception())
 
-        assertFalse(isCompletedRecursively.value)
+        assertFalse(isCompletedRecursively)
     }
 
     @Test
     fun does_not_produce_error_recursively_WHEN_completing() {
-        val isErrorRecursively = AtomicBoolean()
+        var isErrorRecursively = false
 
         observable.subscribe(
             observer(
                 onComplete = { emitter.onError(Exception()) },
-                onError = { isErrorRecursively.value = true }
+                onError = { isErrorRecursively = true }
             )
         )
 
         emitter.onComplete()
 
-        assertFalse(isErrorRecursively.value)
+        assertFalse(isErrorRecursively)
     }
 
     @Test
     fun does_not_produce_error_recursively_WHEN_producing_error() {
-        val isErrorRecursively = AtomicBoolean()
-        val hasError = AtomicBoolean()
+        var isErrorRecursively = false
+        var hasError = false
 
         observable.subscribe(
             observer(
                 onError = {
-                    if (!hasError.value) {
-                        hasError.value = true
+                    if (!hasError) {
+                        hasError = true
                         emitter.onError(Exception())
                     } else {
-                        isErrorRecursively.value = true
+                        isErrorRecursively = true
                     }
                 }
             )
@@ -365,31 +354,7 @@ class ObservableByEmitterTest {
 
         emitter.onError(Exception())
 
-        assertFalse(isErrorRecursively.value)
-    }
-
-    @Test
-    fun does_not_freeze_observer_WHEN_disposable_is_frozen() {
-        observable.subscribe(
-            object : ObservableObserver<Int?> {
-                init {
-                    ensureNeverFrozen()
-                }
-
-                override fun onSubscribe(disposable: Disposable) {
-                    disposable.freeze()
-                }
-
-                override fun onNext(value: Int?) {
-                }
-
-                override fun onComplete() {
-                }
-
-                override fun onError(error: Throwable) {
-                }
-            }
-        )
+        assertFalse(isErrorRecursively)
     }
 
     private fun observer(

@@ -1,27 +1,24 @@
-import com.badoo.reaktive.dependencies.Deps
-
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
 }
 
 android {
-    compileSdkVersion 29
+    namespace "com.badoo.reaktive.sample.android"
+    compileSdk 31
 
     defaultConfig {
         applicationId 'com.badoo.reaktive.sample.android'
         minSdkVersion 15
-        targetSdkVersion 29
+        targetSdkVersion 31
         versionCode 1
         versionName '1.0'
     }
 }
 
 dependencies {
-    implementation Deps.kotlin.stdlib.jdk7
-    implementation Deps.android.androidx.appcompat
-    implementation Deps.android.androidx.constraintLayout
-    implementation Deps.android.androidx.exifinterface
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.constraintLayout
     implementation project(':reaktive')
     implementation project(':sample-mpp-module')
 }

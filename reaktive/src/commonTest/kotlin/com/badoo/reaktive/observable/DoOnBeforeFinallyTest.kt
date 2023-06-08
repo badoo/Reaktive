@@ -8,9 +8,6 @@ import com.badoo.reaktive.test.mockUncaughtExceptionHandler
 import com.badoo.reaktive.test.observable.DefaultObservableObserver
 import com.badoo.reaktive.test.observable.TestObservable
 import com.badoo.reaktive.test.observable.test
-import com.badoo.reaktive.utils.SharedList
-import com.badoo.reaktive.utils.atomic.AtomicBoolean
-import com.badoo.reaktive.utils.atomic.AtomicInt
 import com.badoo.reaktive.utils.resetReaktiveUncaughtErrorHandler
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -32,7 +29,7 @@ class DoOnBeforeFinallyTest :
 
     @Test
     fun calls_action_before_completion() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         upstream
             .doOnBeforeFinally {
@@ -53,7 +50,7 @@ class DoOnBeforeFinallyTest :
 
     @Test
     fun calls_action_before_failing() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
         val exception = Exception()
 
         upstream
@@ -75,7 +72,7 @@ class DoOnBeforeFinallyTest :
 
     @Test
     fun calls_action_before_disposing_upstream() {
-        val callOrder = SharedList<String>()
+        val callOrder = ArrayList<String>()
 
         observableUnsafe<Unit> { observer ->
             observer.onSubscribe(
@@ -95,95 +92,85 @@ class DoOnBeforeFinallyTest :
 
     @Test
     fun calls_action_WHEN_disposed_before_upstream_onSubscribe() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         observableUnsafe<Nothing> {}
-            .doOnBeforeFinally { isCalled.value = true }
+            .doOnBeforeFinally { isCalled = true }
             .test()
             .dispose()
 
-        assertTrue(isCalled.value)
+        assertTrue(isCalled)
     }
 
     @Test
     fun does_not_call_action_second_time_WHEN_downstream_disposed_and_upstream_completed() {
-        val count = AtomicInt()
+        var count = 0
 
         upstream
-            .doOnBeforeFinally {
-                count.addAndGet(1)
-            }
+            .doOnBeforeFinally { count++ }
             .test()
             .dispose()
 
         upstream.onComplete()
 
-        assertEquals(1, count.value)
+        assertEquals(1, count)
     }
 
     @Test
     fun does_not_call_action_second_time_WHEN_downstream_disposed_and_upstream_produced_error() {
-        val count = AtomicInt()
+        var count = 0
 
         upstream
-            .doOnBeforeFinally {
-                count.addAndGet(1)
-            }
+            .doOnBeforeFinally { count++ }
             .test()
             .dispose()
 
         upstream.onError(Throwable())
 
-        assertEquals(1, count.value)
+        assertEquals(1, count)
     }
 
     @Test
     fun does_not_call_action_second_time_WHEN_upstream_completed_and_downstream_disposed() {
-        val count = AtomicInt()
+        var count = 0
 
         val observer =
             upstream
-                .doOnBeforeFinally {
-                    count.addAndGet(1)
-                }
+                .doOnBeforeFinally { count++ }
                 .test()
 
         upstream.onComplete()
         observer.dispose()
 
-        assertEquals(1, count.value)
+        assertEquals(1, count)
     }
 
     @Test
     fun does_not_call_action_second_time_WHEN_upstream_produced_error_and_downstream_disposed() {
-        val count = AtomicInt()
+        var count = 0
 
         val observer =
             upstream
-                .doOnBeforeFinally {
-                    count.addAndGet(1)
-                }
+                .doOnBeforeFinally { count++ }
                 .test()
 
         upstream.onError(Throwable())
         observer.dispose()
 
-        assertEquals(1, count.value)
+        assertEquals(1, count)
     }
 
     @Test
     fun does_not_call_action_WHEN_upstream_emitted_value() {
-        val isCalled = AtomicBoolean()
+        var isCalled = false
 
         upstream
-            .doOnBeforeFinally {
-                isCalled.value = true
-            }
+            .doOnBeforeFinally { isCalled = true }
             .test()
 
         upstream.onNext(0)
 
-        assertFalse(isCalled.value)
+        assertFalse(isCalled)
     }
 
     @Test

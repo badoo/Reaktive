@@ -1,17 +1,17 @@
-import com.badoo.reaktive.dependencies.Deps
-
 plugins {
     id 'com.github.johnrengelman.shadow'
     id 'org.jetbrains.kotlin.jvm'
-    id 'me.champeau.gradle.jmh'
+    id 'me.champeau.jmh'
 }
 
 dependencies {
     implementation project(':reaktive')
-    implementation Deps.kotlin.stdlib.jdk7
-    implementation Deps.jmh.core
-    implementation Deps.rxjava2
-    implementation Deps.kotlinx.coroutines.core
+    implementation libs.rxjava2
+    implementation libs.kotlinx.coroutines.core
+}
+
+kotlin {
+    jvmToolchain(11)
 }
 
 jmh {

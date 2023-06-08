@@ -133,8 +133,6 @@ class PublishConfigurationPlugin : Plugin<Project> {
             "androidDebug" to Target.shouldPublishTarget(project, Target.JVM),
             "androidRelease" to Target.shouldPublishTarget(project, Target.JVM),
             "linuxX64" to Target.shouldPublishTarget(project, Target.LINUX),
-            "linuxArm32Hfp" to Target.shouldPublishTarget(project, Target.LINUX),
-            "iosArm32" to Target.shouldPublishTarget(project, Target.IOS),
             "iosArm64" to Target.shouldPublishTarget(project, Target.IOS),
             "iosX64" to Target.shouldPublishTarget(project, Target.IOS),
             "iosSimulatorArm64" to Target.shouldPublishTarget(project, Target.IOS),

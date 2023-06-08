@@ -1,9 +1,8 @@
 package com.badoo.reaktive.disposable
 
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import com.badoo.reaktive.utils.atomic.getAndSet
-import com.badoo.reaktive.utils.atomic.getAndUpdate
-import com.badoo.reaktive.utils.atomic.update
+import com.badoo.reaktive.utils.atomic.change
+import com.badoo.reaktive.utils.atomic.getAndChange
 
 /**
  * Thread-safe collection of [Disposable]
@@ -65,7 +64,7 @@ actual open class CompositeDisposable actual constructor() : Disposable {
     private inline fun updateSet(block: (Set<Disposable>) -> Set<Disposable>?): Boolean {
         var isUpdated = false
 
-        list.update { oldSet: Set<Disposable>? ->
+        list.change { oldSet: Set<Disposable>? ->
             val newSet: Set<Disposable>? = oldSet?.let(block)
             isUpdated = newSet != null
             newSet ?: oldSet
@@ -81,7 +80,7 @@ actual open class CompositeDisposable actual constructor() : Disposable {
      */
     actual fun clear(dispose: Boolean) {
         list
-            .getAndUpdate { it?.let { emptySet() } }
+            .getAndChange { it?.let { emptySet() } }
             ?.takeIf { dispose }
             ?.forEach(Disposable::dispose)
     }
@@ -90,7 +89,7 @@ actual open class CompositeDisposable actual constructor() : Disposable {
      * Atomically removes already disposed [Disposable]s
      */
     actual fun purge() {
-        list.update {
+        list.change {
             it?.filterNotTo(LinkedHashSet(it.size), Disposable::isDisposed)
         }
     }

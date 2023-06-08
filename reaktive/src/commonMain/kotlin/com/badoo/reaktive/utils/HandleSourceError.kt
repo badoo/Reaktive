@@ -34,6 +34,6 @@ private fun handleError(error: Throwable, onError: (Throwable) -> Unit) {
 
 private fun printErrors(message: String, outerError: Throwable, innerError: Throwable) {
     printError("$message ($outerError): $innerError")
-    outerError.printStack()
-    innerError.printStack()
+    outerError.printStackTrace()
+    innerError.printStackTrace()
 }
