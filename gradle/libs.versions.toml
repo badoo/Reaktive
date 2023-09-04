@@ -1,6 +1,6 @@
 [versions]
-kotlin = "1.8.21"
-kotlinx-coroutines = "1.7.1"
+kotlin = "1.9.10"
+kotlinx-coroutines = "1.7.3"
 detekt = "1.22.0"
 
 [libraries]
@@ -14,11 +14,11 @@ kotlin-test-js = { module = "org.jetbrains.kotlin:kotlin-test-js", version.ref =
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 
-kotlinx-compatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.13.0"
+kotlinx-compatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.13.2"
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 
-android-plugin = "com.android.tools.build:gradle:7.3.1"
+android-plugin = "com.android.tools.build:gradle:8.0.2"
 
 androidx-appcompat = "androidx.appcompat:appcompat:1.4.2"
 androidx-constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"

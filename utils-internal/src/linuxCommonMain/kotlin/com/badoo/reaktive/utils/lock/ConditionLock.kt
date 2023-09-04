@@ -2,6 +2,7 @@ package com.badoo.reaktive.utils.lock
 
 import com.badoo.reaktive.utils.InternalReaktiveApi
 import kotlinx.cinterop.Arena
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
@@ -35,6 +36,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
 
+@OptIn(ExperimentalForeignApi::class)
 @InternalReaktiveApi
 actual open class ConditionLock {
 

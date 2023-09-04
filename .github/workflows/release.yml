@@ -34,7 +34,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Release JVM, Android, JS, Linux
@@ -73,7 +73,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
       - name: Select Xcode version
         uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
         with:
@@ -101,7 +101,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Check JVM, Android, JS, Linux
@@ -130,7 +130,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
       - name: Select Xcode version
         uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
         with:

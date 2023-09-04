@@ -1,10 +1,3 @@
-public final class com/badoo/reaktive/test/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
-}
-
 public class com/badoo/reaktive/test/base/TestObserver : com/badoo/reaktive/base/ErrorCallback, com/badoo/reaktive/base/Observer, com/badoo/reaktive/disposable/Disposable {
 	public fun <init> ()V
 	protected fun checkActive ()V
