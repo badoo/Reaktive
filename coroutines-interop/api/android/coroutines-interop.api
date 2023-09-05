@@ -1,10 +1,3 @@
-public final class com/badoo/reaktive/coroutinesinterop/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
-}
-
 public final class com/badoo/reaktive/coroutinesinterop/CompletableFromCoroutineKt {
 	public static final fun asCompletable (Lkotlin/jvm/functions/Function1;)Lcom/badoo/reaktive/completable/Completable;
 	public static final fun asCompletable (Lkotlin/jvm/functions/Function2;)Lcom/badoo/reaktive/completable/Completable;

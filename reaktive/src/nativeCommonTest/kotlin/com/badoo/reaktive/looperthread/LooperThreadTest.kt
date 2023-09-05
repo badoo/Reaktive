@@ -58,7 +58,7 @@ class LooperThreadTest {
             isExecuted.value = true
         }
 
-        usleep(200_000)
+        usleep(200_000U)
 
         assertFalse(isExecuted.value)
     }

@@ -12,6 +12,7 @@ import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.plugins.PublishingPlugin
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.withType
+import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -97,6 +98,12 @@ class PublishConfigurationPlugin : Plugin<Project> {
             if (inMemoryKey != null) {
                 useInMemoryPgpKeys(inMemoryKey, password)
             }
+        }
+
+        // Workaround for https://github.com/gradle/gradle/issues/26091
+        val signingTasks = project.tasks.withType<Sign>()
+        project.tasks.withType<AbstractPublishToMaven>().configureEach {
+            dependsOn(signingTasks)
         }
     }
 

@@ -3,12 +3,15 @@ package com.badoo.reaktive.configuration
 import com.android.build.gradle.BaseExtension
 import com.badoo.reaktive.getLibrary
 import org.gradle.api.Action
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class MppConfigurationPlugin : Plugin<Project> {
 
@@ -137,9 +140,18 @@ class MppConfigurationPlugin : Plugin<Project> {
                 minSdk = 1
                 targetSdk = 29
             }
+            compileOptions {
+                sourceCompatibility(JavaVersion.VERSION_1_8)
+                targetCompatibility(JavaVersion.VERSION_1_8)
+            }
+        }
+        project.tasks.withType<KotlinCompile> {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
         }
         project.kotlin {
-            android {
+            androidTarget {
                 publishLibraryVariants("release", "debug")
                 disableIfUndefined(Target.JVM)
             }

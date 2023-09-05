@@ -1,7 +1,7 @@
 package com.badoo.reaktive.disposable
 
 import com.badoo.reaktive.utils.synchronizedCompat
-import kotlin.jvm.Volatile
+import kotlin.concurrent.Volatile
 
 /**
  * Thread-safe container of one [Disposable]

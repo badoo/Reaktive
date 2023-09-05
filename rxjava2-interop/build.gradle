@@ -15,6 +15,10 @@ compileKotlin {
     }
 }
 
+compileJava {
+    targetCompatibility(JavaVersion.VERSION_1_8)
+}
+
 publishing {
     publications {
         jvm(MavenPublication) {
