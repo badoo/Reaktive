@@ -3,6 +3,7 @@ package com.badoo.reaktive.publish
 import com.badoo.reaktive.configuration.Target
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -10,6 +11,7 @@ import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.plugins.PublishingPlugin
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.Sign
@@ -23,8 +25,8 @@ class PublishConfigurationPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.plugins.apply(MavenPublishPlugin::class.java)
         val taskConfigurationMap = createConfigurationMap(target)
-        disablePublishingTasks(target, taskConfigurationMap)
-        createFilteredPublishTasks(target)
+        val umbrellaTasks = createFilteredPublishTasks(target)
+        wirePublicationTasksToUmbrellaTasks(target, taskConfigurationMap, umbrellaTasks)
         setupPublishing(target)
         setupSign(target)
         createEmptySourcesJar(target)
@@ -34,7 +36,7 @@ class PublishConfigurationPlugin : Plugin<Project> {
         val publishing = project.extensions.getByType(PublishingExtension::class.java)
         publishing.repositories {
             maven {
-                name = "sonatype"
+                name = SONATYPE_PUBLICATION_NAME
                 val repositoryId = project.findProperty("sonatype.repository")
                 url = URI.create(
                     if (repositoryId != null) {
@@ -107,28 +109,17 @@ class PublishConfigurationPlugin : Plugin<Project> {
         }
     }
 
-    private fun createFilteredPublishTasks(project: Project) {
+    private fun createFilteredPublishTasks(project: Project): UmbrellaTasks {
         // Create umbrella task with enabled publish tasks only.
         // We can't use regular publishToMavenLocal/publishAll
         // because even if task is disabled all its dependencies will be still executed.
-        project.tasks.register(TASK_FILTERED_PUBLISH_TO_MAVEN_LOCAL) {
+        val mavenLocal = project.tasks.register(TASK_FILTERED_PUBLISH_TO_MAVEN_LOCAL) {
             group = PublishingPlugin.PUBLISH_TASK_GROUP
-            dependsOn(
-                project
-                    .tasks
-                    .withType(PublishToMavenLocal::class.java)
-                    .matching { it.enabled }
-            )
         }
-        project.tasks.register(TASK_FILTERED_PUBLISH_TO_SONATYPE) {
+        val sonatype = project.tasks.register(TASK_FILTERED_PUBLISH_TO_SONATYPE) {
             group = PublishingPlugin.PUBLISH_TASK_GROUP
-            dependsOn(
-                project
-                    .tasks
-                    .withType(PublishToMavenRepository::class.java)
-                    .matching { it.enabled && it.repository.name == "sonatype" }
-            )
         }
+        return UmbrellaTasks(mavenLocal, sonatype)
     }
 
     private fun createConfigurationMap(project: Project): Map<String, Boolean> {
@@ -156,20 +147,34 @@ class PublishConfigurationPlugin : Plugin<Project> {
         )
     }
 
-    private fun disablePublishingTasks(
+    private fun wirePublicationTasksToUmbrellaTasks(
         target: Project,
-        taskConfigurationMap: Map<String, Boolean>
+        taskConfigurationMap: Map<String, Boolean>,
+        umbrellaTasks: UmbrellaTasks,
     ) {
-        target.project.tasks.withType(AbstractPublishToMaven::class).configureEach {
-            val configuration = publication?.name ?: run {
-                // Android Plugin does not set publication property after creation of task
-                logger.warn("Unable to configure task $name in place, using hacks instead")
+        fun shouldPublish(task: AbstractPublishToMaven): Boolean {
+            val configuration = task.publication?.name ?: run {
+                task.logger.warn("Unable to configure task ${task.name} in place, using hacks instead")
                 val configuration = taskConfigurationMap.keys
-                    .find { name.contains(it, ignoreCase = true) }
-                logger.warn("Found $configuration for $name")
+                    .find { task.name.contains(it, ignoreCase = true) }
+                task.logger.warn("Found $configuration for ${task.name}")
                 configuration
             }
-            enabled = taskConfigurationMap[configuration] == true
+            return taskConfigurationMap[configuration] == true
+        }
+
+        umbrellaTasks.mavenLocal.configure {
+            dependsOn(
+                target.project.tasks.withType(PublishToMavenLocal::class)
+                    .matching(::shouldPublish)
+            )
+        }
+        umbrellaTasks.sonatype.configure {
+            dependsOn(
+                target.project.tasks.withType(PublishToMavenRepository::class)
+                    .matching { it.repository.name == SONATYPE_PUBLICATION_NAME }
+                    .matching(::shouldPublish)
+            )
         }
     }
 
@@ -185,7 +190,13 @@ class PublishConfigurationPlugin : Plugin<Project> {
             .configureEach { artifact(task.get()) }
     }
 
+    private class UmbrellaTasks(
+        val mavenLocal: TaskProvider<Task>,
+        val sonatype: TaskProvider<Task>,
+    )
+
     companion object {
+        const val SONATYPE_PUBLICATION_NAME = "sonatype"
         const val TASK_FILTERED_PUBLISH_TO_MAVEN_LOCAL = "publishAllFilteredToMavenLocal"
         const val TASK_FILTERED_PUBLISH_TO_SONATYPE = "publishAllFilteredToSonatype"
     }
