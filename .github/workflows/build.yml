@@ -39,6 +39,7 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/version-2.0' }}
           arguments: |
             build
+            publishAllFilteredToMavenLocal
             -Ptarget=all_linux_hosted
       - name: Build macOS
         if: matrix.os == 'macOS-latest'
@@ -53,6 +54,7 @@ jobs:
             :reaktive:build
             :coroutines-interop:build
             :sample-mpp-module:build
+            publishAllFilteredToMavenLocal
             -Ptarget=all_macos_hosted
       # Do not invoke from Gradle, it creates circular dependency (Gradle invokes XCode invokes Gradle).
       - name: Build iOS app
