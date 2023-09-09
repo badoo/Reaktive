@@ -38,7 +38,7 @@ jobs:
       - name: Select Xcode version
         uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
         with:
-          xcode-version: '14.3.1'
+          xcode-version: '14.2.0'
       - name: Publish
         uses: gradle/gradle-build-action@v2
         with:
@@ -65,7 +65,7 @@ jobs:
       - name: Select Xcode version
         uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
         with:
-          xcode-version: '14.3.1'
+          xcode-version: '14.2.0'
       - name: Check publication
         uses: gradle/gradle-build-action@v2
         with:
