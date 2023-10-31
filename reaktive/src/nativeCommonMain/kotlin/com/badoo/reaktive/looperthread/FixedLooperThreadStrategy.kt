@@ -1,6 +1,6 @@
 package com.badoo.reaktive.looperthread
 
-import kotlin.native.concurrent.AtomicInt
+import kotlin.concurrent.AtomicInt
 
 internal class FixedLooperThreadStrategy(threadCount: Int) : LooperThreadStrategy {
 

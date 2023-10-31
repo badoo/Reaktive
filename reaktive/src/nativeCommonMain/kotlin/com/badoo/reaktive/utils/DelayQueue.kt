@@ -5,7 +5,7 @@ import com.badoo.reaktive.utils.clock.DefaultClock
 import com.badoo.reaktive.utils.lock.ConditionLock
 import com.badoo.reaktive.utils.lock.synchronized
 import com.badoo.reaktive.utils.queue.PriorityQueue
-import kotlin.native.concurrent.AtomicLong
+import kotlin.concurrent.AtomicLong
 import kotlin.time.Duration
 
 internal class DelayQueue<T : Any>(
@@ -95,7 +95,7 @@ internal class DelayQueue<T : Any>(
         val sequenceNumber = sequencer.addAndGet(1L)
 
         private companion object {
-            private val sequencer = AtomicLong()
+            private val sequencer = AtomicLong(0L)
         }
     }
 

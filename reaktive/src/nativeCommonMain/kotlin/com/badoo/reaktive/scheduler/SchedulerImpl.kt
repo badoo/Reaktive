@@ -7,7 +7,7 @@ import com.badoo.reaktive.looperthread.LooperThreadStrategy
 import com.badoo.reaktive.utils.clock.Clock
 import com.badoo.reaktive.utils.clock.DefaultClock
 import com.badoo.reaktive.utils.coerceAtLeastZero
-import kotlin.native.concurrent.AtomicInt
+import kotlin.concurrent.AtomicInt
 import kotlin.time.Duration
 
 internal class SchedulerImpl(
