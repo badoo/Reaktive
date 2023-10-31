@@ -13,5 +13,5 @@ import com.badoo.reaktive.maybe.blockingGet
  * Please refer to the corresponding RxJava [document](http://reactivex.io/RxJava/javadoc/io/reactivex/Completable.html#blockingAwait--).
  */
 fun Completable.blockingAwait() {
-    asMaybe().blockingGet()
+    asMaybe().blockingGet<Unit>()
 }
