@@ -1,10 +1,12 @@
 package com.badoo.reaktive.looperthread
 
 import com.badoo.reaktive.utils.DelayQueue
+import kotlin.native.concurrent.ObsoleteWorkersApi
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
+@OptIn(ObsoleteWorkersApi::class) // There is no replacement yet
 internal class LooperThread {
 
     private val queue = DelayQueue<Message>()
