@@ -10,6 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 class LooperThreadTest {
 
@@ -18,9 +19,9 @@ class LooperThreadTest {
         val isExecuted = AtomicBoolean()
         val lock = ConditionLock()
         val thread = LooperThread()
-        val startTime = getTimeMillis() + 200L
+        val startTime = TimeSource.Monotonic.markNow() + 200.milliseconds
 
-        thread.schedule(Unit, startTime.milliseconds) {
+        thread.schedule(Unit, startTime) {
             lock.synchronized {
                 isExecuted.value = true
                 lock.signal()
@@ -31,7 +32,7 @@ class LooperThreadTest {
             lock.waitForOrFail(predicate = isExecuted::value)
         }
 
-        assertTrue(getTimeMillis() >= startTime)
+        assertTrue(startTime.hasPassedNow())
     }
 
     @Test
@@ -40,7 +41,7 @@ class LooperThreadTest {
         val lock = ConditionLock()
         val thread = LooperThread()
 
-        thread.schedule(Unit, getTimeMillis().milliseconds) {
+        thread.schedule(Unit, TimeSource.Monotonic.markNow()) {
             lock.synchronized {
                 isExecuted.value = true
                 lock.signal()
@@ -54,7 +55,7 @@ class LooperThreadTest {
         thread.destroy()
 
         isExecuted.value = false
-        thread.schedule(Unit, getTimeMillis().milliseconds) {
+        thread.schedule(Unit, TimeSource.Monotonic.markNow()) {
             isExecuted.value = true
         }
 

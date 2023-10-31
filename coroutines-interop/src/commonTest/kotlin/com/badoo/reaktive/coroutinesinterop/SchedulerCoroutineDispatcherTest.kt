@@ -14,7 +14,6 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 class SchedulerCoroutineDispatcherTest {
@@ -44,7 +43,7 @@ class SchedulerCoroutineDispatcherTest {
         val scheduler = TestScheduler(isManualProcessing = false)
         val dispatcher = SchedulerCoroutineDispatcher(scheduler = scheduler)
         val startTime = DefaultClock.uptime
-        val endTime = AtomicReference(Duration.ZERO)
+        val endTime = AtomicReference(startTime)
 
         launch(dispatcher) {
             delay(500.milliseconds)
@@ -52,7 +51,7 @@ class SchedulerCoroutineDispatcherTest {
         }
 
         withContext(Dispatchers.Default) {
-            while (endTime.value == Duration.ZERO) {
+            while (endTime.value == startTime) {
                 yield()
             }
         }

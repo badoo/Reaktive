@@ -3,7 +3,7 @@ package com.badoo.reaktive.looperthread
 import com.badoo.reaktive.utils.DelayQueue
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
-import kotlin.time.Duration
+import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
 internal class LooperThread {
 
@@ -14,7 +14,7 @@ internal class LooperThread {
         worker.execute(TransferMode.SAFE, { this }) { it.loop() }
     }
 
-    fun schedule(token: Any, startTime: Duration, task: () -> Unit) {
+    fun schedule(token: Any, startTime: ValueTimeMark, task: () -> Unit) {
         queue.offerAt(Message(token, task), startTime)
     }
 

@@ -13,6 +13,8 @@ import kotlin.test.assertTrue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
+import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
 @OptIn(ExperimentalCoroutinesApi::class) // UnconfinedTestDispatcher is experimental
 class CoroutineContextSchedulerTest {
@@ -291,7 +293,7 @@ class CoroutineContextSchedulerTest {
     }
 
     private class TestClock : Clock {
-        override var uptime: Duration = Duration.ZERO
+        override var uptime: ValueTimeMark = TimeSource.Monotonic.markNow()
 
         fun advanceBy(duration: Duration) {
             uptime += duration
