@@ -10,6 +10,7 @@ import com.badoo.reaktive.utils.clock.DefaultClock
 import com.badoo.reaktive.utils.coerceAtLeastZero
 import com.badoo.reaktive.utils.serializer.serializer
 import kotlin.time.Duration
+import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
 internal class TrampolineScheduler(
     private val clock: Clock = DefaultClock,
@@ -79,11 +80,11 @@ internal class TrampolineScheduler(
                 return false
             }
 
-            val nextStart = if (task.period.isInfinite()) Duration.INFINITE else clock.uptime + task.period
+            val nextStart = if (task.period.isInfinite()) null else clock.uptime + task.period
 
             task.task()
 
-            if (!nextStart.isInfinite()) {
+            if (nextStart != null) {
                 submit(task.copy(startTime = nextStart))
             }
 
@@ -91,7 +92,7 @@ internal class TrampolineScheduler(
         }
 
         private data class Task(
-            val startTime: Duration,
+            val startTime: ValueTimeMark,
             val period: Duration,
             val task: () -> Unit
         ) : Comparable<Task> {

@@ -7,8 +7,9 @@ import com.badoo.reaktive.looperthread.LooperThreadStrategy
 import com.badoo.reaktive.utils.clock.Clock
 import com.badoo.reaktive.utils.clock.DefaultClock
 import com.badoo.reaktive.utils.coerceAtLeastZero
-import kotlin.native.concurrent.AtomicInt
+import kotlin.concurrent.AtomicInt
 import kotlin.time.Duration
+import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
 internal class SchedulerImpl(
     private val looperThreadStrategy: LooperThreadStrategy,
@@ -63,7 +64,7 @@ internal class SchedulerImpl(
             submit(startTime = getStartTime(delay), task = t)
         }
 
-        private fun submit(startTime: Duration, task: () -> Unit) {
+        private fun submit(startTime: ValueTimeMark, task: () -> Unit) {
             if (!isDisposed) {
                 looperThread.schedule(token = this, startTime = startTime, task = task)
             }
@@ -73,7 +74,7 @@ internal class SchedulerImpl(
             looperThread.cancel(this)
         }
 
-        private fun getStartTime(delay: Duration): Duration =
+        private fun getStartTime(delay: Duration): ValueTimeMark =
             clock.uptime + delay.coerceAtLeastZero()
     }
 }

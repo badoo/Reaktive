@@ -20,6 +20,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration
+import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
 internal class CoroutineContextScheduler(
     private val context: CoroutineContext,
@@ -102,7 +103,7 @@ internal class CoroutineContextScheduler(
             }
         }
 
-        private suspend fun delayUntilStart(startTime: Duration) {
+        private suspend fun delayUntilStart(startTime: ValueTimeMark) {
             val uptime = clock.uptime
             if (uptime < startTime) {
                 delay(startTime - uptime)
@@ -123,7 +124,7 @@ internal class CoroutineContextScheduler(
         }
 
         private data class Task(
-            val startTime: Duration,
+            val startTime: ValueTimeMark,
             val period: Duration,
             val task: () -> Unit
         )

@@ -1,5 +1,6 @@
 package com.badoo.reaktive.utils
 
+import kotlin.native.concurrent.ObsoleteWorkersApi
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
 import kotlin.time.Duration
@@ -9,6 +10,7 @@ import kotlin.time.Duration
  * DelayQueue should be destroyed, but all readers and writers must be cancelled first.
  * See LooperThread for sample implementation.
  */
+@OptIn(ObsoleteWorkersApi::class) // There is no replacement yet
 internal class ExpirationPool<T : Any>(
     private val onItemExpired: (T) -> Unit
 ) {

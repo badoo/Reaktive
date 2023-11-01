@@ -5,8 +5,9 @@ import com.badoo.reaktive.utils.clock.DefaultClock
 import com.badoo.reaktive.utils.lock.ConditionLock
 import com.badoo.reaktive.utils.lock.synchronized
 import com.badoo.reaktive.utils.queue.PriorityQueue
-import kotlin.native.concurrent.AtomicLong
+import kotlin.concurrent.AtomicLong
 import kotlin.time.Duration
+import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
 internal class DelayQueue<T : Any>(
     private val clock: Clock = DefaultClock,
@@ -66,7 +67,7 @@ internal class DelayQueue<T : Any>(
         offerAt(value, clock.uptime + timeout)
     }
 
-    fun offerAt(value: T, time: Duration) {
+    fun offerAt(value: T, time: ValueTimeMark) {
         lock.synchronized {
             val queue = queue ?: return
             queue.offer(Holder(value, time))
@@ -90,12 +91,12 @@ internal class DelayQueue<T : Any>(
 
     private data class Holder<out T>(
         val value: T,
-        val endTime: Duration,
+        val endTime: ValueTimeMark,
     ) {
         val sequenceNumber = sequencer.addAndGet(1L)
 
         private companion object {
-            private val sequencer = AtomicLong()
+            private val sequencer = AtomicLong(0L)
         }
     }
 
