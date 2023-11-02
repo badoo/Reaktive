@@ -1,11 +1,11 @@
 /*
  * Use the following Gradle tasks to run your application:
- * :browserProductionRun - release mode
- * :browserDevelopmentRun - debug mode
+ * :jsBrowserProductionRun - release mode
+ * :jsBrowserDevelopmentRun - debug mode
  */
 
 plugins {
-    id 'org.jetbrains.kotlin.js'
+    id 'kotlin-multiplatform'
 }
 
 kotlin {
@@ -13,9 +13,13 @@ kotlin {
         browser()
         binaries.executable()
     }
-}
 
-dependencies {
-    implementation project(':reaktive')
-    implementation project(':sample-mpp-module')
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation project(':reaktive')
+                implementation project(':sample-mpp-module')
+            }
+        }
+    }
 }
