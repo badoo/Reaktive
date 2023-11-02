@@ -24,6 +24,9 @@ class CompletableToObservableTestsImpl(
     transform: Completable.() -> Observable<*>
 ) : CompletableToObservableTests, SourceTests by SourceTestsImpl(TestCompletable(), { transform().test() }) {
 
+    // See: https://youtrack.jetbrains.com/issue/KT-63132
+    constructor() : this(transform = { error("Dummy") })
+
     private val upstream = TestCompletable()
     private val observer = upstream.transform().test()
 

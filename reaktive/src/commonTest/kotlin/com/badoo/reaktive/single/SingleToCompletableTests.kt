@@ -20,6 +20,9 @@ class SingleToCompletableTestsImpl(
     transform: Single<Unit>.() -> Completable
 ) : SingleToCompletableTests, SourceTests by SourceTestsImpl(TestSingle<Nothing>(), { transform().test() }) {
 
+    // See: https://youtrack.jetbrains.com/issue/KT-63132
+    constructor() : this(transform = { error("Dummy") })
+
     private val upstream = TestSingle<Unit>()
     private val observer = upstream.transform().test()
 

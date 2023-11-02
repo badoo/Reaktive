@@ -30,11 +30,12 @@ import platform.posix.pthread_mutexattr_init
 import platform.posix.pthread_mutexattr_settype
 import platform.posix.pthread_mutexattr_t
 import platform.posix.timespec
-import kotlin.native.internal.createCleaner
-import kotlin.system.getTimeNanos
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.ref.createCleaner
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 @OptIn(ExperimentalForeignApi::class)
 @InternalReaktiveApi
@@ -47,7 +48,7 @@ actual open class ConditionLock {
     private val cond = arena.alloc<pthread_cond_t>()
 
     @Suppress("unused") // Must be stored in a property
-    @OptIn(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalNativeApi::class)
     private val cleaner = createCleaner(Resources(arena, mutexAttr, mutex, condAttr, cond), Resources::destroy)
 
     init {
@@ -88,10 +89,10 @@ actual open class ConditionLock {
         memScoped {
             val ts = alloc<timespec> { clock_gettime(CLOCK_MONOTONIC, ptr) }
             ts += timeout
-            val startNanos = getTimeNanos().nanoseconds
+            val startNanos = TimeSource.Monotonic.markNow()
 
             when (val result = pthread_cond_timedwait(cond.ptr, mutex.ptr, ts.ptr)) {
-                0 -> startNanos + timeout - getTimeNanos().nanoseconds
+                0 -> startNanos + timeout - TimeSource.Monotonic.markNow()
                 ETIMEDOUT -> Duration.ZERO
                 else -> error("Error waiting for condition: $result")
             }

@@ -23,4 +23,10 @@ kotlin {
             }
         }
     }
+
+    targets.configureEach {
+        compilations.configureEach {
+            compilerOptions.configure((Action) { it.freeCompilerArgs.add("-Xexpect-actual-classes") })
+        }
+    }
 }

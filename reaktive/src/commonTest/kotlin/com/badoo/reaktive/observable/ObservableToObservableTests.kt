@@ -23,6 +23,9 @@ class ObservableToObservableTestsImpl(
     transform: Observable<*>.() -> Observable<*>
 ) : ObservableToObservableTests, SourceTests by SourceTestsImpl(TestObservable<Nothing>(), { transform().test() }) {
 
+    // See: https://youtrack.jetbrains.com/issue/KT-63132
+    constructor() : this(transform = { error("Dummy") })
+
     private val upstream = TestObservable<Nothing>()
     private val observer = upstream.transform().test()
 

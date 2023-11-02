@@ -13,6 +13,5 @@ actual class AtomicInt actual constructor(initialValue: Int) : java.util.concurr
 
     // See KT-16087
     override fun toByte(): Byte = value.toByte()
-    override fun toChar(): Char = value.toChar()
     override fun toShort(): Short = value.toShort()
 }

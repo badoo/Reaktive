@@ -13,6 +13,5 @@ actual class AtomicLong actual constructor(initialValue: Long) : java.util.concu
 
     // See KT-16087
     override fun toByte(): Byte = value.toByte()
-    override fun toChar(): Char = value.toInt().toChar()
     override fun toShort(): Short = value.toShort()
 }

@@ -102,6 +102,9 @@ class PublishGenericTestsImpl(
     transform: Observable<Int?>.() -> ConnectableObservable<Int?>
 ) : PublishGenericTests {
 
+    // See: https://youtrack.jetbrains.com/issue/KT-63132
+    constructor() : this(transform = { error("Dummy") })
+
     private val upstream = TestObservable<Int?>()
     private val publish = upstream.transform()
 

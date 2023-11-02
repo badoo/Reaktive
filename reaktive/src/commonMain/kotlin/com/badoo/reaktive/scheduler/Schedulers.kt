@@ -1,7 +1,6 @@
 package com.badoo.reaktive.scheduler
 
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import kotlin.native.concurrent.SharedImmutable
 
 /**
  * Provides the global instance of Main [Scheduler]
@@ -33,27 +32,21 @@ val singleScheduler: Scheduler get() = singleSchedulerFactory.value.value
  */
 val newThreadScheduler: Scheduler get() = newThreadSchedulerFactory.value.value
 
-@SharedImmutable
 private val mainSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
     AtomicReference(lazy(::createMainScheduler))
 
-@SharedImmutable
 private val computationSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
     AtomicReference(lazy(::createComputationScheduler))
 
-@SharedImmutable
 private val ioSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
     AtomicReference(lazy(::createIoScheduler))
 
-@SharedImmutable
 private val trampolineSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
     AtomicReference(lazy(::createTrampolineScheduler))
 
-@SharedImmutable
 private val singleSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
     AtomicReference(lazy(::createSingleScheduler))
 
-@SharedImmutable
 private val newThreadSchedulerFactory: AtomicReference<Lazy<Scheduler>> =
     AtomicReference(lazy(::createNewThreadScheduler))
 
