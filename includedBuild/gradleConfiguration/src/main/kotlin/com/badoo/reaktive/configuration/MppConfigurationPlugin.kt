@@ -33,6 +33,14 @@ class MppConfigurationPlugin : Plugin<Project> {
                     implementation(target.getLibrary("kotlin-test-annotations"))
                 }
             }
+
+            targets.configureEach {
+                compilations.configureEach {
+                    compilerOptions.configure {
+                        freeCompilerArgs.add("-Xexpect-actual-classes")
+                    }
+                }
+            }
         }
     }
 
