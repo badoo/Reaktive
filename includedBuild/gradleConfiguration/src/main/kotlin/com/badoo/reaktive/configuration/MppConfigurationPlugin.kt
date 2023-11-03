@@ -33,6 +33,14 @@ class MppConfigurationPlugin : Plugin<Project> {
                     implementation(target.getLibrary("kotlin-test-annotations"))
                 }
             }
+
+            targets.configureEach {
+                compilations.configureEach {
+                    compilerOptions.configure {
+                        freeCompilerArgs.add("-Xexpect-actual-classes")
+                    }
+                }
+            }
         }
     }
 
@@ -95,9 +103,6 @@ class MppConfigurationPlugin : Plugin<Project> {
 
                 maybeCreate("watchosArm64Main").dependsOn(getByName("darwinCommonMain"))
                 maybeCreate("watchosArm64Test").dependsOn(getByName("darwinCommonTest"))
-
-                maybeCreate("watchosX86Main").dependsOn(getByName("darwinCommonMain"))
-                maybeCreate("watchosX86Test").dependsOn(getByName("darwinCommonTest"))
 
                 maybeCreate("watchosX64Main").dependsOn(getByName("darwinCommonMain"))
                 maybeCreate("watchosX64Test").dependsOn(getByName("darwinCommonTest"))

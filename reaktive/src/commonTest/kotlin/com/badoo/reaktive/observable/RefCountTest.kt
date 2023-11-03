@@ -60,7 +60,7 @@ class RefCountTest {
 
     @Test
     fun does_not_connect_second_time_WHEN_subscriberCount_is_1_and_subscribed_second_time() {
-        var isConnected = false
+        var isConnected: Boolean
         val upstream = testUpstream(connect = { isConnected = true })
         val refCount = upstream.refCount(subscriberCount = 1)
         refCount.test()

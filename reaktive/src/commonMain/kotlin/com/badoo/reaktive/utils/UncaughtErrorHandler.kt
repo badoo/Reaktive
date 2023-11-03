@@ -1,9 +1,7 @@
 package com.badoo.reaktive.utils
 
 import com.badoo.reaktive.utils.atomic.AtomicReference
-import kotlin.native.concurrent.SharedImmutable
 
-@SharedImmutable
 @Suppress("ObjectPropertyName")
 private val _reaktiveUncaughtErrorHandler: AtomicReference<(Throwable) -> Unit> =
     AtomicReference(createDefaultUncaughtErrorHandler())

@@ -7,7 +7,6 @@ import com.badoo.reaktive.test.observable.onNext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -20,13 +19,14 @@ import kotlin.test.assertTrue
 class ObservableAsFlowTest {
 
     private val upstream = TestObservable<Int?>()
+    private val scope = CoroutineScope(Dispatchers.Unconfined)
 
     @Test
     fun produces_values_in_correct_order_WHEN_upstream_produced_values() {
         val values = listOf(0, null, 1, null, 2)
         val list = ArrayList<Int?>()
 
-        GlobalScope.launch(Dispatchers.Unconfined) {
+        scope.launch(Dispatchers.Unconfined) {
             upstream.asFlow().collect {
                 list.add(it)
             }
@@ -40,7 +40,7 @@ class ObservableAsFlowTest {
     @Test
     fun completes_WHEN_upstream_completed() {
         var isCompleted = false
-        GlobalScope.launch(Dispatchers.Unconfined) {
+        scope.launch {
             upstream.asFlow().collect {}
             isCompleted = true
         }
@@ -54,7 +54,7 @@ class ObservableAsFlowTest {
     fun produces_error_WHEN_upstream_produced_error() {
         var isError = false
 
-        GlobalScope.launch(Dispatchers.Unconfined) {
+        scope.launch {
             try {
                 upstream.asFlow().collect {}
             } catch (e: Throwable) {
@@ -71,7 +71,7 @@ class ObservableAsFlowTest {
     fun unsubscribes_from_upstream_WHEN_flow_is_cancelled() {
         val scope = CoroutineScope(Dispatchers.Unconfined)
 
-        scope.launch(Dispatchers.Unconfined) {
+        scope.launch {
             upstream.asFlow().collect {}
         }
 
@@ -84,7 +84,7 @@ class ObservableAsFlowTest {
     fun throws_exception_WHEN_upstream_subscribe_throws_exception() {
         var isThrown = false
 
-        GlobalScope.launch(Dispatchers.Unconfined) {
+        scope.launch {
             observableUnsafe<Nothing> { throw Exception() }
                 .asFlow()
                 .run {

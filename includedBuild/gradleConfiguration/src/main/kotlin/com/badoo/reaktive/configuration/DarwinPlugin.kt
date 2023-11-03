@@ -18,7 +18,6 @@ class DarwinPlugin : Plugin<Project> {
             iosSimulatorArm64().disableIfUndefined(Target.IOS)
             watchosArm32().disableIfUndefined(Target.WATCHOS)
             watchosArm64().disableIfUndefined(Target.WATCHOS)
-            watchosX86().disableIfUndefined(Target.WATCHOS)
             watchosX64().disableIfUndefined(Target.WATCHOS)
             watchosSimulatorArm64().disableIfUndefined(Target.WATCHOS)
             tvosArm64().disableIfUndefined(Target.TVOS)

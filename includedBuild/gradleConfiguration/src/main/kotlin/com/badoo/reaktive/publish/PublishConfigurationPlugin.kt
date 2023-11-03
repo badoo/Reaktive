@@ -136,7 +136,6 @@ class PublishConfigurationPlugin : Plugin<Project> {
             "iosSimulatorArm64" to Target.shouldPublishTarget(project, Target.IOS),
             "watchosArm32" to Target.shouldPublishTarget(project, Target.WATCHOS),
             "watchosArm64" to Target.shouldPublishTarget(project, Target.WATCHOS),
-            "watchosX86" to Target.shouldPublishTarget(project, Target.WATCHOS),
             "watchosX64" to Target.shouldPublishTarget(project, Target.WATCHOS),
             "watchosSimulatorArm64" to Target.shouldPublishTarget(project, Target.WATCHOS),
             "tvosArm64" to Target.shouldPublishTarget(project, Target.TVOS),

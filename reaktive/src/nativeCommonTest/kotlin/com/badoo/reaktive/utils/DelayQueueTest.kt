@@ -1,47 +1,50 @@
 package com.badoo.reaktive.utils
 
+import kotlin.native.concurrent.ObsoleteWorkersApi
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
-import kotlin.system.getTimeMillis
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
+@OptIn(ObsoleteWorkersApi::class) // No replacement yet
 class DelayQueueTest {
 
     private val queue = DelayQueue<Int>()
 
     @Test
     fun provides_item_with_delay() {
-        val startMillis = getTimeMillis()
+        val startTime = TimeSource.Monotonic.markNow()
 
         queue.offer(0, 200.milliseconds)
         val value = queue.take()
 
-        assertTrue(getTimeMillis() - startMillis >= 200L)
+        startTime.elapsedNow()
+        assertTrue(startTime.elapsedNow() >= 200.milliseconds)
         assertEquals(0, value)
     }
 
     @Test
     fun provides_items_in_correct_order_and_with_correct_delays() {
-        val startMillis = getTimeMillis()
+        val startTime = TimeSource.Monotonic.markNow()
 
         queue.offer(2, 300.milliseconds)
         queue.offer(3, 500.milliseconds)
         queue.offer(1, 200.milliseconds)
         val v1 = queue.take()
-        val t1 = getTimeMillis() - startMillis
+        val t1 = startTime.elapsedNow()
         val v2 = queue.take()
-        val t2 = getTimeMillis() - startMillis
+        val t2 = startTime.elapsedNow()
         val v3 = queue.take()
-        val t3 = getTimeMillis() - startMillis
+        val t3 = startTime.elapsedNow()
 
-        assertTrue(t1 >= 200L)
-        assertTrue(t2 >= 300L)
-        assertTrue(t3 >= 500L)
+        assertTrue(t1 >= 200.milliseconds)
+        assertTrue(t2 >= 300.milliseconds)
+        assertTrue(t3 >= 500.milliseconds)
         assertEquals(1, v1)
         assertEquals(2, v2)
         assertEquals(3, v3)
@@ -49,14 +52,14 @@ class DelayQueueTest {
 
     @Test
     fun removes_first_item() {
-        val startMillis = getTimeMillis()
+        val startTime = TimeSource.Monotonic.markNow()
 
         queue.offer(0, 200.milliseconds)
         queue.offer(1, 100.milliseconds)
         queue.removeFirst()
         val value = queue.take()
 
-        assertTrue(getTimeMillis() - startMillis >= 200L)
+        assertTrue(startTime.elapsedNow() >= 200.milliseconds)
         assertEquals(0, value)
     }
 

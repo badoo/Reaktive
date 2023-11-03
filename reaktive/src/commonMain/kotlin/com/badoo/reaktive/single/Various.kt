@@ -2,7 +2,6 @@ package com.badoo.reaktive.single
 
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.plugin.onAssembleSingle
-import kotlin.native.concurrent.SharedImmutable
 
 /**
  * ⚠️ Advanced use only: creates an instance of [Single] without any safeguards by calling `onSubscribe` with a [SingleObserver].
@@ -38,7 +37,6 @@ fun <T> singleOf(value: T): Single<T> =
  */
 fun <T> T.toSingle(): Single<T> = singleOf(this)
 
-@SharedImmutable
 private val singleOfNever by lazy {
     singleUnsafe<Nothing> { observer ->
         observer.onSubscribe(Disposable())
