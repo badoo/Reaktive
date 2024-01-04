@@ -8,6 +8,7 @@ internal actual fun printError(error: Any?) {
     }
 }
 
+@Suppress("UnusedPrivateMember")
 private fun actualPrint(str: String) {
     js("console.log(str)")
 }
