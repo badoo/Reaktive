@@ -120,7 +120,7 @@ private class SubjectGenericTestsImpl(
         subject.onNext(0)
         subject.onComplete()
 
-        observers.forEach(TestObservableObserver<*>::assertComplete)
+        observers.forEach { it.assertComplete() }
     }
 
     override fun delivers_error_to_all_observers_WHEN_error_produced() {

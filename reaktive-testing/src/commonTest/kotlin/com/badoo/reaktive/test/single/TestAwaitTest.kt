@@ -19,7 +19,7 @@ class TestAwaitTest {
             .testAwait(assertSuccess = { assertEquals(1, it) })
 
     @Test
-    fun succeeds_WHEN_upstream_failed_and_assertError_did_not_throw() {
+    fun succeeds_WHEN_upstream_failed_and_assertError_did_not_throw(): AsyncTestResult {
         val error = Exception()
 
         return singleOfError<Nothing>(error)

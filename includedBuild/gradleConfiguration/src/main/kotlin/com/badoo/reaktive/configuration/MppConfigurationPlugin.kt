@@ -27,10 +27,9 @@ class MppConfigurationPlugin : Plugin<Project> {
         target.version = target.findProperty("reaktive_version") as Any
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
             sourceSets {
-                maybeCreate("commonMain").dependencies { implementation(target.getLibrary("kotlin-stdlib-common")) }
+                maybeCreate("commonMain").dependencies { implementation(target.getLibrary("kotlin-stdlib")) }
                 maybeCreate("commonTest").dependencies {
-                    implementation(target.getLibrary("kotlin-test-common"))
-                    implementation(target.getLibrary("kotlin-test-annotations"))
+                    implementation(target.getLibrary("kotlin-test"))
                 }
             }
 
@@ -48,6 +47,7 @@ class MppConfigurationPlugin : Plugin<Project> {
         setupAndroidTarget(project)
         setupJvmTarget(project)
         setupJsTarget(project)
+        setupWasmJsTarget(project)
         setupLinuxX64Target(project)
         setupIosTargets(project)
 
@@ -61,6 +61,9 @@ class MppConfigurationPlugin : Plugin<Project> {
 
                 maybeCreate("jvmJsCommonMain").dependsOn(getByName("commonMain"))
                 maybeCreate("jvmJsCommonTest").dependsOn(getByName("commonTest"))
+
+                maybeCreate("jsWasmJsCommonMain").dependsOn(getByName("commonMain"))
+                maybeCreate("jsWasmJsCommonTest").dependsOn(getByName("commonTest"))
 
                 maybeCreate("jvmNativeCommonMain").dependsOn(getByName("commonMain"))
                 maybeCreate("jvmNativeCommonTest").dependsOn(getByName("commonTest"))
@@ -80,8 +83,23 @@ class MppConfigurationPlugin : Plugin<Project> {
                 maybeCreate("androidMain").dependsOn(getByName("jvmCommonMain"))
                 maybeCreate("androidUnitTest").dependsOn(getByName("jvmCommonTest"))
 
-                maybeCreate("jsMain").dependsOn(getByName("jvmJsCommonMain"))
-                maybeCreate("jsTest").dependsOn(getByName("jvmJsCommonTest"))
+                maybeCreate("jsMain").apply {
+                    dependsOn(getByName("jvmJsCommonMain"))
+                    dependsOn(getByName("jsWasmJsCommonMain"))
+                }
+                maybeCreate("jsTest").apply {
+                    dependsOn(getByName("jvmJsCommonTest"))
+                    dependsOn(getByName("jsWasmJsCommonTest"))
+                }
+
+                maybeCreate("wasmJsMain").apply {
+                    dependsOn(getByName("jvmJsCommonMain"))
+                    dependsOn(getByName("jsWasmJsCommonMain"))
+                }
+                maybeCreate("wasmJsTest").apply {
+                    dependsOn(getByName("jvmJsCommonTest"))
+                    dependsOn(getByName("jsWasmJsCommonTest"))
+                }
 
                 maybeCreate("nativeCommonMain").dependsOn(getByName("jvmNativeCommonMain"))
                 maybeCreate("nativeCommonTest").dependsOn(getByName("jvmNativeCommonTest"))
@@ -162,7 +180,7 @@ class MppConfigurationPlugin : Plugin<Project> {
             }
             sourceSets {
                 maybeCreate("androidMain").dependencies { implementation(project.getLibrary("kotlin-stdlib")) }
-                maybeCreate("androidUnitTest").dependencies { implementation(project.getLibrary("kotlin-test-junit")) }
+                maybeCreate("androidUnitTest").dependencies { implementation(project.getLibrary("kotlin-test")) }
             }
         }
     }
@@ -179,13 +197,17 @@ class MppConfigurationPlugin : Plugin<Project> {
             }
             sourceSets {
                 maybeCreate("jvmMain").dependencies { implementation(project.getLibrary("kotlin-stdlib")) }
-                maybeCreate("jvmTest").dependencies { implementation(project.getLibrary("kotlin-test-junit")) }
+                maybeCreate("jvmTest").dependencies { implementation(project.getLibrary("kotlin-test")) }
             }
         }
     }
 
     private fun setupJsTarget(project: Project) {
         project.apply<JsPlugin>()
+    }
+
+    private fun setupWasmJsTarget(project: Project) {
+        project.apply<WasmJsPlugin>()
     }
 
     private fun setupLinuxX64Target(project: Project) {

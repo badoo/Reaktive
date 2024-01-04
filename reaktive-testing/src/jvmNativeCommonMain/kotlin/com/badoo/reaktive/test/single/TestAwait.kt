@@ -17,4 +17,6 @@ actual fun <T> Single<T>.testAwait(assertError: ((Throwable) -> Unit)?, assertSu
 
         assertSuccess(result)
     }
+
+    return
 }
