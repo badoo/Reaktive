@@ -5,7 +5,7 @@
  * :wasmJsBrowserProductionRun - release mode WASM-JS
  * :wasmJsBrowserDevelopmentRun - debug mode WASM-JS
  */
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     id("kotlin-multiplatform")
@@ -16,6 +16,7 @@ kotlin {
         browser()
         binaries.executable()
     }
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         binaries.executable()
         browser()
