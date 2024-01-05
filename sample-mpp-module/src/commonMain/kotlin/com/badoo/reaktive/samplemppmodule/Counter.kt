@@ -4,16 +4,20 @@ import com.badoo.reaktive.base.invoke
 import com.badoo.reaktive.disposable.scope.DisposableScope
 import com.badoo.reaktive.observable.BehaviorObservableWrapper
 import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.doOnAfterNext
 import com.badoo.reaktive.observable.map
 import com.badoo.reaktive.observable.observableFromFunction
+import com.badoo.reaktive.observable.observableInterval
 import com.badoo.reaktive.observable.observableOf
 import com.badoo.reaktive.observable.observableOfEmpty
+import com.badoo.reaktive.observable.observableTimer
 import com.badoo.reaktive.observable.observeOn
 import com.badoo.reaktive.observable.startWithValue
 import com.badoo.reaktive.observable.subscribeOn
 import com.badoo.reaktive.observable.wrap
 import com.badoo.reaktive.scheduler.computationScheduler
 import com.badoo.reaktive.scheduler.mainScheduler
+import kotlin.time.Duration
 
 class Counter : DisposableScope by DisposableScope() {
 
@@ -27,16 +31,29 @@ class Counter : DisposableScope by DisposableScope() {
 
     val state: BehaviorObservableWrapper<State> = feature.state.wrap()
 
-    private fun onEvent(event: Event, state: State): Observable<Msg> {
+    private fun onEvent(event: Event, getState: () -> State): Observable<Msg> {
+        val state = getState()
         if (state.isLoading) {
             return observableOfEmpty()
         }
 
+
         return when (event) {
-            is Event.Increment -> observableOf(Msg.Set(value = state.value + 1L))
+            is Event.Increment -> observableOf(Msg.Set(value = state.value + 5L))
             is Event.Decrement -> observableOf(Msg.Set(value = state.value - 1L))
             is Event.Reset -> observableOf(Msg.Set(value = 0L))
             is Event.Fibonacci -> fibonacci(n = state.value)
+            is Event.IncrementAfter -> {
+                observableTimer(delay = event.duration, scheduler = mainScheduler)
+                    .doOnAfterNext { println("IncrementAfter: $event") }
+                    .map { Msg.Set(value = getState().value + 1L) }
+            }
+
+            is Event.IncrementEvery -> {
+                observableInterval(period = event.duration, scheduler = mainScheduler)
+                    .doOnAfterNext { println("IncrementEvery: $event") }
+                    .map { Msg.Set(value = getState().value + 1L) }
+            }
         }
     }
 
@@ -68,6 +85,8 @@ class Counter : DisposableScope by DisposableScope() {
         object Decrement : Event
         object Reset : Event
         object Fibonacci : Event
+        class IncrementAfter(val duration: Duration) : Event
+        class IncrementEvery(val duration: Duration) : Event
     }
 
     private sealed interface Msg {
