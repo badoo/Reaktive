@@ -62,9 +62,6 @@ class MppConfigurationPlugin : Plugin<Project> {
                 maybeCreate("jvmJsCommonMain").dependsOn(getByName("commonMain"))
                 maybeCreate("jvmJsCommonTest").dependsOn(getByName("commonTest"))
 
-                maybeCreate("jsWasmJsCommonMain").dependsOn(getByName("commonMain"))
-                maybeCreate("jsWasmJsCommonTest").dependsOn(getByName("commonTest"))
-
                 maybeCreate("jvmNativeCommonMain").dependsOn(getByName("commonMain"))
                 maybeCreate("jvmNativeCommonTest").dependsOn(getByName("commonTest"))
 
@@ -83,23 +80,14 @@ class MppConfigurationPlugin : Plugin<Project> {
                 maybeCreate("androidMain").dependsOn(getByName("jvmCommonMain"))
                 maybeCreate("androidUnitTest").dependsOn(getByName("jvmCommonTest"))
 
-                maybeCreate("jsMain").apply {
-                    dependsOn(getByName("jvmJsCommonMain"))
-                    dependsOn(getByName("jsWasmJsCommonMain"))
-                }
-                maybeCreate("jsTest").apply {
-                    dependsOn(getByName("jvmJsCommonTest"))
-                    dependsOn(getByName("jsWasmJsCommonTest"))
-                }
+                maybeCreate("jsCommonMain").dependsOn(getByName("jvmJsCommonMain"))
+                maybeCreate("jsCommonTest").dependsOn(getByName("jvmJsCommonTest"))
 
-                maybeCreate("wasmJsMain").apply {
-                    dependsOn(getByName("jvmJsCommonMain"))
-                    dependsOn(getByName("jsWasmJsCommonMain"))
-                }
-                maybeCreate("wasmJsTest").apply {
-                    dependsOn(getByName("jvmJsCommonTest"))
-                    dependsOn(getByName("jsWasmJsCommonTest"))
-                }
+                maybeCreate("jsMain").dependsOn(getByName("jsCommonMain"))
+                maybeCreate("jsTest").dependsOn(getByName("jsCommonTest"))
+
+                maybeCreate("wasmJsMain").dependsOn(getByName("jsCommonMain"))
+                maybeCreate("wasmJsTest").dependsOn(getByName("jsCommonTest"))
 
                 maybeCreate("nativeCommonMain").dependsOn(getByName("jvmNativeCommonMain"))
                 maybeCreate("nativeCommonTest").dependsOn(getByName("jvmNativeCommonTest"))

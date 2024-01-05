@@ -6,7 +6,6 @@ detekt = "1.22.0"
 [libraries]
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
-kotlin-stdlib-wasm-js = { module = "org.jetbrains.kotlin:kotlin-stdlib-wasm-js", version.ref = "kotlin" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations", version.ref = "kotlin" }
