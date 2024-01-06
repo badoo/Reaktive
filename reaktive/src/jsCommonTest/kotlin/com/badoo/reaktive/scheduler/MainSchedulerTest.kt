@@ -28,9 +28,7 @@ class MainSchedulerTest {
         var executed = false
         executor.submit(200.milliseconds) { executed = true }
 
-        return observableOf(
-            100.milliseconds, 300.milliseconds
-        )
+        return observableOf(100.milliseconds, 300.milliseconds)
             .flatMapSingle { timeout ->
                 singleTimer(timeout, scheduler = scheduler)
                     .map { executed }
@@ -46,36 +44,31 @@ class MainSchedulerTest {
     fun interval_task_executed_at_interval(): AsyncTestResult {
         val scheduler = MainScheduler()
         val executor = scheduler.newExecutor()
-        var counter = 0L
-        val items = mutableListOf<Long>()
+        var counter = 0
+        val items = mutableListOf<Int>()
 
-        val delayBetweenTasks = 50.milliseconds
-
-        executor.submit(period = delayBetweenTasks) {
+        executor.submit(period = 100.milliseconds) {
             items.add(counter++)
         }
 
-        val amountToTest = 10
-        val testTickShift = 25L
+        val checkTicks =
+            observableOf(50.milliseconds, 150.milliseconds, 250.milliseconds, 350.milliseconds, 450.milliseconds)
+                .flatMapSingle { timeout ->
+                    singleTimer(timeout, scheduler = scheduler)
+                        .map { items.toList() }
+                }
 
-        val testTicks = 1..amountToTest
-        val expectedItems = testTicks.map { tick ->
-            (0 until tick).map { it.toLong() }.toList()
-        }.toList()
+        val expectedResults =
+            listOf(
+                emptyList(),
+                listOf(0),
+                listOf(0, 1),
+                listOf(0, 1, 2),
+                listOf(0, 1, 2, 3),
+            )
 
-        return observableOf(
-            *testTicks
-                .map { it * 50L + testTickShift }
-                .map { it.milliseconds }
-                .toTypedArray()
-        )
-            .flatMapSingle { timeout ->
-                singleTimer(timeout, scheduler = scheduler)
-                    .map { items.toList() }
-            }
-            .toList()
-            .testAwait { tickStates ->
-                assertEquals(expectedItems, tickStates)
-            }
+        return checkTicks.toList().testAwait { results ->
+            assertEquals(expectedResults, results)
+        }
     }
 }

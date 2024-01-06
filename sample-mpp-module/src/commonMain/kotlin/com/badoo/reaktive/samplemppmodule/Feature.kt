@@ -4,7 +4,6 @@ import com.badoo.reaktive.base.Consumer
 import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.disposable.scope.DisposableScope
 import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.observable.flatMap
 import com.badoo.reaktive.observable.map
 import com.badoo.reaktive.observable.switchMap
 import com.badoo.reaktive.subject.behavior.BehaviorObservable

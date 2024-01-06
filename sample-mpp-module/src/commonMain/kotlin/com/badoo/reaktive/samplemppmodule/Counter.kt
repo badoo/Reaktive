@@ -37,9 +37,8 @@ class Counter : DisposableScope by DisposableScope() {
             return observableOfEmpty()
         }
 
-
         return when (event) {
-            is Event.Increment -> observableOf(Msg.Set(value = state.value + 5L))
+            is Event.Increment -> observableOf(Msg.Set(value = state.value + 1L))
             is Event.Decrement -> observableOf(Msg.Set(value = state.value - 1L))
             is Event.Reset -> observableOf(Msg.Set(value = 0L))
             is Event.Fibonacci -> fibonacci(n = state.value)
