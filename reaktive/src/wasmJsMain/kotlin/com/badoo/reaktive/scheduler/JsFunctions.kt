@@ -1,15 +1,17 @@
 package com.badoo.reaktive.scheduler
 
-internal actual fun jsSetTimeout(task: () -> Unit, delayMillis: Int): Any =
-    js("setTimeout(task, delayMillis)")
+import kotlinx.browser.window
 
-internal actual fun jsSetInterval(task: () -> Unit, delayMillis: Int): Any =
-    js("setInterval(task, delayMillis)")
+internal actual fun jsSetTimeout(task: () -> Unit, delayMillis: Int): TimeoutId =
+    window.setTimeout({ task().toJsReference() }, delayMillis)
 
-internal actual fun jsClearTimeout(id: Any) {
-    js("clearTimeout(id)")
+internal actual fun jsSetInterval(task: () -> Unit, delayMillis: Int): TimeoutId =
+    window.setInterval({ task().toJsReference() }, delayMillis)
+
+internal actual fun jsClearTimeout(id: TimeoutId) {
+    window.clearTimeout(id)
 }
 
-internal actual fun jsClearInterval(id: Any) {
-    js("clearInterval(id)")
+internal actual fun jsClearInterval(id: TimeoutId) {
+    window.clearInterval(id)
 }

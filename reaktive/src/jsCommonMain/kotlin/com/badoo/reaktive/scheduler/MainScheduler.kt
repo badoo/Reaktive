@@ -20,8 +20,8 @@ internal class MainScheduler : Scheduler {
 
         private var _isDisposed = false
 
-        private val timeoutIds = mutableSetOf<Any>()
-        private val intervalIds = mutableSetOf<Any>()
+        private val timeoutIds = mutableSetOf<TimeoutId>()
+        private val intervalIds = mutableSetOf<TimeoutId>()
 
         init {
             disposables += this
@@ -48,12 +48,17 @@ internal class MainScheduler : Scheduler {
         }
 
         private fun setTimeout(delay: Duration, task: () -> Unit) {
-            timeoutIds.add(
-                jsSetTimeout(
-                    task = task,
-                    delayMillis = delay.coerceAtLeastZero().inWholeMilliseconds.toInt()
-                )
+            var timeoutId: TimeoutId? = null
+
+            timeoutId = jsSetTimeout(
+                task = {
+                    timeoutIds.remove(timeoutId)
+                    task()
+                },
+                delayMillis = delay.coerceAtLeastZero().inWholeMilliseconds.toInt()
             )
+
+            timeoutIds.add(timeoutId)
         }
 
         private fun setInterval(period: Duration, task: () -> Unit) {

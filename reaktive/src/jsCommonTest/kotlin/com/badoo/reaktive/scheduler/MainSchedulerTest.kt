@@ -3,6 +3,7 @@ package com.badoo.reaktive.scheduler
 import com.badoo.reaktive.observable.flatMapSingle
 import com.badoo.reaktive.observable.observableOf
 import com.badoo.reaktive.observable.toList
+import com.badoo.reaktive.single.doOnBeforeFinally
 import com.badoo.reaktive.single.map
 import com.badoo.reaktive.single.singleTimer
 import com.badoo.reaktive.test.single.AsyncTestResult
@@ -67,11 +68,13 @@ class MainSchedulerTest {
                 listOf(0, 1, 2, 3),
             )
 
-        return checkTicks.toList().testAwait { results ->
-            assertEquals(expectedResults, results)
+        return checkTicks
+            .toList()
             // Required to pass test on NodeJS environment since runtime waits
             // for all tasks to cancel or finish their work.
-            executor.cancel()
-        }
+            .doOnBeforeFinally(executor::cancel)
+            .testAwait { results ->
+                assertEquals(expectedResults, results)
+            }
     }
 }
