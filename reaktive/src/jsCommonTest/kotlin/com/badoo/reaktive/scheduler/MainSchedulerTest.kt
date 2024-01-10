@@ -69,6 +69,9 @@ class MainSchedulerTest {
 
         return checkTicks.toList().testAwait { results ->
             assertEquals(expectedResults, results)
+            // Required to pass test on NodeJS environment since runtime waits
+            // for all tasks to cancel or finish their work.
+            executor.cancel()
         }
     }
 }
