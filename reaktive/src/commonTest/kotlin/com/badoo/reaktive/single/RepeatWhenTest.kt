@@ -190,8 +190,8 @@ class RepeatWhenTest : SingleToObservableTests by SingleToObservableTestsImpl({ 
             .test()
 
         upstream.onComplete()
-        assertSame(attemptVar, 1)
+        assertEquals(attemptVar, 1)
         upstream.onComplete()
-        assertSame(attemptVar, 2)
+        assertEquals(attemptVar, 2)
     }
 }

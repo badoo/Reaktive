@@ -3,7 +3,6 @@ package com.badoo.reaktive.scheduler
 import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.minusAssign
 import com.badoo.reaktive.disposable.plusAssign
-import com.badoo.reaktive.global.external.globalThis
 import com.badoo.reaktive.utils.coerceAtLeastZero
 import kotlin.time.Duration
 
@@ -16,13 +15,13 @@ internal class MainScheduler : Scheduler {
     override fun destroy() = disposables.dispose()
 
     private class MainThreadExecutor(
-        private val disposables: CompositeDisposable
+        private val disposables: CompositeDisposable,
     ) : Scheduler.Executor {
 
         private var _isDisposed = false
 
-        private val timeoutIds = mutableSetOf<dynamic>()
-        private val intervalIds = mutableSetOf<dynamic>()
+        private val timeoutIds = mutableSetOf<TimeoutId>()
+        private val intervalIds = mutableSetOf<TimeoutId>()
 
         init {
             disposables += this
@@ -49,38 +48,31 @@ internal class MainScheduler : Scheduler {
         }
 
         private fun setTimeout(delay: Duration, task: () -> Unit) {
-            var id: dynamic = undefined
+            var timeoutId: TimeoutId? = null
 
-            id =
-                globalThis.setTimeout(
-                    {
-                        timeoutIds.remove(id)
-                        task()
-                    },
-                    delay.coerceAtLeastZero().inWholeMilliseconds.toInt(),
-                )
+            timeoutId = jsSetTimeout(
+                task = {
+                    timeoutIds.remove(timeoutId)
+                    task()
+                },
+                delayMillis = delay.coerceAtLeastZero().inWholeMilliseconds.toInt()
+            )
 
-            timeoutIds.add(id)
+            timeoutIds.add(timeoutId)
         }
 
         private fun setInterval(period: Duration, task: () -> Unit) {
-            var id: dynamic = undefined
-
-            id =
-                globalThis.setInterval(
-                    {
-                        intervalIds.remove(id)
-                        task()
-                    },
-                    period.coerceAtLeastZero().inWholeMilliseconds.toInt(),
+            intervalIds.add(
+                jsSetInterval(
+                    task = task,
+                    delayMillis = period.coerceAtLeastZero().inWholeMilliseconds.toInt(),
                 )
-
-            intervalIds.add(id)
+            )
         }
 
         override fun cancel() {
-            timeoutIds.forEach { globalThis.clearTimeout(it) }
-            intervalIds.forEach { globalThis.clearInterval(it) }
+            timeoutIds.forEach { jsClearTimeout(it) }
+            intervalIds.forEach { jsClearInterval(it) }
         }
 
         override val isDisposed: Boolean

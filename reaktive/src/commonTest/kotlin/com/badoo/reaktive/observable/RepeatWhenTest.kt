@@ -170,8 +170,8 @@ class RepeatWhenTest : ObservableToObservableTests by ObservableToObservableTest
             .test()
 
         upstream.onComplete()
-        assertSame(timeRef, 1)
+        assertEquals(timeRef, 1)
         upstream.onComplete()
-        assertSame(timeRef, 2)
+        assertEquals(timeRef, 2)
     }
 }

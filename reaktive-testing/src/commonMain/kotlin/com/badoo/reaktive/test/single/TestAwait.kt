@@ -50,4 +50,4 @@ import com.badoo.reaktive.single.Single
  * @param assertSuccess when provided, it will be called in case of [Single] success.
  * This gives an opportunity to assert the result.
  */
-expect fun <T> Single<T>.testAwait(assertError: ((Throwable) -> Unit)? = null, assertSuccess: (T) -> Unit)
+expect fun <T> Single<T>.testAwait(assertError: ((Throwable) -> Unit)? = null, assertSuccess: (T) -> Unit): AsyncTestResult

@@ -13,6 +13,7 @@ enum class Target(
     ALL_LINUX_HOSTED(linuxHosted = true, macOsHosted = false),
     JVM(linuxHosted = true, macOsHosted = false),
     JS(linuxHosted = true, macOsHosted = false),
+    WASM_JS(linuxHosted = true, macOsHosted = false),
     LINUX(linuxHosted = true, macOsHosted = false),
     ALL_MACOS_HOSTED(linuxHosted = false, macOsHosted = true),
     IOS(linuxHosted = false, macOsHosted = true),

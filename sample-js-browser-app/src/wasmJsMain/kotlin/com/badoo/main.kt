@@ -7,10 +7,6 @@ import org.w3c.dom.HTMLElement
 import kotlin.time.Duration.Companion.seconds
 
 fun main() {
-    document.addEventListener(type = "DOMContentLoaded", callback = { onLoaded() })
-}
-
-private fun onLoaded() {
     val counter = Counter()
 
     val valueText = document.getElementById("value") as HTMLElement
@@ -40,3 +36,4 @@ private fun onLoaded() {
         counter.onEvent(Event.IncrementEvery(1.seconds))
     }
 }
+

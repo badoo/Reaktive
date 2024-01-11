@@ -25,8 +25,8 @@ actual fun <T> Single<T>.testAwait(assertError: ((Throwable) -> Unit)?, assertSu
 private fun <T> Single<T>.asTestResult(): AsyncTestResult =
     AsyncTestResult { resolve, reject ->
         subscribe(
-            onSuccess = { resolve(Unit) },
-            onError = reject,
+            onSuccess = { resolve(Unit.toJsReference()) },
+            onError = { reject(it.toJsReference()) },
         )
     }
 

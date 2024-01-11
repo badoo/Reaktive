@@ -128,6 +128,7 @@ class PublishConfigurationPlugin : Plugin<Project> {
             KotlinMultiplatformPlugin.METADATA_TARGET_NAME to Target.shouldPublishTarget(project, Target.META),
             "jvm" to Target.shouldPublishTarget(project, Target.JVM),
             "js" to Target.shouldPublishTarget(project, Target.JS),
+            "wasmJs" to Target.shouldPublishTarget(project, Target.WASM_JS),
             "androidDebug" to Target.shouldPublishTarget(project, Target.JVM),
             "androidRelease" to Target.shouldPublishTarget(project, Target.JVM),
             "linuxX64" to Target.shouldPublishTarget(project, Target.LINUX),

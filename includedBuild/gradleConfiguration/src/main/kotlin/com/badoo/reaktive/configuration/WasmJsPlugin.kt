@@ -4,37 +4,27 @@ import com.badoo.reaktive.getLibrary
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
-class JsPlugin : Plugin<Project> {
+@OptIn(ExperimentalWasmDsl::class)
+class WasmJsPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        configureJsCompilation(target)
+        configureWasmJsCompilation(target)
     }
 
-    private fun configureJsCompilation(target: Project) {
+    private fun configureWasmJsCompilation(target: Project) {
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
-            js {
-                browser {
-                    testTask {
-                        useKarma {
-                            useChromeHeadless()
-                        }
-                    }
-                }
-                nodejs {
-                    testTask {
-                        useCommonJs()
-                    }
-                }
-
-                disableIfUndefined(Target.JS)
+            wasmJs {
+                browser()
+                disableIfUndefined(Target.WASM_JS)
             }
-            sourceSets.getByName("jsMain") {
+            sourceSets.getByName("wasmJsMain") {
                 dependencies {
                     implementation(project.getLibrary("kotlin-stdlib"))
                 }
             }
-            sourceSets.getByName("jsTest") {
+            sourceSets.getByName("wasmJsTest") {
                 dependencies {
                     implementation(project.getLibrary("kotlin-test"))
                 }

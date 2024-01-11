@@ -1,5 +1,7 @@
 package com.badoo.reaktive.disposable
 
+import kotlin.js.JsName
+
 @JsName("disposableWithCallback")
 @Suppress("FunctionName")
 actual inline fun Disposable(crossinline onDispose: () -> Unit): Disposable =
