@@ -83,6 +83,40 @@ class RefCountTest {
     }
 
     @Test
+    fun connects_to_upstream_WHEN_subscriberCount_is_1_and_subscribed_and_disposed_in_onSubscribe() {
+        var isConnected = false
+        val upstream = testUpstream(connect = { isConnected = true })
+        val refCount = upstream.refCount(subscriberCount = 1)
+
+        refCount.subscribe(
+            object : DefaultObservableObserver<Int?> {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposable.dispose()
+                }
+            }
+        )
+
+        assertTrue(isConnected)
+    }
+
+    @Test
+    fun disconnects_from_upstream_WHEN_subscriberCount_is_1_and_subscribed_and_disposed_in_onSubscribe() {
+        val disposable = Disposable()
+        val upstream = testUpstream(connect = { onConnect -> onConnect?.invoke(disposable) })
+        val refCount = upstream.refCount(subscriberCount = 1)
+
+        refCount.subscribe(
+            object : DefaultObservableObserver<Int?> {
+                override fun onSubscribe(disposable: Disposable) {
+                    disposable.dispose()
+                }
+            }
+        )
+
+        assertTrue(disposable.isDisposed)
+    }
+
+    @Test
     fun disconnects_from_upstream_WHEN_subscriberCount_is_2_and_all_subscribers_unsubscribed() {
         val disposable = Disposable()
         val upstream = testUpstream(connect = { it?.invoke(disposable) })
