@@ -23,7 +23,7 @@ jobs:
 
   publish:
     name: Publish
-    runs-on: macOS-latest
+    runs-on: macos-14
     needs: create-staging-repository
     env:
       SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
@@ -55,7 +55,7 @@ jobs:
 
   check:
     name: Check publication
-    runs-on: macOS-latest
+    runs-on: macos-14
     needs: [ create-staging-repository, publish ]
     steps:
       - name: Checkout
