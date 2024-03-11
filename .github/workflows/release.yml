@@ -29,26 +29,29 @@ jobs:
       SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
       - name: Select Xcode version
-        uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
+        uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd
         with:
           xcode-version: '14.2.0'
-      - name: Publish
-        uses: gradle/gradle-build-action@v2
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: true
-          arguments: |
-            publishAllFilteredToSonatype
-            -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
-            -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
-            -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
-            -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: Publish
+        run: >
+          ./gradlew 
+          publishAllFilteredToSonatype
+          -Psigning.password=${{ secrets.SIGNING_PASSWORD }}
+          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
+          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
+          -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
 
   check:
     name: Check publication
@@ -56,29 +59,30 @@ jobs:
     needs: [ create-staging-repository, publish ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
       - name: Select Xcode version
-        uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98
+        uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd
         with:
           xcode-version: '14.2.0'
-      - name: Check publication
-        uses: gradle/gradle-build-action@v2
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: true
-          # Exclude kotlinStoreYarnLock because publication check project has different from the main project
-          # dependencies, and the task fails the build. Ignoring it looks fine.
-          arguments: |
-            :tools:check-publication:build
-            --exclude-task kotlinStoreYarnLock
-            -Pcheck_publication
-            -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
-            -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
-            -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - name: Check publication
+        run: >
+          ./gradlew 
+          :tools:check-publication:build
+          --exclude-task kotlinStoreYarnLock
+          -Pcheck_publication
+          -Psonatype.username=${{ secrets.SONATYPE_USERNAME }}
+          -Psonatype.password=${{ secrets.SONATYPE_PASSWORD }}
+          -Psonatype.repository=${{ needs.create-staging-repository.outputs.repository-id }}
 
   close-staging-repository:
     runs-on: ubuntu-latest
