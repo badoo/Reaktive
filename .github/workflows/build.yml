@@ -28,7 +28,7 @@ jobs:
         if: matrix.os == 'macos-14'
         uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd
         with:
-          xcode-version: '14.2.0'
+          xcode-version: '15.2.0'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
