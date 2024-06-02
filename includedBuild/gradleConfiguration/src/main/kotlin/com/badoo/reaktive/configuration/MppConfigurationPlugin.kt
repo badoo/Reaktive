@@ -35,8 +35,10 @@ class MppConfigurationPlugin : Plugin<Project> {
 
             targets.configureEach {
                 compilations.configureEach {
-                    compilerOptions.configure {
-                        freeCompilerArgs.add("-Xexpect-actual-classes")
+                    compileTaskProvider.configure {
+                        compilerOptions {
+                            freeCompilerArgs.add("-Xexpect-actual-classes")
+                        }
                     }
                 }
             }
@@ -157,8 +159,8 @@ class MppConfigurationPlugin : Plugin<Project> {
             }
         }
         project.tasks.withType<KotlinCompile> {
-            kotlinOptions {
-                jvmTarget = "1.8"
+            compilerOptions {
+                jvmTarget.set(JvmTarget.JVM_1_8)
             }
         }
         project.kotlin {
@@ -178,8 +180,10 @@ class MppConfigurationPlugin : Plugin<Project> {
             jvm {
                 disableIfUndefined(Target.JVM)
                 compilations.getByName("main").apply {
-                    compilerOptions.configure {
-                        jvmTarget.set(JvmTarget.JVM_1_8)
+                    compileTaskProvider.configure {
+                        compilerOptions {
+                            jvmTarget.set(JvmTarget.JVM_1_8)
+                        }
                     }
                 }
             }

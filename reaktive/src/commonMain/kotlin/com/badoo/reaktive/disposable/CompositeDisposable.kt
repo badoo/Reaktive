@@ -6,6 +6,8 @@ package com.badoo.reaktive.disposable
 @Suppress("EmptyDefaultConstructor")
 expect open class CompositeDisposable() : Disposable {
 
+    override val isDisposed: Boolean
+
     /**
      * Atomically disposes the collection and all its [Disposable]s.
      * All future [Disposable]s will be immediately disposed.

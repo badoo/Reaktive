@@ -13,7 +13,7 @@ actual open class CompositeDisposable actual constructor() : Disposable {
 
     @Volatile
     private var _isDisposed = false
-    override val isDisposed: Boolean get() = _isDisposed
+    actual override val isDisposed: Boolean get() = _isDisposed
 
     /**
      * Atomically disposes the collection and all its [Disposable]s.

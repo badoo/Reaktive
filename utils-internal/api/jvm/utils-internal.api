@@ -1,15 +1,3 @@
 public abstract interface annotation class com/badoo/reaktive/utils/InternalReaktiveApi : java/lang/annotation/Annotation {
 }
 
-public final class com/badoo/reaktive/utils/UtilsKt {
-}
-
-public final class com/badoo/reaktive/utils/atomic/AtomicIntExtKt {
-}
-
-public final class com/badoo/reaktive/utils/atomic/AtomicReferenceExtKt {
-}
-
-public final class com/badoo/reaktive/utils/lock/ConditionLockExtKt {
-}
-

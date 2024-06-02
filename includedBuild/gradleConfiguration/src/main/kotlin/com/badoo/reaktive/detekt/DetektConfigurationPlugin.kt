@@ -10,13 +10,16 @@ class DetektConfigurationPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.plugins.apply("io.gitlab.arturbosch.detekt")
         target.extensions.configure(DetektExtension::class.java) {
-            source = target.files(
-                target
-                    .file("src")
-                    .listFiles()
-                    ?.filter { it.isDirectory && it.name.endsWith("main", ignoreCase = true) }
+            source.setFrom(
+                target.files(
+                    target
+                        .file("src")
+                        .listFiles()
+                        ?.filter { it.isDirectory && it.name.endsWith("main", ignoreCase = true) }
+                )
             )
-            config = target.rootProject.files("detekt.yml")
+
+            config.setFrom(target.rootProject.files("detekt.yml"))
             buildUponDefaultConfig = true
         }
         target.dependencies.add(CONFIGURATION_DETEKT_PLUGINS, target.getLibrary("detekt-ktlint"))
