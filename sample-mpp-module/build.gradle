@@ -8,20 +8,20 @@ android {
 }
 
 kotlin {
-    def configureFrameworks = { target ->
-        target.binaries {
-            framework {
-                baseName = "shared"
-                export project(':reaktive')
+    if (System.getenv().keySet().contains("XCODE_VERSION_MAJOR")) {
+        def configureFrameworks = { target ->
+            target.binaries {
+                framework {
+                    baseName = "shared"
+                    export project(':reaktive')
+                }
             }
         }
-    }
 
-    configureFrameworks(iosArm64())
-    configureFrameworks(iosX64())
-    configureFrameworks(iosSimulatorArm64())
-    configureFrameworks(macosX64())
-    configureFrameworks(macosArm64())
+        configureFrameworks(iosArm64())
+        configureFrameworks(iosX64())
+        configureFrameworks(iosSimulatorArm64())
+    }
 
     sourceSets {
         commonMain {
