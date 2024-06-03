@@ -11,7 +11,7 @@ import com.badoo.reaktive.utils.atomic.getAndChange
 actual open class CompositeDisposable actual constructor() : Disposable {
 
     private val list = AtomicReference<Set<Disposable>?>(emptySet())
-    override val isDisposed: Boolean get() = list.value == null
+    actual override val isDisposed: Boolean get() = list.value == null
 
     /**
      * Atomically disposes the collection and all its [Disposable]s.

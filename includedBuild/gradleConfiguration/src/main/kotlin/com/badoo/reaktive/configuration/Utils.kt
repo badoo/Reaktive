@@ -6,7 +6,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 fun KotlinTarget.disableIfUndefined(target: Target) {
     if (!shouldDefineTarget(project, target)) {
         compilations.all {
-            compileKotlinTask.enabled = false
+            compileTaskProvider.configure {
+                enabled = false
+            }
         }
 
         if (target == Target.LINUX) {

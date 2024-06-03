@@ -17,7 +17,7 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import java.net.URI
 
 class PublishConfigurationPlugin : Plugin<Project> {
@@ -125,7 +125,7 @@ class PublishConfigurationPlugin : Plugin<Project> {
     private fun createConfigurationMap(project: Project): Map<String, Boolean> {
         return mapOf(
             "kotlinMultiplatform" to Target.shouldPublishTarget(project, Target.META),
-            KotlinMultiplatformPlugin.METADATA_TARGET_NAME to Target.shouldPublishTarget(project, Target.META),
+            KotlinMetadataTarget.METADATA_TARGET_NAME to Target.shouldPublishTarget(project, Target.META),
             "jvm" to Target.shouldPublishTarget(project, Target.JVM),
             "js" to Target.shouldPublishTarget(project, Target.JS),
             "wasmJs" to Target.shouldPublishTarget(project, Target.WASM_JS),

@@ -14,18 +14,8 @@ class JsPlugin : Plugin<Project> {
     private fun configureJsCompilation(target: Project) {
         target.extensions.configure(KotlinMultiplatformExtension::class.java) {
             js {
-                browser {
-                    testTask {
-                        useKarma {
-                            useChromeHeadless()
-                        }
-                    }
-                }
-                nodejs {
-                    testTask {
-                        useCommonJs()
-                    }
-                }
+                browser()
+                nodejs()
 
                 disableIfUndefined(Target.JS)
             }
