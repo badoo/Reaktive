@@ -8,6 +8,7 @@ android {
 }
 
 kotlin {
+    // Only export the framework under an Xcode build as part of the pre-build step script
     if (System.getenv().keySet().contains("XCODE_VERSION_MAJOR")) {
         def configureFrameworks = { target ->
             target.binaries {

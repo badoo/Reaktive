@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace "com.badoo.reaktive.sample.android"
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId 'com.badoo.reaktive.sample.android'
         minSdkVersion 15
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 1
         versionName '1.0'
     }
