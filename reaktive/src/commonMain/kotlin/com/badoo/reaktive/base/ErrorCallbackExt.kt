@@ -1,6 +1,8 @@
 package com.badoo.reaktive.base
 
+import com.badoo.reaktive.base.exceptions.CompositeException
 import com.badoo.reaktive.utils.handleReaktiveError
+import com.badoo.reaktive.utils.throwIfFatal
 
 inline fun <T> ErrorCallback.tryCatch(
     block: () -> T,
@@ -10,7 +12,18 @@ inline fun <T> ErrorCallback.tryCatch(
     try {
         block()
     } catch (e: Throwable) {
-        handleReaktiveError(errorTransformer(e), ::onError)
+        e.throwIfFatal()
+
+        val transformedError =
+            try {
+                errorTransformer(e)
+            } catch (e2: Throwable) {
+                e2.throwIfFatal()
+                CompositeException(cause1 = e, cause2 = e2)
+            }
+
+        handleReaktiveError(transformedError, ::onError)
+
         return
     }
         .also(onSuccess)
@@ -23,7 +36,17 @@ inline fun ErrorCallback.tryCatch(
     try {
         block()
     } catch (e: Throwable) {
-        handleReaktiveError(errorTransformer(e), ::onError)
+        e.throwIfFatal()
+
+        val transformedError =
+            try {
+                errorTransformer(e)
+            } catch (e2: Throwable) {
+                e2.throwIfFatal()
+                CompositeException(cause1 = e, cause2 = e2)
+            }
+
+        handleReaktiveError(transformedError, ::onError)
     }
 }
 
@@ -34,6 +57,16 @@ internal inline fun tryCatchAndHandle(
     try {
         block()
     } catch (e: Throwable) {
-        handleReaktiveError(errorTransformer(e))
+        e.throwIfFatal()
+
+        val transformedError =
+            try {
+                errorTransformer(e)
+            } catch (e2: Throwable) {
+                e2.throwIfFatal()
+                CompositeException(cause1 = e, cause2 = e2)
+            }
+
+        handleReaktiveError(transformedError)
     }
 }

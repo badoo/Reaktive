@@ -1422,6 +1422,7 @@ public final class com/badoo/reaktive/subject/unicast/UnicastSubjectBuilderKt {
 public final class com/badoo/reaktive/utils/HandleSourceErrorKt {
 	public static final fun handleReaktiveError (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun handleReaktiveError$default (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun throwIfFatal (Ljava/lang/Throwable;)V
 }
 
 public final class com/badoo/reaktive/utils/UncaughtErrorHandlerKt {
