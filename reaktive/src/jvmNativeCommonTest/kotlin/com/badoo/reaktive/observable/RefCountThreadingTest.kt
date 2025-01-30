@@ -49,7 +49,7 @@ class RefCountThreadingTest {
         doInBackground { observer.dispose() }
 
         lock.synchronized {
-            lock.waitForOrFail { !isSecondTime }
+            lock.waitForOrFail { isSecondTime }
         }
 
         refCount.test()
