@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ macos-14, ubuntu-latest ]
+        os: [ macos-latest, ubuntu-latest ]
     runs-on: ${{matrix.os}}
     name: Build on ${{matrix.os}}
     steps:
@@ -20,23 +20,22 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21'
       - name: Install dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install libcurl4-openssl-dev libgtk-3-dev nodejs chromium-browser
       - name: Select Xcode version
-        if: matrix.os == 'macos-14'
+        if: matrix.os == 'macos-latest'
         uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd
         with:
-          xcode-version: '15.2.0'
+          xcode-version: '16.2'
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-home-cache-cleanup: true
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v2
+        uses: gradle/actions/wrapper-validation@v4
       - name: Build Linux
         if: matrix.os == 'ubuntu-latest'
         run: >
@@ -45,7 +44,7 @@ jobs:
           publishAllFilteredToMavenLocal
           -Ptarget=all_linux_hosted
       - name: Build macOS
-        if: matrix.os == 'macos-14'
+        if: matrix.os == 'macos-latest'
         run:
           ./gradlew
           :reaktive-annotations:build
@@ -58,7 +57,7 @@ jobs:
           -Ptarget=all_macos_hosted
       # Do not invoke from Gradle, it creates circular dependency (Gradle invokes XCode invokes Gradle).
       - name: Build iOS app
-        if: matrix.os == 'macos-14'
+        if: matrix.os == 'macos-latest'
         working-directory: sample-ios-app
         run: >
           xcodebuild

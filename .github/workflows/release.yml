@@ -23,7 +23,7 @@ jobs:
 
   publish:
     name: Publish
-    runs-on: macos-14
+    runs-on: macos-latest
     needs: create-staging-repository
     env:
       SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
@@ -34,13 +34,13 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21'
       - name: Select Xcode version
         uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd
         with:
-          xcode-version: '15.2.0'
+          xcode-version: '16.2'
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: true
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
@@ -55,7 +55,7 @@ jobs:
 
   check:
     name: Check publication
-    runs-on: macos-14
+    runs-on: macos-latest
     needs: [ create-staging-repository, publish ]
     steps:
       - name: Checkout
@@ -64,13 +64,13 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21'
       - name: Select Xcode version
         uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd
         with:
-          xcode-version: '15.2.0'
+          xcode-version: '16.2'
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: true
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
