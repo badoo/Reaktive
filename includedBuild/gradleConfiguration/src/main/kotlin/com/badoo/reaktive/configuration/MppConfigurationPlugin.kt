@@ -11,12 +11,12 @@ import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class MppConfigurationPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        target.extensions.create("configuration", MppConfigurationExtension::class.java, target)
         setupMultiplatformLibrary(target)
         setupAllTargetsWithDefaultSourceSets(target)
     }
@@ -25,9 +25,11 @@ class MppConfigurationPlugin : Plugin<Project> {
         target.apply(plugin = "org.jetbrains.kotlin.multiplatform")
         target.group = target.findProperty("reaktive_group_id") as Any
         target.version = target.findProperty("reaktive_version") as Any
-        target.extensions.configure(KotlinMultiplatformExtension::class.java) {
+        target.kotlin {
             sourceSets {
-                maybeCreate("commonMain").dependencies { implementation(target.getLibrary("kotlin-stdlib")) }
+                maybeCreate("commonMain").dependencies {
+                    implementation(target.getLibrary("kotlin-stdlib"))
+                }
                 maybeCreate("commonTest").dependencies {
                     implementation(target.getLibrary("kotlin-test"))
                 }
@@ -166,7 +168,6 @@ class MppConfigurationPlugin : Plugin<Project> {
         project.kotlin {
             androidTarget {
                 publishLibraryVariants("release", "debug")
-                disableIfUndefined(Target.JVM)
             }
             sourceSets {
                 maybeCreate("androidMain").dependencies { implementation(project.getLibrary("kotlin-stdlib")) }
@@ -178,7 +179,6 @@ class MppConfigurationPlugin : Plugin<Project> {
     private fun setupJvmTarget(project: Project) {
         project.kotlin {
             jvm {
-                disableIfUndefined(Target.JVM)
                 compilations.getByName("main").apply {
                     compileTaskProvider.configure {
                         compilerOptions {
@@ -195,23 +195,65 @@ class MppConfigurationPlugin : Plugin<Project> {
     }
 
     private fun setupJsTarget(project: Project) {
-        project.apply<JsPlugin>()
+        project.kotlin {
+            js {
+                browser()
+                nodejs()
+            }
+            sourceSets.getByName("jsMain") {
+                dependencies {
+                    implementation(project.getLibrary("kotlin-stdlib"))
+                }
+            }
+            sourceSets.getByName("jsTest") {
+                dependencies {
+                    implementation(project.getLibrary("kotlin-test"))
+                }
+            }
+        }
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     private fun setupWasmJsTarget(project: Project) {
-        project.apply<WasmJsPlugin>()
+        project.kotlin {
+            wasmJs {
+                browser()
+            }
+            sourceSets.getByName("wasmJsMain") {
+                dependencies {
+                    implementation(project.getLibrary("kotlin-stdlib"))
+                }
+            }
+            sourceSets.getByName("wasmJsTest") {
+                dependencies {
+                    implementation(project.getLibrary("kotlin-test"))
+                }
+            }
+        }
     }
 
     private fun setupLinuxX64Target(project: Project) {
         project.kotlin {
             linuxX64 {
-                disableIfUndefined(Target.LINUX)
             }
         }
     }
 
     private fun setupIosTargets(project: Project) {
-        project.apply<DarwinPlugin>()
+        project.kotlin {
+            iosArm64()
+            iosX64()
+            iosSimulatorArm64()
+            watchosArm32()
+            watchosArm64()
+            watchosX64()
+            watchosSimulatorArm64()
+            tvosArm64()
+            tvosX64()
+            tvosSimulatorArm64()
+            macosX64()
+            macosArm64()
+        }
     }
 
     private fun Project.kotlin(action: Action<KotlinMultiplatformExtension>) {
