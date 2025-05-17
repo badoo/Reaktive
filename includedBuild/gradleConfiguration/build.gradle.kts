@@ -16,6 +16,8 @@ dependencies {
     implementation(libs.detekt.plugin)
     implementation(libs.shadow)
     implementation(libs.kotlinx.compatibility)
+    implementation(libs.publish.plugin)
+    implementation(libs.dokka.plugin)
 }
 
 gradlePlugin {
