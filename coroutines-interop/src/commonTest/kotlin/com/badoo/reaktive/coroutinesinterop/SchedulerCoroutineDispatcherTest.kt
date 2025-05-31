@@ -56,7 +56,8 @@ class SchedulerCoroutineDispatcherTest {
             }
         }
 
-        assertTrue(endTime.value - startTime >= 500.milliseconds)
+        val duration = endTime.value - startTime
+        assertTrue(actual = duration >= 500.milliseconds, message = "Expected duration>=500ms: $duration")
     }
 
     private class TestRunnable : Runnable {

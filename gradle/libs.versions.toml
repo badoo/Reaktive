@@ -1,6 +1,7 @@
 [versions]
-kotlin = "2.0.0"
-kotlinx-coroutines = "1.8.1"
+kotlin = "2.1.21"
+kotlinx-coroutines = "1.10.2"
+kotlinx-browser = "0.3"
 detekt = "1.23.6"
 
 [libraries]
@@ -10,6 +11,7 @@ kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations", version.ref = "kotlin" }
 
+kotlinx-browser = { group = "org.jetbrains.kotlinx", name = "kotlinx-browser", version.ref = "kotlinx-browser" }
 kotlinx-compatibility = "org.jetbrains.kotlinx:binary-compatibility-validator:0.17.0"
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
