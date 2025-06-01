@@ -48,12 +48,12 @@ class MainSchedulerTest {
         var counter = 0
         val items = mutableListOf<Int>()
 
-        executor.submit(period = 100.milliseconds) {
+        executor.submit(period = 256.milliseconds) {
             items.add(counter++)
         }
 
         val checkTicks =
-            observableOf(50.milliseconds, 150.milliseconds, 250.milliseconds, 350.milliseconds, 450.milliseconds)
+            observableOf(128.milliseconds, 384.milliseconds, 640.milliseconds, 896.milliseconds, 1152.milliseconds)
                 .flatMapSingle { timeout ->
                     singleTimer(timeout, scheduler = scheduler)
                         .map { items.toList() }

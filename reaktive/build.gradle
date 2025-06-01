@@ -22,5 +22,11 @@ kotlin {
                 implementation project(':reaktive-testing')
             }
         }
+
+        wasmJsMain {
+            dependencies {
+                implementation libs.kotlinx.browser
+            }
+        }
     }
 }
