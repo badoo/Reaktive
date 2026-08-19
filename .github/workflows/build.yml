@@ -26,7 +26,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         with:
           xcode-version: '16.2'
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
