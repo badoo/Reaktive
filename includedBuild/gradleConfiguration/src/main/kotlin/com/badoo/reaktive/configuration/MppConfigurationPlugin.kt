@@ -52,7 +52,7 @@ class MppConfigurationPlugin : Plugin<Project> {
         setupJvmTarget(project)
         setupJsTarget(project)
         setupWasmJsTarget(project)
-        setupLinuxX64Target(project)
+        setupLinuxTargets(project)
         setupIosTargets(project)
 
         project.kotlin {
@@ -101,6 +101,9 @@ class MppConfigurationPlugin : Plugin<Project> {
 
                 maybeCreate("linuxX64Main").dependsOn(getByName("linuxCommonMain"))
                 maybeCreate("linuxX64Test").dependsOn(getByName("linuxCommonTest"))
+
+                maybeCreate("linuxArm64Main").dependsOn(getByName("linuxCommonMain"))
+                maybeCreate("linuxArm64Test").dependsOn(getByName("linuxCommonTest"))
 
                 maybeCreate("jvmNativeCommonMain").dependsOn(getByName("commonMain"))
                 maybeCreate("jvmNativeCommonTest").dependsOn(getByName("commonTest"))
@@ -232,10 +235,10 @@ class MppConfigurationPlugin : Plugin<Project> {
         }
     }
 
-    private fun setupLinuxX64Target(project: Project) {
+    private fun setupLinuxTargets(project: Project) {
         project.kotlin {
-            linuxX64 {
-            }
+            linuxX64()
+            linuxArm64()
         }
     }
 
