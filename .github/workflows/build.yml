@@ -25,7 +25,7 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd
         if: matrix.os == 'macos-latest'
         with:
-          xcode-version: '16.2'
+          xcode-version: '26.6.0'
       - uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
